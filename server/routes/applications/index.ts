@@ -1,13 +1,21 @@
-import { Router, Request, Response } from 'express'
+import { Request, Response, Router } from 'express'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
+import AuditService, { Page } from '../../services/auditService'
 
-const router = Router()
+export default function applicationsRoutes({ auditService }: { auditService: AuditService }): Router {
+  const router = Router()
 
-router.get(
-  '/',
-  asyncMiddleware(async (req: Request, res: Response) => {
-    res.render('pages/applications', { title: 'Applications' })
-  }),
-)
+  router.get(
+    '/',
+    asyncMiddleware(async (req: Request, res: Response) => {
+      await auditService.logPageView(Page.APPLICATIONS_PAGE, {
+        who: res.locals.user.username,
+        correlationId: req.id,
+      })
 
-export default router
+      res.render('pages/applications', { title: 'Applications' })
+    }),
+  )
+
+  return router
+}
