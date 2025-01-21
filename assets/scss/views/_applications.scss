@@ -1,13 +1,13 @@
 .applications-landing-page {
   &__banner {
     margin-top: -40px;
-    background: rgb(38, 49, 53);
+    background: #263135;
     color: govuk-colour('white');
 
     h1,
     p,
     a {
-      color: govuk-colour('white');
+      color: inherit;
     }
   }
 
@@ -18,7 +18,7 @@
     &-item {
       flex-basis: calc(50% - 10px);
       box-sizing: border-box;
-      border-top: 1px solid #b1b4b6;
+      border-top: 1px solid $govuk-border-colour;
 
       &:nth-child(odd) {
         margin-right: 10px;
@@ -35,7 +35,6 @@
       &-notification {
         font-weight: normal;
         border-radius: 20px;
-        margin-right: 5px;
         font-size: 1rem;
         color: #942514;
       }
