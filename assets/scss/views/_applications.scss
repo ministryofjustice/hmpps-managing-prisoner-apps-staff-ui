@@ -1,0 +1,43 @@
+.applications-landing-page {
+  &__banner {
+    margin-top: -40px;
+    background: #263135;
+    color: govuk-colour('white');
+
+    h1,
+    p,
+    a {
+      color: inherit;
+    }
+  }
+
+  &__list-menu {
+    display: flex;
+    flex-wrap: wrap;
+
+    &-item {
+      flex-basis: calc(50% - 10px);
+      box-sizing: border-box;
+      border-top: 1px solid $govuk-border-colour;
+
+      &:nth-child(odd) {
+        margin-right: 10px;
+      }
+
+      &:nth-child(even) {
+        margin-left: 10px;
+      }
+
+      a {
+        color: $govuk-link-colour;
+      }
+
+      &-notification {
+        font-weight: normal;
+        border-radius: 20px;
+        font-size: 1rem;
+        color: #942514;
+      }
+    }
+  }
+}

@@ -1,10 +1,45 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{%- from "govuk/components/tag/macro.njk" import govukTag -%}
+
 {% extends "../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - Applications" %}
-{% set mainClasses = "app-container govuk-body" %}
+{% set mainClasses = "app-container govuk-body applications-landing-page" %}
+
+{% block beforeContent %}
+  <div class="govuk-body applications-landing-page__banner govuk-!-margin-bottom-0 govuk-!-padding-top-5 govuk-!-padding-bottom-5">
+    <div class="govuk-width-container">
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+          <h1 class="govuk-heading-l">Applications</h1>
+          <p class="govuk-body-l">Log, action and reply to prisoner applications. You can also forward applications to other departments.</p>
+          <p class="govuk-body">Give us your <a href="">feedback</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
 
 {% block content %}
+  <div class="govuk-body govuk-width-container govuk-!-padding-top-5 govuk-!-padding-bottom-5">
+    {{ govukButton({
+      text: "Log an application",
+      href: "#"
+    }) }}
 
-  <h1>{{ title }}</h1>
-
+    {% for section in sections %}
+      <h2 class="govuk-heading-m govuk-!-padding-top-0">{{ section.title }}</h2>
+      <ul class="applications-landing-page__list-menu govuk-list govuk-!-margin-bottom-9">
+        {% for item in section.items %}
+          <li class="applications-landing-page__list-menu-item govuk-!-padding-top-3 govuk-!-padding-bottom-3 govuk-!-margin-bottom-0">
+            {{ govukTag({
+              text: item.tagText,
+              classes: "applications-landing-page__list-menu-item-notification govuk-tag--red govuk-!-margin-right-1"
+            }) }} 
+            <a href="{{ item.path }}">{{ item.name }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endfor %}
+  </div>
 {% endblock %}
