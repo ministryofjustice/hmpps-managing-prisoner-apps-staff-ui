@@ -1,0 +1,13 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{%- from "govuk/components/tag/macro.njk" import govukTag -%}
+
+{% extends "../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - Applications" %}
+{% set mainClasses = "app-container govuk-body applications-landing-page" %}
+
+{% block content %}
+  <div class="govuk-body govuk-width-container">
+    <h1>{{ title }}</h1>
+  </div>
+{% endblock %}

@@ -46,5 +46,26 @@ export default function applicationsRoutes({ auditService }: { auditService: Aud
     }),
   )
 
+  router.get(
+    '/log/application-type',
+    asyncMiddleware(async (req: Request, res: Response) => {
+      await auditService.logPageView(Page.LOG_APPLICATION_TYPE_PAGE, {
+        who: res.locals.user.username,
+        correlationId: req.id,
+      })
+
+      const applicationTypes = [
+        { name: 'Add new social PIN phone contact' },
+        { name: 'Add new legal PIN phone contact' },
+        { name: 'Add emergency PIN phone credit' },
+        { name: 'Remove PIN phone contact' },
+        { name: 'Swap visiting orders (VOs) for PIN credit' },
+        { name: 'Supply list of PIN phone contacts}' },
+      ]
+
+      res.render('pages/log/application-type', { title: 'Select application type', applicationTypes })
+    }),
+  )
+
   return router
 }
