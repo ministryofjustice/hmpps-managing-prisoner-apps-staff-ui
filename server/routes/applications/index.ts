@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
+import { APPLICATION_TYPES } from '../../constants/applicationTypes'
 
 export default function applicationsRoutes({ auditService }: { auditService: AuditService }): Router {
   const router = Router()
@@ -54,16 +55,10 @@ export default function applicationsRoutes({ auditService }: { auditService: Aud
         correlationId: req.id,
       })
 
-      const applicationTypes = [
-        { name: 'Add new social PIN phone contact' },
-        { name: 'Add new legal PIN phone contact' },
-        { name: 'Add emergency PIN phone credit' },
-        { name: 'Remove PIN phone contact' },
-        { name: 'Swap visiting orders (VOs) for PIN credit' },
-        { name: 'Supply list of PIN phone contacts}' },
-      ]
-
-      res.render('pages/log/application-type', { title: 'Select application type', applicationTypes })
+      res.render('pages/log/application-type', {
+        title: 'Select application type',
+        applicationTypes: APPLICATION_TYPES,
+      })
     }),
   )
 
