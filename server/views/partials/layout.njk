@@ -4,12 +4,20 @@
   <link href="{{ '/assets/css/app.css' | assetMap }}" rel="stylesheet" />
 {% endblock %}
 
+{% for js in feComponents.jsIncludes %}
+    <script src="{{ js }}" nonce="{{ cspNonce }}"></script>
+{% endfor %}
+
+{% for css in feComponents.cssIncludes %}
+    <link href="{{ css }}" nonce="{{ cspNonce }}" rel="stylesheet" />
+{% endfor %}
+
 {% block pageTitle %}
   {{ pageTitle | default(applicationName) }}
 {% endblock %}
 
 {% block header %}
-  {% include "./header.njk" %}
+  {{ feComponents.header | safe }}
 {% endblock %}
 
 {% block main %}
@@ -17,6 +25,10 @@
     {% block beforeContent %}{% endblock %}
     {% block content %}{% endblock %}
   </main>
+{% endblock %}
+
+{% block footer %}
+    {{ feComponents.footer | safe }}
 {% endblock %}
 
 {% block bodyEnd %}
