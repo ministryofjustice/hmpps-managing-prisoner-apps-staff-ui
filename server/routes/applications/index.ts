@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
+import { APPLICATION_TYPES } from '../../constants/applicationTypes'
 
 export default function applicationsRoutes({ auditService }: { auditService: AuditService }): Router {
   const router = Router()
@@ -43,6 +44,21 @@ export default function applicationsRoutes({ auditService }: { auditService: Aud
       ]
 
       res.render('pages/applications', { title: 'Applications', sections })
+    }),
+  )
+
+  router.get(
+    '/log/application-type',
+    asyncMiddleware(async (req: Request, res: Response) => {
+      await auditService.logPageView(Page.LOG_APPLICATION_TYPE_PAGE, {
+        who: res.locals.user.username,
+        correlationId: req.id,
+      })
+
+      res.render('pages/log/application-type', {
+        title: 'Select application type',
+        applicationTypes: APPLICATION_TYPES,
+      })
     }),
   )
 

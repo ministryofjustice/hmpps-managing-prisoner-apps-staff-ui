@@ -25,7 +25,10 @@ context('Applications Page', () => {
   })
 
   it('should display the log an application button', () => {
-    cy.get('a.govuk-button').should('exist').and('have.text', '\n  Log an application\n').and('have.attr', 'href', '#')
+    cy.get('a.govuk-button')
+      .should('exist')
+      .and('have.text', '\n  Log an application\n')
+      .and('have.attr', 'href', '/log/application-type')
   })
 
   it('should display all sections with their items', () => {
