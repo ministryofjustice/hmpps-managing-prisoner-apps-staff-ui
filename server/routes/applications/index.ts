@@ -55,9 +55,14 @@ export default function applicationsRoutes({ auditService }: { auditService: Aud
         correlationId: req.id,
       })
 
+      const applicationTypes = APPLICATION_TYPES.map(applicationType => ({
+        value: applicationType.value,
+        text: applicationType.name,
+      }))
+
       res.render('pages/log/application-type', {
         title: 'Select application type',
-        applicationTypes: APPLICATION_TYPES,
+        applicationTypes,
       })
     }),
   )
