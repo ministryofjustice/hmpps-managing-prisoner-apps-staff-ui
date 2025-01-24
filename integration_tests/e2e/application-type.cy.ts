@@ -20,7 +20,8 @@ context('Application Type Page', () => {
         cy.get('.govuk-radios__item')
           .find('label.govuk-label.govuk-radios__label')
           .should('exist')
-          .and('have.text', applicationType.name)
+          .invoke('text')
+          .should('satisfy', text => text.trim() === applicationType.name)
         cy.get('.govuk-radios__item')
           .should('exist')
           .find('input.govuk-radios__input')
@@ -30,7 +31,10 @@ context('Application Type Page', () => {
     })
 
     it('should display the continue button', () => {
-      cy.get('.govuk-button').should('exist').and('have.text', 'Continue').invoke('text').should('eq', 'Continue')
+      cy.get('.govuk-button')
+        .should('exist')
+        .invoke('text')
+        .should('satisfy', text => text.trim() === 'Continue')
     })
 
     it('should ensure links are functional (if paths are set)', () => {
