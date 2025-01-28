@@ -1,0 +1,5 @@
+{
+  "applicationTypes": [
+    { "name": "Swap visiting orders (VOs) for PIN credit", "value": "swap-visiting-orders-for-pin-credit" }
+  ]
+}
