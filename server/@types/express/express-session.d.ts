@@ -2,8 +2,8 @@ import 'express-session'
 
 declare module 'express-session' {
   interface SessionData {
-    data?: {
-      appType: {
+    applicationData?: {
+      type: {
         value: string
         name: string
       }
