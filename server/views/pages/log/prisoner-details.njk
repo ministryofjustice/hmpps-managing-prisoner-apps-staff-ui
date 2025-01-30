@@ -1,4 +1,9 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{%- from "moj/components/date-picker/macro.njk" import mojDatePicker -%}
 
 {% extends "../../partials/layout.njk" %}
 
@@ -9,7 +14,45 @@
   <div class="govuk-body govuk-width-container">
     {{ govukBackLink({
       text: "Back",
-      href: "/"
+      href: "/log/application-type"
     }) }}
+
+    <span class="govuk-caption-xl">{{ appTypeTitle }}</span>
+    <h1 class="govuk-!-margin-top-0">Log prisoner details</h1>
+
+    <form method="POST" id="log-prisoner-details">
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+      <div class="govuk-form-group govuk-!-margin-bottom-0">
+        <label class="govuk-label govuk-label--s" for="prisonNumber">
+          Prison number
+        </label>
+
+        <input class="govuk-input govuk-input--width-10" id="prisonNumber" name="prisonNumber" type="text" value="">
+
+        <button id="prison-number-lookup" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+          Find prisoner
+        </button>
+      </div>
+
+      {{ govukInsetText({
+        text: "Prisoner name: Patel, Taj",
+        classes: "govuk-!-margin-top-0"
+      }) }}
+
+      {{ mojDatePicker({
+        id: "date",
+        name: "date",
+        label: {
+            text: "Date",
+            classes: "govuk-label--s"      
+        }
+      }) }}
+
+      {{ govukButton({
+        text: "Continue",
+        classes: "govuk-button--primary"
+      }) }}
+    </form>
   </div>
 {% endblock %}
