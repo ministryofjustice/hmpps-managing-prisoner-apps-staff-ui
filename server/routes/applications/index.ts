@@ -1,7 +1,8 @@
 import { Request, Response, Router } from 'express'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
-import { APPLICATION_TYPES } from '../../constants/applicationTypes'
+import applicationTypeRoutes from './applicationTypeRoutes'
+import prisonerDetailsRoutes from './prisonerDetailsRoutes'
 
 export default function applicationsRoutes({ auditService }: { auditService: AuditService }): Router {
   const router = Router()
@@ -47,25 +48,8 @@ export default function applicationsRoutes({ auditService }: { auditService: Aud
     }),
   )
 
-  router.get(
-    '/log/application-type',
-    asyncMiddleware(async (req: Request, res: Response) => {
-      await auditService.logPageView(Page.LOG_APPLICATION_TYPE_PAGE, {
-        who: res.locals.user.username,
-        correlationId: req.id,
-      })
-
-      const applicationTypes = APPLICATION_TYPES.map(applicationType => ({
-        value: applicationType.value,
-        text: applicationType.name,
-      }))
-
-      res.render('pages/log/application-type', {
-        title: 'Select application type',
-        applicationTypes,
-      })
-    }),
-  )
+  router.use(applicationTypeRoutes({ auditService }))
+  router.use(prisonerDetailsRoutes({ auditService }))
 
   return router
 }
