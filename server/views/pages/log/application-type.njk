@@ -1,5 +1,4 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{%- from "govuk/components/tag/macro.njk" import govukTag -%}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 
@@ -10,27 +9,32 @@
 
 {% block content %}
   <div class="govuk-body govuk-width-container">
-  {{ govukBackLink({
+    {{ govukBackLink({
       text: "Back",
       href: "/"
-     }) }}
-   
-  <span class="govuk-caption-xl">Log an application</span>
-   {{ govukRadios({
-      name: "selectapplicationtype",
-      fieldset: {
-        legend: {
-        text: title,
-        isPageHeading: true,
-        classes: "govuk-fieldset__legend--l"
-    }
-  },
-  items: applicationTypes
-  })
-    }}
-    {{ govukButton({
-      text: "Continue",
-      href: "#"
     }) }}
+   
+    <span class="govuk-caption-xl">Log an application</span>
+
+    <form method="POST" id="logApplicationType">
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+      
+      {{ govukRadios({
+        name: "applicationType",
+        fieldset: {
+          legend: {
+            text: title,
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        items: applicationTypes
+      }) }}
+
+      {{ govukButton({
+        text: "Continue",
+        preventDoubleClick: true
+      }) }}
+    </form>
   </div>
 {% endblock %}
