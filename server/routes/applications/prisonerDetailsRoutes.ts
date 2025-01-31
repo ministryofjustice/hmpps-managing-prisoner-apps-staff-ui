@@ -14,7 +14,7 @@ export default function prisonerDetailsRoutes({ auditService }: { auditService: 
       })
 
       if (!req.session.applicationData?.type) {
-        return res.redirect('log/application-type')
+        return res.redirect('/log/application-type')
       }
 
       return res.render('pages/log/prisoner-details', {

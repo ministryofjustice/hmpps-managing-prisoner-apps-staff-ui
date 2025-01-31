@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
+import { APPLICATION_TYPES } from '../../constants/applicationTypes'
 
 export default function swapVosPinCreditDetailsRoutes({ auditService }: { auditService: AuditService }): Router {
   const router = Router()
@@ -13,13 +14,15 @@ export default function swapVosPinCreditDetailsRoutes({ auditService }: { auditS
         correlationId: req.id,
       })
 
-      if (!req.session.applicationData?.type) {
-        return res.redirect('log/application-type')
+      const selectedAppType = APPLICATION_TYPES.find(type => type.value === req.session.applicationData?.type.value)
+
+      if (!selectedAppType) {
+        return res.redirect('/log/application-type')
       }
 
       return res.render('pages/log/swap-vos-pin-credit-details', {
         title: 'Log swap VOs for PIN credit details',
-        appTypeTitle: req.session.applicationData.type.name,
+        appTypeTitle: 'Swap VOs for PIN credit',
       })
     }),
   )
