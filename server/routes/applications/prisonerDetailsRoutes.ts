@@ -14,13 +14,20 @@ export default function prisonerDetailsRoutes({ auditService }: { auditService: 
       })
 
       if (!req.session.applicationData?.type) {
-        return res.redirect('log/application-type')
+        return res.redirect('/log/application-type')
       }
 
       return res.render('pages/log/prisoner-details', {
         title: 'Log prisoner details',
         appTypeTitle: req.session.applicationData.type.name,
       })
+    }),
+  )
+
+  router.post(
+    '/log/prisoner-details',
+    asyncMiddleware(async (req: Request, res: Response) => {
+      res.redirect(`/log/swap-vos-pin-credit-details`)
     }),
   )
 
