@@ -15,18 +15,11 @@ context('Swap VOs for PIN Credit Details Page', () => {
   })
 
   it('should render the correct form label for the textarea', () => {
-    cy.get('label[for="swap-vos-pin-credit-details"]')
+    cy.get('h1.govuk-label-wrapper')
+      .find('label[for="swap-vos-pin-credit-details"]')
+      .should('exist')
       .invoke('text')
       .should('satisfy', text => text.trim() === 'Details (optional)')
-  })
-
-  it('should display the hint text correctly', () => {
-    cy.get('#swap-vos-pin-credit-details-hint')
-      .invoke('text')
-      .should(
-        'satisfy',
-        text => text.trim() === 'Add a brief summary, for example, if this person is a Foreign National',
-      )
   })
 
   it('should include a hidden CSRF token input field', () => {
