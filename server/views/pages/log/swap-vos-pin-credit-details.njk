@@ -14,16 +14,16 @@
       href: "/log/prisoner-details"
     }) }}
 
-   <span class="govuk-caption-xl">{{ appTypeTitle }}</span>
+    <span class="govuk-caption-xl">{{ appTypeTitle }}</span>
     <h1 class="govuk-heading-xl govuk-!-margin-top-0">Log details</h1>
- 
-    <div class="govuk-width-container">
-        <div class="govuk-grid-row">
-          <div class="govuk-grid-column-one-half">
-    <form method="POST" id="log-swap-vos-pin-credit-details">
-      <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-    {{ govukCharacterCount({
+    <div class="govuk-width-container">
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half">
+          <form method="POST" id="log-swap-vos-pin-credit-details">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+            {{ govukCharacterCount({
       name: "swap-vos-pin-credit-details",
       id: "swap-vos-pin-credit-details",
       maxlength: 1000,
@@ -40,17 +40,16 @@
       })
     }}
 
-    {{ govukButton({
+            {{ govukButton({
         text: "Continue",
         classes: "govuk-button--primary"
       }) }}
 
-    </form> 
-      </div>
+          </form>
         </div>
       </div>
+    </div>
 
- </div>
-
+  </div>
 
 {% endblock %}
