@@ -7,7 +7,7 @@ context('Swap VOs for PIN Credit Details Page', () => {
   })
 
   it('should display the page title', () => {
-    cy.title().should('include', 'Log swap VOs for PIN credit details')
+    cy.title().should('include', 'HMPPS Managing Prisoner Apps Staff Ui - Log swap VOs for PIN credit details')
   })
 
   it('should display the back link', () => {
