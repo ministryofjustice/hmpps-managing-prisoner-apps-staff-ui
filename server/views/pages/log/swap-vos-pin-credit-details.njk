@@ -21,35 +21,31 @@
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-half">
           <form method="POST" id="log-swap-vos-pin-credit-details">
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
             {{ govukCharacterCount({
-      name: "swap-vos-pin-credit-details",
-      id: "swap-vos-pin-credit-details",
-      maxlength: 1000,
-      threshold: 75,
-      value: textareaValue,
-      label: {
-           text: "Details (optional)",
-           classes: "govuk-label--s",
-           isPageHeading: true
-           },
-      hint: {
-         text: "Add a brief summary, for example, if this person is a Foreign National"
-          }
-      })
-    }}
+              name: "swap-vos-pin-credit-details",
+              id: "swap-vos-pin-credit-details",
+              maxlength: 1000,
+              threshold: 75,
+              value: textareaValue,
+              label: {
+                text: "Details (optional)",
+                classes: "govuk-label--s",
+                isPageHeading: true
+              },
+              hint: {
+                text: "Add a brief summary, for example, if this person is a Foreign National"
+              }
+            }) }}
 
             {{ govukButton({
-        text: "Continue",
-        classes: "govuk-button--primary"
-      }) }}
-
+              text: "Continue",
+              classes: "govuk-button--primary"
+            }) }}
           </form>
         </div>
       </div>
     </div>
-
   </div>
-
 {% endblock %}
