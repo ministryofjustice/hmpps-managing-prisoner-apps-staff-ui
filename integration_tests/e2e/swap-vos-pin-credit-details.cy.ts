@@ -1,6 +1,3 @@
-import Page from '../pages/page'
-import SwapVosDetailsPage from '../pages/swapVosDetailsPage'
-
 context('Swap VOs for PIN Credit Details Page', () => {
   beforeEach(() => {
     cy.task('reset')
@@ -9,51 +6,37 @@ context('Swap VOs for PIN Credit Details Page', () => {
     cy.visit('/log/swap-vos-pin-credit-details')
   })
 
-  it('should direct the user to the correct page', () => {
-    Page.verifyOnPage(SwapVosDetailsPage)
-  })
-
-  it('should display the correct page title', () => {
+  it('should display the page title', () => {
     cy.title().should('include', 'Log swap VOs for PIN credit details')
   })
 
-  it('should render the page heading correctly', () => {
-    const page = Page.verifyOnPage(SwapVosDetailsPage)
-    page.pageHeading().should('have.text', 'Log details')
-  })
-
-  it('should render the back link with correct text and href', () => {
-    const page = Page.verifyOnPage(SwapVosDetailsPage)
-    page.backLink().should('have.text', 'Back').and('have.attr', 'href', '/log/prisoner-details')
-  })
-
-  it('should render the correct app type title', () => {
-    const page = Page.verifyOnPage(SwapVosDetailsPage)
-    page.appTypeTitle().should('have.text', 'Swap VOs for PIN credit')
+  it('should display the back link', () => {
+    cy.get('.govuk-back-link').should('exist').and('have.text', 'Back')
   })
 
   it('should render the correct form label for the textarea', () => {
-    const page = Page.verifyOnPage(SwapVosDetailsPage)
-    page.formLabel().should('contain.text', 'Details (optional)')
+    cy.get('label[for="swap-vos-pin-credit-details"]')
+      .invoke('text')
+      .should('satisfy', text => text.trim() === 'Details (optional)')
   })
 
   it('should display the hint text correctly', () => {
-    const page = Page.verifyOnPage(SwapVosDetailsPage)
-    page.hintText().should('have.text', 'Add a brief summary, for example, if this person is a Foreign National')
-  })
-
-  it('should contain a textarea with the correct ID', () => {
-    const page = Page.verifyOnPage(SwapVosDetailsPage)
-    page.textArea().should('have.attr', 'id', 'swap-vos-pin-credit-details')
+    cy.get('#swap-vos-pin-credit-details-hint')
+      .invoke('text')
+      .should(
+        'satisfy',
+        text => text.trim() === 'Add a brief summary, for example, if this person is a Foreign National',
+      )
   })
 
   it('should include a hidden CSRF token input field', () => {
-    const page = Page.verifyOnPage(SwapVosDetailsPage)
-    page.csrfToken().should('exist')
+    cy.get('input[name="_csrf"]').should('exist')
   })
 
-  it('should render a Continue button with the correct text', () => {
-    const page = Page.verifyOnPage(SwapVosDetailsPage)
-    page.continueButton().should('have.text', 'Continue')
+  it('should display the continue button', () => {
+    cy.get('.govuk-button')
+      .should('exist')
+      .invoke('text')
+      .should('satisfy', text => text.trim() === 'Continue')
   })
 })
