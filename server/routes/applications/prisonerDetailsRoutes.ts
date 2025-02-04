@@ -24,5 +24,12 @@ export default function prisonerDetailsRoutes({ auditService }: { auditService: 
     }),
   )
 
+  router.post(
+    '/log/prisoner-details',
+    asyncMiddleware(async (req: Request, res: Response) => {
+      res.redirect(`/log/swap-vos-pin-credit-details`)
+    }),
+  )
+
   return router
 }
