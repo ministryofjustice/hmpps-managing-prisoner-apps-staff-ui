@@ -38,7 +38,7 @@ export default function applicationTypeRoutes({ auditService }: { auditService: 
 
       req.session.applicationData = {
         type: selectedAppType,
-        prisonerName: 'Prisoner Name',
+        prisonerName: '',
         date: new Date(),
       }
 
