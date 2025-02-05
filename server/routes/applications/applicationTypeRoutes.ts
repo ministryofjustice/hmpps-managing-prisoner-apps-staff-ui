@@ -38,6 +38,8 @@ export default function applicationTypeRoutes({ auditService }: { auditService: 
 
       req.session.applicationData = {
         type: selectedAppType,
+        prisonerName: 'Prisoner Name',
+        date: new Date(),
       }
 
       res.redirect(`/log/prisoner-details`)

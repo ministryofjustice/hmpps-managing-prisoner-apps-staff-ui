@@ -27,6 +27,17 @@ export default function prisonerDetailsRoutes({ auditService }: { auditService: 
   router.post(
     '/log/prisoner-details',
     asyncMiddleware(async (req: Request, res: Response) => {
+      if (!req.session.applicationData) {
+        res.status(400).send('Application data is missing')
+        return
+      }
+
+      req.session.applicationData = {
+        ...req.session.applicationData,
+        prisonerName: req.body.prisonerName,
+        date: req.body.date,
+      }
+
       res.redirect(`/log/swap-vos-pin-credit-details`)
     }),
   )

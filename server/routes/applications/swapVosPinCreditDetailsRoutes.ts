@@ -30,6 +30,14 @@ export default function swapVosPinCreditDetailsRoutes({ auditService }: { auditS
   router.post(
     '/log/swap-vos-pin-credit-details',
     asyncMiddleware(async (req: Request, res: Response) => {
+      req.session.applicationData = {
+        ...req.session.applicationData,
+        additionalData: {
+          ...req.session.applicationData?.additionalData,
+          swapVOsToPinCreditDetails: req.body.swapVosPinCreditDetails,
+        },
+      }
+
       res.redirect(`/log/swap-vos-pin-credit-details/confirm`)
     }),
   )
@@ -51,6 +59,7 @@ export default function swapVosPinCreditDetailsRoutes({ auditService }: { auditS
       return res.render('pages/log/confirm-swap-vos-pin-credit-details', {
         title: 'Check details',
         appTypeTitle: 'Swap VOs for PIN credit',
+        session: req.session,
       })
     }),
   )
