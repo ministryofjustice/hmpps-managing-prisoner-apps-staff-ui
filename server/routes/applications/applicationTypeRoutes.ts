@@ -2,6 +2,7 @@ import { Request, Response, Router } from 'express'
 import { APPLICATION_TYPES } from '../../constants/applicationTypes'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
+import { updateSessionData } from '../../utils/session'
 
 export default function applicationTypeRoutes({ auditService }: { auditService: AuditService }): Router {
   const router = Router()
@@ -36,11 +37,7 @@ export default function applicationTypeRoutes({ auditService }: { auditService: 
         return
       }
 
-      req.session.applicationData = {
-        type: selectedAppType,
-        prisonerName: '',
-        date: new Date(),
-      }
+      updateSessionData(req, { type: selectedAppType })
 
       res.redirect(`/log/prisoner-details`)
     }),

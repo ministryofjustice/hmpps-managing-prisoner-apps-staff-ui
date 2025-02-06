@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
+import { updateSessionData } from '../../utils/session'
 
 export default function prisonerDetailsRoutes({ auditService }: { auditService: AuditService }): Router {
   const router = Router()
@@ -32,11 +33,10 @@ export default function prisonerDetailsRoutes({ auditService }: { auditService: 
         return
       }
 
-      req.session.applicationData = {
-        ...req.session.applicationData,
+      updateSessionData(req, {
         prisonerName: req.body.prisonerName,
         date: req.body.date,
-      }
+      })
 
       res.redirect(`/log/swap-vos-pin-credit-details`)
     }),
