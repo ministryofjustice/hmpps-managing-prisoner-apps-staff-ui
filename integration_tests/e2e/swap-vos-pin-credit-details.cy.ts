@@ -1,35 +1,49 @@
+import Page from '../pages/page'
+import SwapVosDetailsPage from '../pages/swapVosDetailsPage'
+
 context('Swap VOs for PIN Credit Details Page', () => {
+  let page: SwapVosDetailsPage
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.signIn()
     cy.visit('/log/swap-vos-pin-credit-details')
+
+    // Navigate through the pages
+    cy.contains('Swap visiting orders (VOs) for PIN credit').click()
+    cy.contains('button', 'Continue').click() // Click the Continue button on the 'Select application type' page
+    cy.contains('button', 'Continue').click() // Click the Continue button on the 'Log prisoner details' page
+    page = Page.verifyOnPage(SwapVosDetailsPage)
   })
 
-  it('should display the page title', () => {
-    cy.title().should('include', 'HMPPS Managing Prisoner Apps Staff Ui - Log swap VOs for PIN credit details')
+  it('should direct the user to the correct page', () => {
+    Page.verifyOnPage(SwapVosDetailsPage)
   })
-
-  it('should display the back link', () => {
-    cy.get('.govuk-back-link').should('exist').and('have.text', 'Back')
+  it('should display the correct page title', () => {
+    page.pageTitle().should('include', 'Log swap VOs for PIN credit details')
   })
-
+  it('should render the page heading correctly', () => {
+    page.pageHeading().should('have.text', 'Log details')
+  })
+  it('should render the back link with correct text and href', () => {
+    page.backLink().should('have.text', 'Back').and('have.attr', 'href', '/log/prisoner-details')
+  })
+  it('should render the correct app type title', () => {
+    page.appTypeTitle().should('have.text', 'Swap VOs for PIN credit')
+  })
   it('should render the correct form label for the textarea', () => {
-    cy.get('h1.govuk-label-wrapper')
-      .find('label[for="swap-vos-pin-credit-details"]')
-      .should('exist')
-      .invoke('text')
-      .should('satisfy', text => text.trim() === 'Details (optional)')
+    page.formLabel().should('contain.text', 'Details (optional)')
   })
-
+  it('should display the hint text correctly', () => {
+    page.hintText().should('contain.text', 'Add a brief summary, for example, if this person is a Foreign National')
+  })
+  it('should contain a textarea with the correct ID', () => {
+    page.textArea().should('have.attr', 'id', 'swap-vos-pin-credit-details')
+  })
   it('should include a hidden CSRF token input field', () => {
-    cy.get('input[name="_csrf"]').should('exist')
+    page.csrfToken().should('exist')
   })
-
-  it('should display the continue button', () => {
-    cy.get('.govuk-button')
-      .should('exist')
-      .invoke('text')
-      .should('satisfy', text => text.trim() === 'Continue')
+  it('should render a Continue button with the correct text', () => {
+    page.continueButton().should('contain.text', 'Continue')
   })
 })
