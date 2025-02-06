@@ -1,7 +1,8 @@
 import { Request, Response, Router } from 'express'
+import { APPLICATION_TYPES } from '../../constants/applicationTypes'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
-import { APPLICATION_TYPES } from '../../constants/applicationTypes'
+import { updateSessionData } from '../../utils/session'
 
 export default function swapVosPinCreditDetailsRoutes({ auditService }: { auditService: AuditService }): Router {
   const router = Router()
@@ -30,6 +31,13 @@ export default function swapVosPinCreditDetailsRoutes({ auditService }: { auditS
   router.post(
     '/log/swap-vos-pin-credit-details',
     asyncMiddleware(async (req: Request, res: Response) => {
+      updateSessionData(req, {
+        additionalData: {
+          ...req.session.applicationData?.additionalData,
+          swapVOsToPinCreditDetails: req.body.swapVosPinCreditDetails,
+        },
+      })
+
       res.redirect(`/log/swap-vos-pin-credit-details/confirm`)
     }),
   )
@@ -51,6 +59,7 @@ export default function swapVosPinCreditDetailsRoutes({ auditService }: { auditS
       return res.render('pages/log/confirm-swap-vos-pin-credit-details', {
         title: 'Check details',
         appTypeTitle: 'Swap VOs for PIN credit',
+        session: req.session,
       })
     }),
   )
