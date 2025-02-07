@@ -1,8 +1,8 @@
 import Page from '../pages/page'
-import SwapVosDetailsPage from '../pages/swapVosDetailsPage'
+import SwapVosPinCreditDetailsPage from '../pages/swapVosPinCreditDetailsPage'
 
 context('Swap VOs for PIN Credit Details Page', () => {
-  let page: SwapVosDetailsPage
+  let page: SwapVosPinCreditDetailsPage
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -13,11 +13,11 @@ context('Swap VOs for PIN Credit Details Page', () => {
     cy.contains('Swap visiting orders (VOs) for PIN credit').click()
     cy.contains('button', 'Continue').click() // Click the Continue button on the 'Select application type' page
     cy.contains('button', 'Continue').click() // Click the Continue button on the 'Log prisoner details' page
-    page = Page.verifyOnPage(SwapVosDetailsPage)
+    page = Page.verifyOnPage(SwapVosPinCreditDetailsPage)
   })
 
   it('should direct the user to the correct page', () => {
-    Page.verifyOnPage(SwapVosDetailsPage)
+    Page.verifyOnPage(SwapVosPinCreditDetailsPage)
   })
   it('should display the correct page title', () => {
     page.pageTitle().should('include', 'Log swap VOs for PIN credit details')
