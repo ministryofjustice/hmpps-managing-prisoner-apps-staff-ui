@@ -23,7 +23,7 @@ context('Swap VOs for PIN Credit Details Page', () => {
     page.pageTitle().should('include', 'Log swap VOs for PIN credit details')
   })
   it('should render the page heading correctly', () => {
-    page.pageHeading().should('have.text', 'Log details')
+    page.checkOnPage()
   })
   it('should render the back link with correct text and href', () => {
     page.backLink().should('have.text', 'Back').and('have.attr', 'href', '/log/prisoner-details')

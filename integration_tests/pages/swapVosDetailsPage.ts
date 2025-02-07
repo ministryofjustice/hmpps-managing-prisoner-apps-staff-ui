@@ -9,8 +9,6 @@ export default class SwapVosDetailsPage extends Page {
 
   appTypeTitle = () => cy.get('.govuk-caption-xl')
 
-  pageHeading = () => cy.get('.govuk-heading-xl')
-
   pageTitle = () => cy.title()
 
   hintText = () => cy.get('#swap-vos-pin-credit-details-hint')
