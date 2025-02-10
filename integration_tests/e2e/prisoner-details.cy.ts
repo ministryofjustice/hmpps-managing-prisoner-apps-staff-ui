@@ -1,68 +1,64 @@
+import LogPrisonerDetailsPage from '../pages/logPrisonerDetails'
+import Page from '../pages/page'
+
 context('Log Prisoner Details Page', () => {
+  let page: LogPrisonerDetailsPage
+
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.signIn()
-    cy.request('/mock-session').then(() => {
-      cy.visit('/log/prisoner-details')
-    })
+
+    cy.visit('/log/prisoner-details')
+
+    cy.contains('Swap visiting orders (VOs) for PIN credit').click()
+    cy.contains('button', 'Continue').click()
+
+    page = Page.verifyOnPage(LogPrisonerDetailsPage)
   })
 
-  it('should display the page title', () => {
-    cy.title().should('include', 'Log prisoner details')
-    cy.log('Checked page title')
+  it('should direct the user to the correct page', () => {
+    Page.verifyOnPage(LogPrisonerDetailsPage)
   })
 
-  it('should display the back link', () => {
-    cy.get('.govuk-back-link')
-      .should('exist')
-      .and('have.attr', 'href', '/log/application-type')
-      .and('have.text', 'Back')
-    cy.log('Checked back link')
+  it('should display the correct page title', () => {
+    page.pageTitle().should('include', 'Log prisoner details')
+  })
+
+  it('should render the back link with correct text and href', () => {
+    page.backLink().should('have.text', 'Back').and('have.attr', 'href', '/log/application-type')
   })
 
   it('should display the prisoner details form', () => {
-    cy.get('form#log-prisoner-details').should('exist')
-    cy.log('Checked prisoner details form')
+    page.form().should('exist')
   })
 
-  it('should display the hidden CSRF token field', () => {
-    cy.get('input[name="_csrf"]').should('exist').and('have.attr', 'type', 'hidden')
-    cy.log('Checked CSRF token field')
+  it('should include a hidden CSRF token input field', () => {
+    page.csrfToken().should('exist').and('have.attr', 'type', 'hidden')
   })
 
-  it('should display the prison number input field', () => {
-    cy.get('input#prisonNumber')
+  it('should render the prison number input field', () => {
+    page.prisonNumberInput().should('exist').and('have.attr', 'type', 'text').and('have.attr', 'name', 'prisonNumber')
+  })
+
+  it('should render the "Find prisoner" button', () => {
+    page
+      .findPrisonerButton()
       .should('exist')
-      .and('have.attr', 'type', 'text')
-      .and('have.attr', 'name', 'prisonNumber')
-    cy.log('Checked prison number input field')
-  })
-
-  it('should display the "Find prisoner" button', () => {
-    cy.get('#prison-number-lookup')
-      .should('exist')
-      .and('include.text', 'Find prisoner')
       .and('have.class', 'govuk-button--secondary')
-    cy.log('Checked "Find prisoner" button')
+      .and('include.text', 'Find prisoner')
   })
 
-  it('should display the prisoner name inset text', () => {
-    cy.get('.govuk-inset-text').should('exist').and('contain.text', 'Prisoner name: Patel, Taj')
-    cy.log('Checked prisoner name inset text')
+  it('should render the prisoner name inset text', () => {
+    page.prisonerNameInsetText().should('exist').and('contain.text', 'Prisoner name: Patel, Taj')
   })
 
-  it('should display the date picker', () => {
-    cy.get('#date').should('exist')
-    cy.get('label[for="date"]').should('exist').and('include.text', 'Date')
-    cy.log('Checked date picker')
+  it('should render the date picker', () => {
+    page.dateInput().should('exist')
+    page.dateLabel().should('exist').and('include.text', 'Date')
   })
 
-  it('should display the continue button', () => {
-    cy.get('[data-test="continue-button"]')
-      .should('exist')
-      .and('include.text', 'Continue')
-      .and('have.class', 'govuk-button--primary')
-    cy.log('Checked continue button')
+  it('should render the continue button with the correct text', () => {
+    page.continueButton().should('exist').and('include.text', 'Continue').and('have.class', 'govuk-button--primary')
   })
 })

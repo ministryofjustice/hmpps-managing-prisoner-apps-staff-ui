@@ -28,9 +28,9 @@
           Prison number
         </label>
 
-        <input class="govuk-input govuk-input--width-10" id="prisonNumber" name="prisonNumber" type="text" value="">
+        <input class="govuk-input govuk-input--width-10" id="prison-number" name="prisonNumber" type="text" value="">
 
-        <button id="prison-number-lookup" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+        <button id="prisoner-number-lookup" class="govuk-button govuk-button--secondary" data-test="find-prisoner-button">
           Find prisoner
         </button>
       </div>
@@ -40,7 +40,7 @@
         classes: "govuk-!-margin-top-0"
       }) }}
 
-      <input type="hidden" id="prisonerName" name="prisonerName" value="Patel, Taj">
+      <input type="hidden" id="prisoner-name" name="prisonerName" value="Patel, Taj">
 
       {{ mojDatePicker({
         id: "date",
