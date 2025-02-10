@@ -52,17 +52,6 @@ export default function createApp(services: Services): express.Application {
 
   app.use(routes(services))
 
-  if (process.env.NODE_ENV === 'development') {
-    app.get('/mock-session', (req, res) => {
-      req.session.applicationData = {
-        type: {
-          value: 'application-type',
-          name: 'Application Type',
-        },
-      }
-    })
-  }
-
   app.use((req, res, next) => next(createError(404, 'Not found')))
   app.use(errorHandler(process.env.NODE_ENV === 'production'))
 
