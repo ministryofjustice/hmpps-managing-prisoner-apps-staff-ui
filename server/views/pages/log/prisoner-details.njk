@@ -36,11 +36,12 @@
       </div>
 
       {{ govukInsetText({
-        text: "Prisoner name: Patel, Taj",
-        classes: "govuk-!-margin-top-0"
+        text: "Prisoner name: Not found",
+        classes: "govuk-!-margin-top-0",
+        attributes: { id: "prisoner-name-display" }
       }) }}
 
-      <input type="hidden" id="prisoner-name" name="prisonerName" value="Patel, Taj">
+      <input type="hidden" id="prisoner-name" name="prisonerName" value="">
 
       {{ mojDatePicker({
         id: "date",

@@ -4,8 +4,15 @@ import AuditService, { Page } from '../../services/auditService'
 import applicationTypeRoutes from './applicationTypeRoutes'
 import prisonerDetailsRoutes from './prisonerDetailsRoutes'
 import swapVosPinCreditDetailsRoutes from './swapVosPinCreditDetailsRoutes'
+import PrisonService from '../../services/prisonService'
 
-export default function applicationsRoutes({ auditService }: { auditService: AuditService }): Router {
+export default function applicationsRoutes({
+  auditService,
+  prisonService,
+}: {
+  auditService: AuditService
+  prisonService: PrisonService
+}): Router {
   const router = Router()
 
   router.get(
@@ -50,7 +57,7 @@ export default function applicationsRoutes({ auditService }: { auditService: Aud
   )
 
   router.use(applicationTypeRoutes({ auditService }))
-  router.use(prisonerDetailsRoutes({ auditService }))
+  router.use(prisonerDetailsRoutes({ auditService, prisonService }))
   router.use(swapVosPinCreditDetailsRoutes({ auditService }))
 
   return router
