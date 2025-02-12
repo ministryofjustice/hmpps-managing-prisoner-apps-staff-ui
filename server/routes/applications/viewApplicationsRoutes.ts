@@ -1,5 +1,4 @@
 import { Request, Response, Router } from 'express'
-
 import { APPLICATION_TYPES } from '../../constants/applicationTypes'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
@@ -19,7 +18,7 @@ export default function viewApplicationRoutes({ auditService }: { auditService: 
       }
 
       if (!application) {
-        res.status(404).send('Application not found')
+        res.redirect('/applications')
         return
       }
 
@@ -31,7 +30,7 @@ export default function viewApplicationRoutes({ auditService }: { auditService: 
       const applicationType = APPLICATION_TYPES.find(type => type.value === application.type)
 
       if (!applicationType) {
-        res.status(400).send('Invalid application type')
+        res.redirect('/applications?error=unknown-type')
         return
       }
 
