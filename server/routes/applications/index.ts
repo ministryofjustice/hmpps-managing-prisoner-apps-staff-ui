@@ -4,6 +4,7 @@ import AuditService, { Page } from '../../services/auditService'
 import applicationTypeRoutes from './applicationTypeRoutes'
 import prisonerDetailsRoutes from './prisonerDetailsRoutes'
 import swapVosPinCreditDetailsRoutes from './swapVosPinCreditDetailsRoutes'
+import submitApplicationRoutes from './submitApplicationRoutes'
 
 export default function applicationsRoutes({ auditService }: { auditService: AuditService }): Router {
   const router = Router()
@@ -52,6 +53,7 @@ export default function applicationsRoutes({ auditService }: { auditService: Aud
   router.use(applicationTypeRoutes({ auditService }))
   router.use(prisonerDetailsRoutes({ auditService }))
   router.use(swapVosPinCreditDetailsRoutes({ auditService }))
+  router.use(submitApplicationRoutes({ auditService }))
 
   return router
 }
