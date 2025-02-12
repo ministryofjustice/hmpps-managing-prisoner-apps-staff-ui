@@ -1,5 +1,4 @@
-{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
-{% from "govuk/components/button/macro.njk" import govukButton %}
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
 {% extends "../../partials/layout.njk" %}
@@ -8,13 +7,166 @@
 {% set mainClasses = "app-container govuk-body applications-landing-page" %}
 
 {% block content %}
-  <div class="govuk-body govuk-width-container">
-    {{ govukBackLink({
-      text: "Back",
-      href: "/"
+  <div class="govuk-body govuk-width-container govuk-!-padding-top-5 govuk-!-padding-bottom-5">
+    <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
+
+    {{ mojSubNavigation({
+      label: 'Sub navigation',
+      items: [{
+        text: 'Applications',
+        href: '#1',
+        active: true
+      }, {
+        text: 'Comments',
+        href: '#2'
+      }, {
+        text: 'Action and reply',
+        href: '#3'
+      }, {
+        text: 'History',
+        href: '#4'
+      }]
     }) }}
 
-    <span class="govuk-caption-xl">{{ application.dept }}</span>
-    <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-heading-m">Application details</h2>
+
+        {{ govukSummaryList({
+          rows: [
+            {
+              key: {
+                text: "Status"
+              },
+              value: {
+                text: ""
+              }
+            },
+            {
+              key: {
+                text: "Department"
+              },
+              value: {
+                text: ""
+              },
+              actions: {
+                items: [
+                  {
+                    href: "#",
+                    text: "Forward",
+                    visuallyHiddenText: "department"
+                  }
+                ]
+              }
+            },
+            {
+              key: {
+                text: "Application type"
+              },
+              value: {
+                text: ""
+              }
+            },
+            {
+              key: {
+                text: "Date sent"
+              },
+              value: {
+                text: ""
+              }
+            },
+            {
+              key: {
+                text: "Application ID"
+              },
+              value: {
+                text: ""
+              }
+            }
+          ]
+        }) }}
+
+        <h2 class="govuk-heading-m">Prisoner details</h2>
+
+        {{ govukSummaryList({
+          rows: [
+            {
+              key: {
+                text: "Prisoner"
+              },
+              value: {
+                text: ""
+              },
+              actions: {
+                items: [
+                  {
+                    href: "#",
+                    text: "View profile",
+                    visuallyHiddenText: "prisoner"
+                  }
+                ]
+              }
+            },
+            {
+              key: {
+                text: "Location"
+              },
+              value: {
+                text: ""
+              }
+            },
+            {
+              key: {
+                text: "IEP"
+              },
+              value: {
+                text: ""
+              }
+            },
+            {
+              key: {
+                text: "Alerts"
+              },
+              value: {
+                text: ""
+              },
+              actions: {
+                items: [
+                  {
+                    href: "#",
+                    text: "View alerts",
+                    visuallyHiddenText: "alerts"
+                  }
+                ]
+              }
+            }
+          ]
+        }) }}
+
+        <h2 class="govuk-heading-m">VOs to swap</h2>
+
+        {{ govukSummaryList({
+          rows: [
+            {
+              key: {
+                text: "Details"
+              },
+              value: {
+                text: ""
+              },
+              actions: {
+                items: [
+                  {
+                    href: "#",
+                    text: "Change",
+                    visuallyHiddenText: "details"
+                  }
+                ]
+              }
+            }
+          ]
+        }) }}
+      </div>
+    </div>
   </div>
 {% endblock %}
