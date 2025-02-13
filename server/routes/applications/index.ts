@@ -54,7 +54,7 @@ export default function applicationsRoutes({ auditService }: { auditService: Aud
   router.use(applicationTypeRoutes({ auditService }))
   router.use(prisonerDetailsRoutes({ auditService }))
   router.use(swapVosPinCreditDetailsRoutes({ auditService }))
-  router.use(submitApplicationRoutes({ auditService })
+  router.use(submitApplicationRoutes({ auditService }))
   router.use(viewApplicationRoutes({ auditService }))
 
   return router
