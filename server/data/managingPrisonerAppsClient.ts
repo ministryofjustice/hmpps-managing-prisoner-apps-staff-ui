@@ -1,7 +1,7 @@
-import logger from '../../../../logger'
-import { Application } from '../../../@types/managingAppsApi'
-import config, { ApiConfig } from '../../../config'
-import RestClient from '../../restClient'
+import logger from '../../logger'
+import { Application } from '../@types/managingAppsApi'
+import config, { ApiConfig } from '../config'
+import RestClient from './restClient'
 
 export default class ManagingPrisonerAppsApiClient {
   public restClient: RestClient

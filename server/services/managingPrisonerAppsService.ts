@@ -1,15 +1,12 @@
-import { HmppsAuthClient, RestClientBuilder } from '../data'
-import ManagingPrisonerAppsApiClient from '../data/api/managingPrisonerApps/client'
+import { HmppsAuthClient } from '../data'
+import { User } from '../data/hmppsManageUsersClient'
+import ManagingPrisonerAppsApiClient from '../data/managingPrisonerAppsClient'
 
 export default class ManagingPrisonerAppsService {
-  constructor(
-    private readonly hmppsAuthClient: HmppsAuthClient,
-    private readonly managingPrisonerAppsApiClientFactory: RestClientBuilder<ManagingPrisonerAppsApiClient>,
-  ) {}
+  constructor(private readonly hmppsAuthClient: HmppsAuthClient) {}
 
-  async getPrisonerApp(applicationId: string, prisonerId: string) {
-    const token = await this.hmppsAuthClient.getSystemClientToken()
-    const managingPrisonerAppsApiClient = this.managingPrisonerAppsApiClientFactory(token)
-    return managingPrisonerAppsApiClient.getPrisonerApp(applicationId, prisonerId)
+  async getPrisonerApp(applicationId: string, prisonerId: string, user: User) {
+    const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
+    return new ManagingPrisonerAppsApiClient(token).getPrisonerApp(applicationId, prisonerId)
   }
 }
