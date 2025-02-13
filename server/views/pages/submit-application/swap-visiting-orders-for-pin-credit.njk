@@ -1,3 +1,5 @@
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+
 {% extends "../../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + title %}
@@ -7,18 +9,18 @@
   <div class="govuk-body govuk-width-container">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
-        <div class="govuk-panel govuk-panel--confirmation">
-              <div class="govuk-panel__body govuk-!-padding-bottom-3">
-                Swap VOs for PIN credit
-              </div>
-              <h1 class="govuk-panel__title">
-                Application submitted
-              </h1>
-        </div>
+        
+        {{ govukPanel({
+            titleText: "Application submitted",
+            html: "Swap VOs for PIN credit"
+          }) }}
+          
       </div>
     </div>
+   
     <p class="govuk-body-l">{{ application.dept }} now has this application.</p>
     <p class="govuk-body">You can now:</p>
+    
     <ul class="govuk-list govuk-list--bullet">
       <li>
         <a href="/view/:application.id">View this application</a>
@@ -30,5 +32,6 @@
         <a href="#">Return to applications dashboard</a>
       </li>
     </ul>
+    
   </div>
 {% endblock %}
