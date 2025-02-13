@@ -11,7 +11,7 @@ export default class TestData {
         id: 'ABC',
         name: 'HMP ABC',
       },
-      initialApp: 'PIN_PHONE_CREDIT_TOP_UP',
+      initialApp: 'SWAP_VISITING_ORDERS_FOR_PIN_CREDIT',
       type: 'DEPARTMENT',
       email: 'business+hub+ABC@justice.gov.uk',
     },
