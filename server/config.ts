@@ -101,7 +101,6 @@ export default {
         deadline: Number(get('PRISONER_DETAILS_API_TIMEOUT_DEADLINE', 10000)),
       },
       agent: new AgentConfig(Number(get('PRISONER_DETAILS_API_TIMEOUT_RESPONSE', 10000))),
-      enabled: get('TOKEN_VERIFICATION_ENABLED', 'false') === 'true',
     },
     hmppsManageUsers: {
       url: get('HMPPS_MANAGE_USERS_API_URL', 'http://localhost:8080', requiredInProduction),
@@ -111,7 +110,6 @@ export default {
         deadline: Number(get('MANAGE_USERS_API_TIMEOUT_DEADLINE', 10000)),
       },
       agent: new AgentConfig(),
-      enabled: get('TOKEN_VERIFICATION_ENABLED', 'false') === 'true',
     },
   },
   sqs: {
