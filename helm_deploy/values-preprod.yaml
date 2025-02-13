@@ -8,13 +8,14 @@ generic-service:
     host: managing-prisoner-apps-staff-ui-preprod.hmpps.service.justice.gov.uk
 
   env:
-    INGRESS_URL: "https://managing-prisoner-apps-staff-ui-preprod.hmpps.service.justice.gov.uk"
-    HMPPS_AUTH_URL: "https://sign-in-preprod.hmpps.service.justice.gov.uk/auth"
-    TOKEN_VERIFICATION_API_URL: "https://token-verification-api-preprod.prison.service.justice.gov.uk"
-    COMPONENT_API_URL: "https://frontend-components-preprod.hmpps.service.justice.gov.uk"
-    DPS_URL: "https://dps-preprod.prison.service.justice.gov.uk/"
+    INGRESS_URL: 'https://managing-prisoner-apps-staff-ui-preprod.hmpps.service.justice.gov.uk'
+    HMPPS_AUTH_URL: 'https://sign-in-preprod.hmpps.service.justice.gov.uk/auth'
+    TOKEN_VERIFICATION_API_URL: 'https://token-verification-api-preprod.prison.service.justice.gov.uk'
+    COMPONENT_API_URL: 'https://frontend-components-preprod.hmpps.service.justice.gov.uk'
+    DPS_URL: 'https://dps-preprod.prison.service.justice.gov.uk/'
+    MANAGING_PRISONER_APPS_API_URL: 'https://prison-app-api-preprod.hmpps.service.justice.gov.uk'
     ENVIRONMENT_NAME: PRE-PRODUCTION
-    AUDIT_ENABLED: "false"
+    AUDIT_ENABLED: 'false'
 
 generic-prometheus-alerts:
   alertSeverity: hmpps-launchpad-nonprod
