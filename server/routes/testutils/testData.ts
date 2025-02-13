@@ -1,7 +1,7 @@
 import { Application } from '../../@types/managingAppsApi'
 
 export default class TestData {
-  prisonerApp = (): Application => ({
+  prisonerApp: Application = {
     id: '13d2c453-be11-44a8-9861-21fd8ae6e911',
     reference: '1232143',
     assignedGroup: {
@@ -36,7 +36,7 @@ export default class TestData {
         amount: 5.0,
       },
     ],
-  })
+  }
 
   user = (username = 'USER1', name = 'Test User', activeCaseLoadId = 'MDI') => {
     return {

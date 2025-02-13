@@ -13,7 +13,7 @@ describe('Managing Prisoner Apps API Client', () => {
 
   const token = 'token-1'
 
-  const application = testData.prisonerApp()
+  const application = testData.prisonerApp
 
   beforeEach(() => {
     fakeManagingPrisonerAppApi = nock(config.apis.managingPrisonerApps.url)
