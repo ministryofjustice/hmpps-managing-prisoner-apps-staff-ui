@@ -11,6 +11,7 @@ export default function viewApplicationRoutes({ auditService }: { auditService: 
     '/view/:applicationId',
     asyncMiddleware(async (req: Request, res: Response) => {
       // const { applicationId, prisonerId } = req.params
+      // const { user } = res.locals
       // const application  = await managingPrisonerAppsService.getPrisonerApp(applicationId, prisonerId, user)
 
       const application = new TestData().prisonerApp
