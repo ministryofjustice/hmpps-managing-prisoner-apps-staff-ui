@@ -47,7 +47,7 @@
                 text: "Department"
               },
               value: {
-                text: ""
+                text: application.assignedGroup.name
               },
               actions: {
                 items: [
@@ -72,7 +72,7 @@
                 text: "Date sent"
               },
               value: {
-                text: ""
+                text: application.requestedDate
               }
             },
             {
@@ -80,7 +80,7 @@
                 text: "Application ID"
               },
               value: {
-                text: ""
+                text: application.id
               }
             }
           ]
@@ -95,7 +95,7 @@
                 text: "Prisoner"
               },
               value: {
-                text: ""
+                text: application.requestedBy.id
               },
               actions: {
                 items: [
@@ -112,7 +112,7 @@
                 text: "Location"
               },
               value: {
-                text: ""
+                text: application.requestedBy.location
               }
             },
             {
@@ -120,7 +120,7 @@
                 text: "IEP"
               },
               value: {
-                text: ""
+                text: application.requestedBy.iep
               }
             },
             {
