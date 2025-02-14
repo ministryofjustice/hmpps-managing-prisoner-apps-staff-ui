@@ -24,4 +24,16 @@ export default class ManagingPrisonerAppsApiClient {
       return null
     }
   }
+
+  async submitPrisonerApp(prisonerId: string, data: Record<string, unknown>): Promise<Application | null> {
+    try {
+      return await this.restClient.post({
+        path: `/v1/prisoners/${prisonerId}/apps`,
+        data,
+      })
+    } catch (error) {
+      logger.error(`Error submitting application for prisonerId: ${prisonerId}`, error)
+      return null
+    }
+  }
 }
