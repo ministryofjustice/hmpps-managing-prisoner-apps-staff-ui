@@ -14,10 +14,11 @@ export default class ManagingPrisonerAppsApiClient {
     )
   }
 
-  async getPrisonerApp(applicationId: string, prisonerId: string): Promise<Application | null> {
+  async getPrisonerApp(prisonerId: string, applicationId: string, token: string): Promise<Application | null> {
     try {
       return await this.restClient.get({
         path: `/v1/prisoners/${prisonerId}/apps/${applicationId}`,
+        headers: { Authorization: `Bearer ${token}` },
       })
     } catch (error) {
       logger.error(`Error fetching application for prisonerId: ${prisonerId}, applicationId: ${applicationId}`, error)

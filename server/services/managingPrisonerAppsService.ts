@@ -5,8 +5,8 @@ import { HmppsUser } from '../interfaces/hmppsUser'
 export default class ManagingPrisonerAppsService {
   constructor(private readonly hmppsAuthClient: HmppsAuthClient) {}
 
-  async getPrisonerApp(applicationId: string, prisonerId: string, user: HmppsUser) {
+  async getPrisonerApp(prisonerId: string, applicationId: string, user: HmppsUser) {
     const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
-    return new ManagingPrisonerAppsApiClient(token).getPrisonerApp(applicationId, prisonerId)
+    return new ManagingPrisonerAppsApiClient(token).getPrisonerApp(prisonerId, applicationId, user.token)
   }
 }

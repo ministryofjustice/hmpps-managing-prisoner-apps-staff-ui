@@ -19,7 +19,7 @@ export default function viewApplicationRoutes({
       const { prisonerId, applicationId } = req.params
       const { user } = res.locals
 
-      const application = await managingPrisonerAppsService.getPrisonerApp(applicationId, prisonerId, user)
+      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
       if (!application) {
         res.redirect('/applications')

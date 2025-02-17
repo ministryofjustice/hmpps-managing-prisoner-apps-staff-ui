@@ -23,13 +23,14 @@ describe('Managing Prisoner Apps API Client', () => {
   afterEach(() => {
     nock.cleanAll()
   })
-  it('getAdjudicationLocations should return data from api', async () => {
+
+  it('getPrisonerApp should return data from api', async () => {
     fakeManagingPrisonerAppApi
       .get('/v1/prisoners/prisoner-id/apps/app-id')
       .matchHeader('authorization', `Bearer ${token}`)
       .reply(200, application)
 
-    const output = await client.getPrisonerApp('app-id', 'prisoner-id')
+    const output = await client.getPrisonerApp('prisoner-id', 'app-id', token)
     expect(output).toEqual(application)
   })
 })
