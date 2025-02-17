@@ -2,19 +2,24 @@ import { Request, Response, Router } from 'express'
 import { APPLICATION_TYPES } from '../../constants/applicationTypes'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
-import TestData from '../testutils/testData'
+import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
-export default function viewApplicationRoutes({ auditService }: { auditService: AuditService }): Router {
+export default function viewApplicationRoutes({
+  auditService,
+  managingPrisonerAppsService,
+}: {
+  auditService: AuditService
+  managingPrisonerAppsService: ManagingPrisonerAppsService
+}): Router {
   const router = Router()
 
   router.get(
-    '/view/:applicationId',
+    '/view/:prisonerId/:applicationId',
     asyncMiddleware(async (req: Request, res: Response) => {
-      // const { applicationId, prisonerId } = req.params
-      // const { user } = res.locals
-      // const application  = await managingPrisonerAppsService.getPrisonerApp(applicationId, prisonerId, user)
+      const { prisonerId, applicationId } = req.params
+      const { user } = res.locals
 
-      const application = new TestData().prisonerApp
+      const application = await managingPrisonerAppsService.getPrisonerApp(applicationId, prisonerId, user)
 
       if (!application) {
         res.redirect('/applications')
@@ -22,7 +27,7 @@ export default function viewApplicationRoutes({ auditService }: { auditService: 
       }
 
       await auditService.logPageView(Page.VIEW_APPLICATION_PAGE, {
-        who: res.locals.user.username,
+        who: user.username,
         correlationId: req.id,
       })
 
