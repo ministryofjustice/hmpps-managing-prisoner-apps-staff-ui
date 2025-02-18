@@ -94,7 +94,7 @@ export default {
       enabled: get('TOKEN_VERIFICATION_ENABLED', 'false') === 'true',
     },
     managingPrisonerApps: {
-      url: get('MANAGING_PRISON_APPS_API_URL', 'http://localhost:8080', requiredInProduction),
+      url: get('MANAGING_PRISONER_APPS_API_URL', 'http://localhost:8080', requiredInProduction),
       healthPath: '/health/ping',
       timeout: {
         response: Number(get('MANAGING_PRISONER_APPS_API_TIMEOUT_RESPONSE', 10000)),
