@@ -27,10 +27,6 @@ export interface ApplicationRequest {
   amount: number
 }
 
-export interface LogDetails {
-  description?: string
-}
-
 export interface Application {
   id: string
   reference: string
