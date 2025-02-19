@@ -26,7 +26,7 @@ describe('Managing Prisoner Apps API Client', () => {
       .matchHeader('authorization', `Bearer ${user.token}`)
       .reply(200, prisonerApp)
 
-    const output = await client.getPrisonerApp('prisoner-id', 'app-id', user.token)
+    const output = await client.getPrisonerApp('prisoner-id', 'app-id')
     expect(output).toEqual(prisonerApp)
   })
 })

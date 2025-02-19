@@ -34,7 +34,7 @@ describe('Managing Prisoner Apps Service', () => {
       const result = await service.getPrisonerApp('prisoner-id', 'application-id', user)
 
       expect(result).toEqual(prisonerApp)
-      expect(getPrisonerApp).toHaveBeenCalledWith('prisoner-id', 'application-id', user.token)
+      expect(getPrisonerApp).toHaveBeenCalledWith('prisoner-id', 'application-id')
     })
   })
 })
