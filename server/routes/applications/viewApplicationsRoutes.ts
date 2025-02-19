@@ -3,11 +3,10 @@ import { APPLICATION_TYPES } from '../../constants/applicationTypes'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
-import TestData from '../testutils/testData'
 
 export default function viewApplicationRoutes({
   auditService,
-  // managingPrisonerAppsService,
+  managingPrisonerAppsService,
 }: {
   auditService: AuditService
   managingPrisonerAppsService: ManagingPrisonerAppsService
@@ -17,11 +16,10 @@ export default function viewApplicationRoutes({
   router.get(
     '/view/:prisonerId/:applicationId',
     asyncMiddleware(async (req: Request, res: Response) => {
-      // const { prisonerId, applicationId } = req.params
+      const { prisonerId, applicationId } = req.params
       const { user } = res.locals
 
-      // const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
-      const application = new TestData().prisonerApp
+      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
       if (!application) {
         res.redirect('/applications')
