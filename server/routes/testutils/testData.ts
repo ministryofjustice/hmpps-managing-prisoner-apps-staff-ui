@@ -1,4 +1,5 @@
 import { Application } from '../../@types/managingAppsApi'
+import { BaseUser } from '../../interfaces/hmppsUser'
 
 export default class TestData {
   prisonerApp: Application = {
@@ -38,13 +39,13 @@ export default class TestData {
     ],
   }
 
-  user = (username = 'USER1', name = 'Test User', activeCaseLoadId = 'MDI') => {
-    return {
-      activeCaseLoadId,
-      name,
-      username,
-      token: 'token-1',
-      authSource: 'auth',
-    }
+  user: BaseUser = {
+    token: 'token',
+    username: 'user',
+    authSource: 'auth',
+    userId: '608955ae-52ed-44cc-884c-011597a77949',
+    name: 'name',
+    displayName: 'Name',
+    userRoles: [],
   }
 }

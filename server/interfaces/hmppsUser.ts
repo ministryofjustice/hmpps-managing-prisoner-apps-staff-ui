@@ -1,4 +1,4 @@
-export type AuthSource = 'nomis' | 'delius' | 'external' | 'azuread'
+export type AuthSource = 'nomis' | 'delius' | 'external' | 'azuread' | 'auth'
 
 /**
  * These are the details that all user types share.
