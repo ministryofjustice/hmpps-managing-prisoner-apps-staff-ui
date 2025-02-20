@@ -13,7 +13,11 @@ describe('Managing Prisoner Apps API Client', () => {
 
   const token = 'token-1'
 
+  const prisonerId = 'prisoner-id'
+
   const application = testData.prisonerApp
+
+  const { submitPrisonerAppData } = testData
 
   beforeEach(() => {
     fakeManagingPrisonerAppApi = nock(config.apis.managingPrisonerApps.url)
@@ -31,5 +35,19 @@ describe('Managing Prisoner Apps API Client', () => {
 
     const output = await client.getPrisonerApp('app-id', 'prisoner-id')
     expect(output).toEqual(application)
+  })
+
+  it('should send data to api and return response', async () => {
+    const requestData = {
+      data: submitPrisonerAppData.requests,
+    }
+
+    fakeManagingPrisonerAppApi
+      .post(`/v1/prisoners/${prisonerId}/apps`, requestData)
+      .matchHeader('authorization', `Bearer ${token}`)
+      .reply(201, submitPrisonerAppData)
+
+    const output = await client.submitPrisonerApp(prisonerId, requestData)
+    expect(output).toEqual(submitPrisonerAppData)
   })
 })
