@@ -14,13 +14,13 @@ export default class ManagingPrisonerAppsService {
   async submitPrisonerApp(prisonerId: string, user: User, req: Request) {
     const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
 
-    const data: Record<string, unknown> = JSON.parse(
-      req.session.applicationData?.additionalData?.swapVOsToPinCreditDetails as string,
-    )
+    const data = req.session.applicationData?.additionalData?.swapVOsToPinCreditDetails
     if (!data) {
       throw new Error('No application data found in session')
     }
 
-    return new ManagingPrisonerAppsApiClient(token).submitPrisonerApp(prisonerId, data)
+    return new ManagingPrisonerAppsApiClient(token).submitPrisonerApp(prisonerId, {
+      swapVOsToPinCreditDetails: data,
+    })
   }
 }
