@@ -38,9 +38,7 @@ describe('Managing Prisoner Apps API Client', () => {
   })
 
   it('should send data to api and return response', async () => {
-    const requestData = {
-      data: submitPrisonerAppData.requests,
-    }
+    const requestData = submitPrisonerAppData
 
     fakeManagingPrisonerAppApi
       .post(`/v1/prisoners/${prisonerId}/apps`, requestData)
