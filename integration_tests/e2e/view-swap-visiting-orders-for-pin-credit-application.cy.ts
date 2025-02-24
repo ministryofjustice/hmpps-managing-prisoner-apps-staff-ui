@@ -9,7 +9,7 @@ context('View Swap VOs for PIN Credit Application Page', () => {
     cy.task('stubSignIn')
     cy.signIn()
 
-    cy.visit('/view/G98765/12345')
+    cy.visit('/applications/business-hub/G98765/12345')
 
     page = Page.verifyOnPage(ViewSwapVosPinCreditApplicationPage)
   })
