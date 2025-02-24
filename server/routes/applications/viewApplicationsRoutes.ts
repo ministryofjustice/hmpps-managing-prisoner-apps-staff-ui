@@ -14,15 +14,27 @@ export default function viewApplicationRoutes({
   const router = Router()
 
   router.get(
-    '/view/:prisonerId/:applicationId',
+    '/applications/:departmentName/:status(pending|closed)',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { prisonerId, applicationId } = req.params
+      const { departmentName, status } = req.params
+
+      res.render('pages/applications/list', {
+        status,
+        departmentName,
+      })
+    }),
+  )
+
+  router.get(
+    '/applications/:departmentName/:prisonerId/:applicationId',
+    asyncMiddleware(async (req: Request, res: Response) => {
+      const { departmentName, prisonerId, applicationId } = req.params
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
       if (!application) {
-        res.redirect('/applications')
+        res.redirect(`/applications/${departmentName}/pending`)
         return
       }
 
@@ -34,13 +46,14 @@ export default function viewApplicationRoutes({
       const applicationType = APPLICATION_TYPES.find(type => type.apiValue === application.type)
 
       if (!applicationType) {
-        res.redirect('/applications?error=unknown-type')
+        res.redirect(`/applications/${departmentName}/pending?error=unknown-type`)
         return
       }
 
       res.render(`pages/view-application/${applicationType.value}`, {
         title: applicationType.name,
         application,
+        departmentName,
       })
     }),
   )
