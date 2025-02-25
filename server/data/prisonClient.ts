@@ -1,6 +1,7 @@
-import logger from '../../../logger'
-import config, { ApiConfig } from '../../config'
-import RestClient from '../restClient'
+import logger from '../../logger'
+import { PrisonerDetail } from '../@types/prisonApi'
+import config, { ApiConfig } from '../config'
+import RestClient from './restClient'
 
 export default class PrisonApiClient {
   public restClient: RestClient
@@ -9,7 +10,7 @@ export default class PrisonApiClient {
     this.restClient = new RestClient('prisonApiClient', config.apis.prison as ApiConfig, token)
   }
 
-  async getPrisonerByPrisonNumber(prisonNumber: string): Promise<{ firstName: string; lastName: string } | null> {
+  async getPrisonerByPrisonNumber(prisonNumber: string): Promise<PrisonerDetail | null> {
     try {
       return await this.restClient.get({
         path: `/api/prisoners/${prisonNumber}`,

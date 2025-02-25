@@ -36,13 +36,14 @@ export default function prisonerDetailsRoutes({
     '/log/prisoner-details/find',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { prisonNumber } = req.query
+      const { user } = res.locals
 
       if (!prisonNumber) {
         res.status(400).json({ error: 'Prison number is required' })
         return
       }
 
-      const prisoner = await prisonService.getPrisonerByPrisonNumber(prisonNumber.toString())
+      const prisoner = await prisonService.getPrisonerByPrisonNumber(prisonNumber.toString(), user)
 
       if (!prisoner) {
         res.status(404).json({ error: 'Prisoner not found' })
