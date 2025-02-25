@@ -2,40 +2,58 @@ import { Request, Response, Router } from 'express'
 import { APPLICATION_TYPES } from '../../constants/applicationTypes'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
-import TestData from '../testutils/testData'
+import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
-export default function viewApplicationRoutes({ auditService }: { auditService: AuditService }): Router {
+export default function viewApplicationRoutes({
+  auditService,
+  managingPrisonerAppsService,
+}: {
+  auditService: AuditService
+  managingPrisonerAppsService: ManagingPrisonerAppsService
+}): Router {
   const router = Router()
 
   router.get(
-    '/view/:applicationId',
+    '/applications/:departmentName/:status(pending|closed)',
     asyncMiddleware(async (req: Request, res: Response) => {
-      // const { applicationId, prisonerId } = req.params
-      // const { user } = res.locals
-      // const application  = await managingPrisonerAppsService.getPrisonerApp(applicationId, prisonerId, user)
+      const { departmentName, status } = req.params
 
-      const application = new TestData().prisonerApp
+      res.render('pages/applications/list', {
+        status,
+        departmentName,
+      })
+    }),
+  )
+
+  router.get(
+    '/applications/:departmentName/:prisonerId/:applicationId',
+    asyncMiddleware(async (req: Request, res: Response) => {
+      const { departmentName, prisonerId, applicationId } = req.params
+      const { user } = res.locals
+
+      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
       if (!application) {
-        res.redirect('/applications')
+        res.redirect(`/applications/${departmentName}/pending`)
         return
       }
 
       await auditService.logPageView(Page.VIEW_APPLICATION_PAGE, {
-        who: res.locals.user.username,
+        who: user.username,
         correlationId: req.id,
       })
 
       const applicationType = APPLICATION_TYPES.find(type => type.apiValue === application.type)
 
       if (!applicationType) {
-        res.redirect('/applications?error=unknown-type')
+        res.redirect(`/applications/${departmentName}/pending?error=unknown-type`)
         return
       }
 
       res.render(`pages/view-application/${applicationType.value}`, {
         title: applicationType.name,
         application,
+        departmentName,
       })
     }),
   )
