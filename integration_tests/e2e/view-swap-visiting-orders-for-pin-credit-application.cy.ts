@@ -4,17 +4,23 @@ import ViewSwapVosPinCreditApplicationPage from '../pages/viewSwapVosPinCreditAp
 
 context('View Swap VOs for PIN Credit Application Page', () => {
   let page: ViewSwapVosPinCreditApplicationPage
-  const { prisonerApp } = new TestData()
+  const { prisonerApp: application } = new TestData()
+  const {
+    id: applicationId,
+    requestedBy: { id: prisonerId },
+  } = application
 
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubGetPrisonerApp', {
-      response: prisonerApp,
+      prisonerId,
+      applicationId,
+      application,
     })
     cy.signIn()
 
-    cy.visit(`/applications/business-hub/${prisonerApp.requestedBy.id}/${prisonerApp.id}`)
+    cy.visit(`/applications/business-hub/${prisonerId}/${applicationId}`)
 
     page = Page.verifyOnPage(ViewSwapVosPinCreditApplicationPage)
   })

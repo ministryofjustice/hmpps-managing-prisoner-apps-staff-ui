@@ -4,23 +4,24 @@ import { stubFor } from './wiremock'
 
 export default {
   stubGetPrisonerApp: ({
-    prisonerId = 'A123456',
-    applicationId = 'application-id',
-    response,
+    prisonerId,
+    applicationId,
+    application,
   }: {
     prisonerId: string
     applicationId: string
-    response: Application
-  }): SuperAgentRequest =>
-    stubFor({
+    application: Application
+  }): SuperAgentRequest => {
+    return stubFor({
       request: {
         method: 'GET',
-        url: `/v1/prisoners/${prisonerId}/apps/${applicationId}`,
+        url: `/managingPrisonerApps/v1/prisoners/${prisonerId}/apps/${applicationId}`,
       },
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: response,
+        jsonBody: application,
       },
-    }),
+    })
+  },
 }
