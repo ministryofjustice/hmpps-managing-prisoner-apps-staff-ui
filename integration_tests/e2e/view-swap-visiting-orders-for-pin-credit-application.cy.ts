@@ -1,15 +1,26 @@
+import TestData from '../../server/routes/testutils/testData'
 import Page from '../pages/page'
 import ViewSwapVosPinCreditApplicationPage from '../pages/viewSwapVosPinCreditApplicationPage'
 
 context('View Swap VOs for PIN Credit Application Page', () => {
   let page: ViewSwapVosPinCreditApplicationPage
+  const { prisonerApp: application } = new TestData()
+  const {
+    id: applicationId,
+    requestedBy: { id: prisonerId },
+  } = application
 
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
+    cy.task('stubGetPrisonerApp', {
+      prisonerId,
+      applicationId,
+      application,
+    })
     cy.signIn()
 
-    cy.visit('/view/12345')
+    cy.visit(`/applications/business-hub/${prisonerId}/${applicationId}`)
 
     page = Page.verifyOnPage(ViewSwapVosPinCreditApplicationPage)
   })

@@ -11,25 +11,22 @@ describe('Managing Prisoner Apps API Client', () => {
   let fakeManagingPrisonerAppApi: nock.Scope
   let client: ManagingPrisonerAppsApiClient
 
-  const token = 'token-1'
-
-  const application = testData.prisonerApp
+  const { prisonerApp, user } = testData
 
   beforeEach(() => {
     fakeManagingPrisonerAppApi = nock(config.apis.managingPrisonerApps.url)
-    client = new ManagingPrisonerAppsApiClient(token)
+    client = new ManagingPrisonerAppsApiClient(user.token)
   })
 
-  afterEach(() => {
-    nock.cleanAll()
-  })
-  it('getAdjudicationLocations should return data from api', async () => {
+  afterEach(() => nock.cleanAll())
+
+  it('should return a response from the api', async () => {
     fakeManagingPrisonerAppApi
       .get('/v1/prisoners/prisoner-id/apps/app-id')
-      .matchHeader('authorization', `Bearer ${token}`)
-      .reply(200, application)
+      .matchHeader('authorization', `Bearer ${user.token}`)
+      .reply(200, prisonerApp)
 
-    const output = await client.getPrisonerApp('app-id', 'prisoner-id')
-    expect(output).toEqual(application)
+    const output = await client.getPrisonerApp('prisoner-id', 'app-id')
+    expect(output).toEqual(prisonerApp)
   })
 })

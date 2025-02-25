@@ -14,7 +14,7 @@ export default class ManagingPrisonerAppsApiClient {
     )
   }
 
-  async getPrisonerApp(applicationId: string, prisonerId: string): Promise<Application | null> {
+  async getPrisonerApp(prisonerId: string, applicationId: string): Promise<Application | null> {
     try {
       return await this.restClient.get({
         path: `/v1/prisoners/${prisonerId}/apps/${applicationId}`,
