@@ -4,7 +4,7 @@ import * as mojFrontend from '@ministryofjustice/frontend'
 govukFrontend.initAll()
 mojFrontend.initAll()
 
-document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
+document.addEventListener('DOMContentLoaded', () => {
   const findPrisonerButton = document.getElementById('prisoner-number-lookup')
   const prisonerNumberInput = document.getElementById('prison-number')
   const prisonerNameInput = document.getElementById('prisoner-name')
@@ -14,25 +14,26 @@ document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
     event.preventDefault()
 
     const prisonNumber = prisonerNumberInput.value.trim()
+    const notFoundText = 'Prisoner name: Not found'
+
     if (!prisonNumber) {
-      prisonerNameDisplay.innerText = 'Prisoner name: Not found'
+      prisonerNameDisplay.innerText = notFoundText
+      prisonerNameInput.value = ''
+      prisonerNameDisplay.classList.remove('govuk-!-display-none')
       return
     }
 
     try {
       const response = await fetch(`/log/prisoner-details/find?prisonNumber=${encodeURIComponent(prisonNumber)}`)
-      const data = await response.json()
+      const data = (await response.ok) ? await response.json() : null
 
-      if (response.ok) {
-        prisonerNameInput.value = data.prisonerName
-        prisonerNameDisplay.innerText = `Prisoner name: ${data.prisonerName}`
-      } else {
-        prisonerNameInput.value = ''
-        prisonerNameDisplay.innerText = 'Prisoner name: Not found'
-      }
-    } catch (e) {
+      prisonerNameInput.value = data && data.prisonerName ? data.prisonerName : ''
+      prisonerNameDisplay.innerText = data ? `Prisoner name: ${data.prisonerName}` : notFoundText
+      prisonerNameDisplay.classList.remove('govuk-!-display-none')
+      // eslint-disable-next-line no-unused-vars
+    } catch (_e) {
       prisonerNameInput.value = ''
-      prisonerNameDisplay.innerText = 'Prisoner name: Not found'
+      prisonerNameDisplay.innerText = notFoundText
     }
   }
 

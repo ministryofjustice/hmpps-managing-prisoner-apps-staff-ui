@@ -10,7 +10,7 @@ export default class PrisonApiClient {
     this.restClient = new RestClient('prisonApiClient', config.apis.prison as ApiConfig, token)
   }
 
-  async getPrisonerByPrisonNumber(prisonNumber: string): Promise<PrisonerDetail | null> {
+  async getPrisonerByPrisonNumber(prisonNumber: string): Promise<PrisonerDetail[] | null> {
     try {
       return await this.restClient.get({
         path: `/api/prisoners/${prisonNumber}`,

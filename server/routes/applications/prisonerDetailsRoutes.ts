@@ -45,13 +45,13 @@ export default function prisonerDetailsRoutes({
 
       const prisoner = await prisonService.getPrisonerByPrisonNumber(prisonNumber.toString(), user)
 
-      if (!prisoner) {
+      if (!prisoner || prisoner.length === 0) {
         res.status(404).json({ error: 'Prisoner not found' })
         return
       }
 
       res.json({
-        prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
+        prisonerName: `${prisoner[0].firstName} ${prisoner[0].lastName}`,
       })
     }),
   )
