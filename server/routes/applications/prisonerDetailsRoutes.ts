@@ -33,9 +33,9 @@ export default function prisonerDetailsRoutes({
   )
 
   router.get(
-    '/log/prisoner-details/find',
+    '/log/prisoner-details/find/:prisonNumber',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { prisonNumber } = req.query
+      const { prisonNumber } = req.params
       const { user } = res.locals
 
       if (!prisonNumber) {
@@ -43,7 +43,7 @@ export default function prisonerDetailsRoutes({
         return
       }
 
-      const prisoner = await prisonService.getPrisonerByPrisonNumber(prisonNumber.toString(), user)
+      const prisoner = await prisonService.getPrisonerByPrisonNumber(prisonNumber, user)
 
       if (!prisoner || prisoner.length === 0) {
         res.status(404).json({ error: 'Prisoner not found' })

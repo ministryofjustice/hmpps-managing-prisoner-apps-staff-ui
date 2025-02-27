@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
     }
 
     try {
-      const response = await fetch(`/log/prisoner-details/find?prisonNumber=${encodeURIComponent(prisonNumber)}`)
+      const response = await fetch(`/log/prisoner-details/find/${encodeURIComponent(prisonNumber)}`)
       const data = await response.json()
 
       prisonerNameDisplay.classList.remove('govuk-!-display-none')
@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
         prisonerNameInput.value = ''
         prisonerNameDisplay.innerText = 'Prisoner name: Not found'
       }
-      // eslint-disable-next-line no-unused-vars
     } catch (e) {
       prisonerNameInput.value = ''
       prisonerNameDisplay.innerText = 'Prisoner name: Not found'
