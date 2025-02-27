@@ -23,6 +23,7 @@ export default function applicationTypeRoutes({ auditService }: { auditService: 
       res.render('pages/log/application-type', {
         title: 'Select application type',
         applicationTypes,
+        errorMessage: null,
       })
     }),
   )
@@ -33,13 +34,19 @@ export default function applicationTypeRoutes({ auditService }: { auditService: 
       const selectedAppType = APPLICATION_TYPES.find(type => type.value === req.body.applicationType)
 
       if (!selectedAppType) {
-        res.status(400).send('Invalid application type selected')
-        return
+        return res.render('pages/log/application-type', {
+          title: 'Select application type',
+          applicationTypes: APPLICATION_TYPES.map(applicationType => ({
+            value: applicationType.value,
+            text: applicationType.name,
+          })),
+          errorMessage: 'Choose one',
+        })
       }
 
       updateSessionData(req, { type: selectedAppType })
 
-      res.redirect(`/log/prisoner-details`)
+      return res.redirect(`/log/prisoner-details`)
     }),
   )
 

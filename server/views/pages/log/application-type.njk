@@ -15,14 +15,20 @@
     }) }}
    
     <span class="govuk-caption-xl">Log an application</span>
-    <h1 class="govuk-heading-xl govuk-!-margin-top-0">Select application type</h1>
-
     <form method="POST" id="log-application-type">
       <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
       
       {{ govukRadios({
         name: "applicationType",
-        items: applicationTypes
+        fieldset: {
+          legend: {
+            text: "Select application type",
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--xl"
+          }
+        },
+        items: applicationTypes,
+        errorMessage: { text: errorMessage } if errorMessage else undefined
       }) }}
 
       {{ govukButton({
