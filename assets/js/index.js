@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
         prisonerNameInput.value = ''
         prisonerNameDisplay.innerText = 'Prisoner name: Not found'
       }
+      // eslint-disable-next-line no-unused-vars
     } catch (e) {
       prisonerNameInput.value = ''
       prisonerNameDisplay.innerText = 'Prisoner name: Not found'
