@@ -10,6 +10,10 @@ document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
   const prisonerNameInput = document.getElementById('prisoner-name')
   const prisonerNameDisplay = document.getElementById('prisoner-name-display')
 
+  if (!findPrisonerButton) {
+    return
+  }
+
   async function handlePrisonerLookup(event) {
     event.preventDefault()
 
