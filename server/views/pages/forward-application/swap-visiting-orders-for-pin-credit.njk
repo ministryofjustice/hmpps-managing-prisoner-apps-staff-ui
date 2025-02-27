@@ -1,0 +1,13 @@
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% extends "../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + title %}
+{% set mainClasses = "app-container govuk-body applications-landing-page" %}
+
+{% block content %}
+  <div class="govuk-body govuk-width-container govuk-!-padding-top-5 govuk-!-padding-bottom-5">
+    <h1 class="govuk-heading-xl govuk-!-margin-top-0">Forward this application to</h1>
+  </div>
+{% endblock %}
