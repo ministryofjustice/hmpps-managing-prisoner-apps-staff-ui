@@ -58,5 +58,37 @@ export default function viewApplicationRoutes({
     }),
   )
 
+  router.get(
+    '/applications/:departmentName/:prisonerId/:applicationId/forward',
+    asyncMiddleware(async (req: Request, res: Response) => {
+      const { departmentName, prisonerId, applicationId } = req.params
+      const { user } = res.locals
+
+      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
+
+      if (!application) {
+        res.redirect(`/applications/${departmentName}/pending`)
+        return
+      }
+
+      await auditService.logPageView(Page.FORWARD_APPLICATION_PAGE, {
+        who: user.username,
+        correlationId: req.id,
+      })
+
+      const applicationType = APPLICATION_TYPES.find(type => type.apiValue === application.type)
+
+      if (!applicationType) {
+        res.redirect(`/applications/${departmentName}/pending?error=unknown-type`)
+        return
+      }
+
+      res.render(`pages/forward-application/${applicationType.value}`, {
+        application,
+        departmentName,
+      })
+    }),
+  )
+
   return router
 }
