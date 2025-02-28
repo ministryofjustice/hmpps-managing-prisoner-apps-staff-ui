@@ -1,4 +1,5 @@
 import { Application } from '../../@types/managingAppsApi'
+import { PrisonerDetail } from '../../@types/prisonApi'
 import { BaseUser } from '../../interfaces/hmppsUser'
 
 export default class TestData {
@@ -37,6 +38,40 @@ export default class TestData {
         amount: 5.0,
       },
     ],
+  }
+
+  prisoner: PrisonerDetail = {
+    offenderNo: 'A0000AA',
+    title: 'Earl',
+    suffix: 'Mac',
+    firstName: 'Thorfinn',
+    middleNames: 'Skull-splitter',
+    lastName: 'Torf-Einarsson',
+    dateOfBirth: '1960-02-29',
+    gender: 'Female',
+    sexCode: 'F',
+    nationalities: 'Scottish',
+    currentlyInPrison: 'N',
+    latestBookingId: 1,
+    latestLocationId: 'WRI',
+    latestLocation: 'Whitemoor (HMP)',
+    internalLocation: 'WRI-B-3-018',
+    pncNumber: '01/000000A',
+    croNumber: '01/0001/01A',
+    ethnicity: 'White: British',
+    ethnicityCode: 'W1',
+    birthCountry: 'Norway',
+    religion: 'Pagan',
+    religionCode: 'PAG',
+    convictedStatus: 'Convicted',
+    legalStatus: 'REMAND',
+    imprisonmentStatus: 'LIFE',
+    imprisonmentStatusDesc: 'Service Life Imprisonment',
+    receptionDate: '1980-01-01',
+    maritalStatus: 'Single',
+    currentWorkingFirstName: 'Thorfinn',
+    currentWorkingLastName: 'Torf-Einarsson',
+    currentWorkingBirthDate: '1960-02-29',
   }
 
   user: BaseUser = {
