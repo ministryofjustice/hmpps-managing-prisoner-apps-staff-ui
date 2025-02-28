@@ -1,6 +1,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% extends "../../partials/layout.njk" %}
 
@@ -9,32 +10,44 @@
 
 {% block content %}
   <div class="govuk-body govuk-width-container">
-    {{ govukBackLink({
-      text: "Back",
-      href: "/"
-    }) }}
-   
-    <span class="govuk-caption-xl">Log an application</span>
-    <form method="POST" id="log-application-type">
-      <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-      
-      {{ govukRadios({
-        name: "applicationType",
-        fieldset: {
-          legend: {
-            text: "Select application type",
-            isPageHeading: true,
-            classes: "govuk-fieldset__legend--xl"
-          }
-        },
-        items: applicationTypes,
-        errorMessage: { text: errorMessage } if errorMessage else undefined
-      }) }}
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-half">
 
-      {{ govukButton({
-        text: "Continue",
-        preventDoubleClick: true
-      }) }}
-    </form>
+        {{ govukBackLink({
+         text: "Back",
+         href: "/"
+        }) }}
+
+        {% if errorSummary %}
+          {{ govukErrorSummary ({
+           titleText: "There is a problem",
+           errorList: errorSummary
+          }) }}
+        {% endif %}
+
+        <span class="govuk-caption-xl">Log an application</span>
+        <form method="POST" id="log-application-type">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+          {{ govukRadios({
+           name: "applicationType",
+           fieldset: {
+            legend: {
+             text: "Select application type",
+             isPageHeading: true,
+             classes: "govuk-fieldset__legend--xl"
+            }
+           },
+           items: applicationTypes,
+           errorMessage: { text: errorMessage } if errorMessage else undefined
+          }) }}
+
+          {{ govukButton({
+           text: "Continue",
+           preventDoubleClick: true
+          }) }}
+        </form>
+      </div>
+    </div>
   </div>
 {% endblock %}

@@ -41,6 +41,7 @@ export default function applicationTypeRoutes({ auditService }: { auditService: 
             text: applicationType.name,
           })),
           errorMessage: 'Choose one',
+          errorSummary: [{ text: 'Choose one', href: '#applicationType' }],
         })
       }
 
