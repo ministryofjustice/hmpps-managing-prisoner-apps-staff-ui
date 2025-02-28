@@ -90,5 +90,12 @@ export default function viewApplicationRoutes({
     }),
   )
 
+  router.post(
+    '/applications/:departmentName/:prisonerId/:applicationId/forward',
+    asyncMiddleware(async (req: Request, res: Response) => {
+      res.redirect(``)
+    }),
+  )
+
   return router
 }

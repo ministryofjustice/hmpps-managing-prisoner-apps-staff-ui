@@ -1,5 +1,9 @@
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 
 {% extends "../../partials/layout.njk" %}
 
@@ -8,6 +12,58 @@
 
 {% block content %}
   <div class="govuk-body govuk-width-container govuk-!-padding-top-5 govuk-!-padding-bottom-5">
-    <h1 class="govuk-heading-xl govuk-!-margin-top-0">Forward this application to</h1>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-half">
+        <h1 class="govuk-heading-xl govuk-!-margin-top-0">Forward this application to swap VO's</h1>
+
+        <form method="POST" id="forward-application-form">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+            {{ govukRadios({
+              name: "forwardToDepartment",
+              fieldset: {
+                legend: {
+                  text: "Send to:"
+                }
+              },
+              items: [
+                {
+                  value: "activities",
+                  text: "Activities"
+                },
+                {
+                  value: "chaplaincy",
+                  text: "Chaplaincy"
+                },
+                {
+                  value: "education",
+                  text: "Education"
+                }
+              ]
+            }) }}
+
+            {{ govukCharacterCount({
+              name: "forwardingReason",
+              id: "forwarding-reason",
+              maxlength: 1000,
+              threshold: 75,
+              value: textareaValue,
+              label: {
+                text: "Reason for forwarding (optional)",
+                classes: "govuk-label--s",
+                isPageHeading: true
+              },
+              hint: {
+                text: "This is added to the comments section for other staff to see"
+              }
+            }) }}
+
+            {{ govukButton({
+              text: "Continue",
+              classes: "govuk-button--primary"
+            }) }}
+        </form>
+      </div>
+    </div>
   </div>
 {% endblock %}
