@@ -3,6 +3,7 @@ import { APPLICATION_TYPES } from '../../constants/applicationTypes'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
+import TestData from '../testutils/testData'
 
 export default function viewApplicationRoutes({
   auditService,
@@ -31,7 +32,8 @@ export default function viewApplicationRoutes({
       const { departmentName, prisonerId, applicationId } = req.params
       const { user } = res.locals
 
-      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
+      // const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
+      const application = new TestData().prisonerApp
 
       if (!application) {
         res.redirect(`/applications/${departmentName}/pending`)
@@ -64,7 +66,8 @@ export default function viewApplicationRoutes({
       const { departmentName, prisonerId, applicationId } = req.params
       const { user } = res.locals
 
-      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
+      // const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
+      const application = new TestData().prisonerApp
 
       if (!application) {
         res.redirect(`/applications/${departmentName}/pending`)
@@ -93,7 +96,13 @@ export default function viewApplicationRoutes({
   router.post(
     '/applications/:departmentName/:prisonerId/:applicationId/forward',
     asyncMiddleware(async (req: Request, res: Response) => {
-      res.redirect(``)
+      const { departmentName, prisonerId, applicationId } = req.params
+      const { forwardToDepartment } = req.body
+      const { user } = res.locals
+
+      await managingPrisonerAppsService.forwardApp(prisonerId, applicationId, forwardToDepartment, user)
+
+      res.redirect(`/applications/${departmentName}/${prisonerId}/${applicationId}`)
     }),
   )
 
