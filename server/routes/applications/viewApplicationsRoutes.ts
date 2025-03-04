@@ -3,7 +3,6 @@ import { APPLICATION_TYPES } from '../../constants/applicationTypes'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
-import TestData from '../testutils/testData'
 
 export default function viewApplicationRoutes({
   auditService,
@@ -32,8 +31,7 @@ export default function viewApplicationRoutes({
       const { departmentName, prisonerId, applicationId } = req.params
       const { user } = res.locals
 
-      // const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
-      const application = new TestData().prisonerApp
+      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
       if (!application) {
         res.redirect(`/applications/${departmentName}/pending`)
@@ -66,8 +64,7 @@ export default function viewApplicationRoutes({
       const { departmentName, prisonerId, applicationId } = req.params
       const { user } = res.locals
 
-      // const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
-      const application = new TestData().prisonerApp
+      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
       if (!application) {
         res.redirect(`/applications/${departmentName}/pending`)
