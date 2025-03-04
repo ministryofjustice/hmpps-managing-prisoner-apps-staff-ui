@@ -29,4 +29,11 @@ describe('Managing Prisoner Apps API Client', () => {
     const output = await client.getPrisonerApp('prisoner-id', 'app-id')
     expect(output).toEqual(prisonerApp)
   })
+
+  it('should return a response from the api', async () => {
+    fakeManagingPrisonerAppApi.get('/').matchHeader('authorization', `Bearer ${user.token}`).reply(200, undefined)
+
+    const output = await client.forwardApp('prisoner-id', 'app-id', 'dept')
+    expect(output).toBeUndefined()
+  })
 })
