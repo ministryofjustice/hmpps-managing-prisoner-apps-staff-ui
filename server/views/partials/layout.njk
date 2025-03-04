@@ -17,7 +17,11 @@
 {% endblock %}
 
 {% block header %}
-  {{ feComponents.header | safe }}
+  {% if feComponents.header %}
+    {{ feComponents.header | safe }}
+  {% else %}
+    {% include "./header.njk" %}
+  {% endif %}
 {% endblock %}
 
 {% block main %}
@@ -28,7 +32,11 @@
 {% endblock %}
 
 {% block footer %}
+    {% if feComponents.footer %}
     {{ feComponents.footer | safe }}
+  {% else %}
+    {% include "./footer.njk" %}
+  {% endif %}
 {% endblock %}
 
 {% block bodyEnd %}
