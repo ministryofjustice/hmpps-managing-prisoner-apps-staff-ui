@@ -25,10 +25,10 @@ export default class ManagingPrisonerAppsApiClient {
     }
   }
 
-  async forwardApp(prisonerId: string, applicationId: string, _department: string): Promise<void> {
+  async forwardApp(prisonerId: string, applicationId: string, department: string): Promise<void> {
     try {
       await this.restClient.put({
-        path: `/`,
+        path: `/v1/prisoners/${prisonerId}/apps/${applicationId}/forward/${department}`,
       })
     } catch (error) {
       logger.error(`Error updating department for prisonerId: ${prisonerId}, applicationId: ${applicationId}`, error)

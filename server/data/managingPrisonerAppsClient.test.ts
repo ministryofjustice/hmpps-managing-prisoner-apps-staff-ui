@@ -31,7 +31,10 @@ describe('Managing Prisoner Apps API Client', () => {
   })
 
   it('should successfully forward an application to a different department', async () => {
-    fakeManagingPrisonerAppApi.get('/').matchHeader('authorization', `Bearer ${user.token}`).reply(200, undefined)
+    fakeManagingPrisonerAppApi
+      .get('/v1/prisoners/prisoner-id/apps/app-id/forward/dept')
+      .matchHeader('authorization', `Bearer ${user.token}`)
+      .reply(200, undefined)
 
     const output = await client.forwardApp('prisoner-id', 'app-id', 'dept')
     expect(output).toBeUndefined()
