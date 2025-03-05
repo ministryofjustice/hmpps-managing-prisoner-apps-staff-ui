@@ -1,8 +1,9 @@
 import { Request, Response, Router } from 'express'
-import { APPLICATION_TYPES } from '../../constants/applicationTypes'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
+import { getApplicationType } from '../../utils/getApplicationType'
+import TestData from '../testutils/testData'
 
 export default function viewApplicationRoutes({
   auditService,
@@ -28,14 +29,13 @@ export default function viewApplicationRoutes({
   router.get(
     '/applications/:departmentName/:prisonerId/:applicationId',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { departmentName, prisonerId, applicationId } = req.params
+      const { departmentName } = req.params
       const { user } = res.locals
 
-      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
+      const application = new TestData().prisonerApp
 
       if (!application) {
-        res.redirect(`/applications/${departmentName}/pending`)
-        return
+        return res.redirect(`/applications/${departmentName}/pending`)
       }
 
       await auditService.logPageView(Page.VIEW_APPLICATION_PAGE, {
@@ -43,63 +43,17 @@ export default function viewApplicationRoutes({
         correlationId: req.id,
       })
 
-      const applicationType = APPLICATION_TYPES.find(type => type.apiValue === application.type)
+      const applicationType = getApplicationType(application.type)
 
       if (!applicationType) {
-        res.redirect(`/applications/${departmentName}/pending?error=unknown-type`)
-        return
+        return res.redirect(`/applications/${departmentName}/pending?error=unknown-type`)
       }
 
-      res.render(`pages/view-application/${applicationType.value}`, {
+      return res.render(`pages/view-application/${applicationType.value}`, {
         title: applicationType.name,
         application,
         departmentName,
       })
-    }),
-  )
-
-  router.get(
-    '/applications/:departmentName/:prisonerId/:applicationId/forward',
-    asyncMiddleware(async (req: Request, res: Response) => {
-      const { departmentName, prisonerId, applicationId } = req.params
-      const { user } = res.locals
-
-      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
-
-      if (!application) {
-        res.redirect(`/applications/${departmentName}/pending`)
-        return
-      }
-
-      await auditService.logPageView(Page.FORWARD_APPLICATION_PAGE, {
-        who: user.username,
-        correlationId: req.id,
-      })
-
-      const applicationType = APPLICATION_TYPES.find(type => type.apiValue === application.type)
-
-      if (!applicationType) {
-        res.redirect(`/applications/${departmentName}/pending?error=unknown-type`)
-        return
-      }
-
-      res.render(`pages/forward-application/${applicationType.value}`, {
-        application,
-        departmentName,
-      })
-    }),
-  )
-
-  router.post(
-    '/applications/:departmentName/:prisonerId/:applicationId/forward',
-    asyncMiddleware(async (req: Request, res: Response) => {
-      const { departmentName, prisonerId, applicationId } = req.params
-      const { forwardToDepartment } = req.body
-      const { user } = res.locals
-
-      await managingPrisonerAppsService.forwardApp(prisonerId, applicationId, forwardToDepartment, user)
-
-      res.redirect(`/applications/${departmentName}/${prisonerId}/${applicationId}`)
     }),
   )
 
