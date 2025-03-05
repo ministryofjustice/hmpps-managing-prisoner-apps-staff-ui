@@ -9,4 +9,9 @@ export default class ManagingPrisonerAppsService {
     const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
     return new ManagingPrisonerAppsApiClient(token).getPrisonerApp(prisonerId, applicationId)
   }
+
+  async forwardApp(prisonerId: string, applicationId: string, department: string, user: BaseUser) {
+    const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
+    return new ManagingPrisonerAppsApiClient(token).forwardApp(prisonerId, applicationId, department)
+  }
 }
