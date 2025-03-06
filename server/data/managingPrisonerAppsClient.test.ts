@@ -20,7 +20,7 @@ describe('Managing Prisoner Apps API Client', () => {
 
   afterEach(() => nock.cleanAll())
 
-  it('should return a response from the api', async () => {
+  it('should fetch a prisoner application by prisoner and application ID', async () => {
     fakeManagingPrisonerAppApi
       .get('/v1/prisoners/prisoner-id/apps/app-id')
       .matchHeader('authorization', `Bearer ${user.token}`)
@@ -29,4 +29,15 @@ describe('Managing Prisoner Apps API Client', () => {
     const output = await client.getPrisonerApp('prisoner-id', 'app-id')
     expect(output).toEqual(prisonerApp)
   })
+
+  // Reinstate with correct api endpoint and implementation once it is available
+  // it('should successfully forward an application to a different department', async () => {
+  //   fakeManagingPrisonerAppApi
+  //     .get('/v1/')
+  //     .matchHeader('authorization', `Bearer ${user.token}`)
+  //     .reply(200, undefined)
+
+  //   const output = await client.forwardApp('prisoner-id', 'app-id', 'dept')
+  //   expect(output).toBeUndefined()
+  // })
 })
