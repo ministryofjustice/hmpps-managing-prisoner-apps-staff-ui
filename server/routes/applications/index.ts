@@ -1,13 +1,14 @@
 import { Request, Response, Router } from 'express'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
-import applicationTypeRoutes from './applicationTypeRoutes'
-import prisonerDetailsRoutes from './prisonerDetailsRoutes'
-import swapVosPinCreditDetailsRoutes from './swapVosPinCreditDetailsRoutes'
-import submitApplicationRoutes from './submitApplicationRoutes'
-import viewApplicationRoutes from './viewApplicationsRoutes'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PrisonService from '../../services/prisonService'
+import applicationTypeRoutes from './applicationTypeRoutes'
+import forwardApplicationRoutes from './forwardApplicationRoutes'
+import prisonerDetailsRoutes from './prisonerDetailsRoutes'
+import submitApplicationRoutes from './submitApplicationRoutes'
+import swapVosPinCreditDetailsRoutes from './swapVosPinCreditDetailsRoutes'
+import viewApplicationRoutes from './viewApplicationsRoutes'
 
 export default function applicationsRoutes({
   auditService,
@@ -62,9 +63,10 @@ export default function applicationsRoutes({
   )
 
   router.use(applicationTypeRoutes({ auditService }))
+  router.use(forwardApplicationRoutes({ auditService, managingPrisonerAppsService }))
   router.use(prisonerDetailsRoutes({ auditService, prisonService }))
-  router.use(swapVosPinCreditDetailsRoutes({ auditService }))
   router.use(submitApplicationRoutes({ auditService }))
+  router.use(swapVosPinCreditDetailsRoutes({ auditService }))
   router.use(viewApplicationRoutes({ auditService, managingPrisonerAppsService }))
 
   return router
