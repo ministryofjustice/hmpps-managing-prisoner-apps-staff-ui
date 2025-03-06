@@ -30,13 +30,14 @@ describe('Managing Prisoner Apps API Client', () => {
     expect(output).toEqual(prisonerApp)
   })
 
-  it('should successfully forward an application to a different department', async () => {
-    fakeManagingPrisonerAppApi
-      .get('/v1/prisoners/prisoner-id/apps/app-id/forward/dept')
-      .matchHeader('authorization', `Bearer ${user.token}`)
-      .reply(200, undefined)
+  // Reinstate with correct api endpoint and implementation once it is available
+  // it('should successfully forward an application to a different department', async () => {
+  //   fakeManagingPrisonerAppApi
+  //     .get('/v1/')
+  //     .matchHeader('authorization', `Bearer ${user.token}`)
+  //     .reply(200, undefined)
 
-    const output = await client.forwardApp('prisoner-id', 'app-id', 'dept')
-    expect(output).toBeUndefined()
-  })
+  //   const output = await client.forwardApp('prisoner-id', 'app-id', 'dept')
+  //   expect(output).toBeUndefined()
+  // })
 })
