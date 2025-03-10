@@ -42,7 +42,7 @@ export default function viewApplicationRoutes({
         correlationId: req.id,
       })
 
-      const applicationType = getApplicationType(application.type)
+      const applicationType = getApplicationType(application.appType)
 
       if (!applicationType) {
         return res.redirect(`/applications/${departmentName}/pending?error=unknown-type`)

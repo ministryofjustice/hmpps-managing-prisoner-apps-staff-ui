@@ -22,7 +22,7 @@ describe('Managing Prisoner Apps API Client', () => {
 
   it('should fetch a prisoner application by prisoner and application ID', async () => {
     fakeManagingPrisonerAppApi
-      .get('/v1/prisoners/prisoner-id/apps/app-id')
+      .get('/v1/prisoners/prisoner-id/apps/app-id?requestedBy=true')
       .matchHeader('authorization', `Bearer ${user.token}`)
       .reply(200, prisonerApp)
 

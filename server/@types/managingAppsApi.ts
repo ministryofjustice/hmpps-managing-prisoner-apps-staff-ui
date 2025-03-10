@@ -13,9 +13,11 @@ export interface AssignedGroup {
 }
 
 export interface RequestedBy {
-  id: string
+  username: string
+  userId: string
   firstName: string
   lastName: string
+  category: string
   location: string
   iep: string
 }
@@ -31,7 +33,7 @@ export interface Application {
   id: string
   reference: string
   assignedGroup: AssignedGroup
-  type: string
+  appType: string
   requestedBy: RequestedBy
   requestedDate: string
   createdDate: string

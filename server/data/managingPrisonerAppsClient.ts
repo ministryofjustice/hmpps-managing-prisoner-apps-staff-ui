@@ -17,7 +17,7 @@ export default class ManagingPrisonerAppsApiClient {
   async getPrisonerApp(prisonerId: string, applicationId: string): Promise<Application | null> {
     try {
       return await this.restClient.get({
-        path: `/v1/prisoners/${prisonerId}/apps/${applicationId}`,
+        path: `/v1/prisoners/${prisonerId}/apps/${applicationId}?requestedBy=true`,
       })
     } catch (error) {
       logger.error(`Error fetching application for prisonerId: ${prisonerId}, applicationId: ${applicationId}`, error)

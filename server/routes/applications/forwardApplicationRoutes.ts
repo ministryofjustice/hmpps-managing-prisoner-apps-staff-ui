@@ -31,7 +31,7 @@ export default function forwardApplicationRoutes({
         correlationId: req.id,
       })
 
-      const applicationType = getApplicationType(application.type)
+      const applicationType = getApplicationType(application.appType)
 
       if (!applicationType) {
         return res.redirect(`/applications/${departmentName}/pending?error=unknown-type`)
@@ -60,7 +60,7 @@ export default function forwardApplicationRoutes({
         return res.redirect(`/applications/${departmentName}/pending`)
       }
 
-      const applicationType = getApplicationType(application.type)
+      const applicationType = getApplicationType(application.appType)
       const errors = validateForwardingApplication(forwardToDepartment, forwardingReason)
 
       if (Object.keys(errors).length > 0) {
