@@ -13,9 +13,11 @@ export interface AssignedGroup {
 }
 
 export interface RequestedBy {
-  id: string
+  username: string
+  userId: string
   firstName: string
   lastName: string
+  category: string
   location: string
   iep: string
 }
