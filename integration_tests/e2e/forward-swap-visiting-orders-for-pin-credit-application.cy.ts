@@ -7,7 +7,7 @@ context('Forward Application Page', () => {
   const { prisonerApp: application } = new TestData()
   const {
     id: applicationId,
-    requestedBy: { id: prisonerId },
+    requestedBy: { username: prisonerId },
   } = application
 
   const visitPage = () => {

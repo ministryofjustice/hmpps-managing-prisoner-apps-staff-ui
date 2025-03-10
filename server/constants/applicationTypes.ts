@@ -3,6 +3,6 @@ export const APPLICATION_TYPES = [
   {
     name: 'Swap visiting orders (VOs) for PIN credit',
     value: 'swap-visiting-orders-for-pin-credit',
-    apiValue: 'SWAP_VISITING_ORDERS_FOR_PIN_CREDIT',
+    apiValue: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
   },
 ]

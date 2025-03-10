@@ -7,7 +7,7 @@ context('View Swap VOs for PIN Credit Application Page', () => {
   const { prisonerApp: application } = new TestData()
   const {
     id: applicationId,
-    requestedBy: { id: prisonerId },
+    requestedBy: { username: prisonerId },
   } = application
 
   beforeEach(() => {

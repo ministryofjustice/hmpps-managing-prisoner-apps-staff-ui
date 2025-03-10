@@ -39,7 +39,7 @@
                 text: "Status"
               },
               value: {
-                text: ""
+                text: application.status
               }
             },
             {
@@ -52,7 +52,7 @@
               actions: {
                 items: [
                   {
-                    href: "/applications/" + departmentName + "/" + application.requestedBy.id + "/" + application.id + "/forward",
+                    href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/forward",
                     text: "Forward",
                     visuallyHiddenText: "department"
                   }
@@ -72,7 +72,7 @@
                 text: "Date sent"
               },
               value: {
-                text: application.requestedDate
+                text: application.requestedDateTime
               }
             },
             {
@@ -95,7 +95,7 @@
                 text: "Prisoner"
               },
               value: {
-                text: application.requestedBy.id
+                text: application.requestedBy.username
               },
               actions: {
                 items: [
