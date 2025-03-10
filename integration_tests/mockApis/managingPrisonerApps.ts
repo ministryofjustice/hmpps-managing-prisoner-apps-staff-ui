@@ -15,7 +15,7 @@ export default {
     return stubFor({
       request: {
         method: 'GET',
-        url: `/managingPrisonerApps/v1/prisoners/${prisonerId}/apps/${applicationId}`,
+        url: `/managingPrisonerApps/v1/prisoners/${prisonerId}/apps/${applicationId}?requestedBy=true`,
       },
       response: {
         status: 200,
