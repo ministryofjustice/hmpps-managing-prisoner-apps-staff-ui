@@ -1,0 +1,27 @@
+{% from "govuk/components/footer/macro.njk" import govukFooter %}
+
+{{ govukFooter({
+  classes: "govuk-!-display-none-print",
+  contentLicence: {
+    html: 'All content is available under the
+            <a class="govuk-footer__link"
+               href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence v3.0</a>, except where otherwise stated'
+  },
+  meta: {
+    visuallyHiddenTitle: "Support links",
+    items: [
+      {
+        href: "https://support-dev.hmpps.service.justice.gov.uk/feedback-and-support",
+        text: "Feedback and support"
+      },
+      {
+        href: "/auth/terms",
+        text: "Terms and conditions"
+      }
+    ]
+  },
+  copyright: {
+    text: "© Crown copyright",
+    href: "https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/"
+  }
+}) }}

@@ -29,32 +29,38 @@ context('Application Type Page', () => {
           .and('have.attr', 'value', applicationType.value)
       })
     })
+  })
 
-    it('should display the continue button', () => {
-      cy.get('.govuk-button')
-        .should('exist')
-        .invoke('text')
-        .should('satisfy', text => text.trim() === 'Continue')
-    })
+  it('should display the continue button', () => {
+    cy.get('.govuk-button')
+      .should('exist')
+      .invoke('text')
+      .should('satisfy', text => text.trim() === 'Continue')
+  })
 
-    it('should ensure links are functional (if paths are set)', () => {
-      cy.get('a').each($link => {
-        const href = $link.attr('href')
-        if (href && href !== '#' && href !== '') {
-          cy.request({
-            url: href,
-            failOnStatusCode: false,
-          }).then(response => {
-            if (response.status !== 200) {
-              cy.log(`Broken link: ${href} - Status: ${response.status}`)
-            } else {
-              cy.wrap(response.status).should('equal', 200)
-            }
-          })
-        } else {
-          cy.log(`Skipping link with href: ${href}`)
-        }
-      })
+  it('should display the error message when no radio button is selected', () => {
+    cy.get('.govuk-button').click()
+    cy.get('.govuk-error-summary').should('exist').and('contain', 'Choose one')
+    cy.get('.govuk-error-message').should('exist').and('contain', 'Choose one')
+  })
+
+  it('should ensure links are functional (if paths are set)', () => {
+    cy.get('a').each($link => {
+      const href = $link.attr('href')
+      if (href && href !== '#' && href !== '') {
+        cy.request({
+          url: href,
+          failOnStatusCode: false,
+        }).then(response => {
+          if (response.status !== 200) {
+            cy.log(`Broken link: ${href} - Status: ${response.status}`)
+          } else {
+            cy.wrap(response.status).should('equal', 200)
+          }
+        })
+      } else {
+        cy.log(`Skipping link with href: ${href}`)
+      }
     })
   })
 })
