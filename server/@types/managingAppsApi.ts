@@ -31,7 +31,7 @@ export interface Application {
   id: string
   reference: string
   assignedGroup: AssignedGroup
-  type: string
+  appType: string
   requestedBy: RequestedBy
   requestedDate: string
   createdDate: string

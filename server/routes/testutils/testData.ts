@@ -17,7 +17,7 @@ export default class TestData {
       type: 'DEPARTMENT',
       email: 'business+hub+ABC@justice.gov.uk',
     },
-    type: 'SWAP_VISITING_ORDERS_FOR_PIN_CREDIT',
+    appType: 'SWAP_VISITING_ORDERS_FOR_PIN_CREDIT',
     requestedBy: {
       id: 'G123456',
       firstName: 'Emily',
