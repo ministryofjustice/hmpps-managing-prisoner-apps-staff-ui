@@ -7,7 +7,7 @@ export default function submitApplicationRoutes({ auditService }: { auditService
   const router = Router()
 
   router.get(
-    '/submit/:applicationId',
+    '/log/submit/:applicationId',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { applicationId } = req.params
 
@@ -34,7 +34,7 @@ export default function submitApplicationRoutes({ auditService }: { auditService
         return
       }
 
-      res.render(`pages/submit-application/${application.type}`, {
+      res.render(`pages/log-application/submit/${application.type}`, {
         title: applicationType.name,
         application,
       })

@@ -9,7 +9,7 @@ context('Confirm Swap VOs for PIN Credit Details Page', () => {
     cy.task('stubSignIn')
     cy.signIn()
 
-    cy.visit('/log/swap-vos-pin-credit-details/confirm')
+    cy.visit('/log/confirm')
 
     cy.contains('Swap visiting orders (VOs) for PIN credit').click()
     cy.contains('button', 'Continue').click()

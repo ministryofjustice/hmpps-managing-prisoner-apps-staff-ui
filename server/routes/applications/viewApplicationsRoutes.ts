@@ -48,7 +48,7 @@ export default function viewApplicationRoutes({
         return res.redirect(`/applications/${departmentName}/pending?error=unknown-type`)
       }
 
-      return res.render(`pages/view-application/${applicationType.value}`, {
+      return res.render(`pages/applications/view/${applicationType.value}`, {
         title: applicationType.name,
         application,
         departmentName,
