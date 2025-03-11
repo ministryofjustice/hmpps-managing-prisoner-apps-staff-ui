@@ -41,7 +41,7 @@ export default function applicationTypeRoutes({ auditService }: { auditService: 
       }))
 
       if (!selectedAppType) {
-        return res.render('pages/log-application/select-application-type', {
+        return res.render('pages/log-application/select-application-type/index', {
           title: 'Select application type',
           applicationTypes,
           errorMessage: 'Choose one',
