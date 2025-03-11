@@ -37,7 +37,7 @@ export default function forwardApplicationRoutes({
         return res.redirect(`/applications/${departmentName}/pending?error=unknown-type`)
       }
 
-      return res.render(`pages/forward-application/${applicationType.value}`, {
+      return res.render(`pages/applications/forward/${applicationType.value}`, {
         application,
         departmentName,
         textareaValue: '',
@@ -64,7 +64,7 @@ export default function forwardApplicationRoutes({
       const errors = validateForwardingApplication(forwardToDepartment, forwardingReason)
 
       if (Object.keys(errors).length > 0) {
-        return res.render(`pages/forward-application/${applicationType.value}`, {
+        return res.render(`pages/applications/forward/${applicationType.value}`, {
           application,
           departmentName,
           textareaValue: forwardingReason,

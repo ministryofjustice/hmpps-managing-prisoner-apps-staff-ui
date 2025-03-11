@@ -17,6 +17,7 @@ export declare module 'express-session' {
   interface ApplicationType {
     value: string
     name: string
+    apiValue: string
   }
 
   type AdditionalApplicationData = SwapVOsForPinCreditDetails

@@ -34,7 +34,7 @@ export default function submitApplicationRoutes({ auditService }: { auditService
         return
       }
 
-      res.render(`pages/submit-application/${application.type}`, {
+      res.render(`pages/log-application/submit/${application.type}`, {
         title: applicationType.name,
         application,
       })

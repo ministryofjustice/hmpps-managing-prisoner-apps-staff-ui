@@ -3,11 +3,11 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PrisonService from '../../services/prisonService'
+import applicationDetailsRoutes from './applicationDetailsRoutes'
 import applicationTypeRoutes from './applicationTypeRoutes'
 import forwardApplicationRoutes from './forwardApplicationRoutes'
 import prisonerDetailsRoutes from './prisonerDetailsRoutes'
 import submitApplicationRoutes from './submitApplicationRoutes'
-import swapVosPinCreditDetailsRoutes from './swapVosPinCreditDetailsRoutes'
 import viewApplicationRoutes from './viewApplicationsRoutes'
 
 export default function applicationsRoutes({
@@ -66,7 +66,7 @@ export default function applicationsRoutes({
   router.use(forwardApplicationRoutes({ auditService, managingPrisonerAppsService }))
   router.use(prisonerDetailsRoutes({ auditService, prisonService }))
   router.use(submitApplicationRoutes({ auditService }))
-  router.use(swapVosPinCreditDetailsRoutes({ auditService }))
+  router.use(applicationDetailsRoutes({ auditService }))
   router.use(viewApplicationRoutes({ auditService, managingPrisonerAppsService }))
 
   return router

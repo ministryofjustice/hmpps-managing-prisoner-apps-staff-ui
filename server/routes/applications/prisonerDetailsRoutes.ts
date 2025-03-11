@@ -25,7 +25,7 @@ export default function prisonerDetailsRoutes({
         return res.redirect('/log/application-type')
       }
 
-      return res.render('pages/log/prisoner-details', {
+      return res.render('pages/log-application/prisoner-details', {
         title: 'Log prisoner details',
         appTypeTitle: req.session.applicationData.type.name,
       })
@@ -69,7 +69,7 @@ export default function prisonerDetailsRoutes({
         date: req.body.date,
       })
 
-      res.redirect(`/log/swap-vos-pin-credit-details`)
+      res.redirect(`/log/application-details`)
     }),
   )
 

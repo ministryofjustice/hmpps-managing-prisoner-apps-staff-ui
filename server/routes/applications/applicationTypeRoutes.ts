@@ -16,11 +16,12 @@ export default function applicationTypeRoutes({ auditService }: { auditService: 
       })
 
       const applicationTypes = APPLICATION_TYPES.map(applicationType => ({
+        apiValue: applicationType.apiValue,
         value: applicationType.value,
         text: applicationType.name,
       }))
 
-      res.render('pages/log/application-type', {
+      res.render('pages/log-application/select-application-type', {
         title: 'Select application type',
         applicationTypes,
         errorMessage: null,
@@ -33,13 +34,16 @@ export default function applicationTypeRoutes({ auditService }: { auditService: 
     asyncMiddleware(async (req: Request, res: Response) => {
       const selectedAppType = APPLICATION_TYPES.find(type => type.value === req.body.applicationType)
 
+      const applicationTypes = APPLICATION_TYPES.map(applicationType => ({
+        apiValue: applicationType.apiValue,
+        value: applicationType.value,
+        text: applicationType.name,
+      }))
+
       if (!selectedAppType) {
-        return res.render('pages/log/application-type', {
+        return res.render('pages/log-application/select-application-type', {
           title: 'Select application type',
-          applicationTypes: APPLICATION_TYPES.map(applicationType => ({
-            value: applicationType.value,
-            text: applicationType.name,
-          })),
+          applicationTypes,
           errorMessage: 'Choose one',
           errorSummary: [{ text: 'Choose one', href: '#applicationType' }],
         })
