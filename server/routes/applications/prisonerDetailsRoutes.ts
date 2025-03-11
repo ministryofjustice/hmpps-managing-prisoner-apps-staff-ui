@@ -25,7 +25,7 @@ export default function prisonerDetailsRoutes({
         return res.redirect('/log/application-type')
       }
 
-      return res.render('pages/log-application/prisoner-details', {
+      return res.render('pages/log-application/prisoner-details/index', {
         title: 'Log prisoner details',
         appTypeTitle: req.session.applicationData.type.name,
       })
