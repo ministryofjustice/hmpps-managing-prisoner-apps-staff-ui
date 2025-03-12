@@ -5,10 +5,13 @@ import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsServ
 import PrisonService from '../../services/prisonService'
 import applicationDetailsRoutes from './applicationDetailsRoutes'
 import applicationTypeRoutes from './applicationTypeRoutes'
+import changeApplicationRoutes from './changeApplicationRoutes'
+import confirmDetailsRoutes from './confirmDetailsRoutes'
 import forwardApplicationRoutes from './forwardApplicationRoutes'
 import prisonerDetailsRoutes from './prisonerDetailsRoutes'
 import submitApplicationRoutes from './submitApplicationRoutes'
 import viewApplicationRoutes from './viewApplicationsRoutes'
+import TestData from '../testutils/testData'
 
 export default function applicationsRoutes({
   auditService,
@@ -29,44 +32,19 @@ export default function applicationsRoutes({
         correlationId: req.id,
       })
 
-      const sections = [
-        {
-          title: 'Departments',
-          items: [
-            { name: 'Business Hub', tagText: '44', path: '' },
-            { name: 'OMU', tagText: '9', path: '' },
-          ],
-        },
-        {
-          title: 'Wings',
-          items: [
-            { name: 'First Night Centre', tagText: '3', path: '' },
-            { name: 'A', tagText: '0', path: '' },
-            { name: 'B', tagText: '2', path: '' },
-            { name: 'C', tagText: '1', path: '' },
-            { name: 'D', tagText: '0', path: '' },
-            { name: 'E', tagText: '1', path: '' },
-          ],
-        },
-        {
-          title: 'Governors',
-          items: [
-            { name: 'Paul White', tagText: '1', path: '' },
-            { name: 'James Smart', tagText: '0', path: '' },
-            { name: 'Syed Hasan', tagText: '4', path: '' },
-          ],
-        },
-      ]
+      const { sections } = new TestData()
 
       res.render('pages/applications', { title: 'Applications', sections })
     }),
   )
 
+  router.use(applicationDetailsRoutes({ auditService }))
   router.use(applicationTypeRoutes({ auditService }))
+  router.use(changeApplicationRoutes({ auditService, managingPrisonerAppsService }))
+  router.use(confirmDetailsRoutes({ auditService }))
   router.use(forwardApplicationRoutes({ auditService, managingPrisonerAppsService }))
   router.use(prisonerDetailsRoutes({ auditService, prisonService }))
   router.use(submitApplicationRoutes({ auditService }))
-  router.use(applicationDetailsRoutes({ auditService }))
   router.use(viewApplicationRoutes({ auditService, managingPrisonerAppsService }))
 
   return router

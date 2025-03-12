@@ -9,107 +9,105 @@
 
 {% block content %}
   <div class="govuk-body govuk-width-container">
-    {{ govukBackLink({
-      text: "Back",
-      href: "/log/swap-vos-pin-credit-details"
-    }) }}
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        {{ govukBackLink({
+          text: "Back",
+          href: backLink
+        }) }}
 
-    <span class="govuk-caption-xl">{{ appTypeTitle }}</span>
-    <h1 class="govuk-heading-xl govuk-!-margin-top-0">Check details</h1>
+        <span class="govuk-caption-xl">{{ appTypeTitle }}</span>
+        <h1 class="govuk-heading-xl govuk-!-margin-top-0">Check details</h1>
 
-    {{ govukSummaryList({
-      classes: "govuk-!-margin-bottom-9",
-      rows: [
-        {
-          key: {
-            text: "Application Type"
-          },
-          value: {
-            text: "Swap VOs for pin credit"
-          },
-          actions: {
-            items: [
-              {
-                href: "#",
-                text: "Change",
-                visuallyHiddenText: "application type"
+        {% set actionItems = [] if isUpdate else [{ href: "#", text: "Change", visuallyHiddenText: "application type" }] %}
+
+        {{ govukSummaryList({
+          classes: "govuk-!-margin-bottom-9",
+          rows: [
+            {
+              key: {
+                text: "Application Type"
+              },
+              value: {
+                text: "Swap VOs for pin credit"
+              },
+              actions: { items: actionItems }
+            }
+          ]
+        }) }}
+
+        <h2 class="govuk-heading-m">Application details</h2>
+
+        {{ govukSummaryList({
+          classes: "govuk-!-margin-bottom-9",
+          rows: [
+            {
+              key: {
+                text: "Prisoner"
+              },
+              value: {
+                text: applicationData.prisonerName
+              },
+              actions: {
+                items: [
+                  {
+                    href: "#",
+                    text: "Change",
+                    visuallyHiddenText: "prisoner"
+                  }
+                ]
               }
-            ]
-          }
-        }
-      ]
-    }) }}
-
-    <h2 class="govuk-heading-m">Application details</h2>
-
-    {{ govukSummaryList({
-      classes: "govuk-!-margin-bottom-9",
-      rows: [
-        {
-          key: {
-            text: "Prisoner"
-          },
-          value: {
-            text: session.applicationData.prisonerName
-          },
-          actions: {
-            items: [
-              {
-                href: "#",
-                text: "Change",
-                visuallyHiddenText: "prisoner"
+            },
+            {
+              key: {
+                text: "Submitted on"
+              },
+              value: {
+                text: applicationData.date
+              },
+              actions: {
+                items: [
+                  {
+                    href: "#",
+                    text: "Change",
+                    visuallyHiddenText: "submitted on"
+                  }
+                ]
               }
-            ]
-          }
-        },
-        {
-          key: {
-            text: "Submitted on"
-          },
-          value: {
-            text: session.applicationData.date
-          },
-          actions: {
-            items: [
-              {
-                href: "#",
-                text: "Change",
-                visuallyHiddenText: "submitted on"
+            }
+          ]
+        }) }}
+
+        <h2 class="govuk-heading-m">VOs to swap</h2>
+
+        {{ govukSummaryList({
+          classes: "govuk-!-margin-bottom-9",
+          rows: [
+            {
+              key: {
+                text: "Details"
+              },
+              value: {
+                text: applicationData.additionalData.swapVOsToPinCreditDetails
+              },
+              actions: {
+                items: [
+                  {
+                    href: "#",
+                    text: "Change",
+                    visuallyHiddenText: "details"
+                  }
+                ]
               }
-            ]
-          }
-        }
-      ]
-    }) }}
+            }
+          ]
+        }) }}
 
-    <h2 class="govuk-heading-m">VOs to swap</h2>
-
-    {{ govukSummaryList({
-      classes: "govuk-!-margin-bottom-9",
-      rows: [
-        {
-          key: {
-            text: "Details"
-          },
-          value: {
-            text: session.applicationData.additionalData.swapVOsToPinCreditDetails
-          },
-          actions: {
-            items: [
-              {
-                href: "#",
-                text: "Change",
-                visuallyHiddenText: "details"
-              }
-            ]
-          }
-        }
-      ]
-    }) }}
-
-    {{ govukButton({
-      text: "Continue",
-      classes: "govuk-button--primary"
-    }) }}
+        {{ govukButton({
+          text: "Continue",
+          classes: "govuk-button--primary"
+        }) }}
+      </div>
+    </div>
   </div>
 {% endblock %}
