@@ -11,6 +11,7 @@
   <div class="govuk-body govuk-width-container">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
+        
         {{ govukBackLink({
           text: "Back",
           href: backLink
@@ -23,12 +24,8 @@
           classes: "govuk-!-margin-bottom-9",
           rows: [
             {
-              key: {
-                text: "Application Type"
-              },
-              value: {
-                text: "Swap VOs for pin credit"
-              },
+              key: { text: "Application Type" },
+              value: { text: "Swap VOs for pin credit" },
               actions: { items: [] if isUpdate else [{ href: "#", text: "Change", visuallyHiddenText: "application type" }] }
             }
           ]
@@ -40,26 +37,14 @@
           classes: "govuk-!-margin-bottom-9",
           rows: [
             {
-              key: {
-                text: "Prisoner"
-              },
-              value: {
-                text: applicationData.prisonerName
-              },
-              actions: {
-                items: [] if isUpdate else [{ href: "#", text: "Change", visuallyHiddenText: "prisoner" }]
-              }
+              key: { text: "Prisoner" },
+              value: { text: applicationData.prisonerName },
+              actions: { items: [] if isUpdate else [{ href: "#", text: "Change", visuallyHiddenText: "prisoner" }] }
             },
             {
-              key: {
-                text: "Submitted on"
-              },
-              value: {
-                text: applicationData.date
-              },
-              actions: {
-                items: [] if isUpdate else [{ href: "#", text: "Change", visuallyHiddenText: "submitted on" }]
-              }
+              key: { text: "Submitted on" },
+              value: { text: applicationData.date },
+              actions: { items: [] if isUpdate else [{ href: "#", text: "Change", visuallyHiddenText: "submitted on" }] }
             }
           ]
         }) }}
@@ -70,21 +55,9 @@
           classes: "govuk-!-margin-bottom-9",
           rows: [
             {
-              key: {
-                text: "Details"
-              },
-              value: {
-                text: applicationData.additionalData.swapVOsToPinCreditDetails
-              },
-              actions: {
-                items: [
-                  {
-                    href: "#",
-                    text: "Change",
-                    visuallyHiddenText: "details"
-                  }
-                ]
-              }
+              key: { text: "Details" },
+              value: { text: applicationData.additionalData.swapVOsToPinCreditDetails },
+              actions: { items: [{ href: "#", text: "Change", visuallyHiddenText: "details" }] }
             }
           ]
         }) }}
@@ -93,6 +66,7 @@
           text: "Continue",
           classes: "govuk-button--primary"
         }) }}
+
       </div>
     </div>
   </div>
