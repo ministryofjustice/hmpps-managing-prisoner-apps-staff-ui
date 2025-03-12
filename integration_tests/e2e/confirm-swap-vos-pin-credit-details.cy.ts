@@ -24,7 +24,7 @@ context('Confirm Swap VOs for PIN Credit Details Page', () => {
   })
 
   it('should render the back link with correct text and href', () => {
-    page.backLink().should('have.text', 'Back').and('have.attr', 'href', '/log/swap-vos-pin-credit-details')
+    page.backLink().should('have.text', 'Back').and('have.attr', 'href', '/log/application-details')
   })
 
   it('should render the application type summary with correct text', () => {
