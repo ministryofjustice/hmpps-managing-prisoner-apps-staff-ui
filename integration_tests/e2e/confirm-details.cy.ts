@@ -16,121 +16,86 @@ context('Confirm Details Page', () => {
     cy.signIn()
   })
 
-  context('Confirm log details', () => {
-    beforeEach(() => {
-      cy.visit('/log/confirm')
+  const testConfirmDetailsPage = (title, route, backLink, hasChangeLinks) => {
+    context(title, () => {
+      beforeEach(() => {
+        if (route.includes('business-hub')) {
+          cy.task('stubGetPrisonerApp', {
+            prisonerId,
+            applicationId,
+            application,
+          })
+        }
 
-      cy.contains('Swap visiting orders (VOs) for PIN credit').click()
-      cy.contains('button', 'Continue').click()
-      cy.contains('button', 'Continue').click()
-      cy.contains('button', 'Continue').click()
+        cy.visit(route)
 
-      page = Page.verifyOnPage(ConfirmDetailsPage)
-    })
+        if (!route.includes('business-hub')) {
+          cy.contains('Swap visiting orders (VOs) for PIN credit').click()
+          cy.contains('button', 'Continue').click()
+          cy.contains('button', 'Continue').click()
+          cy.contains('button', 'Continue').click()
+        }
 
-    it('should display the correct page title', () => {
-      page.pageTitle().should('include', 'Check details')
-    })
-
-    it('should render the back link with correct text and href', () => {
-      page.backLink().should('have.text', 'Back').and('have.attr', 'href', '/log/application-details')
-    })
-
-    it('should render the application type summary with correct text', () => {
-      page.applicationType().should('contain.text', 'Swap VOs for pin credit')
-    })
-
-    it('should allow changing the application type', () => {
-      page.changeApplicationType().should('exist').and('have.attr', 'href', '#')
-    })
-
-    it('should render prisoner name summary with correct text', () => {
-      page.prisonerName().should('exist')
-    })
-
-    it('should allow changing the prisoner details', () => {
-      page.changePrisoner().should('exist').and('have.attr', 'href', '#')
-    })
-
-    it('should display the submitted on date', () => {
-      page.submittedOn().should('exist')
-    })
-
-    it('should allow changing the submission date', () => {
-      page.changeSubmittedOn().should('exist').and('have.attr', 'href', '#')
-    })
-
-    it('should display the VOs to swap details', () => {
-      page.swapVOsDetails().should('exist')
-    })
-
-    it('should allow changing the swap VOs details', () => {
-      page.changeSwapVOsDetails().should('exist').and('have.attr', 'href', '#')
-    })
-
-    it('should render a Continue button with the correct text', () => {
-      page.continueButton().should('contain.text', 'Continue')
-    })
-  })
-
-  context('Confirm update details', () => {
-    beforeEach(() => {
-      cy.task('stubGetPrisonerApp', {
-        prisonerId,
-        applicationId,
-        application,
+        page = Page.verifyOnPage(ConfirmDetailsPage)
       })
 
-      cy.visit(`/applications/business-hub/${prisonerId}/${applicationId}/change/confirm`)
+      it('should display the correct page title', () => {
+        page.pageTitle().should('include', 'Check details')
+      })
 
-      page = Page.verifyOnPage(ConfirmDetailsPage)
-    })
+      it('should render the back link with correct text and href', () => {
+        page.backLink().should('have.text', 'Back').and('have.attr', 'href', backLink)
+      })
 
-    it('should display the correct page title', () => {
-      page.pageTitle().should('include', 'Check details')
-    })
+      it('should render the application type summary with correct text', () => {
+        page.applicationType().should('contain.text', 'Swap VOs for pin credit')
+      })
 
-    it('should render the back link with correct text and href', () => {
-      page
-        .backLink()
-        .should('have.text', 'Back')
-        .and('have.attr', 'href', `/applications/business-hub/${prisonerId}/${applicationId}/change`)
-    })
+      it(`should ${hasChangeLinks ? '' : 'not '}allow changing the application type`, () => {
+        page.changeApplicationType().should(hasChangeLinks ? 'exist' : 'not.exist')
+      })
 
-    it('should render the application type summary with correct text', () => {
-      page.applicationType().should('contain.text', 'Swap VOs for pin credit')
-    })
+      it('should render prisoner name summary with correct text', () => {
+        page.prisonerName().should('exist')
+      })
 
-    it('should allow changing the application type', () => {
-      page.changeApplicationType().should('not.exist')
-    })
+      it(`should ${hasChangeLinks ? '' : 'not '}allow changing the prisoner details`, () => {
+        page.changePrisoner().should(hasChangeLinks ? 'exist' : 'not.exist')
+      })
 
-    it('should render prisoner name summary with correct text', () => {
-      page.prisonerName().should('exist')
-    })
+      it('should display the submitted on date', () => {
+        page.submittedOn().should('exist')
+      })
 
-    it('should allow changing the prisoner details', () => {
-      page.changePrisoner().should('not.exist')
-    })
+      it(`should ${hasChangeLinks ? '' : 'not '}allow changing the submission date`, () => {
+        page.changeSubmittedOn().should(hasChangeLinks ? 'exist' : 'not.exist')
+      })
 
-    it('should display the submitted on date', () => {
-      page.submittedOn().should('exist')
-    })
+      it('should display the VOs to swap details', () => {
+        page.swapVOsDetails().should('exist')
+      })
 
-    it('should allow changing the submission date', () => {
-      page.changeSubmittedOn().should('not.exist')
-    })
+      it('should allow changing the swap VOs details', () => {
+        page.changeSwapVOsDetails().should('exist').and('have.attr', 'href', '#')
+      })
 
-    it('should display the VOs to swap details', () => {
-      page.swapVOsDetails().should('exist')
+      it('should render a Continue button with the correct text', () => {
+        page.continueButton().should('contain.text', 'Continue')
+      })
     })
+  }
 
-    it('should allow changing the swap VOs details', () => {
-      page.changeSwapVOsDetails().should('exist').and('have.attr', 'href', '#')
-    })
+  testConfirmDetailsPage(
+    'Logging a new application - Confirm details',
+    '/log/confirm',
+    '/log/application-details',
+    true,
+  )
 
-    it('should render a Continue button with the correct text', () => {
-      page.continueButton().should('contain.text', 'Continue')
-    })
-  })
+  testConfirmDetailsPage(
+    'Updating an existing application - Confirm details',
+    `/applications/business-hub/${prisonerId}/${applicationId}/change/confirm`,
+    `/applications/business-hub/${prisonerId}/${applicationId}/change`,
+    false,
+  )
 })
