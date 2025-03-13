@@ -4,6 +4,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { getApplicationType } from '../../utils/getApplicationType'
+import { updateSessionData } from '../../utils/session'
 
 export default function confirmDetailsRoutes({
   auditService,
@@ -54,6 +55,12 @@ export default function confirmDetailsRoutes({
       if (!application) {
         return res.redirect(URLS.APPLICATION_DETAILS)
       }
+
+      updateSessionData(req, {
+        prisonerName: req.body.prisonerName,
+        date: req.body.date,
+        prisonerId: req.body.prisonNumber,
+      })
 
       return res.redirect(`/log/submit/${application.id}`)
     }),
