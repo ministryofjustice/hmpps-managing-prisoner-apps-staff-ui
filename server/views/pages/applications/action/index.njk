@@ -1,0 +1,121 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + title %}
+{% set mainClasses = "app-container govuk-body applications-landing-page" %}
+
+{% block content %}
+  <div class="govuk-body govuk-width-container">
+    {% if errors %}
+      {% set errorList = [] %}
+
+      {% if errors.selectAction %}
+        {% set errorList = errorList.concat([{ text: errors.selectAction.text, href: "#selectAction" }]) %}
+      {% endif %}
+
+      {% if errors.actionReplyReason %}
+        {% set errorList = errorList.concat([{ text: errors.actionReplyReason.text, href: "#actionReplyReason" }]) %}
+      {% endif %}
+
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: errorList
+      }) }}
+    {% endif %}
+
+    <span class="govuk-caption-xl">Swap VOs for PIN credit</span>
+    <h1 class="govuk-heading-xl govuk-!-margin-top-0">Action and reply</h1>
+
+    {{ mojSubNavigation({
+      label: 'Sub navigation',
+      items: [{
+        text: 'Application',
+        href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id
+      }, {
+        text: 'Comments',
+        href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/comments"
+      }, {
+        text: 'Action and reply',
+        href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/reply",
+        active: true
+      }, {
+        text: 'History',
+        href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/history"
+      }]
+    }) }}
+
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-heading-m">Action and reply</h2>
+        <p class="govuk-body">These responses will be printed out on the prisoner reply form.</p>
+        
+        <form method="POST" id="action-and-reply-form">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        
+          {{ govukRadios({
+            name: "selectAction",
+            fieldset: {
+              legend: {
+                text: "Select an action",
+                isPageHeading: false,
+                classes: "govuk-fieldset__legend--s"
+              }
+            },
+            items: [
+              {
+                value: "approved",
+                text: "Approved",
+                checked: selectedAction == "approved"
+              },
+              {
+                value: "declined",
+                text: "Declined",
+                checked: selectedAction == "declined"
+              }
+            ]
+          }) }}
+
+          {% set characterCountConfig = {
+            name: "actionReplyReason",
+            id: "action-and-reply-reason",
+            maxlength: 1000,
+            value: textareaValue or "",
+            label: {
+              text: "Reason",
+              classes: "govuk-label--s",
+              isPageHeading: false
+            }
+          } %}
+
+          {% if errors.actionReplyReason and (selectedAction == "declined") %}
+            {% set characterCountConfig = {
+              name: "actionReplyReason",
+              id: "action-and-reply-reason",
+              maxlength: 1000,
+              value: textareaValue or "",
+              label: {
+                text: "Reason",
+                classes: "govuk-label--s",
+                isPageHeading: false
+              },
+              errorMessage: { text: errors.actionReplyReason.text }
+            } %}
+          {% endif %}
+
+          {{ govukCharacterCount(characterCountConfig) }}
+
+          {{ govukButton({
+            text: "Reply",
+            classes: "govuk-button--primary"
+          }) }}
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
