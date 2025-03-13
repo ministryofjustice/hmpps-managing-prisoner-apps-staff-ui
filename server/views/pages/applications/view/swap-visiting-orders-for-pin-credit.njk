@@ -7,24 +7,25 @@
 {% set mainClasses = "app-container govuk-body applications-landing-page" %}
 
 {% block content %}
-  <div class="govuk-body govuk-width-container govuk-!-padding-top-5 govuk-!-padding-bottom-5">
+  <div class="govuk-body govuk-width-container">
+    <span class="govuk-caption-xl">Business Hub applications</span>
     <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
 
     {{ mojSubNavigation({
       label: 'Sub navigation',
       items: [{
         text: 'Application',
-        href: "",
+        href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id,
         active: true
       }, {
         text: 'Comments',
-        href: ""
+        href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/comments"
       }, {
         text: 'Action and reply',
-        href: ""
+        href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/reply"
       }, {
         text: 'History',
-        href: ""
+        href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/history"
       }]
     }) }}
 

@@ -1,9 +1,9 @@
 import TestData from '../../server/routes/testutils/testData'
 import Page from '../pages/page'
-import ViewSwapVosPinCreditApplicationPage from '../pages/viewSwapVosPinCreditApplicationPage'
+import ViewApplicationPage from '../pages/viewApplicationPage'
 
-context('View Swap VOs for PIN Credit Application Page', () => {
-  let page: ViewSwapVosPinCreditApplicationPage
+context('View Application Page', () => {
+  let page: ViewApplicationPage
   const { prisonerApp: application } = new TestData()
   const {
     id: applicationId,
@@ -22,7 +22,7 @@ context('View Swap VOs for PIN Credit Application Page', () => {
 
     cy.visit(`/applications/business-hub/${prisonerId}/${applicationId}`)
 
-    page = Page.verifyOnPage(ViewSwapVosPinCreditApplicationPage)
+    page = Page.verifyOnPage(ViewApplicationPage)
   })
 
   it('should display the correct page title', () => {
@@ -58,14 +58,26 @@ context('View Swap VOs for PIN Credit Application Page', () => {
   })
 
   it('should allow navigating to the Comments section', () => {
-    page.commentsTab().should('exist').and('contain.text', 'Comments').and('have.attr', 'href', '')
+    page
+      .commentsTab()
+      .should('exist')
+      .and('contain.text', 'Comments')
+      .and('have.attr', 'href', '/applications/business-hub/G123456/13d2c453-be11-44a8-9861-21fd8ae6e911/comments')
   })
 
   it('should allow navigating to the Action and Reply section', () => {
-    page.actionAndReplyTab().should('exist').and('contain.text', 'Action and reply').and('have.attr', 'href', '')
+    page
+      .actionAndReplyTab()
+      .should('exist')
+      .and('contain.text', 'Action and reply')
+      .and('have.attr', 'href', '/applications/business-hub/G123456/13d2c453-be11-44a8-9861-21fd8ae6e911/reply')
   })
 
   it('should allow navigating to the History section', () => {
-    page.historyTab().should('exist').and('contain.text', 'History').and('have.attr', 'href', '')
+    page
+      .historyTab()
+      .should('exist')
+      .and('contain.text', 'History')
+      .and('have.attr', 'href', '/applications/business-hub/G123456/13d2c453-be11-44a8-9861-21fd8ae6e911/history')
   })
 })
