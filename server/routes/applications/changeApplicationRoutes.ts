@@ -103,6 +103,7 @@ export default function changeApplicationRoutes({
         backLink: `/applications/${departmentName}/${prisonerId}/${applicationId}/change`,
         errors: null,
         isUpdate: true,
+        title: 'Check details',
       })
     }),
   )
