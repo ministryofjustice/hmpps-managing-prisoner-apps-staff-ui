@@ -2,9 +2,16 @@ import { Request, Response, Router } from 'express'
 import { URLS } from '../../constants/urls'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
+import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { getApplicationType } from '../../utils/getApplicationType'
 
-export default function confirmDetailsRoutes({ auditService }: { auditService: AuditService }): Router {
+export default function confirmDetailsRoutes({
+  auditService,
+  managingPrisonerAppsService,
+}: {
+  auditService: AuditService
+  managingPrisonerAppsService: ManagingPrisonerAppsService
+}): Router {
   const router = Router()
 
   router.get(
@@ -29,6 +36,26 @@ export default function confirmDetailsRoutes({ auditService }: { auditService: A
         backLink: URLS.APPLICATION_DETAILS,
         title: 'Check details',
       })
+    }),
+  )
+
+  router.post(
+    URLS.CONFIRM_DETAILS,
+    asyncMiddleware(async (req: Request, res: Response) => {
+      const { applicationData } = req.session
+      const { user } = res.locals
+
+      if (!applicationData) {
+        return res.redirect(URLS.APPLICATION_DETAILS)
+      }
+
+      const application = await managingPrisonerAppsService.submitPrisonerApp(applicationData, user)
+
+      if (!application) {
+        return res.redirect(URLS.APPLICATION_DETAILS)
+      }
+
+      return res.redirect(`/log/submit/${application.id}`)
     }),
   )
 

@@ -40,4 +40,17 @@ describe('Managing Prisoner Apps API Client', () => {
   //   const output = await client.forwardApp('prisoner-id', 'app-id', 'dept')
   //   expect(output).toBeUndefined()
   // })
+
+  // Reinstate with correct api endpoint and implementation once it is available
+  // it('should submit a prisoner application', async () => {
+  //   fakeManagingPrisonerAppApi
+  //     .post('/v1/prisoners/prisoner-id/apps/')
+  //     .matchHeader('authorization', `Bearer ${user.token}`)
+  //     .reply(201, prisonerApp)
+
+  //   const output = await client.submitPrisonerApp({
+  //     ...submitPrisonerAppData,
+  //   })
+  //   expect(output).toEqual(prisonerApp)
+  // })
 })

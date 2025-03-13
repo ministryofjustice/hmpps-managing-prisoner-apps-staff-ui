@@ -1,3 +1,4 @@
+import { ApplicationData } from 'express-session'
 import logger from '../../logger'
 import { Application } from '../@types/managingAppsApi'
 import config, { ApiConfig } from '../config'
@@ -35,6 +36,23 @@ export default class ManagingPrisonerAppsApiClient {
         `Error updating department for prisonerId: ${prisonerId}, applicationId: ${applicationId}, department: ${department}`,
         error,
       )
+    }
+  }
+
+  async submitPrisonerApp(applicationData: ApplicationData): Promise<Application | null> {
+    try {
+      const payload = {
+        type: applicationData.type,
+        requestedDate: applicationData.date,
+        additionalData: applicationData.additionalData,
+      }
+      return await this.restClient.post({
+        path: `/v1/prisoners/${applicationData.prisonerId}/apps/`,
+        data: payload,
+      })
+    } catch (error) {
+      logger.error(`Error submitting application for prisonerId: ${applicationData.prisonerId}`, error)
+      return null
     }
   }
 }

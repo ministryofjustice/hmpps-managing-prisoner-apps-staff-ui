@@ -9,6 +9,7 @@ export declare module 'express-session' {
 
   interface ApplicationData {
     type?: ApplicationType
+    prisonerId?: string
     prisonerName?: string
     date?: Date
     additionalData?: AdditionalApplicationData
