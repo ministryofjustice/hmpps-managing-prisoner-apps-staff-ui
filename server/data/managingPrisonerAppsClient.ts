@@ -46,6 +46,7 @@ export default class ManagingPrisonerAppsApiClient {
         requestedDate: applicationData.date,
         additionalData: applicationData.additionalData,
       }
+
       return await this.restClient.post({
         path: `/v1/prisoners/${applicationData.prisonerId}/apps/`,
         data: payload,

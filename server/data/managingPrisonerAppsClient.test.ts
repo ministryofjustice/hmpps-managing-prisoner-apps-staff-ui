@@ -11,7 +11,7 @@ describe('Managing Prisoner Apps API Client', () => {
   let fakeManagingPrisonerAppApi: nock.Scope
   let client: ManagingPrisonerAppsApiClient
 
-  const { prisonerApp, user } = testData
+  const { prisonerApp, user, submitPrisonerAppData } = testData
 
   beforeEach(() => {
     fakeManagingPrisonerAppApi = nock(config.apis.managingPrisonerApps.url)
@@ -41,16 +41,13 @@ describe('Managing Prisoner Apps API Client', () => {
   //   expect(output).toBeUndefined()
   // })
 
-  // Reinstate with correct api endpoint and implementation once it is available
-  // it('should submit a prisoner application', async () => {
-  //   fakeManagingPrisonerAppApi
-  //     .post('/v1/prisoners/prisoner-id/apps/')
-  //     .matchHeader('authorization', `Bearer ${user.token}`)
-  //     .reply(201, prisonerApp)
+  it('should submit a prisoner application', async () => {
+    fakeManagingPrisonerAppApi
+      .post('/v1/prisoners/G4567/apps/')
+      .matchHeader('authorization', `Bearer ${user.token}`)
+      .reply(201, prisonerApp)
 
-  //   const output = await client.submitPrisonerApp({
-  //     ...submitPrisonerAppData,
-  //   })
-  //   expect(output).toEqual(prisonerApp)
-  // })
+    const output = await client.submitPrisonerApp(submitPrisonerAppData)
+    expect(output).toEqual(prisonerApp)
+  })
 })
