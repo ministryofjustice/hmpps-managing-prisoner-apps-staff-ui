@@ -114,4 +114,16 @@ export default class TestData {
     displayName: 'Name',
     userRoles: [],
   }
+
+  submitPrisonerAppData = {
+    type: {
+      value: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
+      name: 'Swap VOs for PIN credit',
+      apiValue: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
+    },
+    prisonerId: 'G4567',
+    prisonerName: 'Emily Brown',
+    date: new Date('2024-09-15T00:00:00Z'),
+    additionalData: { swapVOsToPinCreditDetails: 'Swap VOs for PIN credit' },
+  }
 }
