@@ -39,6 +39,8 @@ export default function actionAndReplyRoutes({
       return res.render(`pages/applications/action/index`, {
         application,
         departmentName,
+        isAppPending: true,
+        title: 'Action and reply',
       })
     }),
   )
@@ -62,8 +64,10 @@ export default function actionAndReplyRoutes({
         return res.render(`pages/applications/action/index`, {
           application,
           departmentName,
+          isAppPending: true,
           selectedAction: selectAction,
           textareaValue: actionReplyReason,
+          title: 'Action and reply',
           errors,
         })
       }
