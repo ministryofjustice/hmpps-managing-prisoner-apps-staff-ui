@@ -37,6 +37,8 @@ export default function actionAndReplyRoutes({
       return res.render(`pages/applications/history/index`, {
         application,
         departmentName,
+        title: applicationType.name,
+        h1: applicationType.name,
       })
     }),
   )
