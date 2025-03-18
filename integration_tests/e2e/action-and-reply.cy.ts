@@ -4,32 +4,66 @@ import Page from '../pages/page'
 
 context('Action and Reply Page', () => {
   let page: ActionAndReplyPage
-  const { prisonerApp: application } = new TestData()
-  const {
-    id: applicationId,
-    requestedBy: { username: prisonerId },
-  } = application
+  const testData = new TestData()
 
-  const visitPage = () => {
-    cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubGetPrisonerApp', { prisonerId, applicationId, application })
-    cy.signIn()
-    cy.visit(`/applications/business-hub/${prisonerId}/${applicationId}/reply`)
-    page = Page.verifyOnPage(ActionAndReplyPage)
-  }
+  const testCases = [
+    { status: 'pending', label: 'pending', isClosed: false },
+    { status: 'closed', label: 'closed', isClosed: true },
+  ]
 
-  beforeEach(visitPage)
+  testCases.forEach(({ status, label, isClosed }) => {
+    describe(`When application is ${label}`, () => {
+      const application = { ...testData.prisonerApp, status }
+      const {
+        id: applicationId,
+        requestedBy: { username: prisonerId },
+      } = application
 
-  describe('Page structure', () => {
-    it('should display the correct page title', () => {
-      page.pageTitle().should('include', 'Action and reply')
-    })
+      const visitPage = () => {
+        cy.task('reset')
+        cy.task('stubSignIn')
+        cy.task('stubGetPrisonerApp', { prisonerId, applicationId, application })
+        cy.signIn()
+        cy.visit(`/applications/business-hub/${prisonerId}/${applicationId}/reply`)
+        page = Page.verifyOnPage(ActionAndReplyPage)
+      }
 
-    it('should display all form elements', () => {
-      page.selectAction().should('exist')
-      page.actionReplyReason().should('exist')
-      page.replyButton().should('exist').and('contain.text', 'Reply')
+      beforeEach(visitPage)
+
+      it('should display the correct page title', () => {
+        page.pageTitle().should('include', 'Action and reply')
+      })
+
+      if (!isClosed) {
+        describe('Pending application view', () => {
+          it('should display all form elements', () => {
+            page.selectAction().should('exist')
+            page.actionReplyReason().should('exist')
+            page.replyButton().should('exist').and('contain.text', 'Reply')
+          })
+        })
+      } else {
+        describe('Closed application view', () => {
+          it('should display the summary list with action details', () => {
+            cy.get('.govuk-summary-list').should('exist')
+            cy.get('.govuk-summary-list__key').contains('Action')
+            cy.get('.govuk-summary-list__value').contains('Approved')
+
+            cy.get('.govuk-summary-list__key').contains('Reason')
+            cy.get('.govuk-summary-list__value').contains('Lorem ipsum dolor sit amet, consectetur adipiscing elit.')
+
+            cy.get('.govuk-summary-list__key').contains('Actioned by')
+            cy.get('.govuk-summary-list__value').contains('J. Smith')
+
+            cy.get('.govuk-summary-list__key').contains('Date')
+            cy.get('.govuk-summary-list__value').contains('13 November 2024')
+          })
+
+          it('should display the Print reply button', () => {
+            cy.get('button.govuk-button--primary').should('exist').and('contain.text', 'Print reply')
+          })
+        })
+      }
     })
   })
 })
