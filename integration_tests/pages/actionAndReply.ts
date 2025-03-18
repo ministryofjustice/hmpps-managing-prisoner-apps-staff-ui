@@ -6,10 +6,4 @@ export default class ActionAndReplyPage extends Page {
   }
 
   pageTitle = () => cy.title()
-
-  selectAction = () => cy.get('.govuk-radios')
-
-  actionReplyReason = () => cy.get('#action-and-reply-reason')
-
-  replyButton = () => cy.get('button.govuk-button--primary')
 }

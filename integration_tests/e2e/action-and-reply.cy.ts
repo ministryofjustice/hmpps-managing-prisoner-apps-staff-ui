@@ -37,9 +37,9 @@ context('Action and Reply Page', () => {
       if (!isClosed) {
         describe('Pending application view', () => {
           it('should display all form elements', () => {
-            page.selectAction().should('exist')
-            page.actionReplyReason().should('exist')
-            page.replyButton().should('exist').and('contain.text', 'Reply')
+            cy.get('.govuk-radios').should('exist')
+            cy.get('#action-and-reply-reason').should('exist')
+            cy.get('button.govuk-button--primary').should('exist').and('contain.text', 'Reply')
           })
         })
       } else {
