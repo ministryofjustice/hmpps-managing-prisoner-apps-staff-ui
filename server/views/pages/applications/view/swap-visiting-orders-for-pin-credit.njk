@@ -1,4 +1,3 @@
-{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
 {% extends "../../../partials/layout.njk" %}
@@ -11,23 +10,8 @@
     <span class="govuk-caption-xl">Business Hub applications</span>
     <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
 
-    {{ mojSubNavigation({
-      label: 'Sub navigation',
-      items: [{
-        text: 'Application',
-        href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id,
-        active: true
-      }, {
-        text: 'Comments',
-        href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/comments"
-      }, {
-        text: 'Action and reply',
-        href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/reply"
-      }, {
-        text: 'History',
-        href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/history"
-      }]
-    }) }}
+    {% set activeTab = 'application' %}
+    {% include "../partials/sub-navigation.njk" %}
 
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
