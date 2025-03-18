@@ -1,4 +1,5 @@
 import { Request, Response, Router } from 'express'
+import { APPLICATION_STATUS } from '../../constants/applicationStatus'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
@@ -36,10 +37,12 @@ export default function actionAndReplyRoutes({
         return res.redirect(`/applications/${departmentName}/pending?error=unknown-type`)
       }
 
+      const isAppPending = application.status === APPLICATION_STATUS.PENDING
+
       return res.render(`pages/applications/action/index`, {
         application,
         departmentName,
-        isAppPending: true,
+        isAppPending,
         title: 'Action and reply',
       })
     }),
@@ -59,12 +62,13 @@ export default function actionAndReplyRoutes({
       }
 
       const errors = validateActionAndReply(selectAction, actionReplyReason)
+      const isAppPending = application.status === APPLICATION_STATUS.PENDING
 
       if (Object.keys(errors).length > 0) {
         return res.render(`pages/applications/action/index`, {
           application,
           departmentName,
-          isAppPending: true,
+          isAppPending,
           selectedAction: selectAction,
           textareaValue: actionReplyReason,
           title: 'Action and reply',
