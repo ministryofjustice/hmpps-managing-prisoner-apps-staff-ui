@@ -1,0 +1,43 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + title %}
+{% set mainClasses = "app-container govuk-body applications-landing-page" %}
+
+{% block content %}
+  <div class="govuk-body govuk-width-container">
+    {% if errors %}
+      {% set errorList = [] %}
+
+      {% if errors.selectAction %}
+        {% set errorList = errorList.concat([{ text: errors.selectAction.text, href: "#selectAction" }]) %}
+      {% endif %}
+
+      {% if errors.actionReplyReason %}
+        {% set errorList = errorList.concat([{ text: errors.actionReplyReason.text, href: "#actionReplyReason" }]) %}
+      {% endif %}
+
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: errorList
+      }) }}
+    {% endif %}
+
+    <span class="govuk-caption-xl">Swap VOs for PIN credit</span>
+    <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
+
+    {% set activeTab = 'reply' %}
+    {% include "../partials/sub-navigation.njk" %}
+
+    {% if isAppPending %}
+      {% include "./pending.njk" %}
+    {% else %}
+      {% include "./closed.njk" %}
+    {% endif %}
+
+  </div>
+{% endblock %}

@@ -1,5 +1,6 @@
 import { Application } from '../../@types/managingAppsApi'
 import { PrisonerDetail } from '../../@types/prisonApi'
+import { APPLICATION_STATUS } from '../../constants/applicationStatus'
 import { BaseUser } from '../../interfaces/hmppsUser'
 
 export default class TestData {
@@ -40,6 +41,7 @@ export default class TestData {
         amount: 5.0,
       },
     ],
+    status: APPLICATION_STATUS.PENDING,
   }
 
   prisoner: PrisonerDetail = {

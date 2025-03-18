@@ -3,15 +3,17 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PrisonService from '../../services/prisonService'
+import TestData from '../testutils/testData'
+import actionAndReplyRoutes from './actionAndReplyRoutes'
 import applicationDetailsRoutes from './applicationDetailsRoutes'
 import applicationTypeRoutes from './applicationTypeRoutes'
 import changeApplicationRoutes from './changeApplicationRoutes'
+import commentsRoutes from './commentsRoutes'
 import confirmDetailsRoutes from './confirmDetailsRoutes'
 import forwardApplicationRoutes from './forwardApplicationRoutes'
 import prisonerDetailsRoutes from './prisonerDetailsRoutes'
 import submitApplicationRoutes from './submitApplicationRoutes'
 import viewApplicationRoutes from './viewApplicationsRoutes'
-import TestData from '../testutils/testData'
 
 export default function applicationsRoutes({
   auditService,
@@ -38,10 +40,12 @@ export default function applicationsRoutes({
     }),
   )
 
+  router.use(actionAndReplyRoutes({ auditService, managingPrisonerAppsService }))
   router.use(applicationDetailsRoutes({ auditService }))
   router.use(applicationTypeRoutes({ auditService }))
   router.use(changeApplicationRoutes({ auditService, managingPrisonerAppsService }))
-  router.use(confirmDetailsRoutes({ auditService, managingPrisonerAppsService }))
+  router.use(commentsRoutes({ auditService, managingPrisonerAppsService }))
+  router.use(confirmDetailsRoutes({ auditService, managingPrisonerAppsService  }))
   router.use(forwardApplicationRoutes({ auditService, managingPrisonerAppsService }))
   router.use(prisonerDetailsRoutes({ auditService, prisonService }))
   router.use(submitApplicationRoutes({ auditService }))

@@ -31,14 +31,15 @@ export interface ApplicationRequest {
 
 export interface Application {
   id: string
-  reference: string
-  assignedGroup: AssignedGroup
   appType: string
-  requestedBy: RequestedBy
-  requestedDate: string
-  createdDate: string
+  assignedGroup: AssignedGroup
   createdBy: string
+  createdDate: string
   lastModifiedBy: string
   lastModifiedDate: string
+  reference: string
+  requestedBy: RequestedBy
+  requestedDate: string
   requests: ApplicationRequest[]
+  status: 'pending' | 'approved' | 'declined'
 }
