@@ -8,6 +8,7 @@ import actionAndReplyRoutes from './actionAndReplyRoutes'
 import applicationDetailsRoutes from './applicationDetailsRoutes'
 import applicationTypeRoutes from './applicationTypeRoutes'
 import changeApplicationRoutes from './changeApplicationRoutes'
+import commentsRoutes from './commentsRoutes'
 import confirmDetailsRoutes from './confirmDetailsRoutes'
 import forwardApplicationRoutes from './forwardApplicationRoutes'
 import prisonerDetailsRoutes from './prisonerDetailsRoutes'
@@ -43,6 +44,7 @@ export default function applicationsRoutes({
   router.use(applicationDetailsRoutes({ auditService }))
   router.use(applicationTypeRoutes({ auditService }))
   router.use(changeApplicationRoutes({ auditService, managingPrisonerAppsService }))
+  router.use(commentsRoutes({ auditService, managingPrisonerAppsService }))
   router.use(confirmDetailsRoutes({ auditService }))
   router.use(forwardApplicationRoutes({ auditService, managingPrisonerAppsService }))
   router.use(prisonerDetailsRoutes({ auditService, prisonService }))

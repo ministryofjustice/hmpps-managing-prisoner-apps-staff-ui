@@ -9,10 +9,9 @@ context('Swap VOs for PIN Credit Details Page', () => {
     cy.signIn()
     cy.visit('/log/application-details')
 
-    // Navigate through the pages
     cy.contains('Swap visiting orders (VOs) for PIN credit').click()
-    cy.contains('button', 'Continue').click() // Click the Continue button on the 'Select application type' page
-    cy.contains('button', 'Continue').click() // Click the Continue button on the 'Log prisoner details' page
+    cy.contains('button', 'Continue').click()
+    cy.contains('button', 'Continue').click()
     page = Page.verifyOnPage(SwapVosPinCreditDetailsPage)
   })
 

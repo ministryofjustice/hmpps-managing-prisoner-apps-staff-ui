@@ -1,0 +1,52 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + title %}
+{% set mainClasses = "app-container govuk-body applications-landing-page" %}
+
+{% block content %}
+  <div class="govuk-body govuk-width-container">
+    <span class="govuk-caption-xl">Swap VOs for PIN credit</span>
+    <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
+
+    {% set activeTab = 'comments' %}
+    {% include "../partials/sub-navigation.njk" %}
+
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-heading-m">Comments about this application</h2>
+        <p class="govuk-body">Only staff will see these comments</p>
+
+        <div class="app-message govuk-body">
+          <div class="app-messages-content">
+            <p class="none">None</p>
+          </div>
+        </div>
+
+        <form method="POST" id="application-comments-form">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+          {{ govukCharacterCount({
+            name: "applicationComment",
+            id: "application-comment",
+            maxlength: 1000,
+            threshold: 75,
+            value: "",
+            label: {
+              text: "Add a comment",
+              classes: "govuk-label--s",
+              isPageHeading: true
+            }
+          }) }}
+
+          {{ govukButton({
+            text: "Continue",
+            classes: "govuk-button--primary"
+          }) }}
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
