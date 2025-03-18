@@ -43,16 +43,16 @@
 }
 
 .app-message {
-  padding: 15px 0;
-  border-top: 1px solid #b1b4b6;
-  border-bottom: 1px solid #b1b4b6;
+  padding: govuk-spacing(3) 0;
+  border-top: 1px solid $govuk-border-colour;
+  border-bottom: 1px solid $govuk-border-colour;
   margin-bottom: -1px;
 }
 
 .app-message:last-of-type {
-  border-bottom: 1px solid #b1b4b6;
+  border-bottom: 1px solid $govuk-border-colour;
 }
 
 .app-message .app-messages-metadata {
-  color: #505a5f;
+  color: govuk-colour("dark-grey");
 }

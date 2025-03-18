@@ -1,6 +1,6 @@
 import Page from './page'
 
-export default class HistorySwapVosPinCreditApplicationPage extends Page {
+export default class ApplicationHistoryPage extends Page {
   constructor() {
     super('Swap visiting orders (VOs) for PIN credit')
   }

@@ -1,9 +1,9 @@
 import TestData from '../../server/routes/testutils/testData'
 import Page from '../pages/page'
-import HistoryApplicationPage from '../pages/historyApplicationPage'
+import ApplicationHistoryPage from '../pages/applicationHistoryPage'
 
-context('History Application Page', () => {
-  let page: HistoryApplicationPage
+context('Application History Page', () => {
+  let page: ApplicationHistoryPage
   const { prisonerApp: application } = new TestData()
   const {
     id: applicationId,
@@ -22,7 +22,7 @@ context('History Application Page', () => {
 
     cy.visit(`/applications/business-hub/${prisonerId}/${applicationId}/history`)
 
-    page = Page.verifyOnPage(HistoryApplicationPage)
+    page = Page.verifyOnPage(ApplicationHistoryPage)
   })
 
   it('should display the page title', () => {

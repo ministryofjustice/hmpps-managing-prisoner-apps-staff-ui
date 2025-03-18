@@ -4,7 +4,7 @@ import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { getApplicationType } from '../../utils/getApplicationType'
 
-export default function actionAndReplyRoutes({
+export default function applicationHistoryRoutes({
   auditService,
   managingPrisonerAppsService,
 }: {
@@ -23,7 +23,7 @@ export default function actionAndReplyRoutes({
       if (!application) {
         return res.redirect(`/applications/${departmentName}/pending`)
       }
-      await auditService.logPageView(Page.HISTORY_APLICATION_PAGE, {
+      await auditService.logPageView(Page.APPLICATION_HISTORY_PAGE, {
         who: res.locals.user.username,
         correlationId: req.id,
       })
@@ -38,7 +38,6 @@ export default function actionAndReplyRoutes({
         application,
         departmentName,
         title: applicationType.name,
-        h1: applicationType.name,
       })
     }),
   )
