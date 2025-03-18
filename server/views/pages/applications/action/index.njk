@@ -50,7 +50,11 @@
       }]
     }) }}
 
-    {% include "./pending.njk" %}
+    {% if isAppPending %}
+      {% include "./pending.njk" %}
+    {% else %}
+      {% include "./closed.njk" %}
+    {% endif %}
 
   </div>
 {% endblock %}

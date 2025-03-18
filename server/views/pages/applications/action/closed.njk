@@ -1,0 +1,22 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h2 class="govuk-heading-m">Action this application</h2>
+
+    {{ govukSummaryList({
+      rows: [
+        { key: { text: "Action" }, value: { text: "Approved" } },
+        { key: { text: "Reason" }, value: { text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." } },
+        { key: { text: "Actioned by" }, value: { text: "J. Smith" } },
+        { key: { text: "Date" }, value: { text: "13 November 2024" } }
+      ]
+    }) }}
+
+    {{ govukButton({
+      text: "Print reply",
+      classes: "govuk-button--primary"
+    }) }}
+  </div>
+</div>
