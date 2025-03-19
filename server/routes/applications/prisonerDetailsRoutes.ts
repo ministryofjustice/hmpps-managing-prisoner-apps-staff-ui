@@ -67,6 +67,7 @@ export default function prisonerDetailsRoutes({
       updateSessionData(req, {
         prisonerName: req.body.prisonerName,
         date: req.body.date,
+        prisonerId: req.body.prisonNumber,
       })
 
       res.redirect(`/log/application-details`)
