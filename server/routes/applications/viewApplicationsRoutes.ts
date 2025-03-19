@@ -18,7 +18,7 @@ export default function viewApplicationRoutes({
     asyncMiddleware(async (req: Request, res: Response) => {
       const { status } = req.params
 
-      res.render('pages/applications/list', {
+      res.render('pages/applications/list/index', {
         status,
       })
     }),

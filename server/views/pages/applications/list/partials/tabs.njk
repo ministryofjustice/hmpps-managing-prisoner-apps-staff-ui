@@ -1,0 +1,35 @@
+{% set pendingApps %}
+  <h2 class="govuk-heading-l">Pending</h2>
+  {{ govukTable({
+    head: [
+      { text: "Date" },
+      { text: "Application type" },
+      { text: "From" },
+      { text: "Department" },
+      { text: "" }
+    ],
+    rows: []
+  }) }}
+{% endset -%}
+
+{% set closedApps %}
+  <h2 class="govuk-heading-l">Closed</h2>
+  {{ govukTable({
+    head: [
+      { text: "Date" },
+      { text: "Application type" },
+      { text: "From" },
+      { text: "Department" },
+      { text: "Decision" },
+      { text: "" }
+    ],
+    rows: []
+  }) }}
+{% endset -%}
+
+{{ govukTabs({
+  items: [
+    { label: "Pending", id: "pending", panel: { html: pendingApps } },
+    { label: "Closed", id: "closed", panel: { html: closedApps } }
+  ]
+}) }}
