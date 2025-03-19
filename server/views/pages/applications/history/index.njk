@@ -8,24 +8,24 @@
 {% block content %}
   <div class="govuk-body govuk-width-container govuk!">
 
-   <span class="govuk-caption-xl">Business Hub applications</span>
-   <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
+    <span class="govuk-caption-xl">Business Hub applications</span>
+    <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
 
-   {{ mojSubNavigation({
-     label: 'Sub navigation',
-     items: [{
-       text: 'Application',
-       href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id
+    {{ mojSubNavigation({
+      label: 'Sub navigation',
+      items: [{
+        text: 'Application',
+        href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id
       }, {
-       text: 'Comments',
-       href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/comments"
+        text: 'Comments',
+        href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/comments"
       }, {
-       text: 'Action and reply',
-       href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/reply"
+        text: 'Action and reply',
+        href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/reply"
       }, {
-       text: 'History',
-       href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/history",
-       active: true
+        text: 'History',
+        href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/history",
+        active: true
       }]
     }) }}
 
