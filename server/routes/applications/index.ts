@@ -3,7 +3,6 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PrisonService from '../../services/prisonService'
-import TestData from '../testutils/testData'
 import actionAndReplyRoutes from './actionAndReplyRoutes'
 import applicationDetailsRoutes from './applicationDetailsRoutes'
 import applicationTypeRoutes from './applicationTypeRoutes'
@@ -34,9 +33,7 @@ export default function applicationsRoutes({
         correlationId: req.id,
       })
 
-      const { sections } = new TestData()
-
-      res.render('pages/applications', { title: 'Applications', sections })
+      res.render('pages/applications', { title: 'Applications' })
     }),
   )
 
