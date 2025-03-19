@@ -14,13 +14,12 @@ export default function viewApplicationRoutes({
   const router = Router()
 
   router.get(
-    '/applications/:departmentName/:status(pending|closed)',
+    '/applications/:status(pending|closed)',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { departmentName, status } = req.params
+      const { status } = req.params
 
       res.render('pages/applications/list', {
         status,
-        departmentName,
       })
     }),
   )

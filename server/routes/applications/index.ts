@@ -34,9 +34,7 @@ export default function applicationsRoutes({
         correlationId: req.id,
       })
 
-      const { sections } = new TestData()
-
-      res.render('pages/applications', { title: 'Applications', sections })
+      res.render('pages/applications', { title: 'Applications' })
     }),
   )
 
