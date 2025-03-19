@@ -4,10 +4,6 @@ context('Applications Page', () => {
     cy.task('stubSignIn')
     cy.signIn()
     cy.visit('/')
-
-    cy.fixture('sections.json').then(data => {
-      this.sections = data
-    })
   })
 
   it('should display the page title', () => {
@@ -24,36 +20,23 @@ context('Applications Page', () => {
       })
   })
 
-  it('should display the log an application button', () => {
-    cy.get('a.govuk-button')
+  it('should display the Log a new application card', () => {
+    cy.get('[data-testid="log-new-application"]')
       .should('exist')
-      .and('have.text', '\n  Log an application\n')
-      .and('have.attr', 'href', '/log/application-type')
-  })
-
-  it('should display all sections with their items', () => {
-    cy.fixture('sections.json').then(({ sections }) => {
-      sections.forEach(section => {
-        cy.contains('h2.govuk-heading-m', section.title).should('exist')
-
-        section.items.forEach(item => {
-          cy.contains('.applications-landing-page__list-menu-item', item.name)
-            .should('exist')
-            .within(() => {
-              cy.get('.applications-landing-page__list-menu-item-notification').should('exist')
-              cy.get('a').contains(item.name)
-            })
-        })
+      .within(() => {
+        cy.get('h2').contains('Log a new application')
+        cy.get('a').should('have.attr', 'href', '/log/application-type')
+        cy.get('p').contains('Log a new application to process.')
       })
-    })
   })
 
-  it('should ensure links are functional (if paths are set)', () => {
-    cy.get('.applications-landing-page__list-menu-item a').each($link => {
-      const href = $link.attr('href')
-      if (href && href !== '#') {
-        cy.request(href).its('status').should('eq', 200)
-      }
-    })
+  it('should display the View all applications card', () => {
+    cy.get('[data-testid="view-all-applications"]')
+      .should('exist')
+      .within(() => {
+        cy.get('h2').contains('View all applications')
+        cy.get('a').should('have.attr', 'href', '/applications/pending')
+        cy.get('p').contains('View all applications logged in your prison.')
+      })
   })
 })
