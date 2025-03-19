@@ -35,7 +35,7 @@ context('Applications Page', () => {
       .should('exist')
       .within(() => {
         cy.get('h2').contains('View all applications')
-        cy.get('a').should('have.attr', 'href', '/applications/pending')
+        cy.get('a').should('have.attr', 'href', '/applications')
         cy.get('p').contains('View all applications logged in your prison.')
       })
   })
