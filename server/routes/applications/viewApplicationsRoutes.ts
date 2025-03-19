@@ -14,7 +14,7 @@ export default function viewApplicationRoutes({
   const router = Router()
 
   router.get(
-    '/applications/:status(pending|closed)',
+    '/applications',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { status } = req.params
 
