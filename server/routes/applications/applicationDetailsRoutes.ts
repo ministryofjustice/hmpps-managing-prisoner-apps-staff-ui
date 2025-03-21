@@ -5,6 +5,7 @@ import AuditService, { Page } from '../../services/auditService'
 import { getApplicationType } from '../../utils/getApplicationType'
 import { updateSessionData } from '../../utils/session'
 import { URLS } from '../../constants/urls'
+import { validateTextField } from '../validate/validateTextField'
 
 export default function applicationDetailsRoutes({ auditService }: { auditService: AuditService }): Router {
   const router = Router()
@@ -34,10 +35,22 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
     URLS.APPLICATION_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { applicationData } = req.session
+      const { swapVosPinCreditDetails } = req.body
 
       const isSwapVOsToPinCredit =
         applicationData?.type?.apiValue ===
         APPLICATION_TYPES.find(type => type.value === 'swap-visiting-orders-for-pin-credit')?.apiValue
+
+      const errors = validateTextField(swapVosPinCreditDetails, 'Details')
+
+      if (Object.keys(errors).length > 0) {
+        return res.render('pages/log-application/application-details/swap-visiting-orders-for-pin-credit', {
+          errors,
+          title: 'Log swap VOs for PIN credit details',
+          appTypeTitle: 'Swap VOs for PIN credit',
+          swapVosPinCreditDetails,
+        })
+      }
 
       updateSessionData(req, {
         additionalData: {
@@ -46,7 +59,7 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
         },
       })
 
-      res.redirect('/log/confirm')
+      return res.redirect('/log/confirm')
     }),
   )
 
