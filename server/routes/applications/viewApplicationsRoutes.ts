@@ -27,13 +27,13 @@ export default function viewApplicationRoutes({
   router.get(
     '/applications/:prisonerId/:applicationId',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { departmentName, prisonerId, applicationId } = req.params
+      const { prisonerId, applicationId } = req.params
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
       if (!application) {
-        return res.redirect(`/applications/${departmentName}/pending`)
+        return res.redirect(`/applications`)
       }
 
       await auditService.logPageView(Page.VIEW_APPLICATION_PAGE, {
@@ -44,13 +44,12 @@ export default function viewApplicationRoutes({
       const applicationType = getApplicationType(application.appType)
 
       if (!applicationType) {
-        return res.redirect(`/applications/${departmentName}/pending?error=unknown-type`)
+        return res.redirect(`/applications?error=unknown-type`)
       }
 
       return res.render(`pages/applications/view/${applicationType.value}`, {
         title: applicationType.name,
         application,
-        departmentName,
       })
     }),
   )

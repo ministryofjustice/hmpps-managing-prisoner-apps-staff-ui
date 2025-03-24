@@ -18,13 +18,13 @@ export default function actionAndReplyRoutes({
   router.get(
     '/applications/:prisonerId/:applicationId/reply',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { departmentName, prisonerId, applicationId } = req.params
+      const { prisonerId, applicationId } = req.params
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
       if (!application) {
-        return res.redirect(`/applications/${departmentName}/pending`)
+        return res.redirect(`/applications`)
       }
       await auditService.logPageView(Page.ACTION_AND_REPLY_PAGE, {
         who: res.locals.user.username,
@@ -34,14 +34,13 @@ export default function actionAndReplyRoutes({
       const applicationType = getApplicationType(application.appType)
 
       if (!applicationType) {
-        return res.redirect(`/applications/${departmentName}/pending?error=unknown-type`)
+        return res.redirect(`/applications?error=unknown-type`)
       }
 
       const isAppPending = application.status === APPLICATION_STATUS.PENDING
 
       return res.render(`pages/applications/action/index`, {
         application,
-        departmentName,
         isAppPending,
         title: 'Action and reply',
       })
@@ -51,14 +50,14 @@ export default function actionAndReplyRoutes({
   router.post(
     '/applications/:prisonerId/:applicationId/reply',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { departmentName, prisonerId, applicationId } = req.params
+      const { prisonerId, applicationId } = req.params
       const { selectAction, actionReplyReason } = req.body
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
       if (!application) {
-        return res.redirect(`/applications/${departmentName}/pending`)
+        return res.redirect(`/applications`)
       }
 
       const errors = validateActionAndReply(selectAction, actionReplyReason)
@@ -67,7 +66,6 @@ export default function actionAndReplyRoutes({
       if (Object.keys(errors).length > 0) {
         return res.render(`pages/applications/action/index`, {
           application,
-          departmentName,
           isAppPending,
           selectedAction: selectAction,
           textareaValue: actionReplyReason,
@@ -76,7 +74,7 @@ export default function actionAndReplyRoutes({
         })
       }
 
-      return res.redirect(`/applications/${departmentName}/${prisonerId}/${applicationId}`)
+      return res.redirect(`/applications/${prisonerId}/${applicationId}`)
     }),
   )
 
