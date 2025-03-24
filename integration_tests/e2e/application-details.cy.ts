@@ -21,7 +21,7 @@ context('Application Details Page', () => {
   })
 
   it('should display the correct page title', () => {
-    page.pageTitle().should('include', 'Log swap VOs for PIN credit details')
+    page.pageTitle().should('include', 'Log details')
   })
 
   it('should render the page heading correctly', () => {

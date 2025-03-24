@@ -24,7 +24,7 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
       }
 
       return res.render(`pages/log-application/application-details/${applicationType.value}`, {
-        title: 'Log swap VOs for PIN credit details',
+        title: 'Log details',
         appTypeTitle: 'Swap VOs for PIN credit',
       })
     }),

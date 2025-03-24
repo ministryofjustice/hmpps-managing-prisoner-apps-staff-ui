@@ -59,13 +59,30 @@ export default function prisonerDetailsRoutes({
   router.post(
     '/log/prisoner-details',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const [day, month, year] = req.body.date.split('/').map(Number)
-      const date = new Date(year, month - 1, day)
+      const { prisonerName, prisonNumber, date: dateString } = req.body
+
+      let date: string | null = null
+
+      if (typeof dateString === 'string' && dateString.trim() !== '') {
+        const dateParts = dateString.split('/')
+
+        if (dateParts.length === 3) {
+          const [day, month, year] = dateParts.map(part => Number(part))
+
+          if (!Number.isNaN(day) && !Number.isNaN(month) && !Number.isNaN(year)) {
+            const parsedDate = new Date(year, month - 1, day)
+
+            if (!Number.isNaN(parsedDate.getTime())) {
+              date = `${parsedDate.toISOString().split('.')[0]}Z`
+            }
+          }
+        }
+      }
 
       updateSessionData(req, {
-        prisonerName: req.body.prisonerName,
-        date: `${date.toISOString().split('.')[0]}Z`,
-        prisonerId: req.body.prisonNumber,
+        prisonerName,
+        date,
+        prisonerId: prisonNumber,
       })
 
       res.redirect(`/log/application-details`)
