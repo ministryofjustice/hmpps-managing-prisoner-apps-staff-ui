@@ -62,7 +62,7 @@ export default function confirmDetailsRoutes({
         prisonerId: req.body.prisonNumber,
       })
 
-      return res.redirect(`/log/submit/${application.id}`)
+      return res.redirect(`/log/submit/${applicationData.prisonerId}/${application.id}`)
     }),
   )
 

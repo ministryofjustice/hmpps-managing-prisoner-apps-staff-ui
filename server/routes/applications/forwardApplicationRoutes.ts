@@ -15,7 +15,7 @@ export default function forwardApplicationRoutes({
   const router = Router()
 
   router.get(
-    '/applications/:departmentName/:prisonerId/:applicationId/forward',
+    '/applications/:prisonerId/:applicationId/forward',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { departmentName, prisonerId, applicationId } = req.params
       const { user } = res.locals
@@ -48,7 +48,7 @@ export default function forwardApplicationRoutes({
   )
 
   router.post(
-    '/applications/:departmentName/:prisonerId/:applicationId/forward',
+    '/applications/:prisonerId/:applicationId/forward',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { departmentName, prisonerId, applicationId } = req.params
       const { forwardToDepartment, forwardingReason } = req.body

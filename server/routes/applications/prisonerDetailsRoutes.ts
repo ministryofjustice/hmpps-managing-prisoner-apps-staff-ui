@@ -59,14 +59,12 @@ export default function prisonerDetailsRoutes({
   router.post(
     '/log/prisoner-details',
     asyncMiddleware(async (req: Request, res: Response) => {
-      if (!req.session.applicationData) {
-        res.status(400).send('Application data is missing')
-        return
-      }
+      const [day, month, year] = req.body.date.split('/').map(Number)
+      const date = new Date(year, month - 1, day)
 
       updateSessionData(req, {
         prisonerName: req.body.prisonerName,
-        date: req.body.date,
+        date: `${date.toISOString().split('.')[0]}Z`,
         prisonerId: req.body.prisonNumber,
       })
 

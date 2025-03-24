@@ -16,7 +16,7 @@ export default function changeApplicationRoutes({
   const router = Router()
 
   router.get(
-    '/applications/:departmentName/:prisonerId/:applicationId/change',
+    '/applications/:prisonerId/:applicationId/change',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { departmentName, prisonerId, applicationId } = req.params
       const { user } = res.locals
@@ -47,7 +47,7 @@ export default function changeApplicationRoutes({
   )
 
   router.post(
-    '/applications/:departmentName/:prisonerId/:applicationId/change',
+    '/applications/:prisonerId/:applicationId/change',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { prisonerId, applicationId, departmentName } = req.params
       const { applicationData } = req.session
@@ -63,7 +63,7 @@ export default function changeApplicationRoutes({
       updateSessionData(req, {
         type: selectedAppType,
         prisonerName: prisonerId,
-        date: new Date(application.requestedDate),
+        date: application.requestedDate,
         additionalData: {
           ...applicationData?.additionalData,
           ...(isSwapVOsToPinCredit ? { swapVOsToPinCreditDetails: req.body.swapVosPinCreditDetails } : {}),
@@ -75,7 +75,7 @@ export default function changeApplicationRoutes({
   )
 
   router.get(
-    '/applications/:departmentName/:prisonerId/:applicationId/change/confirm',
+    '/applications/:prisonerId/:applicationId/change/confirm',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { departmentName, prisonerId, applicationId } = req.params
       const { user } = res.locals

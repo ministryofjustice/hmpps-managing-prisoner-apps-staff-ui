@@ -25,7 +25,7 @@ export default function viewApplicationRoutes({
   )
 
   router.get(
-    '/applications/:departmentName/:prisonerId/:applicationId',
+    '/applications/:prisonerId/:applicationId',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { departmentName, prisonerId, applicationId } = req.params
       const { user } = res.locals

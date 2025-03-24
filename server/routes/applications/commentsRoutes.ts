@@ -14,7 +14,7 @@ export default function commentsRoutes({
   const router = Router()
 
   router.get(
-    '/applications/:departmentName/:prisonerId/:applicationId/comments',
+    '/applications/:prisonerId/:applicationId/comments',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { departmentName, prisonerId, applicationId } = req.params
       const { user } = res.locals

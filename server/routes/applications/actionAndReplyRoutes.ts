@@ -16,7 +16,7 @@ export default function actionAndReplyRoutes({
   const router = Router()
 
   router.get(
-    '/applications/:departmentName/:prisonerId/:applicationId/reply',
+    '/applications/:prisonerId/:applicationId/reply',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { departmentName, prisonerId, applicationId } = req.params
       const { user } = res.locals
@@ -49,7 +49,7 @@ export default function actionAndReplyRoutes({
   )
 
   router.post(
-    '/applications/:departmentName/:prisonerId/:applicationId/reply',
+    '/applications/:prisonerId/:applicationId/reply',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { departmentName, prisonerId, applicationId } = req.params
       const { selectAction, actionReplyReason } = req.body

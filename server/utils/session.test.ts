@@ -38,12 +38,12 @@ describe(updateSessionData.name, () => {
       type: { name: 'Swap VOs', value: 'swap-vos', apiValue: 'swap-vos' },
     }
 
-    updateSessionData(req, { prisonerName: 'John Doe', date: new Date('2024-02-05') })
+    updateSessionData(req, { prisonerName: 'John Doe', date: '2024-02-05T00:00:00Z' })
 
     expect(req.session.applicationData).toEqual({
       type: { name: 'Swap VOs', value: 'swap-vos', apiValue: 'swap-vos' },
       prisonerName: 'John Doe',
-      date: new Date('2024-02-05'),
+      date: '2024-02-05T00:00:00Z',
     })
   })
 

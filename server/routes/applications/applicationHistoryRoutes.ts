@@ -13,7 +13,7 @@ export default function applicationHistoryRoutes({
 }): Router {
   const router = Router()
   router.get(
-    '/applications/:departmentName/:prisonerId/:applicationId/history',
+    '/applications/:prisonerId/:applicationId/history',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { departmentName, prisonerId, applicationId } = req.params
       const { user } = res.locals
