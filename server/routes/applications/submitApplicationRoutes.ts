@@ -21,8 +21,6 @@ export default function submitApplicationRoutes({
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
-      console.log(application)
-
       if (!application) {
         res.redirect('/applications')
         return
