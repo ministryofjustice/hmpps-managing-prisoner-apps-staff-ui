@@ -20,7 +20,7 @@ context('View Application Page', () => {
     })
     cy.signIn()
 
-    cy.visit(`/applications/business-hub/${prisonerId}/${applicationId}`)
+    cy.visit(`/applications/${prisonerId}/${applicationId}`)
 
     page = Page.verifyOnPage(ViewApplicationPage)
   })

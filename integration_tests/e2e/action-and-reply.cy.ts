@@ -24,7 +24,7 @@ context('Action and Reply Page', () => {
         cy.task('stubSignIn')
         cy.task('stubGetPrisonerApp', { prisonerId, applicationId, application })
         cy.signIn()
-        cy.visit(`/applications/business-hub/${prisonerId}/${applicationId}/reply`)
+        cy.visit(`/applications/${prisonerId}/${applicationId}/reply`)
         page = Page.verifyOnPage(ActionAndReplyPage)
       }
 

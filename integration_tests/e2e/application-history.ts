@@ -20,7 +20,7 @@ context('Application History Page', () => {
     })
     cy.signIn()
 
-    cy.visit(`/applications/business-hub/${prisonerId}/${applicationId}/history`)
+    cy.visit(`/applications/${prisonerId}/${applicationId}/history`)
 
     page = Page.verifyOnPage(ApplicationHistoryPage)
   })
@@ -34,7 +34,7 @@ context('Application History Page', () => {
       .historyTab()
       .should('exist')
       .and('contain.text', 'History')
-      .and('have.attr', 'href', '/applications/business-hub/G123456/13d2c453-be11-44a8-9861-21fd8ae6e911/history')
+      .and('have.attr', 'href', '/applications/G123456/13d2c453-be11-44a8-9861-21fd8ae6e911/history')
   })
 
   it('should display the text', () => {
