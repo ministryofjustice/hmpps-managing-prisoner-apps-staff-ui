@@ -1,6 +1,6 @@
 import Page from './page'
 
-export default class SwapVosPinCreditDetailsPage extends Page {
+export default class ApplicationDetailsPage extends Page {
   constructor() {
     super('Log details')
   }

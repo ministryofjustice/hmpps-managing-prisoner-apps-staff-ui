@@ -1,6 +1,6 @@
 import Page from './page'
 
-export default class SubmitSwapVosPinCreditApplicationPage extends Page {
+export default class SubmitApplicationPage extends Page {
   constructor() {
     super('Application submitted')
   }
@@ -13,7 +13,7 @@ export default class SubmitSwapVosPinCreditApplicationPage extends Page {
 
   bulletPoints = () => cy.get('.govuk-list--bullet')
 
-  viewApplicationLink = () => cy.get('a[href^="/view/"]')
+  viewApplicationLink = () => cy.get('a[href^="/applications/"]')
 
   addAnotherApplicationLink = () => cy.contains('a', 'Add another application')
 

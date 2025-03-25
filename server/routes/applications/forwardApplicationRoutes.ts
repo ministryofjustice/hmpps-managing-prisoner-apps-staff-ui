@@ -15,15 +15,15 @@ export default function forwardApplicationRoutes({
   const router = Router()
 
   router.get(
-    '/applications/:departmentName/:prisonerId/:applicationId/forward',
+    '/applications/:prisonerId/:applicationId/forward',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { departmentName, prisonerId, applicationId } = req.params
+      const { prisonerId, applicationId } = req.params
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
       if (!application) {
-        return res.redirect(`/applications/${departmentName}/pending`)
+        return res.redirect(`/applications`)
       }
 
       await auditService.logPageView(Page.FORWARD_APPLICATION_PAGE, {
@@ -34,12 +34,11 @@ export default function forwardApplicationRoutes({
       const applicationType = getApplicationType(application.appType)
 
       if (!applicationType) {
-        return res.redirect(`/applications/${departmentName}/pending?error=unknown-type`)
+        return res.redirect(`/applications?error=unknown-type`)
       }
 
       return res.render(`pages/applications/forward/${applicationType.value}`, {
         application,
-        departmentName,
         textareaValue: '',
         title: "Forward this application to swap VO's",
         errors: null,
@@ -48,16 +47,16 @@ export default function forwardApplicationRoutes({
   )
 
   router.post(
-    '/applications/:departmentName/:prisonerId/:applicationId/forward',
+    '/applications/:prisonerId/:applicationId/forward',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { departmentName, prisonerId, applicationId } = req.params
+      const { prisonerId, applicationId } = req.params
       const { forwardToDepartment, forwardingReason } = req.body
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
       if (!application) {
-        return res.redirect(`/applications/${departmentName}/pending`)
+        return res.redirect(`/applications`)
       }
 
       const applicationType = getApplicationType(application.appType)
@@ -66,7 +65,6 @@ export default function forwardApplicationRoutes({
       if (Object.keys(errors).length > 0) {
         return res.render(`pages/applications/forward/${applicationType.value}`, {
           application,
-          departmentName,
           textareaValue: forwardingReason,
           title: "Forward this application to swap VO's",
           errors,
@@ -75,7 +73,7 @@ export default function forwardApplicationRoutes({
 
       await managingPrisonerAppsService.forwardApp(prisonerId, applicationId, forwardToDepartment, user)
 
-      return res.redirect(`/applications/${departmentName}/${prisonerId}/${applicationId}`)
+      return res.redirect(`/applications/${prisonerId}/${applicationId}`)
     }),
   )
 

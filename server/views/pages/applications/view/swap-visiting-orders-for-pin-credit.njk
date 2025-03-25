@@ -37,7 +37,7 @@
               actions: {
                 items: [
                   {
-                    href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/forward",
+                    href: "/applications/" + application.requestedBy.username + "/" + application.id + "/forward",
                     text: "Forward",
                     visuallyHiddenText: "department"
                   }
@@ -57,7 +57,7 @@
                 text: "Date sent"
               },
               value: {
-                text: application.requestedDateTime
+                text: application.requestedDate
               }
             },
             {
@@ -137,12 +137,12 @@
                 text: "Details"
               },
               value: {
-                text: ""
+                text: application.requests[0].swapVOsToPinCreditDetails
               },
               actions: {
                 items: [
                   {
-                    href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/change",
+                    href: "/applications/" + application.requestedBy.username + "/" + application.id + "/change",
                     text: "Change",
                     visuallyHiddenText: "details"
                   }

@@ -11,7 +11,7 @@ export declare module 'express-session' {
     type?: ApplicationType
     prisonerId?: string
     prisonerName?: string
-    date?: Date
+    date?: string
     additionalData?: AdditionalApplicationData
   }
 

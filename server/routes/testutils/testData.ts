@@ -96,7 +96,7 @@ export default class TestData {
     },
     prisonerId: 'G4567',
     prisonerName: 'Emily Brown',
-    date: new Date('2024-09-15T00:00:00Z'),
+    date: new Date('2024-09-15').toISOString(),
     additionalData: { swapVOsToPinCreditDetails: 'Swap VOs for PIN credit' },
   }
 }
