@@ -35,20 +35,24 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
     URLS.APPLICATION_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { applicationData } = req.session
-      const { swapVosPinCreditDetails } = req.body
+
+      const applicationType = getApplicationType(req.session.applicationData?.type.apiValue)
+      const fieldToValidate = req.body.swapVosPinCreditDetails
 
       const isSwapVOsToPinCredit =
         applicationData?.type?.apiValue ===
         APPLICATION_TYPES.find(type => type.value === 'swap-visiting-orders-for-pin-credit')?.apiValue
 
-      const errors = validateTextField(swapVosPinCreditDetails, 'Details')
+      const fieldName = isSwapVOsToPinCredit ? 'Details' : ''
+
+      const errors = validateTextField(fieldToValidate, fieldName)
 
       if (Object.keys(errors).length > 0) {
-        return res.render('pages/log-application/application-details/swap-visiting-orders-for-pin-credit', {
+        return res.render(`pages/log-application/application-details/${applicationType.value}`, {
           errors,
           title: 'Log swap VOs for PIN credit details',
           appTypeTitle: 'Swap VOs for PIN credit',
-          swapVosPinCreditDetails,
+          fieldToValidate,
         })
       }
 
