@@ -15,7 +15,7 @@ context('Comments Page', () => {
     cy.task('stubSignIn')
     cy.task('stubGetPrisonerApp', { prisonerId, applicationId, application })
     cy.signIn()
-    cy.visit(`/applications/business-hub/${prisonerId}/${applicationId}/comments`)
+    cy.visit(`/applications/${prisonerId}/${applicationId}/comments`)
     page = Page.verifyOnPage(CommentsPage)
   }
 

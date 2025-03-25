@@ -1,21 +1,25 @@
 import { Request, Response, Router } from 'express'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
-import { APPLICATION_TYPES } from '../../constants/applicationTypes'
+import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
+import { getApplicationType } from '../../utils/getApplicationType'
 
-export default function submitApplicationRoutes({ auditService }: { auditService: AuditService }): Router {
+export default function submitApplicationRoutes({
+  auditService,
+  managingPrisonerAppsService,
+}: {
+  auditService: AuditService
+  managingPrisonerAppsService: ManagingPrisonerAppsService
+}): Router {
   const router = Router()
 
   router.get(
-    '/log/submit/:applicationId',
+    '/log/submit/:prisonerId/:applicationId',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { applicationId } = req.params
+      const { applicationId, prisonerId } = req.params
+      const { user } = res.locals
 
-      const application = {
-        id: applicationId,
-        type: 'swap-visiting-orders-for-pin-credit',
-        dept: 'Business Hub',
-      }
+      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
       if (!application) {
         res.redirect('/applications')
@@ -27,14 +31,14 @@ export default function submitApplicationRoutes({ auditService }: { auditService
         correlationId: req.id,
       })
 
-      const applicationType = APPLICATION_TYPES.find(type => type.value === application.type)
+      const applicationType = getApplicationType(application.appType)
 
       if (!applicationType) {
         res.redirect('/applications?error=unknown-type')
         return
       }
 
-      res.render(`pages/log-application/submit/${application.type}`, {
+      res.render(`pages/log-application/submit/${applicationType.value}`, {
         title: applicationType.name,
         application,
       })

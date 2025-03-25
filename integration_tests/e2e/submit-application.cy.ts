@@ -1,17 +1,28 @@
+import TestData from '../../server/routes/testutils/testData'
 import Page from '../pages/page'
-import SubmitSwapVosPinCreditApplicationPage from '../pages/submitSwapVosPinCreditApplicationPage'
+import SubmitApplicationPage from '../pages/submitApplicationPage'
 
-context('Swap VOs for PIN Credit - Application Submitted Page', () => {
-  let page: SubmitSwapVosPinCreditApplicationPage
+context('Application Submitted Page', () => {
+  let page: SubmitApplicationPage
+  const { prisonerApp: application } = new TestData()
+  const {
+    id: applicationId,
+    requestedBy: { username: prisonerId },
+  } = application
 
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
+    cy.task('stubGetPrisonerApp', {
+      prisonerId,
+      applicationId,
+      application,
+    })
     cy.signIn()
 
-    cy.visit('/log/submit/12345')
+    cy.visit(`/log/submit/${prisonerId}/${applicationId}`)
 
-    page = Page.verifyOnPage(SubmitSwapVosPinCreditApplicationPage)
+    page = Page.verifyOnPage(SubmitApplicationPage)
   })
 
   it('should display the panel title and body', () => {
@@ -31,7 +42,7 @@ context('Swap VOs for PIN Credit - Application Submitted Page', () => {
       .should('exist')
       .and('have.text', 'View this application')
       .and('have.attr', 'href')
-      .and('include', '/view/')
+      .and('include', `/applications/`)
     page.addAnotherApplicationLink().should('exist').and('have.text', 'Add another application')
     page.dashboardLink().should('exist').and('have.text', 'Return to applications dashboard')
   })

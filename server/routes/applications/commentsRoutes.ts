@@ -14,15 +14,15 @@ export default function commentsRoutes({
   const router = Router()
 
   router.get(
-    '/applications/:departmentName/:prisonerId/:applicationId/comments',
+    '/applications/:prisonerId/:applicationId/comments',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { departmentName, prisonerId, applicationId } = req.params
+      const { prisonerId, applicationId } = req.params
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
       if (!application) {
-        return res.redirect(`/applications/${departmentName}/pending`)
+        return res.redirect(`/applications`)
       }
       await auditService.logPageView(Page.COMMENTS_PAGE, {
         who: res.locals.user.username,
@@ -32,12 +32,11 @@ export default function commentsRoutes({
       const applicationType = getApplicationType(application.appType)
 
       if (!applicationType) {
-        return res.redirect(`/applications/${departmentName}/pending?error=unknown-type`)
+        return res.redirect(`/applications?error=unknown-type`)
       }
 
       return res.render(`pages/applications/comments/index`, {
         application,
-        departmentName,
         title: 'Comments',
       })
     }),

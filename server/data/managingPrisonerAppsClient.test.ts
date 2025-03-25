@@ -43,7 +43,7 @@ describe('Managing Prisoner Apps API Client', () => {
 
   it('should submit a prisoner application', async () => {
     fakeManagingPrisonerAppApi
-      .post('/v1/prisoners/G4567/apps/')
+      .post('/v1/prisoners/G4567/apps')
       .matchHeader('authorization', `Bearer ${user.token}`)
       .reply(201, prisonerApp)
 

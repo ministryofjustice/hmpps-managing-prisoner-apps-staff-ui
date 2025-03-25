@@ -62,10 +62,14 @@
           ]
         }) }}
 
-        {{ govukButton({
-          text: "Continue",
-          classes: "govuk-button--primary"
-        }) }}
+        <form method="POST" action="/log/confirm">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+          
+          {{ govukButton({
+            text: "Continue",
+            classes: "govuk-button--primary"
+          }) }}
+        </form>
 
       </div>
     </div>

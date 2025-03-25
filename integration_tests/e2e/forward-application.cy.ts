@@ -15,7 +15,7 @@ context('Forward Application Page', () => {
     cy.task('stubSignIn')
     cy.task('stubGetPrisonerApp', { prisonerId, applicationId, application })
     cy.signIn()
-    cy.visit(`/applications/business-hub/${prisonerId}/${applicationId}/forward`)
+    cy.visit(`/applications/${prisonerId}/${applicationId}/forward`)
     page = Page.verifyOnPage(ForwardApplicationPage)
   }
 

@@ -41,14 +41,17 @@ export default class ManagingPrisonerAppsApiClient {
 
   async submitPrisonerApp(applicationData: ApplicationData): Promise<Application | null> {
     try {
+      const { prisonerId, type, date: requestedDate, additionalData } = applicationData
+
       const payload = {
-        type: applicationData.type,
-        requestedDate: applicationData.date,
-        additionalData: applicationData.additionalData,
+        reference: '',
+        type: type.apiValue,
+        requestedDate,
+        requests: [additionalData],
       }
 
       return await this.restClient.post({
-        path: `/v1/prisoners/${applicationData.prisonerId}/apps/`,
+        path: `/v1/prisoners/${prisonerId}/apps`,
         data: payload,
       })
     } catch (error) {
