@@ -36,11 +36,11 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
     asyncMiddleware(async (req: Request, res: Response) => {
       const { applicationData } = req.session
 
-      const applicationType = getApplicationType(req.session.applicationData?.type.apiValue)
+      const applicationType = getApplicationType(applicationData?.type.apiValue)
       const fieldToValidate = req.body.swapVosPinCreditDetails
 
       const isSwapVOsToPinCredit =
-        applicationData?.type?.apiValue ===
+        applicationType?.apiValue ===
         APPLICATION_TYPES.find(type => type.value === 'swap-visiting-orders-for-pin-credit')?.apiValue
 
       const fieldName = isSwapVOsToPinCredit ? 'Details' : ''
@@ -59,7 +59,7 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
       updateSessionData(req, {
         additionalData: {
           ...applicationData?.additionalData,
-          ...(isSwapVOsToPinCredit ? { swapVOsToPinCreditDetails: req.body.swapVosPinCreditDetails } : {}),
+          ...(isSwapVOsToPinCredit ? { swapVOsToPinCreditDetails: fieldToValidate } : {}),
         },
       })
 
