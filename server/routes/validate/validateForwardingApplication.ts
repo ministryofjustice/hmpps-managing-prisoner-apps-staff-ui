@@ -1,9 +1,9 @@
 // eslint-disable-next-line import/prefer-default-export
-export const validateForwardingApplication = (forwardToDepartment: string, forwardingReason: string) => {
+export const validateForwardingApplication = (forwardTo: string, forwardingReason: string) => {
   const errors: Record<string, { text: string }> = {}
 
-  if (!forwardToDepartment) {
-    errors.forwardToDepartment = { text: 'Choose where to send' }
+  if (!forwardTo) {
+    errors.forwardTo = { text: 'Choose where to send' }
   }
 
   if (forwardingReason && forwardingReason.length > 1000) {

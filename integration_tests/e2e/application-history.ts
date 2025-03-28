@@ -4,23 +4,17 @@ import ApplicationHistoryPage from '../pages/applicationHistoryPage'
 
 context('Application History Page', () => {
   let page: ApplicationHistoryPage
-  const { prisonerApp: application } = new TestData()
-  const {
-    id: applicationId,
-    requestedBy: { username: prisonerId },
-  } = application
+  const { app } = new TestData()
 
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubGetPrisonerApp', {
-      prisonerId,
-      applicationId,
-      application,
+      app,
     })
     cy.signIn()
 
-    cy.visit(`/applications/${prisonerId}/${applicationId}/history`)
+    cy.visit(`/applications/${app.requestedBy.username}/${app.id}/history`)
 
     page = Page.verifyOnPage(ApplicationHistoryPage)
   })

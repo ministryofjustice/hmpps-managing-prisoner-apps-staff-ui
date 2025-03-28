@@ -4,23 +4,17 @@ import SubmitApplicationPage from '../pages/submitApplicationPage'
 
 context('Application Submitted Page', () => {
   let page: SubmitApplicationPage
-  const { prisonerApp: application } = new TestData()
-  const {
-    id: applicationId,
-    requestedBy: { username: prisonerId },
-  } = application
+  const { app } = new TestData()
 
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubGetPrisonerApp', {
-      prisonerId,
-      applicationId,
-      application,
+      app,
     })
     cy.signIn()
 
-    cy.visit(`/log/submit/${prisonerId}/${applicationId}`)
+    cy.visit(`/log/submit/${app.requestedBy.username}/${app.id}`)
 
     page = Page.verifyOnPage(SubmitApplicationPage)
   })

@@ -1,6 +1,6 @@
 import { ApplicationData } from 'express-session'
 import logger from '../../logger'
-import { Application, ApplicationSearchPayload, ViewApplicationsResponse } from '../@types/managingAppsApi'
+import { Application, ApplicationSearchPayload, Group, ViewApplicationsResponse } from '../@types/managingAppsApi'
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 
@@ -18,7 +18,7 @@ export default class ManagingPrisonerAppsApiClient {
   async getPrisonerApp(prisonerId: string, applicationId: string): Promise<Application | null> {
     try {
       return await this.restClient.get({
-        path: `/v1/prisoners/${prisonerId}/apps/${applicationId}?requestedBy=true`,
+        path: `/v1/prisoners/${prisonerId}/apps/${applicationId}?requestedBy=true&assignedGroup=true`,
       })
     } catch (error) {
       logger.error(`Error fetching application for prisonerId: ${prisonerId}, applicationId: ${applicationId}`, error)
@@ -28,8 +28,8 @@ export default class ManagingPrisonerAppsApiClient {
 
   async forwardApp(applicationId: string, groupId: string): Promise<void> {
     try {
-      await this.restClient.put({
-        path: `/v1/apps/${applicationId}forward/groups/${groupId}`,
+      await this.restClient.get({
+        path: `/v1/apps/${applicationId}/forward/groups/${groupId}`,
       })
     } catch (error) {
       logger.error(`Error updating department for applicationId: ${applicationId}, department: ${groupId}`, error)
@@ -65,6 +65,17 @@ export default class ManagingPrisonerAppsApiClient {
       })
     } catch (error) {
       logger.error(`Error fetching applications. Payload: ${JSON.stringify(payload)}`, error)
+      return null
+    }
+  }
+
+  async getGroups(): Promise<Group[]> {
+    try {
+      return await this.restClient.get({
+        path: `/v1/groups`,
+      })
+    } catch (error) {
+      logger.error(`Error fetching groups.`, error)
       return null
     }
   }

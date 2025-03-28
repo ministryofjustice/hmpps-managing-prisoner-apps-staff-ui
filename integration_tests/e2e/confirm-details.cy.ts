@@ -4,11 +4,7 @@ import Page from '../pages/page'
 
 context('Confirm Details Page', () => {
   let page: ConfirmDetailsPage
-  const { prisonerApp: application } = new TestData()
-  const {
-    id: applicationId,
-    requestedBy: { username: prisonerId },
-  } = application
+  const { app } = new TestData()
 
   beforeEach(() => {
     cy.task('reset')
@@ -20,9 +16,7 @@ context('Confirm Details Page', () => {
     context(title, () => {
       beforeEach(() => {
         cy.task('stubGetPrisonerApp', {
-          prisonerId,
-          applicationId,
-          application,
+          app,
         })
 
         cy.visit(route)
@@ -92,8 +86,8 @@ context('Confirm Details Page', () => {
 
   testConfirmDetailsPage(
     'Updating an existing application - Confirm details',
-    `/applications/${prisonerId}/${applicationId}/change/confirm`,
-    `/applications/${prisonerId}/${applicationId}/change`,
+    `/applications/${app.requestedBy.username}/${app.id}/change/confirm`,
+    `/applications/${app.requestedBy.username}/${app.id}/change`,
     false,
   )
 })

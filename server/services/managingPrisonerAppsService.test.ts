@@ -3,9 +3,10 @@ import TestData from '../routes/testutils/testData'
 import ManagingPrisonerAppsService from './managingPrisonerAppsService'
 
 const mockClientMethods = {
-  getPrisonerApp: jest.fn(),
   forwardApp: jest.fn(),
   getApps: jest.fn(),
+  getGroups: jest.fn(),
+  getPrisonerApp: jest.fn(),
 }
 
 const testData = new TestData()
@@ -18,7 +19,7 @@ jest.mock('../data/managingPrisonerAppsClient', () => {
 describe('ManagingPrisonerAppsService', () => {
   let service: ManagingPrisonerAppsService
 
-  const { appSearchPayload, prisonerApp, user } = testData
+  const { appSearchPayload, app, user } = testData
 
   beforeEach(() => {
     const hmppsAuthClient = new HmppsAuthClient(null) as jest.Mocked<HmppsAuthClient>
@@ -31,11 +32,11 @@ describe('ManagingPrisonerAppsService', () => {
 
   describe('getPrisonerApp', () => {
     it('should retrieve a prisoner application using the client', async () => {
-      mockClientMethods.getPrisonerApp.mockReturnValue(prisonerApp)
+      mockClientMethods.getPrisonerApp.mockReturnValue(app)
 
       const result = await service.getPrisonerApp('prisoner-id', 'application-id', user)
 
-      expect(result).toEqual(prisonerApp)
+      expect(result).toEqual(app)
       expect(mockClientMethods.getPrisonerApp).toHaveBeenCalledWith('prisoner-id', 'application-id')
     })
   })
@@ -55,6 +56,15 @@ describe('ManagingPrisonerAppsService', () => {
 
       expect(result).toBeUndefined()
       expect(mockClientMethods.getApps).toHaveBeenCalledWith(appSearchPayload)
+    })
+  })
+
+  describe('getGroups', () => {
+    it('should fetch a list of groups for the given establishment', async () => {
+      const result = await service.getGroups(user)
+
+      expect(result).toBeUndefined()
+      expect(mockClientMethods.getGroups).toHaveBeenCalledWith()
     })
   })
 })

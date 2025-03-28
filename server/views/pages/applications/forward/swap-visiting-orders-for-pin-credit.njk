@@ -17,8 +17,8 @@
         {% if errors %}
           {% set errorList = [] %}
 
-          {% if errors.forwardToDepartment %}
-            {% set errorList = errorList.concat([{ text: errors.forwardToDepartment.text, href: "#forwardToDepartment" }]) %}
+          {% if errors.forwardTo %}
+            {% set errorList = errorList.concat([{ text: errors.forwardToDepartment.text, href: "#forwardTo" }]) %}
           {% endif %}
 
           {% if errors.forwardingReason %}
@@ -36,26 +36,13 @@
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
           {{ govukRadios({
-            name: "forwardToDepartment",
+            name: "forwardTo",
             fieldset: {
               legend: {
                 text: "Send to:"
               }
             },
-            items: [
-              {
-                value: "activities",
-                text: "Activities"
-              },
-              {
-                value: "chaplaincy",
-                text: "Chaplaincy"
-              },
-              {
-                value: "education",
-                text: "Education"
-              }
-            ],
+            items: departments,
             errorMessage: errors.forwardToDepartment
           }) }}
 

@@ -87,3 +87,11 @@ export type ViewApplicationsResponse = {
   assignedGroups: ViewApplicationsResponseAssignedGroup[]
   apps: ViewApplicationsResponseApplication[]
 }
+
+export type Group = {
+  id: string
+  name: string
+  establishment: Establishment
+  initialApp: string
+  type: string
+}

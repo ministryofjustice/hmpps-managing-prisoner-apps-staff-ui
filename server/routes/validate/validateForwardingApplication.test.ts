@@ -7,11 +7,11 @@ describe('validateForwardingApplication', () => {
     expect(errors).toEqual({})
   })
 
-  it('should return an error for missing forwardToDepartment', () => {
+  it('should return an error for missing forwardTo', () => {
     const errors = validateForwardingApplication('', 'Reason must be 1000 characters or less')
 
     expect(errors).toEqual({
-      forwardToDepartment: { text: 'Choose where to send' },
+      forwardTo: { text: 'Choose where to send' },
     })
   })
 
@@ -24,12 +24,12 @@ describe('validateForwardingApplication', () => {
     })
   })
 
-  it('should return both errors for missing forwardToDepartment and long forwardingReason', () => {
+  it('should return both errors for missing forwardTo and long forwardingReason', () => {
     const longReason = 'A'.repeat(1001)
     const errors = validateForwardingApplication('', longReason)
 
     expect(errors).toEqual({
-      forwardToDepartment: { text: 'Choose where to send' },
+      forwardTo: { text: 'Choose where to send' },
       forwardingReason: { text: 'Reason must be 1000 characters or less' },
     })
   })
