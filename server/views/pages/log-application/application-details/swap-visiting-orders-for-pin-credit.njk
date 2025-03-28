@@ -19,14 +19,15 @@
       <div class="govuk-grid-column-one-half">
         {% if errors %}
           {% set errorList = [] %}
-            {% if errors.Details %}
-              {% set errorList = errorList.concat([{ text: errors.Details.text, href: "#swapVosPinCreditDetails" }]) %}
-            {% endif %}
 
-            {{ govukErrorSummary({
-              titleText: "There is a problem",
-              errorList: errorList
-            }) }}
+          {% if errors.Details %}
+            {% set errorList = errorList.concat([{ text: errors.Details.text, href: "#swapVosPinCreditDetails" }]) %}
+          {% endif %}
+
+          {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          }) }}
         {% endif %}
 
         <span class="govuk-caption-xl">{{ appTypeTitle }}</span>
