@@ -22,7 +22,7 @@ describe('ManagingPrisonerAppsApiClient', () => {
 
   it('should retrieve a specific prisoner application by prisoner and application ID', async () => {
     fakeManagingPrisonerAppApi
-      .get('/v1/prisoners/prisoner-id/apps/app-id?requestedBy=true')
+      .get('/v1/prisoners/prisoner-id/apps/app-id?requestedBy=true&assignedGroup=true')
       .matchHeader('authorization', `Bearer ${user.token}`)
       .reply(200, prisonerApp)
 
@@ -30,16 +30,15 @@ describe('ManagingPrisonerAppsApiClient', () => {
     expect(output).toEqual(prisonerApp)
   })
 
-  // Pending implementation - update once the correct API endpoint is available
-  // it('should forward an application to another department', async () => {
-  //   fakeManagingPrisonerAppApi
-  //     .get('/v1/')
-  //     .matchHeader('authorization', `Bearer ${user.token}`)
-  //     .reply(200, undefined)
+  it('should forward an application to another department', async () => {
+    fakeManagingPrisonerAppApi
+      .get('/v1/apps/app-id/forward/groups/group-id')
+      .matchHeader('authorization', `Bearer ${user.token}`)
+      .reply(200, undefined)
 
-  //   const output = await client.forwardApp('prisoner-id', 'app-id', 'dept')
-  //   expect(output).toBeUndefined()
-  // })
+    const output = await client.forwardApp('app-id', 'group-id')
+    expect(output).toBeUndefined()
+  })
 
   it('should submit a new prisoner application', async () => {
     fakeManagingPrisonerAppApi
