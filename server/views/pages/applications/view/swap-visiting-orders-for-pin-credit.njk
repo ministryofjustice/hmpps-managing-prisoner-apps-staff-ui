@@ -7,7 +7,6 @@
 
 {% block content %}
   <div class="govuk-body govuk-width-container">
-    <span class="govuk-caption-xl">Business Hub applications</span>
     <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
 
     {% set activeTab = 'application' %}
@@ -32,7 +31,7 @@
                 text: "Department"
               },
               value: {
-                text: application.assignedGroup.name
+                text: application.assignedGroup
               },
               actions: {
                 items: [
