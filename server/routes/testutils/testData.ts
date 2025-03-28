@@ -1,4 +1,4 @@
-import { Application } from '../../@types/managingAppsApi'
+import { Application, ApplicationSearchPayload, ViewApplicationsResponse } from '../../@types/managingAppsApi'
 import { PrisonerDetail } from '../../@types/prisonApi'
 import { APPLICATION_STATUS } from '../../constants/applicationStatus'
 import { BaseUser } from '../../interfaces/hmppsUser'
@@ -98,5 +98,77 @@ export default class TestData {
     prisonerName: 'Emily Brown',
     date: new Date('2024-09-15').toISOString(),
     additionalData: { swapVOsToPinCreditDetails: 'Swap VOs for PIN credit' },
+  }
+
+  appSearchPayload: ApplicationSearchPayload = {
+    page: 1,
+    size: 10,
+    status: ['PENDING'],
+    types: null,
+    requestedBy: null,
+    assignedGroups: null,
+  }
+
+  appSearchResponse: ViewApplicationsResponse = {
+    page: 1,
+    totalRecords: 3,
+    exhausted: true,
+    types: {
+      PIN_PHONE_CREDIT_TOP_UP: 0,
+      PIN_PHONE_EMERGENCY_CREDIT_TOP_UP: 0,
+      PIN_PHONE_ADD_NEW_CONTACT: 3,
+      PIN_PHONE_REMOVE_CONTACT: 0,
+      PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS: 0,
+    },
+    assignedGroups: [
+      {
+        id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
+        name: 'Business Hub',
+        count: 3,
+      },
+      {
+        id: '72c73234-b618-4c65-9fb1-6b710be68474',
+        name: 'OMU',
+        count: 0,
+      },
+    ],
+    apps: [
+      {
+        id: '1808f5e2-2bf4-499a-b79f-fb0a5f4bac7b',
+        establishmentId: 'TEST_ESTABLISHMENT_FIRST',
+        status: 'PENDING',
+        appType: 'PIN_PHONE_ADD_NEW_CONTACT',
+        requestedBy: 'A12345',
+        requestedDate: '2025-03-24T14:03:13Z',
+        assignedGroup: {
+          id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
+          name: 'Business Hub',
+        },
+      },
+      {
+        id: '53a02b48-b6af-47d5-9c54-3d0137f6ed96',
+        establishmentId: 'TEST_ESTABLISHMENT_FIRST',
+        status: 'PENDING',
+        appType: 'PIN_PHONE_ADD_NEW_CONTACT',
+        requestedBy: 'A12345',
+        requestedDate: '2025-03-23T14:03:13Z',
+        assignedGroup: {
+          id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
+          name: 'Business Hub',
+        },
+      },
+      {
+        id: 'b4e9944b-3a27-4d10-b12b-895426349ea3',
+        establishmentId: 'TEST_ESTABLISHMENT_FIRST',
+        status: 'PENDING',
+        appType: 'PIN_PHONE_ADD_NEW_CONTACT',
+        requestedBy: 'A12345',
+        requestedDate: '2025-03-21T14:03:13Z',
+        assignedGroup: {
+          id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
+          name: 'Business Hub',
+        },
+      },
+    ],
   }
 }

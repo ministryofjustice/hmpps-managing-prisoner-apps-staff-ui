@@ -71,7 +71,7 @@ export default function forwardApplicationRoutes({
         })
       }
 
-      await managingPrisonerAppsService.forwardApp(prisonerId, applicationId, forwardToDepartment, user)
+      await managingPrisonerAppsService.forwardApp(applicationId, forwardToDepartment, user)
 
       return res.redirect(`/applications/${prisonerId}/${applicationId}`)
     }),

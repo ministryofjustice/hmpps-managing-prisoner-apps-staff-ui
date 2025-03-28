@@ -46,15 +46,7 @@ export default function confirmDetailsRoutes({
       const { applicationData } = req.session
       const { user } = res.locals
 
-      if (!applicationData) {
-        return res.redirect(URLS.APPLICATION_DETAILS)
-      }
-
       const application = await managingPrisonerAppsService.submitPrisonerApp(applicationData, user)
-
-      if (!application) {
-        return res.redirect(URLS.APPLICATION_DETAILS)
-      }
 
       updateSessionData(req, {
         prisonerName: req.body.prisonerName,
