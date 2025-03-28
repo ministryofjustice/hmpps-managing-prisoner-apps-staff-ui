@@ -19,7 +19,7 @@ jest.mock('../data/managingPrisonerAppsClient', () => {
 describe('ManagingPrisonerAppsService', () => {
   let service: ManagingPrisonerAppsService
 
-  const { appSearchPayload, prisonerApp, user } = testData
+  const { appSearchPayload, app, user } = testData
 
   beforeEach(() => {
     const hmppsAuthClient = new HmppsAuthClient(null) as jest.Mocked<HmppsAuthClient>
@@ -32,11 +32,11 @@ describe('ManagingPrisonerAppsService', () => {
 
   describe('getPrisonerApp', () => {
     it('should retrieve a prisoner application using the client', async () => {
-      mockClientMethods.getPrisonerApp.mockReturnValue(prisonerApp)
+      mockClientMethods.getPrisonerApp.mockReturnValue(app)
 
       const result = await service.getPrisonerApp('prisoner-id', 'application-id', user)
 
-      expect(result).toEqual(prisonerApp)
+      expect(result).toEqual(app)
       expect(mockClientMethods.getPrisonerApp).toHaveBeenCalledWith('prisoner-id', 'application-id')
     })
   })

@@ -11,7 +11,7 @@ describe('ManagingPrisonerAppsApiClient', () => {
   let fakeManagingPrisonerAppApi: nock.Scope
   let client: ManagingPrisonerAppsApiClient
 
-  const { appSearchPayload, appSearchResponse, prisonerApp, submitPrisonerAppData, user } = testData
+  const { appSearchPayload, appSearchResponse, app, submitPrisonerAppData, user } = testData
 
   beforeEach(() => {
     fakeManagingPrisonerAppApi = nock(config.apis.managingPrisonerApps.url)
@@ -24,10 +24,10 @@ describe('ManagingPrisonerAppsApiClient', () => {
     fakeManagingPrisonerAppApi
       .get('/v1/prisoners/prisoner-id/apps/app-id?requestedBy=true&assignedGroup=true')
       .matchHeader('authorization', `Bearer ${user.token}`)
-      .reply(200, prisonerApp)
+      .reply(200, app)
 
     const output = await client.getPrisonerApp('prisoner-id', 'app-id')
-    expect(output).toEqual(prisonerApp)
+    expect(output).toEqual(app)
   })
 
   it('should forward an application to another department', async () => {
@@ -44,10 +44,10 @@ describe('ManagingPrisonerAppsApiClient', () => {
     fakeManagingPrisonerAppApi
       .post('/v1/prisoners/G4567/apps')
       .matchHeader('authorization', `Bearer ${user.token}`)
-      .reply(201, prisonerApp)
+      .reply(201, app)
 
     const output = await client.submitPrisonerApp(submitPrisonerAppData)
-    expect(output).toEqual(prisonerApp)
+    expect(output).toEqual(app)
   })
 
   it('should search for applications based on payload', async () => {
