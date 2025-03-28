@@ -40,7 +40,7 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
       const fieldToValidate = req.body.swapVosPinCreditDetails
 
       const isSwapVOsToPinCredit =
-        applicationType?.apiValue ===
+        applicationData?.type?.apiValue ===
         APPLICATION_TYPES.find(type => type.value === 'swap-visiting-orders-for-pin-credit')?.apiValue
 
       const fieldName = isSwapVOsToPinCredit ? 'Details' : ''
