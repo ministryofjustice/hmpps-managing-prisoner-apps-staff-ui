@@ -17,24 +17,23 @@
 
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-half">
-          {% if errors %}
-              {% set errorList = [] %}
+        {% if errors %}
+          {% set errorList = [] %}
+            {% if errors.Details %}
+              {% set errorList = errorList.concat([{ text: errors.Details.text, href: "#swapVosPinCreditDetails" }]) %}
+            {% endif %}
 
-              {% if errors.Details %}
-                  {% set errorList = errorList.concat([{ text: errors.Details.text, href: "#swapVosPinCreditDetails" }]) %}
-              {% endif %}
+            {{ govukErrorSummary({
+              titleText: "There is a problem",
+              errorList: errorList
+            }) }}
+        {% endif %}
 
-              {{ govukErrorSummary({
-                  titleText: "There is a problem",
-                  errorList: errorList
-              }) }}
-          {% endif %}
+        <span class="govuk-caption-xl">{{ appTypeTitle }}</span>
+        <h1 class="govuk-heading-xl govuk-!-margin-top-0">Log details</h1>
 
-          <span class="govuk-caption-xl">{{ appTypeTitle }}</span>
-          <h1 class="govuk-heading-xl govuk-!-margin-top-0">Log details</h1>
-
-          <form method="POST" id="log-swap-vos-pin-credit-details">
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <form method="POST" id="log-swap-vos-pin-credit-details">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
             {{ govukCharacterCount({
               name: "swapVosPinCreditDetails",
