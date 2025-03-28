@@ -11,7 +11,7 @@ describe('ManagingPrisonerAppsApiClient', () => {
   let fakeManagingPrisonerAppApi: nock.Scope
   let client: ManagingPrisonerAppsApiClient
 
-  const { appSearchPayload, appSearchResponse, prisonerApp, submitPrisonerAppData, user } = testData
+  const { appSearchPayload, appSearchResponse, app, submitPrisonerAppData, user } = testData
 
   beforeEach(() => {
     fakeManagingPrisonerAppApi = nock(config.apis.managingPrisonerApps.url)
@@ -22,33 +22,32 @@ describe('ManagingPrisonerAppsApiClient', () => {
 
   it('should retrieve a specific prisoner application by prisoner and application ID', async () => {
     fakeManagingPrisonerAppApi
-      .get('/v1/prisoners/prisoner-id/apps/app-id?requestedBy=true')
+      .get('/v1/prisoners/prisoner-id/apps/app-id?requestedBy=true&assignedGroup=true')
       .matchHeader('authorization', `Bearer ${user.token}`)
-      .reply(200, prisonerApp)
+      .reply(200, app)
 
     const output = await client.getPrisonerApp('prisoner-id', 'app-id')
-    expect(output).toEqual(prisonerApp)
+    expect(output).toEqual(app)
   })
 
-  // Pending implementation - update once the correct API endpoint is available
-  // it('should forward an application to another department', async () => {
-  //   fakeManagingPrisonerAppApi
-  //     .get('/v1/')
-  //     .matchHeader('authorization', `Bearer ${user.token}`)
-  //     .reply(200, undefined)
+  it('should forward an application to another department', async () => {
+    fakeManagingPrisonerAppApi
+      .get('/v1/apps/app-id/forward/groups/group-id')
+      .matchHeader('authorization', `Bearer ${user.token}`)
+      .reply(200, undefined)
 
-  //   const output = await client.forwardApp('prisoner-id', 'app-id', 'dept')
-  //   expect(output).toBeUndefined()
-  // })
+    const output = await client.forwardApp('app-id', 'group-id')
+    expect(output).toBeUndefined()
+  })
 
   it('should submit a new prisoner application', async () => {
     fakeManagingPrisonerAppApi
       .post('/v1/prisoners/G4567/apps')
       .matchHeader('authorization', `Bearer ${user.token}`)
-      .reply(201, prisonerApp)
+      .reply(201, app)
 
     const output = await client.submitPrisonerApp(submitPrisonerAppData)
-    expect(output).toEqual(prisonerApp)
+    expect(output).toEqual(app)
   })
 
   it('should search for applications based on payload', async () => {

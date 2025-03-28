@@ -21,6 +21,7 @@ export default function forwardApplicationRoutes({
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
+      const groups = await managingPrisonerAppsService.getGroups(user)
 
       if (!application) {
         return res.redirect(`/applications`)
@@ -37,8 +38,14 @@ export default function forwardApplicationRoutes({
         return res.redirect(`/applications?error=unknown-type`)
       }
 
+      const departments = groups.map(group => ({
+        value: group.id,
+        text: group.name,
+      }))
+
       return res.render(`pages/applications/forward/${applicationType.value}`, {
         application,
+        departments,
         textareaValue: '',
         title: "Forward this application to swap VO's",
         errors: null,
@@ -50,7 +57,7 @@ export default function forwardApplicationRoutes({
     '/applications/:prisonerId/:applicationId/forward',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { prisonerId, applicationId } = req.params
-      const { forwardToDepartment, forwardingReason } = req.body
+      const { forwardTo, forwardingReason } = req.body
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
@@ -60,7 +67,7 @@ export default function forwardApplicationRoutes({
       }
 
       const applicationType = getApplicationType(application.appType)
-      const errors = validateForwardingApplication(forwardToDepartment, forwardingReason)
+      const errors = validateForwardingApplication(forwardTo, forwardingReason)
 
       if (Object.keys(errors).length > 0) {
         return res.render(`pages/applications/forward/${applicationType.value}`, {
@@ -71,7 +78,7 @@ export default function forwardApplicationRoutes({
         })
       }
 
-      await managingPrisonerAppsService.forwardApp(applicationId, forwardToDepartment, user)
+      await managingPrisonerAppsService.forwardApp(applicationId, forwardTo, user)
 
       return res.redirect(`/applications/${prisonerId}/${applicationId}`)
     }),

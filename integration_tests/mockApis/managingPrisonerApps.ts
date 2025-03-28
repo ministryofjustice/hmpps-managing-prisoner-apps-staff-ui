@@ -1,26 +1,33 @@
 import { SuperAgentRequest } from 'superagent'
 import { Application } from '../../server/@types/managingAppsApi'
+import TestData from '../../server/routes/testutils/testData'
 import { stubFor } from './wiremock'
 
 export default {
-  stubGetPrisonerApp: ({
-    prisonerId,
-    applicationId,
-    application,
-  }: {
-    prisonerId: string
-    applicationId: string
-    application: Application
-  }): SuperAgentRequest => {
+  stubGetPrisonerApp: ({ app }: { app: Application }): SuperAgentRequest => {
     return stubFor({
       request: {
         method: 'GET',
-        url: `/managingPrisonerApps/v1/prisoners/${prisonerId}/apps/${applicationId}?requestedBy=true`,
+        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}?requestedBy=true&assignedGroup=true`,
       },
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: application,
+        jsonBody: app,
+      },
+    })
+  },
+
+  stubGetGroups: (): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        url: `/managingPrisonerApps/v1/groups`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: [new TestData().group],
       },
     })
   },

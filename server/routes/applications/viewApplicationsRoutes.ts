@@ -1,4 +1,6 @@
+import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
+
 import { ApplicationSearchPayload } from '../../@types/managingAppsApi'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
@@ -64,7 +66,10 @@ export default function viewApplicationRoutes({
 
       return res.render(`pages/applications/view/${applicationType.value}`, {
         title: applicationType.name,
-        application,
+        application: {
+          ...application,
+          requestedDate: format(new Date(application.requestedDate), 'd MMMM yyyy'),
+        },
       })
     }),
   )

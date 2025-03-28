@@ -4,23 +4,17 @@ import ViewApplicationPage from '../pages/viewApplicationPage'
 
 context('View Application Page', () => {
   let page: ViewApplicationPage
-  const { prisonerApp: application } = new TestData()
-  const {
-    id: applicationId,
-    requestedBy: { username: prisonerId },
-  } = application
+  const { app } = new TestData()
 
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubGetPrisonerApp', {
-      prisonerId,
-      applicationId,
-      application,
+      app,
     })
     cy.signIn()
 
-    cy.visit(`/applications/${prisonerId}/${applicationId}`)
+    cy.visit(`/applications/${app.requestedBy.username}/${app.id}`)
 
     page = Page.verifyOnPage(ViewApplicationPage)
   })
