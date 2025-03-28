@@ -24,9 +24,11 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
         return res.redirect(URLS.APPLICATION_TYPE)
       }
 
+      const appTypeTitle = applicationType?.name
+
       return res.render(`pages/log-application/application-details/${applicationType.value}`, {
-        title: 'Log swap VOs for PIN credit details',
-        appTypeTitle: 'Swap VOs for PIN credit',
+        title: `Log ${appTypeTitle}`,
+        appTypeTitle,
       })
     }),
   )
@@ -37,29 +39,30 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
       const { applicationData } = req.session
 
       const applicationType = getApplicationType(applicationData?.type.apiValue)
-      const fieldToValidate = req.body.swapVosPinCreditDetails
 
       const isSwapVOsToPinCredit =
         applicationData?.type?.apiValue ===
         APPLICATION_TYPES.find(type => type.value === 'swap-visiting-orders-for-pin-credit')?.apiValue
 
+      const textareaValue = isSwapVOsToPinCredit ? req.body.swapVosPinCreditDetails : ''
       const fieldName = isSwapVOsToPinCredit ? 'Details' : ''
 
-      const errors = validateTextField(fieldToValidate, fieldName)
+      const errors = validateTextField(textareaValue, fieldName)
+      const appTypeTitle = applicationType?.name
 
       if (Object.keys(errors).length > 0) {
         return res.render(`pages/log-application/application-details/${applicationType.value}`, {
           errors,
-          title: 'Log swap VOs for PIN credit details',
-          appTypeTitle: 'Swap VOs for PIN credit',
-          fieldToValidate,
+          title: `Log ${appTypeTitle}`,
+          appTypeTitle,
+          textareaValue,
         })
       }
 
       updateSessionData(req, {
         additionalData: {
           ...applicationData?.additionalData,
-          ...(isSwapVOsToPinCredit ? { swapVOsToPinCreditDetails: fieldToValidate } : {}),
+          ...(isSwapVOsToPinCredit ? { swapVOsToPinCreditDetails: textareaValue } : {}),
         },
       })
 

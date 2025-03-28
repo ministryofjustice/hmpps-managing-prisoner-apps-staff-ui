@@ -19,7 +19,7 @@ context('Swap VOs for PIN Credit Details Page', () => {
     Page.verifyOnPage(SwapVosPinCreditDetailsPage)
   })
   it('should display the correct page title', () => {
-    page.pageTitle().should('include', 'Log swap VOs for PIN credit details')
+    page.pageTitle().should('include', 'Swap visiting orders (VOs) for PIN credit')
   })
   it('should render the page heading correctly', () => {
     page.checkOnPage()
@@ -28,7 +28,7 @@ context('Swap VOs for PIN Credit Details Page', () => {
     page.backLink().should('have.text', 'Back').and('have.attr', 'href', '/log/prisoner-details')
   })
   it('should render the correct app type title', () => {
-    page.appTypeTitle().should('have.text', 'Swap VOs for PIN credit')
+    page.appTypeTitle().should('have.text', 'Swap visiting orders (VOs) for PIN credit')
   })
   it('should render the correct form label for the textarea', () => {
     page.formLabel().should('contain.text', 'Details (optional)')
