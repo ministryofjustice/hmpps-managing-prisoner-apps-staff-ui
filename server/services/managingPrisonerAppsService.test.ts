@@ -3,9 +3,10 @@ import TestData from '../routes/testutils/testData'
 import ManagingPrisonerAppsService from './managingPrisonerAppsService'
 
 const mockClientMethods = {
-  getPrisonerApp: jest.fn(),
   forwardApp: jest.fn(),
   getApps: jest.fn(),
+  getGroups: jest.fn(),
+  getPrisonerApp: jest.fn(),
 }
 
 const testData = new TestData()
@@ -55,6 +56,15 @@ describe('ManagingPrisonerAppsService', () => {
 
       expect(result).toBeUndefined()
       expect(mockClientMethods.getApps).toHaveBeenCalledWith(appSearchPayload)
+    })
+  })
+
+  describe('getGroups', () => {
+    it('should fetch a list of groups for the given establishment', async () => {
+      const result = await service.getGroups(user)
+
+      expect(result).toBeUndefined()
+      expect(mockClientMethods.getGroups).toHaveBeenCalledWith()
     })
   })
 })
