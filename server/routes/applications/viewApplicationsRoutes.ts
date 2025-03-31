@@ -25,12 +25,13 @@ export default function viewApplicationRoutes({
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
 
-      const status = req.query.status?.toString().toUpperCase() === 'CLOSED' ? 'CLOSED' : 'PENDING'
+      const statusQuery = req.query.status?.toString().toUpperCase()
+      const status = statusQuery === 'CLOSED' ? ['APPROVED', 'DECLINED'] : ['PENDING']
 
       const payload: ApplicationSearchPayload = {
         page: 1,
         size: 5,
-        status: [status],
+        status,
         types: [],
         requestedBy: null,
         assignedGroups: [],
@@ -55,7 +56,7 @@ export default function viewApplicationRoutes({
       })
 
       res.render('pages/applications/list/index', {
-        status,
+        status: statusQuery || 'PENDING',
         apps: formatApplicationsToRows(appsWithNames),
       })
     }),
