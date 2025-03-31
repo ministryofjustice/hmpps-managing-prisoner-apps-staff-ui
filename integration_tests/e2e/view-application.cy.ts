@@ -4,23 +4,17 @@ import ViewApplicationPage from '../pages/viewApplicationPage'
 
 context('View Application Page', () => {
   let page: ViewApplicationPage
-  const { prisonerApp: application } = new TestData()
-  const {
-    id: applicationId,
-    requestedBy: { username: prisonerId },
-  } = application
+  const { app } = new TestData()
 
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubGetPrisonerApp', {
-      prisonerId,
-      applicationId,
-      application,
+      app,
     })
     cy.signIn()
 
-    cy.visit(`/applications/business-hub/${prisonerId}/${applicationId}`)
+    cy.visit(`/applications/${app.requestedBy.username}/${app.id}`)
 
     page = Page.verifyOnPage(ViewApplicationPage)
   })
@@ -62,7 +56,7 @@ context('View Application Page', () => {
       .commentsTab()
       .should('exist')
       .and('contain.text', 'Comments')
-      .and('have.attr', 'href', '/applications/business-hub/G123456/13d2c453-be11-44a8-9861-21fd8ae6e911/comments')
+      .and('have.attr', 'href', '/applications/G123456/13d2c453-be11-44a8-9861-21fd8ae6e911/comments')
   })
 
   it('should allow navigating to the Action and Reply section', () => {
@@ -70,7 +64,7 @@ context('View Application Page', () => {
       .actionAndReplyTab()
       .should('exist')
       .and('contain.text', 'Action and reply')
-      .and('have.attr', 'href', '/applications/business-hub/G123456/13d2c453-be11-44a8-9861-21fd8ae6e911/reply')
+      .and('have.attr', 'href', '/applications/G123456/13d2c453-be11-44a8-9861-21fd8ae6e911/reply')
   })
 
   it('should allow navigating to the History section', () => {
@@ -78,6 +72,6 @@ context('View Application Page', () => {
       .historyTab()
       .should('exist')
       .and('contain.text', 'History')
-      .and('have.attr', 'href', '/applications/business-hub/G123456/13d2c453-be11-44a8-9861-21fd8ae6e911/history')
+      .and('have.attr', 'href', '/applications/G123456/13d2c453-be11-44a8-9861-21fd8ae6e911/history')
   })
 })

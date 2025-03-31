@@ -16,15 +16,15 @@ export default function changeApplicationRoutes({
   const router = Router()
 
   router.get(
-    '/applications/:departmentName/:prisonerId/:applicationId/change',
+    '/applications/:prisonerId/:applicationId/change',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { departmentName, prisonerId, applicationId } = req.params
+      const { prisonerId, applicationId } = req.params
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
       if (!application) {
-        return res.redirect(`/applications/${departmentName}/pending`)
+        return res.redirect(`/applications=`)
       }
 
       await auditService.logPageView(Page.CHANGE_APPLICATION_PAGE, {
@@ -35,21 +35,21 @@ export default function changeApplicationRoutes({
       const applicationType = getApplicationType(application.appType)
 
       if (!applicationType) {
-        return res.redirect(`/applications/${departmentName}/pending?error=unknown-type`)
+        return res.redirect(`/applications?error=unknown-type`)
       }
 
       return res.render(`pages/applications/change/${applicationType.value}`, {
         application,
-        backLink: `/applications/${departmentName}/${prisonerId}/${applicationId}`,
+        backLink: `/applications/${prisonerId}/${applicationId}`,
         errors: null,
       })
     }),
   )
 
   router.post(
-    '/applications/:departmentName/:prisonerId/:applicationId/change',
+    '/applications/:prisonerId/:applicationId/change',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { prisonerId, applicationId, departmentName } = req.params
+      const { prisonerId, applicationId } = req.params
       const { applicationData } = req.session
       const { user } = res.locals
 
@@ -63,28 +63,28 @@ export default function changeApplicationRoutes({
       updateSessionData(req, {
         type: selectedAppType,
         prisonerName: prisonerId,
-        date: new Date(application.requestedDate),
+        date: application.requestedDate,
         additionalData: {
           ...applicationData?.additionalData,
           ...(isSwapVOsToPinCredit ? { swapVOsToPinCreditDetails: req.body.swapVosPinCreditDetails } : {}),
         },
       })
 
-      return res.redirect(`/applications/${departmentName}/${prisonerId}/${applicationId}/change/confirm`)
+      return res.redirect(`/applications/${prisonerId}/${applicationId}/change/confirm`)
     }),
   )
 
   router.get(
-    '/applications/:departmentName/:prisonerId/:applicationId/change/confirm',
+    '/applications/:prisonerId/:applicationId/change/confirm',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { departmentName, prisonerId, applicationId } = req.params
+      const { prisonerId, applicationId } = req.params
       const { user } = res.locals
       const { applicationData } = req.session
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
       if (!application) {
-        return res.redirect(`/applications/${departmentName}/pending`)
+        return res.redirect(`/applications`)
       }
 
       await auditService.logPageView(Page.CHANGE_APPLICATION_PAGE, {
@@ -95,12 +95,12 @@ export default function changeApplicationRoutes({
       const applicationType = getApplicationType(application.appType)
 
       if (!applicationType) {
-        return res.redirect(`/applications/${departmentName}/pending?error=unknown-type`)
+        return res.redirect(`/applications?error=unknown-type`)
       }
 
       return res.render(`pages/log-application/confirm/${applicationType.value}`, {
         applicationData,
-        backLink: `/applications/${departmentName}/${prisonerId}/${applicationId}/change`,
+        backLink: `/applications/${prisonerId}/${applicationId}/change`,
         errors: null,
         isUpdate: true,
         title: 'Check details',

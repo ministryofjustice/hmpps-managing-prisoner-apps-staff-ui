@@ -13,18 +13,14 @@ context('Action and Reply Page', () => {
 
   testCases.forEach(({ status, label, isClosed }) => {
     describe(`When application is ${label}`, () => {
-      const application = { ...testData.prisonerApp, status }
-      const {
-        id: applicationId,
-        requestedBy: { username: prisonerId },
-      } = application
+      const app = { ...testData.app, status }
 
       const visitPage = () => {
         cy.task('reset')
         cy.task('stubSignIn')
-        cy.task('stubGetPrisonerApp', { prisonerId, applicationId, application })
+        cy.task('stubGetPrisonerApp', { app })
         cy.signIn()
-        cy.visit(`/applications/business-hub/${prisonerId}/${applicationId}/reply`)
+        cy.visit(`/applications/${app.requestedBy.username}/${app.id}/reply`)
         page = Page.verifyOnPage(ActionAndReplyPage)
       }
 

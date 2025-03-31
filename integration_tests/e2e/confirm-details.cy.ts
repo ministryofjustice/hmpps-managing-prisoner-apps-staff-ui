@@ -4,11 +4,7 @@ import Page from '../pages/page'
 
 context('Confirm Details Page', () => {
   let page: ConfirmDetailsPage
-  const { prisonerApp: application } = new TestData()
-  const {
-    id: applicationId,
-    requestedBy: { username: prisonerId },
-  } = application
+  const { app } = new TestData()
 
   beforeEach(() => {
     cy.task('reset')
@@ -19,17 +15,13 @@ context('Confirm Details Page', () => {
   const testConfirmDetailsPage = (title, route, backLink, hasChangeLinks) => {
     context(title, () => {
       beforeEach(() => {
-        if (route.includes('business-hub')) {
-          cy.task('stubGetPrisonerApp', {
-            prisonerId,
-            applicationId,
-            application,
-          })
-        }
+        cy.task('stubGetPrisonerApp', {
+          app,
+        })
 
         cy.visit(route)
 
-        if (!route.includes('business-hub')) {
+        if (route === '/log/confirm') {
           cy.contains('Swap visiting orders (VOs) for PIN credit').click()
           cy.contains('button', 'Continue').click()
           cy.contains('button', 'Continue').click()
@@ -94,8 +86,8 @@ context('Confirm Details Page', () => {
 
   testConfirmDetailsPage(
     'Updating an existing application - Confirm details',
-    `/applications/business-hub/${prisonerId}/${applicationId}/change/confirm`,
-    `/applications/business-hub/${prisonerId}/${applicationId}/change`,
+    `/applications/${app.requestedBy.username}/${app.id}/change/confirm`,
+    `/applications/${app.requestedBy.username}/${app.id}/change`,
     false,
   )
 })

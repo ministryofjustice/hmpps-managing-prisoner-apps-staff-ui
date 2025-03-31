@@ -3,7 +3,6 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PrisonService from '../../services/prisonService'
-import TestData from '../testutils/testData'
 import actionAndReplyRoutes from './actionAndReplyRoutes'
 import applicationDetailsRoutes from './applicationDetailsRoutes'
 import applicationTypeRoutes from './applicationTypeRoutes'
@@ -11,6 +10,7 @@ import changeApplicationRoutes from './changeApplicationRoutes'
 import commentsRoutes from './commentsRoutes'
 import confirmDetailsRoutes from './confirmDetailsRoutes'
 import forwardApplicationRoutes from './forwardApplicationRoutes'
+import applicationHistoryRoutes from './applicationHistoryRoutes'
 import prisonerDetailsRoutes from './prisonerDetailsRoutes'
 import submitApplicationRoutes from './submitApplicationRoutes'
 import viewApplicationRoutes from './viewApplicationsRoutes'
@@ -34,9 +34,7 @@ export default function applicationsRoutes({
         correlationId: req.id,
       })
 
-      const { sections } = new TestData()
-
-      res.render('pages/applications', { title: 'Applications', sections })
+      res.render('pages/applications', { title: 'Applications' })
     }),
   )
 
@@ -45,10 +43,11 @@ export default function applicationsRoutes({
   router.use(applicationTypeRoutes({ auditService }))
   router.use(changeApplicationRoutes({ auditService, managingPrisonerAppsService }))
   router.use(commentsRoutes({ auditService, managingPrisonerAppsService }))
-  router.use(confirmDetailsRoutes({ auditService }))
+  router.use(confirmDetailsRoutes({ auditService, managingPrisonerAppsService }))
   router.use(forwardApplicationRoutes({ auditService, managingPrisonerAppsService }))
+  router.use(applicationHistoryRoutes({ auditService, managingPrisonerAppsService }))
   router.use(prisonerDetailsRoutes({ auditService, prisonService }))
-  router.use(submitApplicationRoutes({ auditService }))
+  router.use(submitApplicationRoutes({ auditService, managingPrisonerAppsService }))
   router.use(viewApplicationRoutes({ auditService, managingPrisonerAppsService }))
 
   return router

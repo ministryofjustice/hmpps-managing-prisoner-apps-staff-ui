@@ -4,7 +4,7 @@ import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { getApplicationType } from '../../utils/getApplicationType'
 
-export default function commentsRoutes({
+export default function applicationHistoryRoutes({
   auditService,
   managingPrisonerAppsService,
 }: {
@@ -12,9 +12,8 @@ export default function commentsRoutes({
   managingPrisonerAppsService: ManagingPrisonerAppsService
 }): Router {
   const router = Router()
-
   router.get(
-    '/applications/:prisonerId/:applicationId/comments',
+    '/applications/:prisonerId/:applicationId/history',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { prisonerId, applicationId } = req.params
       const { user } = res.locals
@@ -24,7 +23,7 @@ export default function commentsRoutes({
       if (!application) {
         return res.redirect(`/applications`)
       }
-      await auditService.logPageView(Page.COMMENTS_PAGE, {
+      await auditService.logPageView(Page.APPLICATION_HISTORY_PAGE, {
         who: res.locals.user.username,
         correlationId: req.id,
       })
@@ -35,9 +34,9 @@ export default function commentsRoutes({
         return res.redirect(`/applications?error=unknown-type`)
       }
 
-      return res.render(`pages/applications/comments/index`, {
+      return res.render(`pages/applications/history/index`, {
         application,
-        title: 'Comments',
+        title: applicationType.name,
       })
     }),
   )

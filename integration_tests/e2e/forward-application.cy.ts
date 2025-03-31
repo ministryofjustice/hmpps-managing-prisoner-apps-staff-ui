@@ -4,18 +4,17 @@ import Page from '../pages/page'
 
 context('Forward Application Page', () => {
   let page: ForwardApplicationPage
-  const { prisonerApp: application } = new TestData()
-  const {
-    id: applicationId,
-    requestedBy: { username: prisonerId },
-  } = application
+  const { app, group } = new TestData()
 
   const visitPage = () => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubGetPrisonerApp', { prisonerId, applicationId, application })
+    cy.task('stubGetPrisonerApp', {
+      app,
+    })
+    cy.task('stubGetGroups')
     cy.signIn()
-    cy.visit(`/applications/business-hub/${prisonerId}/${applicationId}/forward`)
+    cy.visit(`/applications/${app.requestedBy.username}/${app.id}/forward`)
     page = Page.verifyOnPage(ForwardApplicationPage)
   }
 
@@ -35,7 +34,7 @@ context('Forward Application Page', () => {
 
   describe('Form interactions', () => {
     it('should allow submitting the form when a department is selected', () => {
-      page.selectForwardToDepartment('activities')
+      page.selectForwardToDepartment(group.id)
       page.continueButton().click()
       cy.url().should('not.include', '/forward')
     })

@@ -26,8 +26,14 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
 
       const appTypeTitle = applicationType?.name
 
+      const isSwapVOsToPinCredit =
+        applicationType.apiValue ===
+        APPLICATION_TYPES.find(type => type.value === 'swap-visiting-orders-for-pin-credit')?.apiValue
+
+      const title = isSwapVOsToPinCredit ? 'Details' : ''
+
       return res.render(`pages/log-application/application-details/${applicationType.value}`, {
-        title: `Log ${appTypeTitle}`,
+        title: `Log ${title}`,
         appTypeTitle,
       })
     }),
@@ -53,7 +59,7 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
       if (Object.keys(errors).length > 0) {
         return res.render(`pages/log-application/application-details/${applicationType.value}`, {
           errors,
-          title: `Log ${appTypeTitle}`,
+          title: `Log ${fieldName}`,
           appTypeTitle,
           textareaValue,
         })

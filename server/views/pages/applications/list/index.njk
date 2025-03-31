@@ -1,0 +1,74 @@
+{% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
+{% from "moj/components/filter/macro.njk" import mojFilter %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tabs/macro.njk" import govukTabs %}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set pageTitle = "Applications" %}
+{% set mainClasses = "app-container govuk-body applications-list-page" %}
+
+{% block content %}
+  <div class="govuk-body govuk-width-container govuk-!-padding-top-5 govuk-!-padding-bottom-5">
+    <span class="govuk-caption-xl">Applications</span>
+    <h1 class="govuk-heading-xl govuk-!-margin-top-0">View all applications in your prison</h1>
+
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-quarter">
+        {% include './partials/filter.njk' %}
+      </div>
+
+      <div class="govuk-grid-column-three-quarters">
+        {% set pendingApps %}
+          <h2 class="govuk-heading-m">Pending applications</h2>
+
+          <div class="app-results-table">
+            {{ govukTable({
+              head: [
+                { 
+                  text: "Date", 
+                  attributes: { "aria-sort": "ascending" } 
+                },
+                { text: "Application type" },
+                { text: "From" },
+                { text: "Department" },
+                { text: "" }
+              ],
+              rows: apps if status == "PENDING" else [],
+              attributes: { "data-qa": "app-results-table", "data-module": "moj-sortable-table" }
+            }) }}
+          </div>
+        {% endset -%}
+
+        {% set closedApps %}
+          <h2 class="govuk-heading-m">Closed applications</h2>
+
+          <div class="app-results-table">
+            {{ govukTable({
+              head: [
+                { 
+                  text: "Date", 
+                  attributes: { "aria-sort": "descending" } 
+                },
+                { text: "Application type" },
+                { text: "From" },
+                { text: "Department" },
+                { text: "Decision" },
+                { text: "" }
+              ],
+              rows: apps if status == "CLOSED" else [],
+              attributes: { "data-qa": "app-results-table", "data-module": "moj-sortable-table" }
+            }) }}
+          </div>
+        {% endset -%}
+
+        {{ govukTabs({
+          items: [
+            { label: "Pending", id: "pending", panel: { html: pendingApps } },
+            { label: "Closed", id: "closed", panel: { html: closedApps } }
+          ]
+        }) }}
+      </div>
+    </div>
+  </div>
+{% endblock %}

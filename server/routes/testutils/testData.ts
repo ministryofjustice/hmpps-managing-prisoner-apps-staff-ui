@@ -1,10 +1,10 @@
-import { Application } from '../../@types/managingAppsApi'
+import { Application, ApplicationSearchPayload, Group, ViewApplicationsResponse } from '../../@types/managingAppsApi'
 import { PrisonerDetail } from '../../@types/prisonApi'
 import { APPLICATION_STATUS } from '../../constants/applicationStatus'
 import { BaseUser } from '../../interfaces/hmppsUser'
 
 export default class TestData {
-  prisonerApp: Application = {
+  app: Application = {
     id: '13d2c453-be11-44a8-9861-21fd8ae6e911',
     reference: '1232143',
     assignedGroup: {
@@ -78,35 +78,6 @@ export default class TestData {
     currentWorkingBirthDate: '1960-02-29',
   }
 
-  sections = [
-    {
-      title: 'Departments',
-      items: [
-        { name: 'Business Hub', tagText: '44', path: '' },
-        { name: 'OMU', tagText: '9', path: '' },
-      ],
-    },
-    {
-      title: 'Wings',
-      items: [
-        { name: 'First Night Centre', tagText: '3', path: '' },
-        { name: 'A', tagText: '0', path: '' },
-        { name: 'B', tagText: '2', path: '' },
-        { name: 'C', tagText: '1', path: '' },
-        { name: 'D', tagText: '0', path: '' },
-        { name: 'E', tagText: '1', path: '' },
-      ],
-    },
-    {
-      title: 'Governors',
-      items: [
-        { name: 'Paul White', tagText: '1', path: '' },
-        { name: 'James Smart', tagText: '0', path: '' },
-        { name: 'Syed Hasan', tagText: '4', path: '' },
-      ],
-    },
-  ]
-
   user: BaseUser = {
     token: 'token',
     username: 'user',
@@ -115,5 +86,100 @@ export default class TestData {
     name: 'name',
     displayName: 'Name',
     userRoles: [],
+  }
+
+  submitPrisonerAppData = {
+    type: {
+      value: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
+      name: 'Swap VOs for PIN credit',
+      apiValue: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
+    },
+    prisonerId: 'G4567',
+    prisonerName: 'Emily Brown',
+    date: new Date('2024-09-15').toISOString(),
+    additionalData: { swapVOsToPinCreditDetails: 'Swap VOs for PIN credit' },
+  }
+
+  appSearchPayload: ApplicationSearchPayload = {
+    page: 1,
+    size: 10,
+    status: ['PENDING'],
+    types: null,
+    requestedBy: null,
+    assignedGroups: null,
+  }
+
+  appSearchResponse: ViewApplicationsResponse = {
+    page: 1,
+    totalRecords: 3,
+    exhausted: true,
+    types: {
+      PIN_PHONE_CREDIT_TOP_UP: 0,
+      PIN_PHONE_EMERGENCY_CREDIT_TOP_UP: 0,
+      PIN_PHONE_ADD_NEW_CONTACT: 3,
+      PIN_PHONE_REMOVE_CONTACT: 0,
+      PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS: 0,
+    },
+    assignedGroups: [
+      {
+        id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
+        name: 'Business Hub',
+        count: 3,
+      },
+      {
+        id: '72c73234-b618-4c65-9fb1-6b710be68474',
+        name: 'OMU',
+        count: 0,
+      },
+    ],
+    apps: [
+      {
+        id: '1808f5e2-2bf4-499a-b79f-fb0a5f4bac7b',
+        establishmentId: 'TEST_ESTABLISHMENT_FIRST',
+        status: 'PENDING',
+        appType: 'PIN_PHONE_ADD_NEW_CONTACT',
+        requestedBy: 'A12345',
+        requestedDate: '2025-03-24T14:03:13Z',
+        assignedGroup: {
+          id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
+          name: 'Business Hub',
+        },
+      },
+      {
+        id: '53a02b48-b6af-47d5-9c54-3d0137f6ed96',
+        establishmentId: 'TEST_ESTABLISHMENT_FIRST',
+        status: 'PENDING',
+        appType: 'PIN_PHONE_ADD_NEW_CONTACT',
+        requestedBy: 'A12345',
+        requestedDate: '2025-03-23T14:03:13Z',
+        assignedGroup: {
+          id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
+          name: 'Business Hub',
+        },
+      },
+      {
+        id: 'b4e9944b-3a27-4d10-b12b-895426349ea3',
+        establishmentId: 'TEST_ESTABLISHMENT_FIRST',
+        status: 'PENDING',
+        appType: 'PIN_PHONE_ADD_NEW_CONTACT',
+        requestedBy: 'A12345',
+        requestedDate: '2025-03-21T14:03:13Z',
+        assignedGroup: {
+          id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
+          name: 'Business Hub',
+        },
+      },
+    ],
+  }
+
+  group: Group = {
+    id: '916267ad-3ba6-4826-8d59-01cfbaa8420b',
+    name: 'Business Hub',
+    establishment: {
+      id: 'TEST_ESTABLISHMENT_FIRST',
+      name: 'TEST_ESTABLISHMENT_FIRST',
+    },
+    initialApp: 'PIN_PHONE_ADD_NEW_CONTACT',
+    type: 'WING',
   }
 }

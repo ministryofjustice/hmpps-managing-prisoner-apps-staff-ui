@@ -1,3 +1,5 @@
+import { ApplicationData } from 'express-session'
+import { ApplicationSearchPayload } from '../@types/managingAppsApi'
 import { HmppsAuthClient } from '../data'
 import ManagingPrisonerAppsApiClient from '../data/managingPrisonerAppsClient'
 import { BaseUser } from '../interfaces/hmppsUser'
@@ -10,8 +12,23 @@ export default class ManagingPrisonerAppsService {
     return new ManagingPrisonerAppsApiClient(token).getPrisonerApp(prisonerId, applicationId)
   }
 
-  async forwardApp(prisonerId: string, applicationId: string, department: string, user: BaseUser) {
+  async forwardApp(applicationId: string, groupId: string, user: BaseUser) {
     const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
-    return new ManagingPrisonerAppsApiClient(token).forwardApp(prisonerId, applicationId, department)
+    return new ManagingPrisonerAppsApiClient(token).forwardApp(applicationId, groupId)
+  }
+
+  async submitPrisonerApp(applicationData: ApplicationData, user: BaseUser) {
+    const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
+    return new ManagingPrisonerAppsApiClient(token).submitPrisonerApp(applicationData)
+  }
+
+  async getApps(payload: ApplicationSearchPayload, user: BaseUser) {
+    const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
+    return new ManagingPrisonerAppsApiClient(token).getApps(payload)
+  }
+
+  async getGroups(user: BaseUser) {
+    const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
+    return new ManagingPrisonerAppsApiClient(token).getGroups()
   }
 }

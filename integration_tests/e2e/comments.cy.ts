@@ -4,18 +4,14 @@ import Page from '../pages/page'
 
 context('Comments Page', () => {
   let page: CommentsPage
-  const { prisonerApp: application } = new TestData()
-  const {
-    id: applicationId,
-    requestedBy: { username: prisonerId },
-  } = application
+  const { app } = new TestData()
 
   const visitPage = () => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubGetPrisonerApp', { prisonerId, applicationId, application })
+    cy.task('stubGetPrisonerApp', { app })
     cy.signIn()
-    cy.visit(`/applications/business-hub/${prisonerId}/${applicationId}/comments`)
+    cy.visit(`/applications/${app.requestedBy.username}/${app.id}/comments`)
     page = Page.verifyOnPage(CommentsPage)
   }
 

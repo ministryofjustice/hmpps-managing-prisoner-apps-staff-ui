@@ -7,11 +7,11 @@ const testData = new TestData()
 
 jest.mock('../../logger')
 
-describe('Managing Prisoner Apps API Client', () => {
+describe('ManagingPrisonerAppsApiClient', () => {
   let fakeManagingPrisonerAppApi: nock.Scope
   let client: ManagingPrisonerAppsApiClient
 
-  const { prisonerApp, user } = testData
+  const { appSearchPayload, appSearchResponse, app, submitPrisonerAppData, user } = testData
 
   beforeEach(() => {
     fakeManagingPrisonerAppApi = nock(config.apis.managingPrisonerApps.url)
@@ -20,24 +20,43 @@ describe('Managing Prisoner Apps API Client', () => {
 
   afterEach(() => nock.cleanAll())
 
-  it('should fetch a prisoner application by prisoner and application ID', async () => {
+  it('should retrieve a specific prisoner application by prisoner and application ID', async () => {
     fakeManagingPrisonerAppApi
-      .get('/v1/prisoners/prisoner-id/apps/app-id?requestedBy=true')
+      .get('/v1/prisoners/prisoner-id/apps/app-id?requestedBy=true&assignedGroup=true')
       .matchHeader('authorization', `Bearer ${user.token}`)
-      .reply(200, prisonerApp)
+      .reply(200, app)
 
     const output = await client.getPrisonerApp('prisoner-id', 'app-id')
-    expect(output).toEqual(prisonerApp)
+    expect(output).toEqual(app)
   })
 
-  // Reinstate with correct api endpoint and implementation once it is available
-  // it('should successfully forward an application to a different department', async () => {
-  //   fakeManagingPrisonerAppApi
-  //     .get('/v1/')
-  //     .matchHeader('authorization', `Bearer ${user.token}`)
-  //     .reply(200, undefined)
+  it('should forward an application to another department', async () => {
+    fakeManagingPrisonerAppApi
+      .get('/v1/apps/app-id/forward/groups/group-id')
+      .matchHeader('authorization', `Bearer ${user.token}`)
+      .reply(200, undefined)
 
-  //   const output = await client.forwardApp('prisoner-id', 'app-id', 'dept')
-  //   expect(output).toBeUndefined()
-  // })
+    const output = await client.forwardApp('app-id', 'group-id')
+    expect(output).toBeUndefined()
+  })
+
+  it('should submit a new prisoner application', async () => {
+    fakeManagingPrisonerAppApi
+      .post('/v1/prisoners/G4567/apps')
+      .matchHeader('authorization', `Bearer ${user.token}`)
+      .reply(201, app)
+
+    const output = await client.submitPrisonerApp(submitPrisonerAppData)
+    expect(output).toEqual(app)
+  })
+
+  it('should search for applications based on payload', async () => {
+    fakeManagingPrisonerAppApi
+      .post('/v1/prisoners/apps/search')
+      .matchHeader('authorization', `Bearer ${user.token}`)
+      .reply(200, appSearchResponse)
+
+    const output = await client.getApps(appSearchPayload)
+    expect(output).toEqual(appSearchResponse)
+  })
 })

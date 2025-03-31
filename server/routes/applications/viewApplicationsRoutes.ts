@@ -1,7 +1,11 @@
+import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
+
+import { ApplicationSearchPayload } from '../../@types/managingAppsApi'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
+import { formatApplicationsToRows } from '../../utils/formatAppsToRows'
 import { getApplicationType } from '../../utils/getApplicationType'
 
 export default function viewApplicationRoutes({
@@ -14,27 +18,39 @@ export default function viewApplicationRoutes({
   const router = Router()
 
   router.get(
-    '/applications/:departmentName/:status(pending|closed)',
+    '/applications',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { departmentName, status } = req.params
+      const status = req.query.status === 'CLOSED' ? 'CLOSED' : 'PENDING'
 
-      res.render('pages/applications/list', {
+      const payload: ApplicationSearchPayload = {
+        page: 1,
+        size: 5,
+        status: [status],
+        types: [],
+        requestedBy: null,
+        assignedGroups: [],
+      }
+
+      const { user } = res.locals
+      const { apps } = await managingPrisonerAppsService.getApps(payload, user)
+
+      res.render('pages/applications/list/index', {
         status,
-        departmentName,
+        apps: formatApplicationsToRows(apps),
       })
     }),
   )
 
   router.get(
-    '/applications/:departmentName/:prisonerId/:applicationId',
+    '/applications/:prisonerId/:applicationId',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { departmentName, prisonerId, applicationId } = req.params
+      const { prisonerId, applicationId } = req.params
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
       if (!application) {
-        return res.redirect(`/applications/${departmentName}/pending`)
+        return res.redirect(`/applications`)
       }
 
       await auditService.logPageView(Page.VIEW_APPLICATION_PAGE, {
@@ -45,13 +61,15 @@ export default function viewApplicationRoutes({
       const applicationType = getApplicationType(application.appType)
 
       if (!applicationType) {
-        return res.redirect(`/applications/${departmentName}/pending?error=unknown-type`)
+        return res.redirect(`/applications?error=unknown-type`)
       }
 
       return res.render(`pages/applications/view/${applicationType.value}`, {
         title: applicationType.name,
-        application,
-        departmentName,
+        application: {
+          ...application,
+          requestedDate: format(new Date(application.requestedDate), 'd MMMM yyyy'),
+        },
       })
     }),
   )

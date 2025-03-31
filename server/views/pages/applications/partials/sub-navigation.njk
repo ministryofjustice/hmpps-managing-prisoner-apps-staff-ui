@@ -4,19 +4,19 @@
   label: 'Sub navigation',
   items: [{
     text: 'Application',
-    href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id,
+    href: "/applications/" + application.requestedBy.username + "/" + application.id,
     active: activeTab == 'application'
   }, {
     text: 'Comments',
-    href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/comments",
+    href: "/applications/" + application.requestedBy.username + "/" + application.id + "/comments",
     active: activeTab == 'comments'
   }, {
     text: 'Action and reply',
-    href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/reply",
+    href: "/applications/" + application.requestedBy.username + "/" + application.id + "/reply",
     active: activeTab == 'reply'
   }, {
     text: 'History',
-    href: "/applications/" + departmentName + "/" + application.requestedBy.username + "/" + application.id + "/history",
+    href: "/applications/" + application.requestedBy.username + "/" + application.id + "/history",
     active: activeTab == 'history'
   }]
 }) }}

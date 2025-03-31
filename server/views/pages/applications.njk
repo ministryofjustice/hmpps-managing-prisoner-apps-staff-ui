@@ -22,24 +22,26 @@
 
 {% block content %}
   <div class="govuk-body govuk-width-container govuk-!-padding-top-5 govuk-!-padding-bottom-5">
-    {{ govukButton({
-      text: "Log an application",
-      href: "/log/application-type"
-    }) }}
-
-    {% for section in sections %}
-      <h2 class="govuk-heading-m govuk-!-padding-top-0">{{ section.title }}</h2>
-      <ul class="applications-landing-page__list-menu govuk-list govuk-!-margin-bottom-9">
-        {% for item in section.items %}
-          <li class="applications-landing-page__list-menu-item govuk-!-padding-top-3 govuk-!-padding-bottom-3 govuk-!-margin-bottom-0">
-            {{ govukTag({
-              text: item.tagText,
-              classes: "applications-landing-page__list-menu-item-notification govuk-tag--red govuk-!-margin-right-1"
-            }) }} 
-            <a href="{{ item.path }}">{{ item.name }}</a>
-          </li>
-        {% endfor %}
+    <div class="govuk-grid-row">
+      <ul class="card-group">
+        <li class="govuk-grid-column-one-third card-group__item">
+          <div class="card card--clickable" data-testid="log-new-application">
+            <h2 class="govuk-heading-m card__heading">
+              <a class="govuk-link card__link" href="/log/application-type">Log a new application</a>
+            </h2>
+            <p class="govuk-body card__description">Log a new application to process.</p>
+          </div>
+        </li>
+        
+        <li class="govuk-grid-column-one-third card-group__item">
+          <div class="card card--clickable" data-testid="view-all-applications">
+            <h2 class="govuk-heading-m card__heading">
+              <a class="govuk-link card__link" href="/applications">View all applications</a>
+            </h2>
+            <p class="govuk-body card__description">View all applications logged in your prison.</p>
+          </div>
+        </li>
       </ul>
-    {% endfor %}
+    </div>
   </div>
 {% endblock %}
