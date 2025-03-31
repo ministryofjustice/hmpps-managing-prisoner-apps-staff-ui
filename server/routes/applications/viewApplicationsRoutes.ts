@@ -5,22 +5,27 @@ import { ApplicationSearchPayload } from '../../@types/managingAppsApi'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
+import PrisonService from '../../services/prisonService'
 import { formatApplicationsToRows } from '../../utils/formatAppsToRows'
 import { getApplicationType } from '../../utils/getApplicationType'
 
 export default function viewApplicationRoutes({
   auditService,
   managingPrisonerAppsService,
+  prisonService,
 }: {
   auditService: AuditService
   managingPrisonerAppsService: ManagingPrisonerAppsService
+  prisonService: PrisonService
 }): Router {
   const router = Router()
 
   router.get(
     '/applications',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const status = req.query.status === 'CLOSED' ? 'CLOSED' : 'PENDING'
+      const { user } = res.locals
+
+      const status = req.query.status?.toString().toUpperCase() === 'CLOSED' ? 'CLOSED' : 'PENDING'
 
       const payload: ApplicationSearchPayload = {
         page: 1,
@@ -31,12 +36,27 @@ export default function viewApplicationRoutes({
         assignedGroups: [],
       }
 
-      const { user } = res.locals
-      const { apps } = await managingPrisonerAppsService.getApps(payload, user)
+      const [{ apps }, prisonerDetails] = await Promise.all([
+        managingPrisonerAppsService.getApps(payload, user),
+        managingPrisonerAppsService.getApps(payload, user).then(response =>
+          Promise.all(
+            response.apps.map(async app => {
+              if (!app.requestedBy) return null
+              return prisonService.getPrisonerByPrisonNumber(app.requestedBy, user)
+            }),
+          ),
+        ),
+      ])
+
+      const appsWithNames = apps.map((app, index) => {
+        const prisoner = prisonerDetails[index]
+        const prisonerName = prisoner ? `${prisoner[0]?.lastName}, ${prisoner[0]?.firstName}` : 'Undefined'
+        return { ...app, prisonerName }
+      })
 
       res.render('pages/applications/list/index', {
         status,
-        apps: formatApplicationsToRows(apps),
+        apps: formatApplicationsToRows(appsWithNames),
       })
     }),
   )
