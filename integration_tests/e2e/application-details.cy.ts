@@ -33,7 +33,7 @@ context('Application Details Page', () => {
   })
 
   it('should render the correct app type title', () => {
-    page.appTypeTitle().should('have.text', 'Swap VOs for PIN credit')
+    page.appTypeTitle().should('have.text', 'Swap visiting orders (VOs) for PIN credit')
   })
 
   it('should render the correct form label for the textarea', () => {
