@@ -21,7 +21,7 @@ context('Application Details Page', () => {
   })
 
   it('should display the correct page title', () => {
-    page.pageTitle().should('include', 'Log Details')
+    page.pageTitle().should('include', 'Log details')
   })
 
   it('should render the page heading correctly', () => {
