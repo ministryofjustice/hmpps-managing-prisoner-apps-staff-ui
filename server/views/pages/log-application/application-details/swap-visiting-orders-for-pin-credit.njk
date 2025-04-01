@@ -1,6 +1,7 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -14,14 +15,26 @@
       href: "/log/prisoner-details"
     }) }}
 
-    <span class="govuk-caption-xl">{{ appTypeTitle }}</span>
-    <h1 class="govuk-heading-xl govuk-!-margin-top-0">Log details</h1>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-half">
+        {% if errors %}
+          {% set errorList = [] %}
 
-    <div class="govuk-width-container">
-      <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-half">
-          <form method="POST" id="log-swap-vos-pin-credit-details">
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+          {% if errors.Details %}
+            {% set errorList = errorList.concat([{ text: errors.Details.text, href: "#swapVosPinCreditDetails" }]) %}
+          {% endif %}
+
+          {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          }) }}
+        {% endif %}
+
+        <span class="govuk-caption-xl">{{ appType }}</span>
+        <h1 class="govuk-heading-xl govuk-!-margin-top-0">Log details</h1>
+
+        <form method="POST" id="log-swap-vos-pin-credit-details">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
             {{ govukCharacterCount({
               name: "swapVosPinCreditDetails",
@@ -34,6 +47,7 @@
                 classes: "govuk-label--s",
                 isPageHeading: true
               },
+              errorMessage: errors.Details,
               hint: {
                 text: "Add a brief summary, for example, if this person is a Foreign National"
               }
