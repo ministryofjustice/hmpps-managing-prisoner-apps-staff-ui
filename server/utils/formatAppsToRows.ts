@@ -14,13 +14,14 @@ export function formatApplicationsToRows(applications: ViewAppsResponseAppWithNa
     const formattedDate = format(date, 'd MMMM yyyy')
     const sortValue = getTime(date)
     const type = APPLICATION_TYPES.find(t => t.apiValue === appType)?.name || 'N/A'
+    const statusText = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
 
     return [
       { text: formattedDate, attributes: { 'data-sort-value': sortValue.toString() } },
       { text: type },
       { html: `${prisonerName}<br/><span class="govuk-table__subtext govuk-body-s">${requestedBy}</span>` },
       { text: assignedGroup?.name || 'N/A' },
-      status === 'CLOSED' ? { text: 'Decision' } : null,
+      status === 'PENDING' ? null : { text: statusText },
       { html: `<a href="/applications/${requestedBy}/${id}" class="govuk-link">View</a>` },
     ].filter(Boolean)
   })
