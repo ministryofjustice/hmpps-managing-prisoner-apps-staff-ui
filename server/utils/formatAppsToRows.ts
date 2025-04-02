@@ -21,7 +21,7 @@ export function formatApplicationsToRows(applications: ViewAppsResponseAppWithNa
       { text: type },
       { html: `${prisonerName}<br/><span class="govuk-table__subtext govuk-body-s">${requestedBy}</span>` },
       { text: assignedGroup?.name || 'N/A' },
-      status === 'PENDING' ? null : { text: statusText },
+      status !== 'PENDING' ? { text: statusText } : null,
       { html: `<a href="/applications/${requestedBy}/${id}" class="govuk-link">View</a>` },
     ].filter(Boolean)
   })
