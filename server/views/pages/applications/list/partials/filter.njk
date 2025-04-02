@@ -35,39 +35,26 @@
   }) }}
 {% endset -%}
 
+<form novalidate>
 {{ mojFilter({
-  heading: {
-    text: "Filter"
-  },
+  heading: { text: "Filter" },
   submit: {
-    attributes: {
-        "data-test-id": "submit-button"
-    }
+    attributes: { "data-test-id": "submit-button" }
   },
   selectedFilters: {
-    heading: {
-      text: "Selected filters"
-    },
-    clearLink: {
-      text: "Clear filters"
-    },
+    heading: { text: "Selected filters" },
+    clearLink: { text: "Clear filters", href: "/applications" },
     categories: [
       {
-        heading: {
-          text: "Department"
-        },
-        items: [{
-          href: "/path/to/remove/this",
-          text: "OMU"
-        }]
+        heading: { text: "Department" },
+        items: selectedFilters.departments
       },
       {
-        heading: {
-          text: "Application type"
-        },
-        items: []
+        heading: { text: "Application type" },
+        items: selectedFilters.appTypes
       }
     ]
   },
   optionsHtml: filterOptionsHtml
 }) }}
+</form>
