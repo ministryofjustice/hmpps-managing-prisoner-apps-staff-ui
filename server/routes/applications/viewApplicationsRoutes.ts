@@ -2,7 +2,10 @@ import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
 
 import { ApplicationSearchPayload } from '../../@types/managingAppsApi'
+
+import { APPLICATION_STATUS } from '../../constants/applicationStatus'
 import { APPLICATION_TYPES } from '../../constants/applicationTypes'
+
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
 import AuditService, { Page } from '../../services/auditService'
@@ -12,7 +15,6 @@ import PrisonService from '../../services/prisonService'
 import { removeFilterFromHref } from '../../utils/filters'
 import { formatApplicationsToRows } from '../../utils/formatAppsToRows'
 import { getApplicationType } from '../../utils/getApplicationType'
-import { APPLICATION_STATUS } from '../../constants/applicationStatus'
 
 export default function viewApplicationRoutes({
   auditService,
