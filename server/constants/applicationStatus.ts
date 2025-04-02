@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/prefer-default-export
 export const APPLICATION_STATUS = {
-  APPROVED: 'approved',
-  DECLINED: 'declined',
-  PENDING: 'pending',
+  APPROVED: 'APPROVED',
+  DECLINED: 'DECLINED',
+  PENDING: 'PENDING',
 } as const

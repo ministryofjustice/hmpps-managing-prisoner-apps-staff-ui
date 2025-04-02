@@ -9,8 +9,10 @@ import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PrisonService from '../../services/prisonService'
 
+import { removeFilterFromHref } from '../../utils/filters'
 import { formatApplicationsToRows } from '../../utils/formatAppsToRows'
 import { getApplicationType } from '../../utils/getApplicationType'
+import { APPLICATION_STATUS } from '../../constants/applicationStatus'
 
 export default function viewApplicationRoutes({
   auditService,
@@ -29,23 +31,27 @@ export default function viewApplicationRoutes({
       const { user } = res.locals
 
       const statusQuery = req.query.status?.toString().toUpperCase()
-      const status = statusQuery === 'CLOSED' ? ['APPROVED', 'DECLINED'] : ['PENDING']
+      const status =
+        statusQuery === 'CLOSED'
+          ? [APPLICATION_STATUS.APPROVED, APPLICATION_STATUS.DECLINED]
+          : [APPLICATION_STATUS.PENDING]
 
-      const selectedDepartments: string[] = []
-      if (req.query.department) {
-        if (Array.isArray(req.query.department)) {
-          selectedDepartments.push(...req.query.department.map(dep => String(dep)))
+      const selectedGroups: string[] = []
+      const selectedTypes: string[] = []
+
+      if (req.query.group) {
+        if (Array.isArray(req.query.group)) {
+          selectedGroups.push(...req.query.group.map(dep => String(dep)))
         } else {
-          selectedDepartments.push(String(req.query.department))
+          selectedGroups.push(String(req.query.group))
         }
       }
 
-      const selectedAppTypes: string[] = []
       if (req.query.type) {
         if (Array.isArray(req.query.type)) {
-          selectedAppTypes.push(...req.query.type.map(type => String(type)))
+          selectedTypes.push(...req.query.type.map(type => String(type)))
         } else {
-          selectedAppTypes.push(String(req.query.type))
+          selectedTypes.push(String(req.query.type))
         }
       }
 
@@ -53,9 +59,9 @@ export default function viewApplicationRoutes({
         page: 1,
         size: 10,
         status,
-        types: selectedAppTypes,
+        types: selectedTypes,
         requestedBy: null,
-        assignedGroups: selectedDepartments,
+        assignedGroups: selectedGroups,
       }
 
       const [{ apps, types, assignedGroups }, prisonerDetails] = await Promise.all([
@@ -83,7 +89,7 @@ export default function viewApplicationRoutes({
             ? {
                 value: matchingType.apiValue,
                 text: `${matchingType.name} (${count})`,
-                checked: selectedAppTypes.includes(matchingType.apiValue),
+                checked: selectedTypes.includes(matchingType.apiValue),
               }
             : null
         })
@@ -94,56 +100,26 @@ export default function viewApplicationRoutes({
         correlationId: req.id,
       })
 
-      const createDepartmentFilterHref = (departmentId: string) => {
-        const newQuery = new URLSearchParams(req.query as Record<string, string | string[]>)
-
-        newQuery.delete('department')
-
-        const departments = req.query.department
-        if (departments) {
-          const departmentArray = Array.isArray(departments) ? departments : [departments as string]
-          departmentArray
-            .filter(dep => dep !== departmentId)
-            .forEach(dep => newQuery.append('department', dep as string))
-        }
-
-        return `/applications?${newQuery.toString()}`
-      }
-
-      const createTypeFilterHref = (typeValue: string) => {
-        const newQuery = new URLSearchParams(req.query as Record<string, string | string[]>)
-
-        newQuery.delete('type')
-
-        const { types: qTypes } = req.query
-        if (qTypes) {
-          const typeArray = Array.isArray(qTypes) ? qTypes : [qTypes]
-          typeArray.filter(type => type !== typeValue).forEach(type => newQuery.append('type', type as string))
-        }
-
-        return `/applications?${newQuery.toString()}`
-      }
-
       res.render('pages/applications/list/index', {
-        status: statusQuery || 'PENDING',
+        status: statusQuery || APPLICATION_STATUS.PENDING,
         apps: formatApplicationsToRows(appsWithNames),
-        departments: assignedGroups.map(group => ({
+        groups: assignedGroups.map(group => ({
           value: group.id,
           text: `${group.name} (${group.count})`,
-          checked: selectedDepartments.includes(group.id),
+          checked: selectedGroups.includes(group.id),
         })),
         appTypes,
         selectedFilters: {
-          departments: assignedGroups
-            .filter(group => selectedDepartments.includes(group.id))
+          groups: assignedGroups
+            .filter(group => selectedGroups.includes(group.id))
             .map(group => ({
-              href: createDepartmentFilterHref(group.id),
+              href: removeFilterFromHref(req, 'group', group.id),
               text: group.name,
             })),
-          appTypes: appTypes
+          types: appTypes
             .filter(type => type.checked)
             .map(type => ({
-              href: createTypeFilterHref(type.value),
+              href: removeFilterFromHref(req, 'type', type.value),
               text: type.text,
             })),
         },

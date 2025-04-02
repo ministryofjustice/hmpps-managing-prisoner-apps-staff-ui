@@ -9,8 +9,8 @@
   }) }}
 
   {{ govukCheckboxes({
-    idPrefix: "department",
-    name: "department",
+    idPrefix: "group",
+    name: "group",
     classes: "govuk-checkboxes--small",
     fieldset: {
       legend: {
@@ -18,7 +18,7 @@
         classes: "govuk-fieldset__legend--s"
       }
     },
-    items: departments
+    items: groups
   }) }}
 
   {{ govukCheckboxes({
@@ -47,11 +47,11 @@
     categories: [
       {
         heading: { text: "Department" },
-        items: selectedFilters.departments
+        items: selectedFilters.groups
       },
       {
         heading: { text: "Application type" },
-        items: selectedFilters.appTypes
+        items: selectedFilters.types
       }
     ]
   },
