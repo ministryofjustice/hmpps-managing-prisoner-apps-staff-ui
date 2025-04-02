@@ -58,8 +58,6 @@ export default function viewApplicationRoutes({
         assignedGroups: selectedDepartments,
       }
 
-      console.log({ payload })
-
       const [{ apps, types, assignedGroups }, prisonerDetails] = await Promise.all([
         managingPrisonerAppsService.getApps(payload, user),
         managingPrisonerAppsService.getApps(payload, user).then(response =>
