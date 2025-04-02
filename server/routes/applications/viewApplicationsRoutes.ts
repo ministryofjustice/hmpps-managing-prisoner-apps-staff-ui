@@ -2,10 +2,13 @@ import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
 
 import { ApplicationSearchPayload } from '../../@types/managingAppsApi'
+import { APPLICATION_TYPES } from '../../constants/applicationTypes'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
+
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PrisonService from '../../services/prisonService'
+
 import { formatApplicationsToRows } from '../../utils/formatAppsToRows'
 import { getApplicationType } from '../../utils/getApplicationType'
 
@@ -30,14 +33,14 @@ export default function viewApplicationRoutes({
 
       const payload: ApplicationSearchPayload = {
         page: 1,
-        size: 5,
+        size: 10,
         status,
         types: [],
         requestedBy: null,
         assignedGroups: [],
       }
 
-      const [{ apps }, prisonerDetails] = await Promise.all([
+      const [{ apps, types }, prisonerDetails] = await Promise.all([
         managingPrisonerAppsService.getApps(payload, user),
         managingPrisonerAppsService.getApps(payload, user).then(response =>
           Promise.all(
@@ -55,9 +58,23 @@ export default function viewApplicationRoutes({
         return { ...app, prisonerName }
       })
 
+      const groups = await managingPrisonerAppsService.getGroups(user)
+
+      const appTypes = Object.entries(types)
+        .map(([apiValue, count]) => {
+          const matchingType = APPLICATION_TYPES.find(type => type.apiValue === apiValue)
+          return matchingType ? { value: matchingType.value, text: `${matchingType.name} (${count})` } : null
+        })
+        .filter(Boolean)
+
       res.render('pages/applications/list/index', {
         status: statusQuery || 'PENDING',
         apps: formatApplicationsToRows(appsWithNames),
+        departments: groups.map(group => ({
+          value: group.id,
+          text: group.name,
+        })),
+        appTypes,
       })
     }),
   )

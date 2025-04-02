@@ -1,1 +1,73 @@
-Filters
+{%- set filterOptionsHtml %}
+  {{ govukInput({
+    id: "prisoner",
+    name: "prisoner",
+    label: {
+      text: "Prisoner name or number",
+      classes: "govuk-label--s"
+    }
+  }) }}
+
+  {{ govukCheckboxes({
+    idPrefix: "department",
+    name: "department",
+    classes: "govuk-checkboxes--small",
+    fieldset: {
+      legend: {
+        text: "Department",
+        classes: "govuk-fieldset__legend--s"
+      }
+    },
+    items: departments
+  }) }}
+
+  {{ govukCheckboxes({
+    idPrefix: "type",
+    name: "type",
+    classes: "govuk-checkboxes--small",
+    fieldset: {
+      legend: {
+        text: "Application type",
+        classes: "govuk-fieldset__legend--s"
+      }
+    },
+    items: appTypes
+  }) }}
+{% endset -%}
+
+{{ mojFilter({
+  heading: {
+    text: "Filter"
+  },
+  submit: {
+    attributes: {
+        "data-test-id": "submit-button"
+    }
+  },
+  selectedFilters: {
+    heading: {
+      text: "Selected filters"
+    },
+    clearLink: {
+      text: "Clear filters"
+    },
+    categories: [
+      {
+        heading: {
+          text: "Department"
+        },
+        items: [{
+          href: "/path/to/remove/this",
+          text: "OMU"
+        }]
+      },
+      {
+        heading: {
+          text: "Application type"
+        },
+        items: []
+      }
+    ]
+  },
+  optionsHtml: filterOptionsHtml
+}) }}
