@@ -9,8 +9,8 @@
   }) }}
 
   {{ govukCheckboxes({
-    idPrefix: "department",
-    name: "department",
+    idPrefix: "group",
+    name: "group",
     classes: "govuk-checkboxes--small",
     fieldset: {
       legend: {
@@ -18,7 +18,7 @@
         classes: "govuk-fieldset__legend--s"
       }
     },
-    items: departments
+    items: groups
   }) }}
 
   {{ govukCheckboxes({
@@ -35,39 +35,26 @@
   }) }}
 {% endset -%}
 
+<form novalidate>
 {{ mojFilter({
-  heading: {
-    text: "Filter"
-  },
+  heading: { text: "Filter" },
   submit: {
-    attributes: {
-        "data-test-id": "submit-button"
-    }
+    attributes: { "data-test-id": "submit-button" }
   },
   selectedFilters: {
-    heading: {
-      text: "Selected filters"
-    },
-    clearLink: {
-      text: "Clear filters"
-    },
+    heading: { text: "Selected filters" },
+    clearLink: { text: "Clear filters", href: "/applications" },
     categories: [
       {
-        heading: {
-          text: "Department"
-        },
-        items: [{
-          href: "/path/to/remove/this",
-          text: "OMU"
-        }]
+        heading: { text: "Department" },
+        items: selectedFilters.groups
       },
       {
-        heading: {
-          text: "Application type"
-        },
-        items: []
+        heading: { text: "Application type" },
+        items: selectedFilters.types
       }
     ]
   },
   optionsHtml: filterOptionsHtml
 }) }}
+</form>

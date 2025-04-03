@@ -41,7 +41,7 @@ export interface Application {
   requestedBy: RequestedBy
   requestedDate: string
   requests: ApplicationRequest[]
-  status: 'pending' | 'approved' | 'declined'
+  status: 'PENDING' | 'APPROVED' | 'DECLINED'
 }
 
 export type ApplicationSearchPayload = {
