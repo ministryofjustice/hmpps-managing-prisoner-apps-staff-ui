@@ -15,6 +15,7 @@ import PrisonService from '../../services/prisonService'
 import { removeFilterFromHref } from '../../utils/filters'
 import { formatApplicationsToRows } from '../../utils/formatAppsToRows'
 import { getApplicationType } from '../../utils/getApplicationType'
+import { getPaginationData } from '../../utils/pagination'
 import { convertToTitleCase } from '../../utils/utils'
 
 export default function viewApplicationRoutes({
@@ -34,6 +35,8 @@ export default function viewApplicationRoutes({
       const { user } = res.locals
 
       const statusQuery = req.query.status?.toString().toUpperCase()
+      const page = Number(req.query.page) || 1
+
       const status =
         statusQuery === 'CLOSED'
           ? [APPLICATION_STATUS.APPROVED, APPLICATION_STATUS.DECLINED]
@@ -59,7 +62,7 @@ export default function viewApplicationRoutes({
       }
 
       const payload: ApplicationSearchPayload = {
-        page: 1,
+        page,
         size: 10,
         status,
         types: selectedTypes,
@@ -67,7 +70,7 @@ export default function viewApplicationRoutes({
         assignedGroups: selectedGroups,
       }
 
-      const [{ apps, types, assignedGroups }, prisonerDetails] = await Promise.all([
+      const [{ apps, types, assignedGroups, totalRecords }, prisonerDetails] = await Promise.all([
         managingPrisonerAppsService.getApps(payload, user),
         managingPrisonerAppsService.getApps(payload, user).then(response =>
           Promise.all(
@@ -78,6 +81,8 @@ export default function viewApplicationRoutes({
           ),
         ),
       ])
+
+      const paginationData = getPaginationData(page, totalRecords)
 
       const appsWithNames = apps.map((app, index) => {
         const prisoner = prisonerDetails[index]
@@ -126,6 +131,9 @@ export default function viewApplicationRoutes({
               text: type.text,
             })),
         },
+        paginationData,
+        page: payload.page,
+        rawQuery: req.query,
       })
     }),
   )
