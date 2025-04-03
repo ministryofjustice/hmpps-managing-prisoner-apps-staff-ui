@@ -15,6 +15,7 @@ import PrisonService from '../../services/prisonService'
 import { removeFilterFromHref } from '../../utils/filters'
 import { formatApplicationsToRows } from '../../utils/formatAppsToRows'
 import { getApplicationType } from '../../utils/getApplicationType'
+import { convertToTitleCase } from '../../utils/utils'
 
 export default function viewApplicationRoutes({
   auditService,
@@ -157,6 +158,7 @@ export default function viewApplicationRoutes({
         application: {
           ...application,
           requestedDate: format(new Date(application.requestedDate), 'd MMMM yyyy'),
+          status: convertToTitleCase(application.status),
         },
       })
     }),
