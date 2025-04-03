@@ -11,6 +11,7 @@ import PrisonService from '../../services/prisonService'
 
 import { formatApplicationsToRows } from '../../utils/formatAppsToRows'
 import { getApplicationType } from '../../utils/getApplicationType'
+import { getPaginationData } from '../../utils/pagination'
 
 export default function viewApplicationRoutes({
   auditService,
@@ -30,9 +31,10 @@ export default function viewApplicationRoutes({
 
       const statusQuery = req.query.status?.toString().toUpperCase()
       const status = statusQuery === 'CLOSED' ? ['APPROVED', 'DECLINED'] : ['PENDING']
+      const page = Number(req.query.page) || 1
 
       const payload: ApplicationSearchPayload = {
-        page: 1,
+        page,
         size: 10,
         status,
         types: [],
@@ -40,7 +42,7 @@ export default function viewApplicationRoutes({
         assignedGroups: [],
       }
 
-      const [{ apps, types }, prisonerDetails] = await Promise.all([
+      const [{ apps, types, totalRecords }, prisonerDetails] = await Promise.all([
         managingPrisonerAppsService.getApps(payload, user),
         managingPrisonerAppsService.getApps(payload, user).then(response =>
           Promise.all(
@@ -51,6 +53,8 @@ export default function viewApplicationRoutes({
           ),
         ),
       ])
+
+      const paginationData = getPaginationData(page, totalRecords)
 
       const appsWithNames = apps.map((app, index) => {
         const prisoner = prisonerDetails[index]
@@ -75,6 +79,9 @@ export default function viewApplicationRoutes({
           text: group.name,
         })),
         appTypes,
+        paginationData,
+        page: payload.page,
+        rawQuery: req.query,
       })
     }),
   )
