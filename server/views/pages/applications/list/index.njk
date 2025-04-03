@@ -48,6 +48,11 @@
                   attributes: { "data-qa": "app-results-table", "data-module": "moj-sortable-table" }
                 }) }}
               </div>
+              {% if paginationData.totalPages > 1 %}
+                <div class="govuk-!-margin-bottom-9">
+                  {{ govukPagination( paginationData | toPagination( rawQuery )) }}
+                </div>
+              {% endif %}
             </div>
           {% endif %}
           
@@ -69,15 +74,14 @@
                   attributes: { "data-qa": "app-results-table", "data-module": "moj-sortable-table" }
                 }) }}
               </div>
+              {% if paginationData.totalPages > 1 %}
+                <div class="govuk-!-margin-bottom-9">
+                  {{ govukPagination( paginationData | toPagination( rawQuery )) }}
+                </div>
+              {% endif %}
             </div>
           {% endif %}
         </div>
-
-        {% if paginationData.totalPages > 1 %}
-          <div class="govuk-!-margin-bottom-9">
-            {{ govukPagination( paginationData | toPagination( rawQuery )) }}
-          </div>
-        {% endif %}
       </div>
     </div>
   </div>
