@@ -1,3 +1,4 @@
+import { APPLICATION_STATUS } from '../../server/constants/applicationStatus'
 import TestData from '../../server/routes/testutils/testData'
 import ActionAndReplyPage from '../pages/actionAndReply'
 import Page from '../pages/page'
@@ -7,8 +8,8 @@ context('Action and Reply Page', () => {
   const testData = new TestData()
 
   const testCases = [
-    { status: 'pending', label: 'pending', isClosed: false },
-    { status: 'closed', label: 'closed', isClosed: true },
+    { status: APPLICATION_STATUS.PENDING, label: 'pending', isClosed: false },
+    { status: APPLICATION_STATUS.APPROVED, label: 'closed', isClosed: true },
   ]
 
   testCases.forEach(({ status, label, isClosed }) => {
