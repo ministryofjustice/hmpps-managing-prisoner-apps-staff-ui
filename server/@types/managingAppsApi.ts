@@ -95,3 +95,9 @@ export type Group = {
   initialApp: string
   type: string
 }
+
+export type PrisonerSearchResult = {
+  prisonerId: string
+  firstName: string
+  lastName: string
+}

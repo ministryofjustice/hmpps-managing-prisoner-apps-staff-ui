@@ -17,6 +17,7 @@ import { formatApplicationsToRows } from '../../utils/formatAppsToRows'
 import { getApplicationType } from '../../utils/getApplicationType'
 import { getPaginationData } from '../../utils/pagination'
 import { convertToTitleCase } from '../../utils/utils'
+import logger from '../../../logger'
 
 export default function viewApplicationRoutes({
   auditService,
@@ -33,6 +34,25 @@ export default function viewApplicationRoutes({
     '/applications',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
+
+      const isAjax = req.xhr || req.headers.accept?.includes('application/json')
+      const prisonerSearchQuery = req.query.prisoner?.toString()
+
+      if (isAjax && prisonerSearchQuery) {
+        try {
+          const prisoners = await managingPrisonerAppsService.searchPrisoners(prisonerSearchQuery, user)
+
+          const formattedResults = prisoners.map(prisoner => ({
+            prisonerId: prisoner.prisonerId,
+            label: `${prisoner.lastName}, ${prisoner.firstName} (${prisoner.prisonerId})`,
+          }))
+
+          res.json(formattedResults)
+        } catch (error) {
+          logger.error('Prisoner search failed', error)
+          res.status(500).json([])
+        }
+      }
 
       const statusQuery = req.query.status?.toString().toUpperCase()
       const page = Number(req.query.page) || 1
