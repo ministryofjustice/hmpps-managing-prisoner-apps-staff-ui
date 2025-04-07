@@ -1,7 +1,7 @@
 {% macro accessibleAutocomplete(params) %}
   <div class="govuk-form-group">
     <label class="govuk-label--s govuk-!-display-block govuk-!-margin-bottom-2" for="accessible-autocomplete">{{ params.label }}</label>
-    <div id="accessible-autocomplete-container"></div>  
+    <div id="accessible-autocomplete-container"></div>
   </div>
 
   {% block scripts %}
@@ -27,7 +27,7 @@
               populateResults([])
             })
         }
-      })
+      });
     </script>
   {% endblock %}
 {% endmacro %}

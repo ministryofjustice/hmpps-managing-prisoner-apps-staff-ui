@@ -86,7 +86,7 @@ export default function viewApplicationRoutes({
         size: 10,
         status,
         types: selectedTypes,
-        requestedBy: null,
+        requestedBy: prisonerSearchQuery?.match(/\(([^)]+)\)/)[1],
         assignedGroups: selectedGroups,
       }
 
