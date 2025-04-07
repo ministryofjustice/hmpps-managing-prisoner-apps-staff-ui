@@ -14,7 +14,7 @@
         displayMenu: 'overlay',
         minLength: 3,
         source: function(query, populateResults) {
-          fetch(`/applications?prisoner=${encodeURIComponent(query)}`, {
+          fetch(`/applications/search-prisoners?prisoner=${encodeURIComponent(query)}`, {
             headers: {
               'X-Requested-With': 'XMLHttpRequest',
               'Accept': 'application/json'

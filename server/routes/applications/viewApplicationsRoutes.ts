@@ -12,7 +12,7 @@ import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PrisonService from '../../services/prisonService'
 
-import { removeFilterFromHref } from '../../utils/filters'
+import { extractQueryParamArray, removeFilterFromHref } from '../../utils/filters'
 import { formatApplicationsToRows } from '../../utils/formatAppsToRows'
 import { getApplicationType } from '../../utils/getApplicationType'
 import { getPaginationData } from '../../utils/pagination'
@@ -35,25 +35,6 @@ export default function viewApplicationRoutes({
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
 
-      const isAjax = req.xhr || req.headers.accept?.includes('application/json')
-      const prisonerSearchQuery = req.query.prisoner?.toString()
-
-      if (isAjax && prisonerSearchQuery) {
-        try {
-          const prisoners = await managingPrisonerAppsService.searchPrisoners(prisonerSearchQuery, user)
-
-          const formattedResults = prisoners.map(prisoner => ({
-            prisonerId: prisoner.prisonerId,
-            label: `${prisoner.lastName}, ${prisoner.firstName} (${prisoner.prisonerId})`,
-          }))
-
-          res.json(formattedResults)
-        } catch (error) {
-          logger.error('Prisoner search failed', error)
-          res.status(500).json([])
-        }
-      }
-
       const statusQuery = req.query.status?.toString().toUpperCase()
       const page = Number(req.query.page) || 1
 
@@ -62,31 +43,15 @@ export default function viewApplicationRoutes({
           ? [APPLICATION_STATUS.APPROVED, APPLICATION_STATUS.DECLINED]
           : [APPLICATION_STATUS.PENDING]
 
-      const selectedGroups: string[] = []
-      const selectedTypes: string[] = []
-
-      if (req.query.group) {
-        if (Array.isArray(req.query.group)) {
-          selectedGroups.push(...req.query.group.map(dep => String(dep)))
-        } else {
-          selectedGroups.push(String(req.query.group))
-        }
-      }
-
-      if (req.query.type) {
-        if (Array.isArray(req.query.type)) {
-          selectedTypes.push(...req.query.type.map(type => String(type)))
-        } else {
-          selectedTypes.push(String(req.query.type))
-        }
-      }
+      const selectedGroups = extractQueryParamArray(req.query.group)
+      const selectedTypes = extractQueryParamArray(req.query.type)
 
       const payload: ApplicationSearchPayload = {
         page,
         size: 10,
         status,
         types: selectedTypes,
-        requestedBy: prisonerSearchQuery?.match(/\(([^)]+)\)/)[1],
+        requestedBy: req.query.prisoner?.toString()?.match(/\(([^)]+)\)/)?.[1] ?? null,
         assignedGroups: selectedGroups,
       }
 
@@ -110,6 +75,12 @@ export default function viewApplicationRoutes({
         return { ...app, prisonerName }
       })
 
+      const groups = assignedGroups.map(group => ({
+        value: group.id,
+        text: `${group.name} (${group.count})`,
+        checked: selectedGroups.includes(group.id),
+      }))
+
       const appTypes = Object.entries(types)
         .map(([apiValue, count]) => {
           const matchingType = APPLICATION_TYPES.find(type => type.apiValue === apiValue)
@@ -123,40 +94,62 @@ export default function viewApplicationRoutes({
         })
         .filter(Boolean)
 
+      const selectedFilters = {
+        groups: assignedGroups
+          .filter(group => selectedGroups.includes(group.id))
+          .map(group => ({
+            href: removeFilterFromHref(req, 'group', group.id),
+            text: group.name,
+          })),
+        types: appTypes
+          .filter(type => type.checked)
+          .map(type => ({
+            href: removeFilterFromHref(req, 'type', type.value),
+            text: type.text,
+          })),
+      }
+
       await auditService.logPageView(Page.VIEW_APPLICATIONS_PAGE, {
         who: user.username,
         correlationId: req.id,
       })
 
-      res.render('pages/applications/list/index', {
+      return res.render('pages/applications/list/index', {
         status: statusQuery || APPLICATION_STATUS.PENDING,
         apps: formatApplicationsToRows(appsWithNames),
-        groups: assignedGroups.map(group => ({
-          value: group.id,
-          text: `${group.name} (${group.count})`,
-          checked: selectedGroups.includes(group.id),
-        })),
+        groups,
         appTypes,
-        selectedFilters: {
-          groups: assignedGroups
-            .filter(group => selectedGroups.includes(group.id))
-            .map(group => ({
-              href: removeFilterFromHref(req, 'group', group.id),
-              text: group.name,
-            })),
-          types: appTypes
-            .filter(type => type.checked)
-            .map(type => ({
-              href: removeFilterFromHref(req, 'type', type.value),
-              text: type.text,
-            })),
-        },
+        selectedFilters,
         paginationData,
         page: payload.page,
         rawQuery: req.query,
       })
     }),
   )
+
+  router.get('/applications/search-prisoners', async (req: Request, res: Response): Promise<void> => {
+    const query = req.query.prisoner?.toString()
+    const { user } = res.locals
+
+    if (!query) {
+      res.json([])
+      return
+    }
+
+    try {
+      const prisoners = await managingPrisonerAppsService.searchPrisoners(query, user)
+
+      const formattedResults = prisoners.map(prisoner => ({
+        prisonerId: prisoner.prisonerId,
+        label: `${prisoner.lastName}, ${prisoner.firstName} (${prisoner.prisonerId})`,
+      }))
+
+      res.json(formattedResults)
+    } catch (error) {
+      logger.error('Prisoner search failed', error)
+      res.status(500).json([])
+    }
+  })
 
   router.get(
     '/applications/:prisonerId/:applicationId',
