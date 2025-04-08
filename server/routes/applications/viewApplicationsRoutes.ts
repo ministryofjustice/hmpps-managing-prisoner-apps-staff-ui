@@ -46,14 +46,14 @@ export default function viewApplicationRoutes({
       const selectedGroups = extractQueryParamArray(req.query.group)
       const selectedTypes = extractQueryParamArray(req.query.type)
       const selectedPrisonerLabel = req.query.prisoner?.toString() || ''
-      const selectedPrisonerId = selectedPrisonerLabel.match(/\(([^)]+)\)/)?.[1] || ''
+      const selectedPrisonerId = selectedPrisonerLabel.match(/\(([^)]+)\)/)?.[1] || null
 
       const payload: ApplicationSearchPayload = {
         page,
         size: 10,
         status,
         types: selectedTypes,
-        requestedBy: req.query.prisoner?.toString()?.match(/\(([^)]+)\)/)?.[1] ?? null,
+        requestedBy: selectedPrisonerId,
         assignedGroups: selectedGroups,
       }
 
