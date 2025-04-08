@@ -71,6 +71,18 @@ export default function viewApplicationRoutes({
 
       const paginationData = getPaginationData(page, totalRecords)
 
+      const prisonerData = selectedPrisonerLabel
+      let error = null
+      if (prisonerData) {
+        const foundPrisoner = prisonerDetails.find(prisoner => prisoner && prisoner[0]?.offenderNo === prisonerData)
+        if (!foundPrisoner) {
+          error = {
+            message: 'Check your spelling or clear the search, then try again',
+            summaryTitle: 'There is a problem',
+          }
+        }
+      }
+
       const appsWithNames = apps.map((app, index) => {
         const prisoner = prisonerDetails[index]
         const prisonerName = prisoner ? `${prisoner[0]?.lastName}, ${prisoner[0]?.firstName}` : 'Undefined'
@@ -127,6 +139,7 @@ export default function viewApplicationRoutes({
         rawQuery: req.query,
         selectedPrisonerLabel,
         selectedPrisonerId,
+        error,
       })
     }),
   )
