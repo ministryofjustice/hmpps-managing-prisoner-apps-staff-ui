@@ -8,7 +8,7 @@ type ViewAppsResponseAppWithName = ViewApplicationsResponseApplication & {
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export function formatApplicationsToRows(applications: ViewAppsResponseAppWithName[]) {
+export function formatAppsToRows(applications: ViewAppsResponseAppWithName[]) {
   return applications.map(({ requestedDate, appType, requestedBy, assignedGroup, status, id, prisonerName }) => {
     const date = new Date(requestedDate)
     const formattedDate = format(date, 'd MMMM yyyy')

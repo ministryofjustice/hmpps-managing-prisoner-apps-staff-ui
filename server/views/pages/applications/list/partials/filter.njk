@@ -4,8 +4,8 @@
   {{ accessibleAutocomplete({
     label: "Search by prisoner",
     nonce: cspNonce,
-    selectedLabel: selectedPrisonerLabel,
-    selectedValue: selectedPrisonerId
+    selectedLabel: filters.selectedPrisonerLabel,
+    selectedValue: filters.selectedPrisonerId
   }) }}
 
   {{ govukCheckboxes({
@@ -18,7 +18,7 @@
         classes: "govuk-fieldset__legend--s"
       }
     },
-    items: groups
+    items: filters.groups
   }) }}
 
   {{ govukCheckboxes({
@@ -31,7 +31,7 @@
         classes: "govuk-fieldset__legend--s"
       }
     },
-    items: appTypes
+    items: filters.appTypes
   }) }}
 {% endset -%}
 
@@ -47,11 +47,11 @@
     categories: [
       {
         heading: { text: "Department" },
-        items: selectedFilters.groups
+        items: filters.selectedFilterTags.groups
       },
       {
         heading: { text: "Application type" },
-        items: selectedFilters.types
+        items: filters.selectedFilterTags.types
       }
     ]
   },
