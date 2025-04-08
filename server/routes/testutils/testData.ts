@@ -116,9 +116,9 @@ export default class TestData {
     types: {
       PIN_PHONE_CREDIT_TOP_UP: 0,
       PIN_PHONE_EMERGENCY_CREDIT_TOP_UP: 0,
-      PIN_PHONE_ADD_NEW_CONTACT: 3,
+      PIN_PHONE_ADD_NEW_CONTACT: 0,
       PIN_PHONE_REMOVE_CONTACT: 0,
-      PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS: 0,
+      PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS: 3,
     },
     assignedGroups: [
       {
@@ -137,7 +137,7 @@ export default class TestData {
         id: '1808f5e2-2bf4-499a-b79f-fb0a5f4bac7b',
         establishmentId: 'TEST_ESTABLISHMENT_FIRST',
         status: 'PENDING',
-        appType: 'PIN_PHONE_ADD_NEW_CONTACT',
+        appType: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
         requestedBy: 'A12345',
         requestedDate: '2025-03-24T14:03:13Z',
         assignedGroup: {
@@ -149,7 +149,7 @@ export default class TestData {
         id: '53a02b48-b6af-47d5-9c54-3d0137f6ed96',
         establishmentId: 'TEST_ESTABLISHMENT_FIRST',
         status: 'PENDING',
-        appType: 'PIN_PHONE_ADD_NEW_CONTACT',
+        appType: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
         requestedBy: 'A12345',
         requestedDate: '2025-03-23T14:03:13Z',
         assignedGroup: {
@@ -161,7 +161,7 @@ export default class TestData {
         id: 'b4e9944b-3a27-4d10-b12b-895426349ea3',
         establishmentId: 'TEST_ESTABLISHMENT_FIRST',
         status: 'PENDING',
-        appType: 'PIN_PHONE_ADD_NEW_CONTACT',
+        appType: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
         requestedBy: 'A12345',
         requestedDate: '2025-03-21T14:03:13Z',
         assignedGroup: {
