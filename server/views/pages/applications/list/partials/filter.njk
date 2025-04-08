@@ -2,10 +2,11 @@
 
 {%- set filterOptionsHtml %}
   {{ accessibleAutocomplete({
-    label: "Prisoner name or number",
-    nonce: cspNonce
+    label: "Search by prisoner",
+    nonce: cspNonce,
+    selectedLabel: selectedPrisonerLabel,
+    selectedValue: selectedPrisonerId
   }) }}
-
 
   {{ govukCheckboxes({
     idPrefix: "group",

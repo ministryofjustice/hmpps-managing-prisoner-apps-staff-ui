@@ -7,12 +7,15 @@
   {% block scripts %}
     <script src="/assets/accessible-autocomplete.min.js"></script>
     <script nonce="{{ params.nonce }}">
-      accessibleAutocomplete({
+      const prisonerValue = "{{ params.selectedLabel | escape }}"
+
+      const autocomplete = accessibleAutocomplete({
         element: document.querySelector('#accessible-autocomplete-container'),
         id: 'prisoner',
         name: 'prisoner',
         displayMenu: 'overlay',
         minLength: 3,
+        defaultValue: prisonerValue,
         source: function(query, populateResults) {
           fetch(`/applications/search-prisoners?prisoner=${encodeURIComponent(query)}`, {
             headers: {
@@ -21,7 +24,10 @@
             }
           })
             .then(res => res.json())
-            .then(data => populateResults(data.map(p => p.label)))
+            .then(data => {
+              prisonerData = data
+              populateResults(data.map(p => p.label))
+            })
             .catch(err => {
               console.error('Autocomplete fetch error:', err)
               populateResults([])
@@ -31,3 +37,4 @@
     </script>
   {% endblock %}
 {% endmacro %}
+
