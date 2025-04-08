@@ -71,10 +71,11 @@ export default function viewApplicationRoutes({
 
       const paginationData = getPaginationData(page, totalRecords)
 
-      const prisonerData = selectedPrisonerLabel
       let error = null
-      if (prisonerData) {
-        const foundPrisoner = prisonerDetails.find(prisoner => prisoner && prisoner[0]?.offenderNo === prisonerData)
+      if (selectedPrisonerId) {
+        const foundPrisoner = prisonerDetails.find(
+          prisoner => prisoner && prisoner[0]?.offenderNo === selectedPrisonerId,
+        )
         if (!foundPrisoner) {
           error = {
             message: 'Check your spelling or clear the search, then try again',
