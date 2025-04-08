@@ -4,7 +4,6 @@ import { Request, Response, Router } from 'express'
 import { ApplicationSearchPayload } from '../../@types/managingAppsApi'
 
 import { APPLICATION_STATUS } from '../../constants/applicationStatus'
-import { APPLICATION_TYPES } from '../../constants/applicationTypes'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
@@ -12,11 +11,13 @@ import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PrisonService from '../../services/prisonService'
 
-import { extractQueryParamArray, removeFilterFromHref } from '../../utils/filters'
-import { formatApplicationsToRows } from '../../utils/formatAppsToRows'
+import { formatAppsToRows } from '../../utils/apps'
+import { extractQueryParamArray, formatAppTypes, formatGroups, removeFilterFromHref } from '../../utils/filters'
 import { getApplicationType } from '../../utils/getApplicationType'
+import { getStatusesForQuery } from '../../utils/getStatusesForQuery'
 import { getPaginationData } from '../../utils/pagination'
 import { convertToTitleCase } from '../../utils/utils'
+
 import logger from '../../../logger'
 
 export default function viewApplicationRoutes({
@@ -38,23 +39,26 @@ export default function viewApplicationRoutes({
       const statusQuery = req.query.status?.toString().toUpperCase()
       const page = Number(req.query.page) || 1
 
-      const status =
-        statusQuery === 'CLOSED'
-          ? [APPLICATION_STATUS.APPROVED, APPLICATION_STATUS.DECLINED]
-          : [APPLICATION_STATUS.PENDING]
+      const status = getStatusesForQuery(statusQuery)
 
-      const selectedGroups = extractQueryParamArray(req.query.group)
-      const selectedTypes = extractQueryParamArray(req.query.type)
-      const selectedPrisonerLabel = req.query.prisoner?.toString() || ''
-      const selectedPrisonerId = selectedPrisonerLabel.match(/\(([^)]+)\)/)?.[1] || null
+      const selectedFilters = (() => {
+        const prisonerLabel = req.query.prisoner?.toString() || ''
+        const prisonerId = prisonerLabel.match(/\(([^)]+)\)/)?.[1] || null
+        return {
+          groups: extractQueryParamArray(req.query.group),
+          types: extractQueryParamArray(req.query.type),
+          prisonerLabel,
+          prisonerId,
+        }
+      })()
 
       const payload: ApplicationSearchPayload = {
         page,
         size: 10,
         status,
-        types: selectedTypes,
-        requestedBy: selectedPrisonerId,
-        assignedGroups: selectedGroups,
+        types: selectedFilters.types,
+        requestedBy: selectedFilters.prisonerId,
+        assignedGroups: selectedFilters.groups,
       }
 
       const [{ apps, types, assignedGroups, totalRecords }, prisonerDetails] = await Promise.all([
@@ -69,12 +73,10 @@ export default function viewApplicationRoutes({
         ),
       ])
 
-      const paginationData = getPaginationData(page, totalRecords)
-
       let error = null
-      if (selectedPrisonerId) {
+      if (selectedFilters.prisonerId) {
         const foundPrisoner = prisonerDetails.find(
-          prisoner => prisoner && prisoner[0]?.offenderNo === selectedPrisonerId,
+          prisoner => prisoner && prisoner[0]?.offenderNo === selectedFilters.prisonerId,
         )
         if (!foundPrisoner) {
           error = {
@@ -90,28 +92,12 @@ export default function viewApplicationRoutes({
         return { ...app, prisonerName }
       })
 
-      const groups = assignedGroups.map(group => ({
-        value: group.id,
-        text: `${group.name} (${group.count})`,
-        checked: selectedGroups.includes(group.id),
-      }))
+      const appTypes = formatAppTypes(types, selectedFilters)
+      const groups = formatGroups(assignedGroups, selectedFilters)
 
-      const appTypes = Object.entries(types)
-        .map(([apiValue, count]) => {
-          const matchingType = APPLICATION_TYPES.find(type => type.apiValue === apiValue)
-          return matchingType
-            ? {
-                value: matchingType.apiValue,
-                text: `${matchingType.name} (${count})`,
-                checked: selectedTypes.includes(matchingType.apiValue),
-              }
-            : null
-        })
-        .filter(Boolean)
-
-      const selectedFilters = {
+      const selectedFilterTags = {
         groups: assignedGroups
-          .filter(group => selectedGroups.includes(group.id))
+          .filter(group => selectedFilters.groups.includes(group.id))
           .map(group => ({
             href: removeFilterFromHref(req, 'group', group.id),
             text: group.name,
@@ -130,16 +116,17 @@ export default function viewApplicationRoutes({
       })
 
       return res.render('pages/applications/list/index', {
+        apps: formatAppsToRows(appsWithNames),
+        filters: {
+          appTypes,
+          groups,
+          selectedFilters: selectedFilterTags,
+          selectedPrisonerLabel: selectedFilters.prisonerLabel,
+          selectedPrisonerId: selectedFilters.prisonerId,
+        },
+        pagination: getPaginationData(page, totalRecords),
+        query: req.query,
         status: statusQuery || APPLICATION_STATUS.PENDING,
-        apps: formatApplicationsToRows(appsWithNames),
-        groups,
-        appTypes,
-        selectedFilters,
-        paginationData,
-        page: payload.page,
-        rawQuery: req.query,
-        selectedPrisonerLabel,
-        selectedPrisonerId,
         error,
       })
     }),

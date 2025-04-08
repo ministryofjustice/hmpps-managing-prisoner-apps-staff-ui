@@ -64,8 +64,8 @@
                 }) }}
               </div>
 
-              {% if paginationData.totalPages > 1 %}
-                {{ govukPagination( paginationData | toPagination( rawQuery )) }}
+              {% if pagination.totalPages > 1 %}
+                {{ govukPagination( pagination | toPagination( query )) }}
               {% endif %}
             </div>
           {% endif %}
@@ -89,8 +89,8 @@
                 }) }}
               </div>
               
-              {% if paginationData.totalPages > 1 %}
-                {{ govukPagination( paginationData | toPagination( rawQuery )) }}
+              {% if pagination.totalPages > 1 %}
+                {{ govukPagination( pagination | toPagination( query )) }}
               {% endif %}
             </div>
           {% endif %}
