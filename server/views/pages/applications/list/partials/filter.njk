@@ -1,11 +1,11 @@
+{%- from "../../../../components/accessibleAutocomplete/macro.njk" import accessibleAutocomplete -%}
+
 {%- set filterOptionsHtml %}
-  {{ govukInput({
-    id: "prisoner",
-    name: "prisoner",
-    label: {
-      text: "Prisoner name or number",
-      classes: "govuk-label--s"
-    }
+  {{ accessibleAutocomplete({
+    label: "Search by prisoner",
+    nonce: cspNonce,
+    selectedLabel: selectedPrisonerLabel,
+    selectedValue: selectedPrisonerId
   }) }}
 
   {{ govukCheckboxes({

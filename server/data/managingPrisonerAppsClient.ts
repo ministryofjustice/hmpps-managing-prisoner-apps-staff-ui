@@ -1,6 +1,12 @@
 import { ApplicationData } from 'express-session'
 import logger from '../../logger'
-import { Application, ApplicationSearchPayload, Group, ViewApplicationsResponse } from '../@types/managingAppsApi'
+import {
+  Application,
+  ApplicationSearchPayload,
+  Group,
+  PrisonerSearchResult,
+  ViewApplicationsResponse,
+} from '../@types/managingAppsApi'
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 
@@ -76,6 +82,17 @@ export default class ManagingPrisonerAppsApiClient {
       })
     } catch (error) {
       logger.error(`Error fetching groups.`, error)
+      return null
+    }
+  }
+
+  async searchPrisoners(query: string): Promise<PrisonerSearchResult[]> {
+    try {
+      return await this.restClient.get({
+        path: `/v1/prisoners/search?name=${query}`,
+      })
+    } catch (error) {
+      logger.error(`Error searching prisoners`, error)
       return null
     }
   }
