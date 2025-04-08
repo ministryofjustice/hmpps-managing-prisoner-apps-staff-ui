@@ -1,6 +1,6 @@
 import { Request } from 'express'
+import { ParsedQs } from 'qs'
 
-// eslint-disable-next-line import/prefer-default-export
 export const removeFilterFromHref = (req: Request, filterKey: string, valueToRemove: string) => {
   const newQuery = new URLSearchParams(req.query as Record<string, string | string[]>)
 
@@ -14,4 +14,19 @@ export const removeFilterFromHref = (req: Request, filterKey: string, valueToRem
   }
 
   return `/applications?${newQuery.toString()}`
+}
+
+export const extractQueryParamArray = (
+  param: string | string[] | ParsedQs | (string | ParsedQs)[] | undefined,
+): string[] => {
+  if (Array.isArray(param)) {
+    return param.map(item => String(item))
+  }
+  if (typeof param === 'string') {
+    return [param]
+  }
+  if (param && typeof param === 'object' && 'toString' in param) {
+    return [String(param)]
+  }
+  return []
 }

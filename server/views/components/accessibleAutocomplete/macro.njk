@@ -1,0 +1,40 @@
+{% macro accessibleAutocomplete(params) %}
+  <div class="govuk-form-group">
+    <label class="govuk-label--s govuk-!-display-block govuk-!-margin-bottom-2" for="accessible-autocomplete">{{ params.label }}</label>
+    <div id="accessible-autocomplete-container"></div>
+  </div>
+
+  {% block scripts %}
+    <script src="/assets/accessible-autocomplete.min.js"></script>
+    <script nonce="{{ params.nonce }}">
+      const prisonerValue = "{{ params.selectedLabel | escape }}"
+
+      const autocomplete = accessibleAutocomplete({
+        element: document.querySelector('#accessible-autocomplete-container'),
+        id: 'prisoner',
+        name: 'prisoner',
+        displayMenu: 'overlay',
+        minLength: 3,
+        defaultValue: prisonerValue,
+        source: function(query, populateResults) {
+          fetch(`/applications/search-prisoners?prisoner=${encodeURIComponent(query)}`, {
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'Accept': 'application/json'
+            }
+          })
+            .then(res => res.json())
+            .then(data => {
+              prisonerData = data
+              populateResults(data.map(p => p.label))
+            })
+            .catch(err => {
+              console.error('Autocomplete fetch error:', err)
+              populateResults([])
+            })
+        }
+      });
+    </script>
+  {% endblock %}
+{% endmacro %}
+
