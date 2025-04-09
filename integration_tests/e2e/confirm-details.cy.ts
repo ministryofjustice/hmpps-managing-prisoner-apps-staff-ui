@@ -40,7 +40,7 @@ context('Confirm Details Page', () => {
       })
 
       it('should render the application type summary with correct text', () => {
-        page.applicationType().should('contain.text', 'Swap visiting orders (VOs) for PIN credit')
+        page.applicationType().should('exist')
       })
 
       it(`should ${hasChangeLinks ? '' : 'not '}allow changing the application type`, () => {

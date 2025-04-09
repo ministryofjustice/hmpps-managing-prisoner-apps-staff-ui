@@ -41,6 +41,7 @@ export default function changeApplicationRoutes({
       return res.render(`pages/applications/change/${applicationType.value}`, {
         application,
         backLink: `/applications/${prisonerId}/${applicationId}`,
+        title: applicationType.name,
         errors: null,
       })
     }),
