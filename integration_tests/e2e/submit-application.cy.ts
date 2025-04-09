@@ -21,7 +21,7 @@ context('Application Submitted Page', () => {
 
   it('should display the panel title and body', () => {
     page.panelTitle().should('contain.text', 'Application submitted')
-    page.panelBody().should('contain.text', 'Swap VOs for PIN credit')
+    page.panelBody().should('contain.text', 'Swap visiting orders (VOs) for PIN credit')
   })
 
   it('should display submission text with department info', () => {
