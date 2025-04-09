@@ -32,7 +32,7 @@ context('Confirm Details Page', () => {
       })
 
       it('should display the correct page title', () => {
-        page.pageTitle().should('include', 'Check details')
+        page.pageTitle().should('include', 'Swap visiting orders (VOs) for PIN credit')
       })
 
       it('should render the back link with correct text and href', () => {
