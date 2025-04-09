@@ -74,10 +74,12 @@ export default function viewApplicationRoutes({
       ])
 
       let error = null
+
       if (selectedFilters.prisonerId) {
         const foundPrisoner = prisonerDetails.find(
           prisoner => prisoner && prisoner[0]?.offenderNo === selectedFilters.prisonerId,
         )
+
         if (!foundPrisoner) {
           error = {
             message: 'Check your spelling or clear the search, then try again',
