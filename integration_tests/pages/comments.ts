@@ -11,7 +11,7 @@ export default class CommentsPage extends Page {
 
   activeTab = () => cy.get('.moj-sub-navigation__item a[aria-current="page"]')
 
-  commentBox = () => cy.get('#application-comment')
+  commentBox = () => cy.get('#app-comment')
 
   submitButton = () => cy.get('button.govuk-button--primary')
 
