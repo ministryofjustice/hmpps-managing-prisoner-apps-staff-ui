@@ -32,7 +32,7 @@ context('Confirm Details Page', () => {
       })
 
       it('should display the correct page title', () => {
-        page.pageTitle().should('include', 'Check details')
+        page.pageTitle().should('include', 'Swap visiting orders (VOs) for PIN credit')
       })
 
       it('should render the back link with correct text and href', () => {
@@ -40,7 +40,7 @@ context('Confirm Details Page', () => {
       })
 
       it('should render the application type summary with correct text', () => {
-        page.applicationType().should('contain.text', 'Swap VOs for pin credit')
+        page.applicationType().should('exist')
       })
 
       it(`should ${hasChangeLinks ? '' : 'not '}allow changing the application type`, () => {

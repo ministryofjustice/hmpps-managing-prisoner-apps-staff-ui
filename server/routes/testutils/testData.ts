@@ -91,13 +91,13 @@ export default class TestData {
   submitPrisonerAppData = {
     type: {
       value: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
-      name: 'Swap VOs for PIN credit',
+      name: 'Swap visiting orders (VOs) for PIN credit',
       apiValue: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
     },
     prisonerId: 'G4567',
     prisonerName: 'Emily Brown',
     date: new Date('2024-09-15').toISOString(),
-    additionalData: { swapVOsToPinCreditDetails: 'Swap VOs for PIN credit' },
+    additionalData: { swapVOsToPinCreditDetails: 'Swap visiting orders (VOs) for PIN credit' },
   }
 
   appSearchPayload: ApplicationSearchPayload = {
