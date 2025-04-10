@@ -101,3 +101,31 @@ export type PrisonerSearchResult = {
   firstName: string
   lastName: string
 }
+
+export type CommentsResponse = {
+  page: number
+  exhausted: boolean
+  totalElements: number
+  contents: Comment[]
+}
+
+export type Comment = {
+  id: string
+  appId: string
+  prisonerNumber: string
+  message: string
+  createdDate: string
+  createdBy: StaffUser
+}
+
+export type TargetUser = {
+  id: string
+}
+
+type StaffUser = {
+  username: string
+  userId: string
+  fullName: string
+  category: 'STAFF'
+  establishment: Establishment
+}

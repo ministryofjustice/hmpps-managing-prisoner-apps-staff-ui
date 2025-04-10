@@ -19,18 +19,27 @@
         <h2 class="govuk-heading-m">Comments about this application</h2>
         <p class="govuk-body">Only staff will see these comments</p>
 
-        <div class="app-message govuk-body">
-          <div class="app-messages-content">
-            <p class="none">None</p>
-          </div>
+        <div class="app-messages govuk-!-margin-bottom-4">
+          {% if comments and comments.length > 0 %}
+            {% for comment in comments %}
+              <div class="app-message">
+                <div class="app-message--metadata">Comment by {{ comment.staffName }} | {{ comment.date }} at {{ comment.time }}</div>
+                <div class="app-message--content">{{ comment.message }}</div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="app-message">
+              <div class="app-message--content">No comments yet</div>
+            </div>
+          {% endif %}
         </div>
 
         <form method="POST" id="application-comments-form">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
           {{ govukCharacterCount({
-            name: "applicationComment",
-            id: "application-comment",
+            name: "appComment",
+            id: "app-comment",
             maxlength: 1000,
             threshold: 75,
             value: "",
