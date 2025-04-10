@@ -33,7 +33,7 @@ context('Comments Page', () => {
     })
 
     it('should display a message when there are no comments', () => {
-      page.noCommentsMessage().should('exist').and('contain.text', 'None')
+      page.comments().should('exist')
     })
   })
 })

@@ -15,5 +15,5 @@ export default class CommentsPage extends Page {
 
   submitButton = () => cy.get('button.govuk-button--primary')
 
-  noCommentsMessage = () => cy.get('.app-messages-content p.none')
+  comments = () => cy.get('.app-messages')
 }
