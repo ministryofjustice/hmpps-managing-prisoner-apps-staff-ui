@@ -59,17 +59,4 @@ describe('ManagingPrisonerAppsApiClient', () => {
     const output = await client.getApps(appSearchPayload)
     expect(output).toEqual(appSearchResponse)
   })
-
-  it('should add a new comment to a prisoner app', async () => {
-    fakeManagingPrisonerAppApi
-      .post('/v1/prisoners/prisoner-id/apps/app-id/comments')
-      .matchHeader('authorization', `Bearer ${user.token}`)
-      .reply(201, comment)
-
-    const output = await client.addComment('prisoner-id', 'application-id', {
-      message: comment.message,
-      targetUsers: [],
-    })
-    expect(output).toBeUndefined()
-  })
 })

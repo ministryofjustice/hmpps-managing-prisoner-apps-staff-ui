@@ -3,6 +3,7 @@ import logger from '../../logger'
 import {
   Application,
   ApplicationSearchPayload,
+  Comment,
   CommentsResponse,
   Group,
   PrisonerSearchResult,
@@ -102,14 +103,15 @@ export default class ManagingPrisonerAppsApiClient {
     prisonerId: string,
     appId: string,
     payload: { message: string; targetUsers: { id: string }[] },
-  ): Promise<void> {
+  ): Promise<Comment | null> {
     try {
-      await this.restClient.post({
+      return await this.restClient.post({
         path: `/v1/prisoners/${prisonerId}/apps/${appId}/comments`,
         data: payload,
       })
     } catch (error) {
       logger.error(`Failed to add comment for prisoner ${prisonerId} on app ${appId}`, error)
+      return null
     }
   }
 
