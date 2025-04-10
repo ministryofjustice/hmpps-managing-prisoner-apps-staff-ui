@@ -7,7 +7,6 @@
 
 {% block content %}
   <div class="govuk-body govuk-width-container govuk!">
-
     <span class="govuk-caption-xl">Business Hub applications</span>
     <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
 
@@ -17,41 +16,24 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <h2 class="govuk-heading-m">History of this application</h2>
+        
+        <div class="app-messages">
+          <div class="app-message">
+            <div class="app-message--content">No history</div>
+          </div>
 
-           <div class="app-message govuk-body">
-              <div class="app-messages-metadata">
-                J. Smith | 14 March 2025 at 09:18
-               </div>
-              
-               <div class="app-messages-content">
-                Logged with Business Hub.
-               </div> 
-           </div>
+          <div class="app-message govuk-body">
+            <div class="app-message--metadata">J. Smith | 14 March 2025 at 09:18</div>
+            <div class="app-message--content">Logged with Business Hub.</div> 
+          </div>
 
-           <div class="app-message govuk-body">
-              <div class="app-messages-metadata">
-               S. Caroll | 15 March 2025 at 10:18
-              </div>
-              
-              <div class="app-messages-content">
-               Forwarded to OMU.
-              </div>
-           </div>   
-
-           <div class="app-message govuk-body">
-              <div class="app-messages-metadata">
-                S. Caroll | 16 March 2025 at 11:18
-              </div>
-
-              <div class="app-messages-content">
-                Marked as Approved.
-              </div>
-           </div>
-         
+          <div class="app-message govuk-body">
+            <div class="app-message--metadata">J. Smith | 14 March 2025 at 09:18</div>
+            <div class="app-message--content">Logged with Business Hub.</div> 
+          </div>
         </div>
       </div>
-
-    </div>  
-
+    </div>
+  </div>  
 {% endblock %}
 

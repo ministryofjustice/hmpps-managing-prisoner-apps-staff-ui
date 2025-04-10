@@ -36,4 +36,19 @@ export default class ManagingPrisonerAppsService {
     const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
     return new ManagingPrisonerAppsApiClient(token).searchPrisoners(query)
   }
+
+  async addComment(
+    prisonerId: string,
+    applicationId: string,
+    payload: { message: string; targetUsers: { id: string }[] },
+    user: BaseUser,
+  ) {
+    const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
+    return new ManagingPrisonerAppsApiClient(token).addComment(prisonerId, applicationId, payload)
+  }
+
+  async getComments(prisonerId: string, applicationId: string, user: BaseUser) {
+    const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
+    return new ManagingPrisonerAppsApiClient(token).getComments(prisonerId, applicationId)
+  }
 }

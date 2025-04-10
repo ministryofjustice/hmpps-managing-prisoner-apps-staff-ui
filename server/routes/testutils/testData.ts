@@ -1,4 +1,11 @@
-import { Application, ApplicationSearchPayload, Group, ViewApplicationsResponse } from '../../@types/managingAppsApi'
+import {
+  Application,
+  ApplicationSearchPayload,
+  Comment,
+  CommentsResponse,
+  Group,
+  ViewApplicationsResponse,
+} from '../../@types/managingAppsApi'
 import { PrisonerDetail } from '../../@types/prisonApi'
 import { APPLICATION_STATUS } from '../../constants/applicationStatus'
 import { BaseUser } from '../../interfaces/hmppsUser'
@@ -181,5 +188,30 @@ export default class TestData {
     },
     initialApp: 'PIN_PHONE_ADD_NEW_CONTACT',
     type: 'WING',
+  }
+
+  comment: Comment = {
+    id: '8980f68a-eabd-4b00-9ef3-a5d733da3a9f',
+    appId: 'f4da49b9-f5d6-4931-9e81-aa6d69a12b2a',
+    message: 'This is my first comment',
+    prisonerNumber: 'G3682UE',
+    createdDate: '2025-04-09T15:57:29Z',
+    createdBy: {
+      username: 'ZFAITHFULL_GEN',
+      userId: '487900',
+      fullName: 'Zak Faithfull',
+      category: 'STAFF',
+      establishment: {
+        id: 'TEST_ESTABLISHMENT_FIRST',
+        name: 'ESTABLISHMENT_NAME_1',
+      },
+    },
+  }
+
+  commentsResponse: CommentsResponse = {
+    page: 1,
+    totalElements: 1,
+    exhausted: true,
+    contents: [this.comment],
   }
 }
