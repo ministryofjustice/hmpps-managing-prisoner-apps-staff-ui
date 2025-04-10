@@ -33,9 +33,8 @@ export default function confirmDetailsRoutes({
 
       return res.render(`pages/log-application/confirm/${applicationType.value}`, {
         applicationData,
-        appTypeTitle: 'Swap VOs for PIN credit',
         backLink: URLS.APPLICATION_DETAILS,
-        title: 'Check details',
+        title: applicationType.name,
       })
     }),
   )

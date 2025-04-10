@@ -38,7 +38,7 @@ export default function submitApplicationRoutes({
         return
       }
 
-      res.render(`pages/log-application/submit/${applicationType.value}`, {
+      res.render(`pages/log-application/submit/index`, {
         title: applicationType.name,
         application,
       })
