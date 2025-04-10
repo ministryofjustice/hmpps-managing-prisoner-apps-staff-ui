@@ -11,7 +11,7 @@ describe('ManagingPrisonerAppsApiClient', () => {
   let fakeManagingPrisonerAppApi: nock.Scope
   let client: ManagingPrisonerAppsApiClient
 
-  const { appSearchPayload, appSearchResponse, app, comment, submitPrisonerAppData, user } = testData
+  const { appSearchPayload, appSearchResponse, app, submitPrisonerAppData, user } = testData
 
   beforeEach(() => {
     fakeManagingPrisonerAppApi = nock(config.apis.managingPrisonerApps.url)
