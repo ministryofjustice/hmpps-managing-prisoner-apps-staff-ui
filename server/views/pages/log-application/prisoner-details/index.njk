@@ -18,7 +18,7 @@
       href: "/log/application-type"
     }) }}
 
-     <div class="govuk-grid-row">
+    <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-half">
         {% if errors %}
           {% set errorList = [] %}
@@ -37,61 +37,61 @@
           }) }}
         {% endif %}
 
-    <span class="govuk-caption-xl">{{ appTypeTitle }}</span>
-    <h1 class="govuk-heading-xl govuk-!-margin-top-0">Log prisoner details</h1>
+        <span class="govuk-caption-xl">{{ appTypeTitle }}</span>
+        <h1 class="govuk-heading-xl govuk-!-margin-top-0">Log prisoner details</h1>
 
-    <form method="POST" id="log-prisoner-details">
-      <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <form method="POST" id="log-prisoner-details">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-      <div class="govuk-form-group govuk-!-margin-bottom-0 {% if errors.prisonNumber %} govuk-form-group--error {% endif %}">
-        <label class="govuk-label govuk-label--s" for="prisonNumber">
-          Prison number
-        </label>
+          <div class="govuk-form-group govuk-!-margin-bottom-0 {% if errors.prisonNumber %} govuk-form-group--error {% endif %}">
+            <label class="govuk-label govuk-label--s" for="prisonNumber">
+              Prison number
+            </label>
 
-        {% if errors.prisonNumber %}
-          <p class="govuk-error-message" id="prison-mumber-error">
-            <span class="govuk-visually-hidden">Error:</span> {{ errors.prisonNumber.text }}
-          </p>
-        {% endif %}
+            {% if errors.prisonNumber %}
+              <p class="govuk-error-message" id="prison-mumber-error">
+                <span class="govuk-visually-hidden">Error:</span> {{ errors.prisonNumber.text }}
+              </p>
+            {% endif %}
 
-        <input class="govuk-input govuk-input--width-10 {% if errors.prisonNumber %} govuk-input--error {% endif %}"
-         id="prison-number" 
-         name="prisonNumber" 
-         type="text" 
-         aria-describedby="prison-number-error" 
-         value="{{ prisonNumber | default('') }}">
+            <input class="govuk-input govuk-input--width-10 {% if errors.prisonNumber %} govuk-input--error {% endif %}"
+              id="prison-number" 
+              name="prisonNumber" 
+              type="text" 
+              aria-describedby="prison-number-error" 
+              value="{{ prisonNumber | default('') }}">
 
-        <button id="prisoner-number-lookup" class="govuk-button govuk-button--secondary" data-test="find-prisoner-button">
-          Find prisoner
-        </button>
+            <button id="prisoner-number-lookup" class="govuk-button govuk-button--secondary" data-test="find-prisoner-button">
+              Find prisoner
+            </button>
+          </div>
+
+          {{ govukInsetText({
+            text: "",
+            classes: "govuk-!-margin-top-0 govuk-!-display-none",
+            attributes: { id: "prisoner-name-display" }
+          }) }}
+
+          <input type="hidden" id="prisoner-name" name="prisonerName" value="">
+
+          {{ mojDatePicker({
+            id: "date",
+            name: "date",
+            label: {
+              text: "Date",
+              classes: "govuk-label--s"
+            },
+            errorMessage: { text: errors.dateString.text } if errors.dateString.text else undefined,
+            value: dateString | default('')
+          }) }}
+
+          {{ govukButton({
+            text: "Continue",
+            classes: "govuk-button--primary",
+            attributes: { "data-test": "continue-button" }
+          }) }}
+        </form>
       </div>
-
-      {{ govukInsetText({
-        text: "",
-        classes: "govuk-!-margin-top-0 govuk-!-display-none",
-        attributes: { id: "prisoner-name-display" }
-      }) }}
-
-      <input type="hidden" id="prisoner-name" name="prisonerName" value="">
-
-      {{ mojDatePicker({
-        id: "date",
-        name: "date",
-        label: {
-            text: "Date",
-            classes: "govuk-label--s"
-        },
-        errorMessage: { text: errors.dateString.text } if errors.dateString.text else undefined,
-        value: dateString | default('')
-      }) }}
-
-      {{ govukButton({
-        text: "Continue",
-        classes: "govuk-button--primary",
-        attributes: { "data-test": "continue-button" }
-      }) }}
-    </form>
-   </div>
-   </div>
+    </div>
   </div>
 {% endblock %}
