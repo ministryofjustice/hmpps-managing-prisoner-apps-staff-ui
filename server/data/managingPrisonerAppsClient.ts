@@ -3,6 +3,8 @@ import logger from '../../logger'
 import {
   Application,
   ApplicationSearchPayload,
+  Comment,
+  CommentsResponse,
   Group,
   PrisonerSearchResult,
   ViewApplicationsResponse,
@@ -63,7 +65,7 @@ export default class ManagingPrisonerAppsApiClient {
     }
   }
 
-  async getApps(payload: ApplicationSearchPayload): Promise<ViewApplicationsResponse> {
+  async getApps(payload: ApplicationSearchPayload): Promise<ViewApplicationsResponse | null> {
     try {
       return await this.restClient.post({
         path: `/v1/prisoners/apps/search`,
@@ -75,7 +77,7 @@ export default class ManagingPrisonerAppsApiClient {
     }
   }
 
-  async getGroups(): Promise<Group[]> {
+  async getGroups(): Promise<Group[] | null> {
     try {
       return await this.restClient.get({
         path: `/v1/groups`,
@@ -86,13 +88,39 @@ export default class ManagingPrisonerAppsApiClient {
     }
   }
 
-  async searchPrisoners(query: string): Promise<PrisonerSearchResult[]> {
+  async searchPrisoners(query: string): Promise<PrisonerSearchResult[] | null> {
     try {
       return await this.restClient.get({
         path: `/v1/prisoners/search?name=${query}`,
       })
     } catch (error) {
       logger.error(`Error searching prisoners`, error)
+      return null
+    }
+  }
+
+  async addComment(
+    prisonerId: string,
+    appId: string,
+    payload: { message: string; targetUsers: { id: string }[] },
+  ): Promise<void> {
+    try {
+      await this.restClient.post({
+        path: `/v1/prisoners/${prisonerId}/apps/${appId}/comments`,
+        data: payload,
+      })
+    } catch (error) {
+      logger.error(`Failed to add comment for prisoner ${prisonerId} on app ${appId}`, error)
+    }
+  }
+
+  async getComments(prisonerId: string, appId: string, page = 1, size = 20): Promise<CommentsResponse | null> {
+    try {
+      return await this.restClient.get({
+        path: `/v1/prisoners/${prisonerId}/apps/${appId}/comments?page=${page}&size=${size}&createdBy=true`,
+      })
+    } catch (error) {
+      logger.error(`Failed to fetch comments for prisoner ${prisonerId} on app ${appId}`, error)
       return null
     }
   }

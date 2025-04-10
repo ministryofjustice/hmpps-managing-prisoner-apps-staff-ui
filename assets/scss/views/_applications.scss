@@ -43,12 +43,12 @@
   border-top: 1px solid $govuk-border-colour;
   border-bottom: 1px solid $govuk-border-colour;
   margin-bottom: -1px;
-}
 
-.app-message:last-of-type {
-  border-bottom: 1px solid $govuk-border-colour;
-}
+  &:last-of-type {
+    border-bottom: 1px solid $govuk-border-colour;
+  }
 
-.app-message .app-messages-metadata {
-  color: govuk-colour("dark-grey");
+  &--metadata {
+    color: govuk-colour('dark-grey');
+  }
 }

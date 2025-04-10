@@ -7,6 +7,8 @@ const mockClientMethods = {
   getApps: jest.fn(),
   getGroups: jest.fn(),
   getPrisonerApp: jest.fn(),
+  getComments: jest.fn(),
+  addComment: jest.fn(),
 }
 
 const testData = new TestData()
@@ -65,6 +67,29 @@ describe('ManagingPrisonerAppsService', () => {
 
       expect(result).toBeUndefined()
       expect(mockClientMethods.getGroups).toHaveBeenCalledWith()
+    })
+  })
+
+  describe('addComment', () => {
+    it('should add a comment to an application', async () => {
+      const payload = {
+        message: 'Test comment',
+        targetUsers: [{ id: 'target-user-id' }],
+      }
+
+      const result = await service.addComment('prisoner-id', 'application-id', payload, user)
+
+      expect(result).toBeUndefined()
+      expect(mockClientMethods.addComment).toHaveBeenCalledWith('prisoner-id', 'application-id', payload)
+    })
+  })
+
+  describe('getComments', () => {
+    it('should fetch the comments for an application', async () => {
+      const result = await service.getComments('prisoner-id', 'application-id', user)
+
+      expect(result).toBeUndefined()
+      expect(mockClientMethods.getComments).toHaveBeenCalledWith('prisoner-id', 'application-id')
     })
   })
 })
