@@ -3,7 +3,6 @@ import logger from '../../logger'
 import {
   Application,
   ApplicationSearchPayload,
-  Comment,
   CommentsResponse,
   Group,
   PrisonerSearchResult,
