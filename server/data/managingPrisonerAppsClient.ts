@@ -3,9 +3,11 @@ import logger from '../../logger'
 import {
   Application,
   ApplicationSearchPayload,
+  AppResponsePayload,
   Comment,
   CommentsResponse,
   Group,
+  Response,
   PrisonerSearchResult,
   ViewApplicationsResponse,
 } from '../@types/managingAppsApi'
@@ -122,6 +124,28 @@ export default class ManagingPrisonerAppsApiClient {
       })
     } catch (error) {
       logger.error(`Failed to fetch comments for prisoner ${prisonerId} on app ${appId}`, error)
+      return null
+    }
+  }
+
+  async addResponse(prisonerId: string, appId: string, payload: AppResponsePayload): Promise<void> {
+    try {
+      await this.restClient.post({
+        path: `/v1/prisoners/${prisonerId}/apps/${appId}/responses`,
+        data: payload,
+      })
+    } catch (error) {
+      logger.error(`Error adding response to application.`, error)
+    }
+  }
+
+  async getResponse(prisonerId: string, appId: string, responseId: string): Promise<Response> {
+    try {
+      return await this.restClient.get({
+        path: `/v1/prisoners/${prisonerId}/apps/${appId}/responses/${responseId}?createdBy=true`,
+      })
+    } catch (error) {
+      logger.error(`Error fetching response for application.`, error)
       return null
     }
   }

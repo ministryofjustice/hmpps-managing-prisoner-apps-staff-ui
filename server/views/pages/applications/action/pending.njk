@@ -7,7 +7,7 @@
       <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
     
       {{ govukRadios({
-        name: "selectAction",
+        name: "decision",
         fieldset: {
           legend: {
             text: "Select an action",
@@ -17,12 +17,12 @@
         },
         items: [
           {
-            value: "approved",
+            value: "APPROVED",
             text: "Approved",
             checked: selectedAction == "approved"
           },
           {
-            value: "declined",
+            value: "DECLINED",
             text: "Declined",
             checked: selectedAction == "declined"
           }
@@ -30,7 +30,7 @@
       }) }}
 
       {% set characterCountConfig = {
-        name: "actionReplyReason",
+        name: "reason",
         id: "action-and-reply-reason",
         maxlength: 1000,
         value: textareaValue or "",
@@ -43,7 +43,7 @@
 
       {% if errors.actionReplyReason and (selectedAction == "declined") %}
         {% set characterCountConfig = {
-          name: "actionReplyReason",
+          name: "reason",
           id: "action-and-reply-reason",
           maxlength: 1000,
           value: textareaValue or "",
