@@ -1,5 +1,6 @@
 {
   "applicationTypes": [
+    { "name": "Add emergency PIN phone credit", "value": "add-emergency-pin-phone-credit" },
     { "name": "Swap visiting orders (VOs) for PIN credit", "value": "swap-visiting-orders-for-pin-credit" }
   ]
 }

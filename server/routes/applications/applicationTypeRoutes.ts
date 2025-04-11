@@ -15,10 +15,13 @@ export default function applicationTypeRoutes({ auditService }: { auditService: 
         correlationId: req.id,
       })
 
+      const selectedAppType = req.session?.applicationData?.type || null
+
       const applicationTypes = APPLICATION_TYPES.map(applicationType => ({
         apiValue: applicationType.apiValue,
         value: applicationType.value,
         text: applicationType.name,
+        checked: applicationType.value === selectedAppType?.value,
       }))
 
       res.render('pages/log-application/select-application-type/index', {

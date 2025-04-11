@@ -82,14 +82,26 @@ describe('formatAppTypes', () => {
   it('should format app types correctly', () => {
     const types = {
       PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS: 3,
+      PIN_PHONE_EMERGENCY_CREDIT_TOP_UP: 2,
     }
     const selectedFilters = { types: ['PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS'] }
 
     const result = formatAppTypes(types, selectedFilters)
 
-    expect(result).toEqual([
-      { value: APPLICATION_TYPES[0].apiValue, text: `${APPLICATION_TYPES[0].name} (3)`, checked: true },
-    ])
+    const expected = [
+      {
+        value: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
+        text: `${APPLICATION_TYPES.find(type => type.apiValue === 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS')?.name} (3)`,
+        checked: true,
+      },
+      {
+        value: 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP',
+        text: `${APPLICATION_TYPES.find(type => type.apiValue === 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP')?.name} (2)`,
+        checked: false,
+      },
+    ]
+
+    expect(result).toEqual(expected)
   })
 
   it('should return an empty array if no matching types are found', () => {

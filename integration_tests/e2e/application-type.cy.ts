@@ -16,17 +16,20 @@ context('Application Type Page', () => {
 
   it('should display radio buttons with names', () => {
     cy.fixture('applicationTypes.json').then(({ applicationTypes }) => {
-      applicationTypes.forEach((applicationType: { name: string; value: string }) => {
-        cy.get('.govuk-radios__item')
+      cy.get('.govuk-radios__item').should('have.length', applicationTypes.length)
+
+      cy.get('.govuk-radios__item').each(($element, index) => {
+        const { name, value } = applicationTypes[index]
+
+        cy.wrap($element)
           .find('label.govuk-label.govuk-radios__label')
           .should('exist')
           .invoke('text')
-          .should('satisfy', text => text.trim() === applicationType.name)
-        cy.get('.govuk-radios__item')
-          .should('exist')
-          .find('input.govuk-radios__input')
-          .should('exist')
-          .and('have.attr', 'value', applicationType.value)
+          .then(text => {
+            expect(text.trim()).to.equal(name)
+          })
+
+        cy.wrap($element).find('input.govuk-radios__input').should('exist').and('have.attr', 'value', value)
       })
     })
   })
