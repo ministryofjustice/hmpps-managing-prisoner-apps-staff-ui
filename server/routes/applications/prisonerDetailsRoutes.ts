@@ -3,7 +3,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import { updateSessionData } from '../../utils/session'
 import PrisonService from '../../services/prisonService'
-import { validatePrisonerDetails } from '../validate/validatePrisonerDetails'
+import validatePrisonerDetails from '../validate/validatePrisonerDetails'
 
 export default function prisonerDetailsRoutes({
   auditService,
