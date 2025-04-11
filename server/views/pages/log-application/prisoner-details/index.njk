@@ -69,7 +69,11 @@
           {{ govukInsetText({
             text: "",
             classes: "govuk-!-margin-top-0 govuk-!-display-none",
-            attributes: { id: "prisoner-name-display" }
+            attributes: { 
+              id: "prisoner-name-display", 
+              "aria-live": "assertive",
+              role: "alert"
+            }
           }) }}
 
           <input type="hidden" id="prisoner-name" name="prisonerName" value="">
