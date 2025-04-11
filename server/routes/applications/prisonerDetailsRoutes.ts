@@ -3,6 +3,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import { updateSessionData } from '../../utils/session'
 import PrisonService from '../../services/prisonService'
+import validatePrisonerDetails from '../validate/validatePrisonerDetails'
 
 export default function prisonerDetailsRoutes({
   auditService,
@@ -28,6 +29,7 @@ export default function prisonerDetailsRoutes({
       return res.render('pages/log-application/prisoner-details/index', {
         title: 'Log prisoner details',
         appTypeTitle: req.session.applicationData.type.name,
+        errors: null,
       })
     }),
   )
@@ -61,6 +63,17 @@ export default function prisonerDetailsRoutes({
     asyncMiddleware(async (req: Request, res: Response) => {
       const { prisonerName, prisonNumber, date: dateString } = req.body
 
+      const errors = validatePrisonerDetails(prisonNumber, dateString)
+
+      if (Object.keys(errors).length > 0) {
+        return res.render('pages/log-application/prisoner-details/index', {
+          appTypeTitle: req.session.applicationData.type.name,
+          prisonNumber,
+          dateString,
+          errors,
+        })
+      }
+
       let date: string | null = null
 
       if (typeof dateString === 'string' && dateString.trim() !== '') {
@@ -85,7 +98,7 @@ export default function prisonerDetailsRoutes({
         prisonerId: prisonNumber,
       })
 
-      res.redirect(`/log/application-details`)
+      return res.redirect(`/log/application-details`)
     }),
   )
 

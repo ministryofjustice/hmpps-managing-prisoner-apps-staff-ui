@@ -24,6 +24,10 @@ context('Confirm Details Page', () => {
         if (route === '/log/confirm') {
           cy.contains('Swap visiting orders (VOs) for PIN credit').click()
           cy.contains('button', 'Continue').click()
+          cy.contains('Prison number').should('exist')
+          cy.get('#prison-number').type('G9812CC')
+          cy.contains('Date').should('exist')
+          cy.get('#date').type('10/04/2023')
           cy.contains('button', 'Continue').click()
           cy.contains('button', 'Continue').click()
         }
