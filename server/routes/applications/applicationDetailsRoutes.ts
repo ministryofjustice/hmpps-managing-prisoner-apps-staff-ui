@@ -5,6 +5,7 @@ import AuditService, { Page } from '../../services/auditService'
 import { getApplicationType } from '../../utils/getApplicationType'
 import { updateSessionData } from '../../utils/session'
 import { validateTextField } from '../validate/validateTextField'
+import { APPLICATION_TYPE_VALUES } from '../../constants/applicationTypes'
 
 export default function applicationDetailsRoutes({ auditService }: { auditService: AuditService }): Router {
   const router = Router()
@@ -46,7 +47,7 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
       }
 
       switch (applicationTypeValue) {
-        case 'swap-visiting-orders-for-pin-credit': {
+        case APPLICATION_TYPE_VALUES.PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS: {
           const { details } = req.body
           const detailErrors = validateTextField(details, 'Details')
 
@@ -59,7 +60,7 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
           break
         }
 
-        case 'add-emergency-pin-phone-credit': {
+        case APPLICATION_TYPE_VALUES.PIN_PHONE_EMERGENCY_CREDIT_TOP_UP: {
           const { amount, reason } = req.body
           const fieldErrors = {
             ...validateTextField(amount, 'Amount'),
