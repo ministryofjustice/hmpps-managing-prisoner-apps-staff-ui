@@ -1,10 +1,11 @@
+import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
+import { APPLICATION_TYPES } from '../../constants/applicationTypes'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { getApplicationType } from '../../utils/getApplicationType'
 import { updateSessionData } from '../../utils/session'
-import { APPLICATION_TYPES } from '../../constants/applicationTypes'
 
 export default function changeApplicationRoutes({
   auditService,
@@ -24,7 +25,7 @@ export default function changeApplicationRoutes({
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
       if (!application) {
-        return res.redirect(`/applications=`)
+        return res.redirect(`/applications`)
       }
 
       await auditService.logPageView(Page.CHANGE_APPLICATION_PAGE, {
@@ -38,8 +39,9 @@ export default function changeApplicationRoutes({
         return res.redirect(`/applications?error=unknown-type`)
       }
 
-      return res.render(`pages/applications/change/${applicationType.value}`, {
+      return res.render(`pages/applications/change/index`, {
         application,
+        applicationType,
         backLink: `/applications/${prisonerId}/${applicationId}`,
         title: applicationType.name,
         errors: null,
@@ -67,7 +69,7 @@ export default function changeApplicationRoutes({
         date: application.requestedDate,
         additionalData: {
           ...applicationData?.additionalData,
-          ...(isSwapVOsToPinCredit ? { swapVOsToPinCreditDetails: req.body.swapVosPinCreditDetails } : {}),
+          ...(isSwapVOsToPinCredit ? { details: req.body.swapVosPinCreditDetails } : {}),
         },
       })
 
@@ -99,8 +101,12 @@ export default function changeApplicationRoutes({
         return res.redirect(`/applications?error=unknown-type`)
       }
 
-      return res.render(`pages/log-application/confirm/${applicationType.value}`, {
-        applicationData,
+      return res.render(`pages/log-application/confirm/index`, {
+        applicationData: {
+          ...applicationData,
+          date: format(new Date(applicationData.date), 'd MMMM yyyy'),
+        },
+        applicationType,
         backLink: `/applications/${prisonerId}/${applicationId}/change`,
         isUpdate: true,
         title: applicationType.name,

@@ -67,14 +67,6 @@ context('Confirm Details Page', () => {
         page.changeSubmittedOn().should(hasChangeLinks ? 'exist' : 'not.exist')
       })
 
-      it('should display the VOs to swap details', () => {
-        page.swapVOsDetails().should('exist')
-      })
-
-      it('should allow changing the swap VOs details', () => {
-        page.changeSwapVOsDetails().should('exist').and('have.attr', 'href', '#')
-      })
-
       it('should render a Continue button with the correct text', () => {
         page.continueButton().should('contain.text', 'Continue')
       })

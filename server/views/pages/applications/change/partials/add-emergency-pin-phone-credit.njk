@@ -1,0 +1,35 @@
+{{ govukInput({
+  id: "amount",
+  name: "amount",
+  label: {
+    text: "Amount",
+    classes: "govuk-label--s"
+  },
+  prefix: {
+    text: "£"
+  },
+  classes: "govuk-input--width-5",
+  spellcheck: false,
+  hint: {
+    text: "Use only multiples of £1, with a limit of £5"
+  },
+  inputmode: "numeric",
+  value: application.requests[0].amount,
+  errorMessage: errors.Amount
+}) }}
+
+{{ govukCharacterCount({
+  name: "reason",
+  id: "reason",
+  maxlength: 1000,
+  threshold: 75,
+  value: application.requests[0].reason,
+  label: {
+    text: "Reason",
+    classes: "govuk-label--s"
+  },
+  errorMessage: errors.Reason,
+  hint: {
+    text: "Add a brief summary"
+  }
+}) }}

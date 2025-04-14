@@ -105,7 +105,7 @@ export default class TestData {
     prisonerId: 'G4567',
     prisonerName: 'Emily Brown',
     date: new Date('2024-09-15').toISOString(),
-    additionalData: { swapVOsToPinCreditDetails: 'Swap visiting orders (VOs) for PIN credit' },
+    additionalData: { details: 'Swap visiting orders (VOs) for PIN credit' },
   }
 
   appSearchPayload: ApplicationSearchPayload = {

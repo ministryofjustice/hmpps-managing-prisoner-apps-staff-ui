@@ -21,10 +21,15 @@ export declare module 'express-session' {
     apiValue: string
   }
 
-  type AdditionalApplicationData = SwapVOsForPinCreditDetails
+  type AdditionalApplicationData = SwapVOsForPinCreditDetails | AddEmergencyPinPhoneCreditDetails
 
   interface SwapVOsForPinCreditDetails {
-    swapVOsToPinCreditDetails: string
+    details?: string
+  }
+
+  interface AddEmergencyPinPhoneCreditDetails {
+    amount?: string
+    reason?: string
   }
 }
 
