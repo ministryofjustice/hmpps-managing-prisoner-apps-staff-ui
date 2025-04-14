@@ -70,7 +70,7 @@ export default function changeApplicationRoutes({
         date: application.requestedDate,
         additionalData: {
           ...applicationData?.additionalData,
-          ...(isSwapVOsToPinCredit ? { details: req.body.swapVosPinCreditDetails } : {}),
+          ...(isSwapVOsToPinCredit ? { details: req.body.details } : {}),
         },
       })
 
