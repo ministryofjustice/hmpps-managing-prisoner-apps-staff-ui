@@ -1,6 +1,6 @@
 import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
-import { APPLICATION_TYPES } from '../../constants/applicationTypes'
+import { APPLICATION_TYPE_VALUES, APPLICATION_TYPES } from '../../constants/applicationTypes'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
@@ -61,7 +61,8 @@ export default function changeApplicationRoutes({
 
       const isSwapVOsToPinCredit =
         selectedAppType.apiValue ===
-        APPLICATION_TYPES.find(type => type.value === 'swap-visiting-orders-for-pin-credit')?.apiValue
+        APPLICATION_TYPES.find(type => type.value === APPLICATION_TYPE_VALUES.PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS)
+          ?.apiValue
 
       updateSessionData(req, {
         type: selectedAppType,
