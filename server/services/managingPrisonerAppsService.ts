@@ -1,5 +1,5 @@
 import { ApplicationData } from 'express-session'
-import { ApplicationSearchPayload } from '../@types/managingAppsApi'
+import { ApplicationSearchPayload, AppResponsePayload } from '../@types/managingAppsApi'
 import { HmppsAuthClient } from '../data'
 import ManagingPrisonerAppsApiClient from '../data/managingPrisonerAppsClient'
 import { BaseUser } from '../interfaces/hmppsUser'
@@ -50,5 +50,15 @@ export default class ManagingPrisonerAppsService {
   async getComments(prisonerId: string, applicationId: string, user: BaseUser) {
     const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
     return new ManagingPrisonerAppsApiClient(token).getComments(prisonerId, applicationId)
+  }
+
+  async addResponse(prisonerId: string, applicationId: string, payload: AppResponsePayload, user: BaseUser) {
+    const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
+    return new ManagingPrisonerAppsApiClient(token).addResponse(prisonerId, applicationId, payload)
+  }
+
+  async getResponse(prisonerId: string, applicationId: string, responseId: string, user: BaseUser) {
+    const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
+    return new ManagingPrisonerAppsApiClient(token).getResponse(prisonerId, applicationId, responseId)
   }
 }

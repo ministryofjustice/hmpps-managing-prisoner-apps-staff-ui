@@ -3,12 +3,14 @@ import TestData from '../routes/testutils/testData'
 import ManagingPrisonerAppsService from './managingPrisonerAppsService'
 
 const mockClientMethods = {
+  addComment: jest.fn(),
+  addResponse: jest.fn(),
   forwardApp: jest.fn(),
   getApps: jest.fn(),
+  getComments: jest.fn(),
   getGroups: jest.fn(),
   getPrisonerApp: jest.fn(),
-  getComments: jest.fn(),
-  addComment: jest.fn(),
+  getResponse: jest.fn(),
 }
 
 const testData = new TestData()
@@ -90,6 +92,30 @@ describe('ManagingPrisonerAppsService', () => {
 
       expect(result).toBeUndefined()
       expect(mockClientMethods.getComments).toHaveBeenCalledWith('prisoner-id', 'application-id')
+    })
+  })
+
+  describe('addResponse', () => {
+    it('should add a response to an application request', async () => {
+      const payload = {
+        reason: '',
+        decision: 'APPROVED',
+        appliesTo: ['id'],
+      }
+
+      const result = await service.addResponse('prisoner-id', 'application-id', payload, user)
+
+      expect(result).toBeUndefined()
+      expect(mockClientMethods.addResponse).toHaveBeenCalledWith('prisoner-id', 'application-id', payload)
+    })
+  })
+
+  describe('getResponse', () => {
+    it('should fetch the response for an application request', async () => {
+      const result = await service.getResponse('prisoner-id', 'application-id', 'response-id', user)
+
+      expect(result).toBeUndefined()
+      expect(mockClientMethods.getResponse).toHaveBeenCalledWith('prisoner-id', 'application-id', 'response-id')
     })
   })
 })

@@ -7,10 +7,10 @@
 
     {{ govukSummaryList({
       rows: [
-        { key: { text: "Action" }, value: { text: "Approved" } },
-        { key: { text: "Reason" }, value: { text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." } },
-        { key: { text: "Actioned by" }, value: { text: "J. Smith" } },
-        { key: { text: "Date" }, value: { text: "13 November 2024" } }
+        { key: { text: "Action" }, value: { text: response.decision } },
+        { key: { text: "Reason" }, value: { text: response.reason } },
+        { key: { text: "Actioned by" }, value: { text: response.actionedBy } },
+        { key: { text: "Date" }, value: { text: response.actionedDate } }
       ]
     }) }}
 

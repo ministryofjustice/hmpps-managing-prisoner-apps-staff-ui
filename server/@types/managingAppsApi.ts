@@ -129,3 +129,22 @@ type StaffUser = {
   category: 'STAFF'
   establishment: Establishment
 }
+
+export type AppResponsePayload = { reason: string; decision: string; appliesTo: string[] }
+
+export type Response = {
+  id: string
+  prisonerId: string
+  appId: string
+  reason: string
+  decision: 'APPROVED' | 'DECLINED'
+  createdDate: string
+  createdBy: {
+    username: string
+    userId: string
+    fullName: string
+    category: string
+    establishment: Establishment
+  }
+  appliesTo: string[]
+}

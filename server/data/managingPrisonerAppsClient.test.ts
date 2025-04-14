@@ -11,7 +11,7 @@ describe('ManagingPrisonerAppsApiClient', () => {
   let fakeManagingPrisonerAppApi: nock.Scope
   let client: ManagingPrisonerAppsApiClient
 
-  const { appSearchPayload, appSearchResponse, app, submitPrisonerAppData, user } = testData
+  const { app, appSearchPayload, appSearchResponse, response, submitPrisonerAppData, user } = testData
 
   beforeEach(() => {
     fakeManagingPrisonerAppApi = nock(config.apis.managingPrisonerApps.url)
@@ -58,5 +58,29 @@ describe('ManagingPrisonerAppsApiClient', () => {
 
     const output = await client.getApps(appSearchPayload)
     expect(output).toEqual(appSearchResponse)
+  })
+
+  it('should add a response to an application', async () => {
+    fakeManagingPrisonerAppApi
+      .post('/v1/prisoners/prisoner-id/apps/app-id/responses')
+      .matchHeader('authorization', `Bearer ${user.token}`)
+      .reply(201, undefined)
+
+    const output = await client.addResponse('prisoner-id', 'app-id', {
+      reason: '',
+      decision: 'APPROVED',
+      appliesTo: ['id'],
+    })
+    expect(output).toBeUndefined()
+  })
+
+  it('should fetch the response for an application', async () => {
+    fakeManagingPrisonerAppApi
+      .get('/v1/prisoners/prisoner-id/apps/app-id/responses/response-id?createdBy=true')
+      .matchHeader('authorization', `Bearer ${user.token}`)
+      .reply(200, response)
+
+    const output = await client.getResponse('prisoner-id', 'app-id', 'response-id')
+    expect(output).toEqual(response)
   })
 })
