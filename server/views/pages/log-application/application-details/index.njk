@@ -2,6 +2,8 @@
 {% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -21,7 +23,15 @@
           {% set errorList = [] %}
 
           {% if errors.Details %}
-            {% set errorList = errorList.concat([{ text: errors.Details.text, href: "#swapVosPinCreditDetails" }]) %}
+            {% set errorList = errorList.concat([{ text: errors.Details.text, href: "#details" }]) %}
+          {% endif %}
+
+          {% if errors.Amount %}
+            {% set errorList = errorList.concat([{ text: errors.Amount.text, href: "#amount" }]) %}
+          {% endif %}
+
+          {% if errors.Reason %}
+            {% set errorList = errorList.concat([{ text: errors.Reason.text, href: "#reason" }]) %}
           {% endif %}
 
           {{ govukErrorSummary({
@@ -30,35 +40,19 @@
           }) }}
         {% endif %}
 
-        <span class="govuk-caption-xl">{{ appType }}</span>
+        <span class="govuk-caption-xl">{{ applicationType.name }}</span>
         <h1 class="govuk-heading-xl govuk-!-margin-top-0">Log details</h1>
 
-        <form method="POST" id="log-swap-vos-pin-credit-details">
+        <form method="POST" id="log-details">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-            {{ govukCharacterCount({
-              name: "swapVosPinCreditDetails",
-              id: "swap-vos-pin-credit-details",
-              maxlength: 1000,
-              threshold: 75,
-              value: textareaValue,
-              label: {
-                text: "Details (optional)",
-                classes: "govuk-label--s",
-                isPageHeading: true
-              },
-              errorMessage: errors.Details,
-              hint: {
-                text: "Add a brief summary, for example, if this person is a Foreign National"
-              }
-            }) }}
+          {% include "./partials/" + applicationType.value + ".njk" %}
 
-            {{ govukButton({
-              text: "Continue",
-              classes: "govuk-button--primary"
-            }) }}
-          </form>
-        </div>
+          {{ govukButton({
+            text: "Continue",
+            classes: "govuk-button--primary"
+          }) }}
+        </form>
       </div>
     </div>
   </div>

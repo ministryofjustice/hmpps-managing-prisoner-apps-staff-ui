@@ -19,9 +19,8 @@ context('Confirm Details Page', () => {
           app,
         })
 
-        cy.visit(route)
-
         if (route === '/log/confirm') {
+          cy.visit(route)
           cy.contains('Swap visiting orders (VOs) for PIN credit').click()
           cy.contains('button', 'Continue').click()
           cy.contains('Prison number').should('exist')
@@ -29,6 +28,9 @@ context('Confirm Details Page', () => {
           cy.contains('Date').should('exist')
           cy.get('#date').type('10/04/2023')
           cy.contains('button', 'Continue').click()
+          cy.contains('button', 'Continue').click()
+        } else if (route.includes('/change')) {
+          cy.visit(route)
           cy.contains('button', 'Continue').click()
         }
 
@@ -67,14 +69,6 @@ context('Confirm Details Page', () => {
         page.changeSubmittedOn().should(hasChangeLinks ? 'exist' : 'not.exist')
       })
 
-      it('should display the VOs to swap details', () => {
-        page.swapVOsDetails().should('exist')
-      })
-
-      it('should allow changing the swap VOs details', () => {
-        page.changeSwapVOsDetails().should('exist').and('have.attr', 'href', '#')
-      })
-
       it('should render a Continue button with the correct text', () => {
         page.continueButton().should('contain.text', 'Continue')
       })
@@ -90,7 +84,7 @@ context('Confirm Details Page', () => {
 
   testConfirmDetailsPage(
     'Updating an existing application - Confirm details',
-    `/applications/${app.requestedBy.username}/${app.id}/change/confirm`,
+    `/applications/${app.requestedBy.username}/${app.id}/change`,
     `/applications/${app.requestedBy.username}/${app.id}/change`,
     false,
   )

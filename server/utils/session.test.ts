@@ -50,16 +50,16 @@ describe(updateSessionData.name, () => {
   it('should not overwrite nested objects but merge updates', () => {
     req.session.applicationData = {
       type: { name: 'Swap VOs', value: 'swap-vos', apiValue: 'swap-vos' },
-      additionalData: { swapVOsToPinCreditDetails: 'Old value' },
+      additionalData: { details: 'Old value' },
     }
 
     updateSessionData(req, {
-      additionalData: { swapVOsToPinCreditDetails: 'New value' },
+      additionalData: { details: 'New value' },
     })
 
     expect(req.session.applicationData).toEqual({
       type: { name: 'Swap VOs', value: 'swap-vos', apiValue: 'swap-vos' },
-      additionalData: { swapVOsToPinCreditDetails: 'New value' },
+      additionalData: { details: 'New value' },
     })
   })
 

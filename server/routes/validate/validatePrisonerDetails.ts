@@ -1,7 +1,7 @@
 import { isValid, parse } from 'date-fns'
 
 const isValidPrisonNumber = (prisonNumber: string): boolean => {
-  const prisonNumberRegex = /^[AC-HJ-NP-RTV-Z]\d{4}[AC-HJ-NP-RTV-Z]{2}$/
+  const prisonNumberRegex = /^[A-Z]\d{4}[A-Z]{2}$/
   return prisonNumberRegex.test(prisonNumber)
 }
 

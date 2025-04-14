@@ -1,0 +1,17 @@
+<h2 class="govuk-heading-m">Emergency credit details</h2>
+
+{{ govukSummaryList({
+  classes: "govuk-!-margin-bottom-9",
+  rows: [
+    {
+      key: { text: "Amount" },
+      value: { text: "£" + applicationData.additionalData.amount },
+      actions: [{ href: "#", text: "Change", visuallyHiddenText: "amount" }]
+    },
+    {
+      key: { text: "Reason" },
+      value: { text: applicationData.additionalData.reason },
+      actions: [{ href: "#", text: "Change", visuallyHiddenText: "reason" }]
+    }
+  ]
+}) }}

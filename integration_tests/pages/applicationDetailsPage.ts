@@ -11,11 +11,11 @@ export default class ApplicationDetailsPage extends Page {
 
   pageTitle = () => cy.title()
 
-  hintText = () => cy.get('#swap-vos-pin-credit-details-hint')
+  hintText = () => cy.get('#details-hint')
 
-  formLabel = () => cy.get('label[for="swap-vos-pin-credit-details"]')
+  formLabel = () => cy.get('label[for="details"]')
 
-  textArea = () => cy.get('#swap-vos-pin-credit-details')
+  textArea = () => cy.get('#details')
 
   csrfToken = () => cy.get('input[name="_csrf"]')
 

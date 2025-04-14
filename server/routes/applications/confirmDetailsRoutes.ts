@@ -1,4 +1,6 @@
+import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
+
 import { URLS } from '../../constants/urls'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
@@ -31,10 +33,14 @@ export default function confirmDetailsRoutes({
         return res.redirect(URLS.APPLICATION_TYPE)
       }
 
-      return res.render(`pages/log-application/confirm/${applicationType.value}`, {
-        applicationData,
+      return res.render(`pages/log-application/confirm/index`, {
+        applicationData: {
+          ...applicationData,
+          date: format(new Date(applicationData.date), 'd MMMM yyyy'),
+        },
         backLink: URLS.APPLICATION_DETAILS,
         title: applicationType.name,
+        applicationType,
       })
     }),
   )
