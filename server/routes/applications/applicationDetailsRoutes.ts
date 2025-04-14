@@ -35,7 +35,7 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
     asyncMiddleware(async (req: Request, res: Response) => {
       const { applicationData } = req.session
       const applicationType = getApplicationType(applicationData?.type.apiValue)
-      const value = applicationData?.type?.value
+      const applicationTypeValue = applicationData?.type?.value
 
       const errors: Record<string, string> = {}
       const additionalData: Record<string, unknown> = {}
@@ -45,28 +45,42 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
         appType: applicationType.name,
       }
 
-      if (value === 'swap-visiting-orders-for-pin-credit') {
-        const { details } = req.body
+      switch (applicationTypeValue) {
+        case 'swap-visiting-orders-for-pin-credit': {
+          const { details } = req.body
+          const detailErrors = validateTextField(details, 'Details')
 
-        Object.assign(errors, validateTextField(details, 'Details'))
+          if (Object.keys(detailErrors).length === 0) {
+            additionalData.details = details
+          } else {
+            Object.assign(errors, detailErrors)
+            templateData.details = details
+          }
+          break
+        }
 
-        if (!errors.Details) additionalData.details = details
-        else templateData.details = details
-      }
+        case 'add-emergency-pin-phone-credit': {
+          const { amount, reason } = req.body
+          const fieldErrors = {
+            ...validateTextField(amount, 'Amount'),
+            ...validateTextField(reason, 'Reason'),
+          }
 
-      if (value === 'add-emergency-pin-phone-credit') {
-        const { amount, reason } = req.body
+          Object.entries({ amount, reason }).forEach(([field, value]) => {
+            if (!fieldErrors[field]) {
+              additionalData[field] = value
+            } else {
+              templateData[field] = value
+            }
+          })
 
-        Object.assign(errors, {
-          ...validateTextField(amount, 'Amount'),
-          ...validateTextField(reason, 'Reason'),
-        })
+          Object.assign(errors, fieldErrors)
+          break
+        }
 
-        if (!errors.Amount) additionalData.amount = amount
-        else templateData.amount = amount
-
-        if (!errors.Reason) additionalData.reason = reason
-        else templateData.reason = reason
+        default: {
+          return res.redirect('/log/confirm')
+        }
       }
 
       if (Object.keys(errors).length > 0) {
