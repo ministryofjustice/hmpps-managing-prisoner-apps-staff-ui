@@ -45,7 +45,7 @@ export default class TestData {
       {
         id: '8c33eb4e-9f32-411e-bb09-225615f0a266',
         responseId: '34500d92-10df-418b-b285-81cef7d0eb7a',
-        pdfResponseUrl: 'https://....xyz.pdf',
+        reason: 'reason',
         amount: 5.0,
       },
     ],

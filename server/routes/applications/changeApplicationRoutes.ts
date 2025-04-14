@@ -53,7 +53,6 @@ export default function changeApplicationRoutes({
     '/applications/:prisonerId/:applicationId/change',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { prisonerId, applicationId } = req.params
-      const { applicationData } = req.session
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
@@ -69,7 +68,6 @@ export default function changeApplicationRoutes({
         prisonerName: prisonerId,
         date: application.requestedDate,
         additionalData: {
-          ...applicationData?.additionalData,
           ...(isSwapVOsToPinCredit ? { details: req.body.details } : {}),
         },
       })
@@ -84,6 +82,10 @@ export default function changeApplicationRoutes({
       const { prisonerId, applicationId } = req.params
       const { user } = res.locals
       const { applicationData } = req.session
+
+      if (!applicationData) {
+        return res.redirect(`/applications/${prisonerId}/${applicationId}/change?error=session-expired`)
+      }
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
@@ -105,7 +107,7 @@ export default function changeApplicationRoutes({
       return res.render(`pages/log-application/confirm/index`, {
         applicationData: {
           ...applicationData,
-          date: format(new Date(applicationData.date), 'd MMMM yyyy'),
+          date: format(new Date(application.requestedDate), 'd MMMM yyyy'),
         },
         applicationType,
         backLink: `/applications/${prisonerId}/${applicationId}/change`,
