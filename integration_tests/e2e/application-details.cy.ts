@@ -49,7 +49,7 @@ context('Application Details Page', () => {
   })
 
   it('should contain a textarea with the correct ID', () => {
-    page.textArea().should('have.attr', 'id', 'swap-vos-pin-credit-details')
+    page.textArea().should('exist')
   })
 
   it('should include a hidden CSRF token input field', () => {

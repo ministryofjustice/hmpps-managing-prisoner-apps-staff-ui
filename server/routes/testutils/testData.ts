@@ -45,7 +45,7 @@ export default class TestData {
       {
         id: '8c33eb4e-9f32-411e-bb09-225615f0a266',
         responseId: '34500d92-10df-418b-b285-81cef7d0eb7a',
-        pdfResponseUrl: 'https://....xyz.pdf',
+        reason: 'reason',
         amount: 5.0,
       },
     ],
@@ -105,7 +105,7 @@ export default class TestData {
     prisonerId: 'G4567',
     prisonerName: 'Emily Brown',
     date: new Date('2024-09-15').toISOString(),
-    additionalData: { swapVOsToPinCreditDetails: 'Swap visiting orders (VOs) for PIN credit' },
+    additionalData: { details: 'Swap visiting orders (VOs) for PIN credit' },
   }
 
   appSearchPayload: ApplicationSearchPayload = {

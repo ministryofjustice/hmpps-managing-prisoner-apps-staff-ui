@@ -25,8 +25,9 @@ export interface RequestedBy {
 export interface ApplicationRequest {
   id: string
   responseId: string
-  pdfResponseUrl: string
-  amount: number
+  details?: string
+  amount?: number
+  reason?: string
 }
 
 export interface Application {
