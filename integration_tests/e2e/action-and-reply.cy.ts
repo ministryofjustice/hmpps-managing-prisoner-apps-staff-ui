@@ -20,6 +20,7 @@ context('Action and Reply Page', () => {
         cy.task('reset')
         cy.task('stubSignIn')
         cy.task('stubGetPrisonerApp', { app })
+        cy.task('stubGetAppResponse', { app })
         cy.signIn()
         cy.visit(`/applications/${app.requestedBy.username}/${app.id}/reply`)
         page = Page.verifyOnPage(ActionAndReplyPage)

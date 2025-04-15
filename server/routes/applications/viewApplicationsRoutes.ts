@@ -186,7 +186,7 @@ export default function viewApplicationRoutes({
         application: {
           ...application,
           requestedDate: format(new Date(application.requestedDate), 'd MMMM yyyy'),
-          status: convertToTitleCase(application.status),
+          status: application.status === 'PENDING' ? convertToTitleCase(application.status) : 'Closed',
         },
       })
     }),

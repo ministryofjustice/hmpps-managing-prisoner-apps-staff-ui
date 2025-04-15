@@ -1,8 +1,9 @@
 import { Request, Response, Router } from 'express'
+
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
-import { updateSessionData } from '../../utils/session'
 import PrisonService from '../../services/prisonService'
+import { updateSessionData } from '../../utils/session'
 import validatePrisonerDetails from '../validate/validatePrisonerDetails'
 
 export default function prisonerDetailsRoutes({

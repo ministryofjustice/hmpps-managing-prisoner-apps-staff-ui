@@ -1,0 +1,12 @@
+<h2 class="govuk-heading-m">VOs to swap</h2>
+
+{{ govukSummaryList({
+  classes: "govuk-!-margin-bottom-9",
+  rows: [
+    {
+      key: { text: "Details" },
+      value: { text: applicationData.additionalData.details },
+      actions: [{ href: "#", text: "Change", visuallyHiddenText: "details" }]
+    }
+  ]
+}) }}

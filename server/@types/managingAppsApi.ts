@@ -25,8 +25,9 @@ export interface RequestedBy {
 export interface ApplicationRequest {
   id: string
   responseId: string
-  pdfResponseUrl: string
-  amount: number
+  details?: string
+  amount?: number
+  reason?: string
 }
 
 export interface Application {
@@ -128,4 +129,23 @@ type StaffUser = {
   fullName: string
   category: 'STAFF'
   establishment: Establishment
+}
+
+export type AppResponsePayload = { reason: string; decision: string; appliesTo: string[] }
+
+export type Response = {
+  id: string
+  prisonerId: string
+  appId: string
+  reason: string
+  decision: 'APPROVED' | 'DECLINED'
+  createdDate: string
+  createdBy: {
+    username: string
+    userId: string
+    fullName: string
+    category: string
+    establishment: Establishment
+  }
+  appliesTo: string[]
 }

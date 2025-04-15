@@ -11,7 +11,7 @@
   <div class="govuk-body govuk-width-container">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
-        
+
         {{ govukBackLink({
           text: "Back",
           href: backLink
@@ -49,22 +49,11 @@
           ]
         }) }}
 
-        <h2 class="govuk-heading-m">VOs to swap</h2>
-
-        {{ govukSummaryList({
-          classes: "govuk-!-margin-bottom-9",
-          rows: [
-            {
-              key: { text: "Details" },
-              value: { text: applicationData.additionalData.swapVOsToPinCreditDetails },
-              actions: { items: [{ href: "#", text: "Change", visuallyHiddenText: "details" }] }
-            }
-          ]
-        }) }}
+        {% include "./partials/" + applicationType.value + ".njk" %}
 
         <form method="POST" action="/log/confirm">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-          
+
           {{ govukButton({
             text: "Continue",
             classes: "govuk-button--primary"
