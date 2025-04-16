@@ -1,22 +1,26 @@
 import ApplicationDetailsPage from '../pages/applicationDetailsPage'
 import Page from '../pages/page'
 
-context('Application Details Page', () => {
+function startApplication(appType: string): void {
+  cy.task('reset')
+  cy.task('stubSignIn')
+  cy.signIn()
+  cy.visit('/log/application-details')
+
+  cy.contains(appType).click()
+  cy.contains('button', 'Continue').click()
+  cy.contains('Prison number').should('exist')
+  cy.get('#prison-number').type('G9812CC')
+  cy.contains('Date').should('exist')
+  cy.get('#date').type('10/04/2023')
+  cy.contains('button', 'Continue').click()
+}
+
+context('Application Details Page - Swap visiting orders (VOs) for PIN credit', () => {
   let page: ApplicationDetailsPage
 
   beforeEach(() => {
-    cy.task('reset')
-    cy.task('stubSignIn')
-    cy.signIn()
-    cy.visit('/log/application-details')
-
-    cy.contains('Swap visiting orders (VOs) for PIN credit').click()
-    cy.contains('button', 'Continue').click()
-    cy.contains('Prison number').should('exist')
-    cy.get('#prison-number').type('G9812CC')
-    cy.contains('Date').should('exist')
-    cy.get('#date').type('10/04/2023')
-    cy.contains('button', 'Continue').click()
+    startApplication('Swap visiting orders (VOs) for PIN credit')
     page = Page.verifyOnPage(ApplicationDetailsPage)
   })
 
@@ -58,5 +62,30 @@ context('Application Details Page', () => {
 
   it('should render a Continue button with the correct text', () => {
     page.continueButton().should('contain.text', 'Continue')
+  })
+})
+
+context('Application Details Page - Add emergency PIN phone credit', () => {
+  let page: ApplicationDetailsPage
+
+  beforeEach(() => {
+    startApplication('Add emergency PIN phone credit')
+    page = Page.verifyOnPage(ApplicationDetailsPage)
+  })
+
+  it('should direct the user to the correct page', () => {
+    Page.verifyOnPage(ApplicationDetailsPage)
+  })
+
+  it('should render the correct app type title', () => {
+    page.appTypeTitle().should('have.text', 'Add emergency PIN phone credit')
+  })
+
+  it('should display the hint text correctly', () => {
+    page.reasonHintText().should('contain.text', 'Add a brief summary')
+  })
+
+  it('should contain a amount input field with the correct ID', () => {
+    page.amountInput().should('exist')
   })
 })
