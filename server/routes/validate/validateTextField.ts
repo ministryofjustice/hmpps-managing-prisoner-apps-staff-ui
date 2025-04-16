@@ -4,6 +4,7 @@ export const validateTextField = (fieldValue: string, fieldName: string, isRequi
 
   const errorMessages: Record<string, string> = {
     Comments: 'Add a comment',
+    Reason: 'Add a reason',
   }
 
   if (isRequired && !fieldValue) {

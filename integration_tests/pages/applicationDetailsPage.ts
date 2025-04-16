@@ -20,4 +20,8 @@ export default class ApplicationDetailsPage extends Page {
   csrfToken = () => cy.get('input[name="_csrf"]')
 
   continueButton = () => cy.get('.govuk-button--primary')
+
+  reasonHintText = () => cy.get('#reason-hint')
+
+  amountInput = () => cy.get('#amount')
 }
