@@ -5,6 +5,7 @@ import AuditService, { Page } from '../../services/auditService'
 import { getApplicationType } from '../../utils/getApplicationType'
 import { updateSessionData } from '../../utils/session'
 import { validateTextField } from '../validate/validateTextField'
+import { validateAmountField } from '../validate/validateAmountField'
 import { APPLICATION_TYPE_VALUES } from '../../constants/applicationTypes'
 
 export default function applicationDetailsRoutes({ auditService }: { auditService: AuditService }): Router {
@@ -62,18 +63,24 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
 
         case APPLICATION_TYPE_VALUES.PIN_PHONE_EMERGENCY_CREDIT_TOP_UP: {
           const { amount, reason } = req.body
+          const { errors: amountErrors, value: sanitizedAmount } = validateAmountField(amount, 'Amount', true)
+          const reasonErrors = validateTextField(reason, 'Reason', true)
+
           const fieldErrors = {
-            ...validateTextField(amount, 'Amount'),
-            ...validateTextField(reason, 'Reason'),
+            ...amountErrors,
+            ...reasonErrors,
           }
 
-          Object.entries({ amount, reason }).forEach(([field, value]) => {
-            if (!fieldErrors[field]) {
-              additionalData[field] = value
-            } else {
-              templateData[field] = value
-            }
-          })
+          templateData.amount = amount
+          templateData.reason = reason
+
+          if (!amountErrors?.Amount) {
+            additionalData.amount = sanitizedAmount
+          }
+
+          if (!reasonErrors?.Reason) {
+            additionalData.reason = reason
+          }
 
           Object.assign(errors, fieldErrors)
           break
@@ -88,6 +95,7 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
         return res.render('pages/log-application/application-details/index', {
           ...templateData,
           errors,
+          applicationType,
         })
       }
 
