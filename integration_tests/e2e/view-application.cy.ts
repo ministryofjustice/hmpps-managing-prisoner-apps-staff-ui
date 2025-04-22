@@ -1,5 +1,4 @@
 import TestData from '../../server/routes/testutils/testData'
-import Page from '../pages/page'
 import ViewApplicationPage from '../pages/viewApplicationPage'
 
 context('View Application Page - Swap visiting orders (VOs) for PIN credit', () => {
