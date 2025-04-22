@@ -28,15 +28,7 @@ export default function prisonerDetailsRoutes({
       }
 
       const { prisonerId, date } = req.session.applicationData
-      const formattedDate = date
-        ? (() => {
-            const parsed = new Date(date)
-            const day = parsed.getDate()
-            const month = parsed.getMonth() + 1
-            const year = parsed.getFullYear()
-            return `${day}/${month}/${year}`
-          })()
-        : ''
+      const formattedDate = date ? new Intl.DateTimeFormat('en-GB').format(new Date(date)) : ''
 
       return res.render('pages/log-application/prisoner-details/index', {
         title: 'Log prisoner details',
