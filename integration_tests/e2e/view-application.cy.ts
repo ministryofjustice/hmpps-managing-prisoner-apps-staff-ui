@@ -2,7 +2,7 @@ import TestData from '../../server/routes/testutils/testData'
 import Page from '../pages/page'
 import ViewApplicationPage from '../pages/viewApplicationPage'
 
-context('View Application Page', () => {
+context('View Application Page - Swap visiting orders (VOs) for PIN credit', () => {
   let page: ViewApplicationPage
   const { app } = new TestData()
 
@@ -16,7 +16,7 @@ context('View Application Page', () => {
 
     cy.visit(`/applications/${app.requestedBy.username}/${app.id}`)
 
-    page = Page.verifyOnPage(ViewApplicationPage)
+    page = new ViewApplicationPage('Swap visiting orders (VOs) for PIN credit')
   })
 
   it('should display the correct page title', () => {
@@ -73,5 +73,34 @@ context('View Application Page', () => {
       .should('exist')
       .and('contain.text', 'History')
       .and('have.attr', 'href', '/applications/G123456/13d2c453-be11-44a8-9861-21fd8ae6e911/history')
+  })
+})
+
+context('View Application Page - Add emergency PIN phone credit', () => {
+  let page: ViewApplicationPage
+  const { app: originalApp } = new TestData()
+  const app = { ...originalApp, appType: 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP' }
+
+  beforeEach(() => {
+    cy.task('reset')
+    cy.task('stubSignIn')
+    cy.task('stubGetPrisonerApp', { app })
+    cy.signIn()
+
+    cy.visit(`/applications/${app.requestedBy.username}/${app.id}`)
+
+    page = new ViewApplicationPage('Add emergency PIN phone credit')
+  })
+
+  it('should display the correct page title', () => {
+    page.emergencyPinPhonePageTitle().should('include', 'Add emergency PIN phone credit')
+  })
+
+  it('should display the application type correctly', () => {
+    page.emergencyPinPhoneApplicationType().should('contain.text', 'Add emergency PIN phone credit')
+  })
+
+  it('should display the emergency credit section heading', () => {
+    page.emergencyCreditHeading().should('exist')
   })
 })
