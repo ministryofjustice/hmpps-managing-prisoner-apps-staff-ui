@@ -27,9 +27,14 @@ export default function prisonerDetailsRoutes({
         return res.redirect('/log/application-type')
       }
 
+      const { prisonerId, date } = req.session.applicationData
+      const formattedDate = date ? new Intl.DateTimeFormat('en-GB').format(new Date(date)) : ''
+
       return res.render('pages/log-application/prisoner-details/index', {
         title: 'Log prisoner details',
         appTypeTitle: req.session.applicationData.type.name,
+        prisonNumber: prisonerId,
+        dateString: formattedDate,
         errors: null,
       })
     }),
