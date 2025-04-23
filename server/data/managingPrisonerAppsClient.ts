@@ -149,4 +149,20 @@ export default class ManagingPrisonerAppsApiClient {
       return null
     }
   }
+
+  async changeApp(
+    prisonerId: string,
+    appId: string,
+    payload: Array<Record<string, unknown> & { id: string }>,
+  ): Promise<Response> {
+    try {
+      return await this.restClient.put({
+        path: `/v1/prisoners/${prisonerId}/apps/${appId}`,
+        data: payload,
+      })
+    } catch (error) {
+      logger.error(`Error fetching response for application.`, error)
+      return null
+    }
+  }
 }
