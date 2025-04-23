@@ -181,8 +181,9 @@ export default function viewApplicationRoutes({
         return res.redirect(`/applications?error=unknown-type`)
       }
 
-      return res.render(`pages/applications/view/${applicationType.value}`, {
+      return res.render('pages/applications/view/index', {
         title: applicationType.name,
+        applicationType,
         application: {
           ...application,
           requestedDate: format(new Date(application.requestedDate), 'd MMMM yyyy'),

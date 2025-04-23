@@ -1,0 +1,14 @@
+{{ appTypeSummaryList("Emergency credit to add", application.requestedBy.username, application.id) }}
+
+{{ govukSummaryList({
+  rows: [
+    { 
+      key: { text: "Amount" }, 
+      value: { text: "£" + application.requests[0].amount }        
+    },
+    {
+      key: { text: "Reason" },
+      value: { text: application.requests[0].reason }
+    }
+  ]
+}) }}

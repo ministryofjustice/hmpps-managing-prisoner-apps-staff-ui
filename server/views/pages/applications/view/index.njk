@@ -1,4 +1,5 @@
 {%- from "govuk/components/summary-list/macro.njk" import govukSummaryList -%}
+{% from "pages/applications/view/partials/appTypeSummaryList.njk" import appTypeSummaryList %}
 {% extends "../../../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + title %}
@@ -26,7 +27,7 @@
               visuallyHiddenText: "department" 
             }] } 
           },
-          { key: { text: "Application type" }, value: { text: "Swap visiting orders (VOs) for PIN credit" } },
+          { key: { text: "Application type" }, value: { text: title } },
           { key: { text: "Date sent" }, value: { text: application.requestedDate } },
           { key: { text: "Application ID" }, value: { text: application.id } }
         ]
@@ -45,7 +46,6 @@
             }] } 
           },
           { key: { text: "Location" }, value: { text: application.requestedBy.location } },
-          { key: { text: "IEP" }, value: { text: application.requestedBy.iep } },
           { 
             key: { text: "Alerts" }, 
             value: { text: "" }, 
@@ -54,24 +54,13 @@
               text: "View alerts", 
               visuallyHiddenText: "alerts" 
             }] } 
-          }
+          },
+          { key: { text: "IEP" }, value: { text: application.requestedBy.iep } }
         ]
       }) }}
 
-      <h2 class="govuk-heading-m">VOs to swap</h2>
-      {{ govukSummaryList({
-        rows: [
-          { 
-            key: { text: "Details" }, 
-            value: { text: application.requests[0].details }, 
-            actions: { items: [{ 
-              href: "/applications/" + application.requestedBy.username + "/" + application.id + "/change", 
-              text: "Change", 
-              visuallyHiddenText: "details" 
-            }] } 
-          }
-        ]
-      }) }}
+      {% include "./partials/" + applicationType.value + ".njk" %}
+
     </div>
   </div>
 </div>

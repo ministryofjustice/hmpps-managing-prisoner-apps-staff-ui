@@ -1,8 +1,8 @@
 import Page from './page'
 
-export default class ViewSwapVosPinCreditApplicationPage extends Page {
-  constructor() {
-    super('Swap visiting orders (VOs) for PIN credit')
+export default class ViewApplicationPage extends Page {
+  constructor(title: string) {
+    super(title)
   }
 
   pageTitle = () => cy.title()
@@ -28,4 +28,10 @@ export default class ViewSwapVosPinCreditApplicationPage extends Page {
   actionAndReplyTab = () => cy.contains('.moj-sub-navigation__link', 'Action and reply')
 
   historyTab = () => cy.contains('.moj-sub-navigation__link', 'History')
+
+  emergencyPinPhonePageTitle = () => cy.title()
+
+  emergencyPinPhoneApplicationType = () => cy.get('.govuk-summary-list__row').contains('Application type').next()
+
+  emergencyCreditHeading = () => cy.get('h2.govuk-heading-m').contains('Emergency credit to add')
 }

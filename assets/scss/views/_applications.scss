@@ -52,3 +52,9 @@
     color: govuk-colour('dark-grey');
   }
 }
+
+.govuk-summary-list--header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid $govuk-border-colour;
+}
