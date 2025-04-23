@@ -1,8 +1,8 @@
-import Page from '../page'
+import Page from './page'
 
 export default class ForwardApplicationPage extends Page {
   constructor() {
-    super("Forward this application to swap VO's")
+    super('Forward this application')
   }
 
   pageTitle = () => cy.title()
@@ -18,4 +18,8 @@ export default class ForwardApplicationPage extends Page {
   selectForwardToDepartment = (department: string) => {
     this.forwardToDepartment().find(`input[value="${department}"]`).check()
   }
+
+  swapVosCaption = () => cy.get('.govuk-caption-xl').contains('Swap visiting orders (VOs) for PIN credit')
+
+  emergencyPinCreditCaption = () => cy.get('.govuk-caption-xl').contains('Add emergency PIN phone credit')
 }

@@ -43,11 +43,12 @@ export default function forwardApplicationRoutes({
         text: group.name,
       }))
 
-      return res.render(`pages/applications/forward/${applicationType.value}`, {
+      return res.render('pages/applications/forward/index', {
         application,
+        applicationType,
         departments,
         textareaValue: '',
-        title: "Forward this application to swap VO's",
+        title: 'Forward this application',
         errors: null,
       })
     }),
@@ -70,10 +71,11 @@ export default function forwardApplicationRoutes({
       const errors = validateForwardingApplication(forwardTo, forwardingReason)
 
       if (Object.keys(errors).length > 0) {
-        return res.render(`pages/applications/forward/${applicationType.value}`, {
+        return res.render('pages/applications/forward/index', {
           application,
+          applicationType,
           textareaValue: forwardingReason,
-          title: "Forward this application to swap VO's",
+          title: 'Forward this application',
           errors,
         })
       }
