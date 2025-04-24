@@ -1,11 +1,14 @@
 import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
-import { APPLICATION_TYPE_VALUES, APPLICATION_TYPES } from '../../constants/applicationTypes'
+import { APPLICATION_TYPE_VALUES } from '../../constants/applicationTypes'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { getApplicationType } from '../../utils/getApplicationType'
 import { updateSessionData } from '../../utils/session'
+import { validateAmountField } from '../validate/validateAmountField'
+import { validateTextField } from '../validate/validateTextField'
+import { handleApplicationDetails } from '../../utils/handleAppDetails'
 
 export default function changeApplicationRoutes({
   auditService,
@@ -51,25 +54,21 @@ export default function changeApplicationRoutes({
 
   router.post(
     '/applications/:prisonerId/:applicationId/change',
-    asyncMiddleware(async (req: Request, res: Response) => {
+    asyncMiddleware(async (req, res) => {
       const { prisonerId, applicationId } = req.params
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
-      const selectedAppType = getApplicationType(application.appType)
 
-      const isSwapVOsToPinCredit =
-        selectedAppType.apiValue ===
-        APPLICATION_TYPES.find(type => type.value === APPLICATION_TYPE_VALUES.PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS)
-          ?.apiValue
-
-      updateSessionData(req, {
-        additionalData: {
-          ...(isSwapVOsToPinCredit ? { details: req.body.details } : {}),
-        },
+      return handleApplicationDetails(req, res, {
+        getAppType: () => getApplicationType(application.appType),
+        getTemplateData: () => ({
+          application,
+          backLink: `/applications/${prisonerId}/${applicationId}`,
+        }),
+        renderPath: 'pages/applications/change/index',
+        successRedirect: () => `/applications/${prisonerId}/${applicationId}/change/confirm`,
       })
-
-      return res.redirect(`/applications/${prisonerId}/${applicationId}/change/confirm`)
     }),
   )
 
