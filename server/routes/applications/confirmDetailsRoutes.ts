@@ -6,7 +6,6 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { getApplicationType } from '../../utils/getApplicationType'
-import { updateSessionData } from '../../utils/session'
 
 export default function confirmDetailsRoutes({
   auditService,
