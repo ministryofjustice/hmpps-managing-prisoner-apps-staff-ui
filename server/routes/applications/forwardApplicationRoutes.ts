@@ -43,11 +43,12 @@ export default function forwardApplicationRoutes({
         text: group.name,
       }))
 
-      return res.render(`pages/applications/forward/${applicationType.value}`, {
+      return res.render('pages/applications/forward/index', {
         application,
+        applicationType,
         departments,
         textareaValue: '',
-        title: "Forward this application to swap VO's",
+        title: 'Forward this application',
         errors: null,
       })
     }),
@@ -61,6 +62,7 @@ export default function forwardApplicationRoutes({
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
+      const groups = await managingPrisonerAppsService.getGroups(user)
 
       if (!application) {
         return res.redirect(`/applications`)
@@ -69,11 +71,19 @@ export default function forwardApplicationRoutes({
       const applicationType = getApplicationType(application.appType)
       const errors = validateForwardingApplication(forwardTo, forwardingReason)
 
+      const departments = groups.map(group => ({
+        value: group.id,
+        text: group.name,
+      }))
+
       if (Object.keys(errors).length > 0) {
-        return res.render(`pages/applications/forward/${applicationType.value}`, {
+        return res.render('pages/applications/forward/index', {
           application,
+          applicationType,
+          departments,
+          forwardTo,
           textareaValue: forwardingReason,
-          title: "Forward this application to swap VO's",
+          title: 'Forward this application',
           errors,
         })
       }
