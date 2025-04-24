@@ -5,6 +5,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { getApplicationType } from '../../utils/getApplicationType'
+import { validateComment } from '../validate/validateComment'
 
 export default function commentsRoutes({
   auditService,
@@ -51,8 +52,8 @@ export default function commentsRoutes({
 
       return res.render(`pages/applications/comments/index`, {
         application,
-        title: 'Comments',
         comments: formattedComments,
+        title: applicationType.name,
       })
     }),
   )
@@ -61,13 +62,44 @@ export default function commentsRoutes({
     '/applications/:prisonerId/:applicationId/comments',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { prisonerId, applicationId } = req.params
-      const { appComment } = req.body
+      const { comment } = req.body
       const { user } = res.locals
+
+      const errors = validateComment(comment)
+
+      if (Object.keys(errors).length > 0) {
+        const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
+        const comments = await managingPrisonerAppsService.getComments(prisonerId, application.id, user)
+
+        if (!application) {
+          return res.redirect(`/applications`)
+        }
+
+        const applicationType = getApplicationType(application.appType)
+
+        const formattedComments =
+          comments?.contents?.map(({ message, createdBy, createdDate }) => {
+            return {
+              message,
+              staffName: `${createdBy.fullName}`,
+              date: format(createdDate, 'd MMMM yyyy'),
+              time: format(createdDate, 'HH:mm'),
+            }
+          }) ?? []
+
+        return res.render('pages/applications/comments/index', {
+          application,
+          comment,
+          comments: formattedComments,
+          errors,
+          title: applicationType.name,
+        })
+      }
 
       await managingPrisonerAppsService.addComment(
         prisonerId,
         applicationId,
-        { message: appComment, targetUsers: [] },
+        { message: comment, targetUsers: [] },
         user,
       )
 
