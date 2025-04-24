@@ -6,7 +6,6 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { getApplicationType } from '../../utils/getApplicationType'
-import { updateSessionData } from '../../utils/session'
 
 export default function confirmDetailsRoutes({
   auditService,
@@ -35,12 +34,13 @@ export default function confirmDetailsRoutes({
 
       return res.render(`pages/log-application/confirm/index`, {
         applicationData: {
-          ...applicationData,
           date: format(new Date(applicationData.date), 'd MMMM yyyy'),
+          prisoner: applicationData.prisonerName,
+          request: applicationData.additionalData,
+          type: applicationType,
         },
         backLink: URLS.APPLICATION_DETAILS,
         title: applicationType.name,
-        applicationType,
       })
     }),
   )
@@ -52,12 +52,6 @@ export default function confirmDetailsRoutes({
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.submitPrisonerApp(applicationData, user)
-
-      updateSessionData(req, {
-        prisonerName: req.body.prisonerName,
-        date: req.body.date,
-        prisonerId: req.body.prisonNumber,
-      })
 
       return res.redirect(`/log/submit/${applicationData.prisonerId}/${application.id}`)
     }),

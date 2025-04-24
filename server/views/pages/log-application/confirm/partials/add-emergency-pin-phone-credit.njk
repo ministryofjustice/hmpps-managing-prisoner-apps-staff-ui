@@ -5,12 +5,12 @@
   rows: [
     {
       key: { text: "Amount" },
-      value: { text: "£" + applicationData.additionalData.amount },
+      value: { text: "£" + applicationData.request.amount },
       actions: [{ href: "#", text: "Change", visuallyHiddenText: "amount" }]
     },
     {
       key: { text: "Reason" },
-      value: { text: applicationData.additionalData.reason },
+      value: { text: applicationData.request.reason },
       actions: [{ href: "#", text: "Change", visuallyHiddenText: "reason" }]
     }
   ]

@@ -5,6 +5,7 @@ import ManagingPrisonerAppsService from './managingPrisonerAppsService'
 const mockClientMethods = {
   addComment: jest.fn(),
   addResponse: jest.fn(),
+  changeApp: jest.fn(),
   forwardApp: jest.fn(),
   getApps: jest.fn(),
   getComments: jest.fn(),
@@ -116,6 +117,16 @@ describe('ManagingPrisonerAppsService', () => {
 
       expect(result).toBeUndefined()
       expect(mockClientMethods.getResponse).toHaveBeenCalledWith('prisoner-id', 'application-id', 'response-id')
+    })
+  })
+
+  describe('changeApp', () => {
+    it('should change the form data for an application', async () => {
+      const payload = [{ id: 'abc-123', key: 'value' }]
+      const result = await service.changeApp('prisoner-id', 'application-id', payload, user)
+
+      expect(result).toBeUndefined()
+      expect(mockClientMethods.changeApp).toHaveBeenCalledWith('prisoner-id', 'application-id', payload)
     })
   })
 })
