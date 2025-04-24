@@ -1,13 +1,9 @@
 import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
-import { APPLICATION_TYPE_VALUES } from '../../constants/applicationTypes'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { getApplicationType } from '../../utils/getApplicationType'
-import { updateSessionData } from '../../utils/session'
-import { validateAmountField } from '../validate/validateAmountField'
-import { validateTextField } from '../validate/validateTextField'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
 
 export default function changeApplicationRoutes({
