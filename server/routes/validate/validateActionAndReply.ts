@@ -8,7 +8,7 @@ export const validateActionAndReply = (selectAction: string, actionReplyReason: 
 
   if (actionReplyReason?.length > 1000) {
     errors.actionReplyReason = { text: 'Reason must be 1000 characters or less' }
-  } else if (selectAction === 'declined' && !actionReplyReason?.trim()) {
+  } else if (selectAction === 'DECLINED' && !actionReplyReason?.trim()) {
     errors.actionReplyReason = { text: 'Add a reason' }
   }
 

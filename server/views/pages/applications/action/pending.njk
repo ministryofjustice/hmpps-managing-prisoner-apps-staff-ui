@@ -1,67 +1,68 @@
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    <h2 class="govuk-heading-m">Action and reply</h2>
-    <p class="govuk-body">These responses will be printed out on the prisoner reply form.</p>
+<h2 class="govuk-heading-m">Action this application</h2>
+<p class="govuk-body">This action and its reason will be seen by the prisoner.</p>
     
-    <form method="POST" id="action-and-reply-form">
-      <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+<form method="POST" id="action-and-reply-form">
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
     
-      {{ govukRadios({
-        name: "decision",
-        fieldset: {
-          legend: {
-            text: "Select an action",
-            isPageHeading: false,
-            classes: "govuk-fieldset__legend--s"
-          }
-        },
-        items: [
-          {
-            value: "APPROVED",
-            text: "Approved",
-            checked: selectedAction == "approved"
-          },
-          {
-            value: "DECLINED",
-            text: "Declined",
-            checked: selectedAction == "declined"
-          }
-        ]
-      }) }}
+  {{ govukRadios({
+    name: "decision",
+    value: selectAction,
+    fieldset: {
+      legend: {
+        text: "Select an action",
+        isPageHeading: false,
+        classes: "govuk-fieldset__legend--s"
+      }
+    },
+    items: [
+      {
+        value: "APPROVED",
+        text: "Approved",
+        checked: selectedAction == "APPROVED"
+      },
+      {
+        value: "DECLINED",
+        text: "Declined",
+        checked: selectedAction == "DECLINED"
+      }
+    ],
+    errorMessage: errors.selectAction
+  }) }}
+        
+  {% set characterCountConfig = {
+    name: "reason",
+    id: "action-and-reply-reason",
+    maxlength: 1000,
+    threshold: 75,
+    value: textareaValue or "",
+    label: {
+      text: "Reason",
+      classes: "govuk-label--s",
+      isPageHeading: false
+    }
+  } %}
 
-      {% set characterCountConfig = {
-        name: "reason",
-        id: "action-and-reply-reason",
-        maxlength: 1000,
-        value: textareaValue or "",
-        label: {
-          text: "Reason",
-          classes: "govuk-label--s",
-          isPageHeading: false
-        }
-      } %}
+  {% if errors.actionReplyReason and (selectedAction == "DECLINED") %}
+    {% set characterCountConfig = {
+      name: "reason",
+      id: "action-and-reply-reason",
+      maxlength: 1000,
+      threshold: 75,
+      value: textareaValue or "",
+      label: {
+        text: "Reason",
+        classes: "govuk-label--s",
+        isPageHeading: false
+      },
+      errorMessage: { text: errors.actionReplyReason.text }
+    } %}
+  {% endif %}
 
-      {% if errors.actionReplyReason and (selectedAction == "declined") %}
-        {% set characterCountConfig = {
-          name: "reason",
-          id: "action-and-reply-reason",
-          maxlength: 1000,
-          value: textareaValue or "",
-          label: {
-            text: "Reason",
-            classes: "govuk-label--s",
-            isPageHeading: false
-          },
-          errorMessage: { text: errors.actionReplyReason.text }
-        } %}
-      {% endif %}
+  {{ govukCharacterCount(characterCountConfig) }}
 
-      {{ govukCharacterCount(characterCountConfig) }}
-
-      {{ govukButton({
-        text: "Reply",
-        classes: "govuk-button--primary"
-      }) }}
-    </form>
-  </div>
-</div>
+  {{ govukButton({
+    text: "Reply",
+    classes: "govuk-button--primary"
+  }) }}
+</form>
+ 
