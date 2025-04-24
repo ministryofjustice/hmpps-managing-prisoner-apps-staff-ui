@@ -2,7 +2,7 @@ import Page from './page'
 
 export default class CommentsPage extends Page {
   constructor() {
-    super('Comments')
+    super('Swap visiting orders (VOs) for PIN credit')
   }
 
   pageTitle = () => cy.title()
@@ -11,7 +11,7 @@ export default class CommentsPage extends Page {
 
   activeTab = () => cy.get('.moj-sub-navigation__item a[aria-current="page"]')
 
-  commentBox = () => cy.get('#app-comment')
+  commentBox = () => cy.get('#comment')
 
   submitButton = () => cy.get('button.govuk-button--primary')
 
