@@ -19,7 +19,7 @@ context('Comments Page', () => {
 
   describe('Page structure', () => {
     it('should display the correct page title', () => {
-      page.pageTitle().should('include', 'Comments')
+      page.pageTitle().should('include', 'Swap visiting orders (VOs) for PIN credit')
     })
 
     it('should highlight the Comments tab as active in sub-navigation', () => {
