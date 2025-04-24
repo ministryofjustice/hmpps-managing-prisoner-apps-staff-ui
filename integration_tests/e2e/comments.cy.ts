@@ -6,20 +6,22 @@ context('Comments Page', () => {
   let page: CommentsPage
   const { app } = new TestData()
 
-  const visitPage = () => {
+  beforeEach(() => {
     cy.task('reset')
+
     cy.task('stubSignIn')
     cy.task('stubGetPrisonerApp', { app })
+    cy.task('stubGetComments', { app })
+
     cy.signIn()
+
     cy.visit(`/applications/${app.requestedBy.username}/${app.id}/comments`)
     page = Page.verifyOnPage(CommentsPage)
-  }
-
-  beforeEach(visitPage)
+  })
 
   describe('Page structure', () => {
     it('should display the correct page title', () => {
-      page.pageTitle().should('include', 'Swap visiting orders (VOs) for PIN credit')
+      page.pageTitle().should('include', 'Comments')
     })
 
     it('should highlight the Comments tab as active in sub-navigation', () => {

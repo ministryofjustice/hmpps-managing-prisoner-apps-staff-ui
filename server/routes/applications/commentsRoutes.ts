@@ -23,17 +23,6 @@ export default function commentsRoutes({
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
-      const comments = await managingPrisonerAppsService.getComments(prisonerId, application.id, user)
-
-      const formattedComments =
-        comments?.contents?.map(comment => {
-          return {
-            message: comment.message,
-            staffName: `${comment.createdBy.fullName}`,
-            date: format(comment.createdDate, 'd MMMM yyyy'),
-            time: format(comment.createdDate, 'HH:mm'),
-          }
-        }) ?? []
 
       if (!application) {
         return res.redirect(`/applications`)
@@ -45,6 +34,18 @@ export default function commentsRoutes({
         return res.redirect(`/applications?error=unknown-type`)
       }
 
+      const comments = await managingPrisonerAppsService.getComments(prisonerId, application.id, user)
+
+      const formattedComments =
+        comments?.contents?.map(({ message, createdBy, createdDate }) => {
+          return {
+            message,
+            staffName: `${createdBy.fullName}`,
+            date: format(createdDate, 'd MMMM yyyy'),
+            time: format(createdDate, 'HH:mm'),
+          }
+        }) ?? []
+
       await auditService.logPageView(Page.COMMENTS_PAGE, {
         who: res.locals.user.username,
         correlationId: req.id,
@@ -52,8 +53,9 @@ export default function commentsRoutes({
 
       return res.render(`pages/applications/comments/index`, {
         application,
+        applicationType,
         comments: formattedComments,
-        title: applicationType.name,
+        title: 'Comments',
       })
     }),
   )
@@ -89,10 +91,11 @@ export default function commentsRoutes({
 
         return res.render('pages/applications/comments/index', {
           application,
+          applicationType,
           comment,
           comments: formattedComments,
           errors,
-          title: applicationType.name,
+          title: 'Comments',
         })
       }
 

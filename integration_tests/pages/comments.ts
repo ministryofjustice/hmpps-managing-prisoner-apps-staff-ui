@@ -2,7 +2,7 @@ import Page from './page'
 
 export default class CommentsPage extends Page {
   constructor() {
-    super('Swap visiting orders (VOs) for PIN credit')
+    super('Comments')
   }
 
   pageTitle = () => cy.title()

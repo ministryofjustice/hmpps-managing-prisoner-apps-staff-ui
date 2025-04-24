@@ -22,8 +22,8 @@
       }) }}
     {% endif %}
 
-    <span class="govuk-caption-xl">{{ title }}</span>
-    <h1 class="govuk-heading-xl govuk-!-margin-top-0">Comments</h1>
+    <span class="govuk-caption-xl">{{ applicationType.name }}</span>
+    <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
 
     {% set activeTab = 'comments' %}
     {% include "../partials/sub-navigation.njk" %}
