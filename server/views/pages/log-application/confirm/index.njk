@@ -25,7 +25,7 @@
           rows: [
             {
               key: { text: "Application Type" },
-              value: { text: title },
+              value: { text: applicationData.type.name },
               actions: { items: [] if isUpdate else [{ href: "#", text: "Change", visuallyHiddenText: "application type" }] }
             }
           ]
@@ -38,7 +38,7 @@
           rows: [
             {
               key: { text: "Prisoner" },
-              value: { text: applicationData.prisonerName },
+              value: { text: applicationData.prisoner },
               actions: { items: [] if isUpdate else [{ href: "#", text: "Change", visuallyHiddenText: "prisoner" }] }
             },
             {
@@ -49,9 +49,9 @@
           ]
         }) }}
 
-        {% include "./partials/" + applicationType.value + ".njk" %}
+        {% include "./partials/" + applicationData.type.value + ".njk" %}
 
-        <form method="POST" action="/log/confirm">
+        <form method="POST">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
           {{ govukButton({

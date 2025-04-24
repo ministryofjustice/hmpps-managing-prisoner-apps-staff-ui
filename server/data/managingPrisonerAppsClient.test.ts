@@ -83,4 +83,16 @@ describe('ManagingPrisonerAppsApiClient', () => {
     const output = await client.getResponse('prisoner-id', 'app-id', 'response-id')
     expect(output).toEqual(response)
   })
+
+  it('should update the form data for an application', async () => {
+    const payload = [{ id: 'abc-123', key: 'value' }]
+
+    fakeManagingPrisonerAppApi
+      .put('/v1/prisoners/prisoner-id/apps/app-id')
+      .matchHeader('authorization', `Bearer ${user.token}`)
+      .reply(200, { ...app, requests: payload })
+
+    const output = await client.changeApp('prisoner-id', 'app-id', payload)
+    expect(output).toEqual({ ...app, requests: payload })
+  })
 })

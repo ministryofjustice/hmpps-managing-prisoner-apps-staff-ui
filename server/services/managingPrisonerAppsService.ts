@@ -61,4 +61,14 @@ export default class ManagingPrisonerAppsService {
     const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
     return new ManagingPrisonerAppsApiClient(token).getResponse(prisonerId, applicationId, responseId)
   }
+
+  async changeApp(
+    prisonerId: string,
+    applicationId: string,
+    appData: Array<Record<string, unknown> & { id: string }>,
+    user: BaseUser,
+  ) {
+    const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
+    return new ManagingPrisonerAppsApiClient(token).changeApp(prisonerId, applicationId, appData)
+  }
 }
