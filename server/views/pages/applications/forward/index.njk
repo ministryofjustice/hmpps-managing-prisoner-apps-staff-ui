@@ -22,7 +22,7 @@
           {% set errorList = [] %}
 
           {% if errors.forwardTo %}
-            {% set errorList = errorList.concat([{ text: errors.forwardToDepartment.text, href: "#forwardTo" }]) %}
+            {% set errorList = errorList.concat([{ text: errors.forwardTo.text, href: "#forwardTo" }]) %}
           {% endif %}
 
           {% if errors.forwardingReason %}
@@ -42,6 +42,7 @@
 
           {{ govukRadios({
             name: "forwardTo",
+            value: forwardTo,
             fieldset: {
               legend: {
                 text: title,
@@ -53,7 +54,7 @@
               text: "Send to:"
             },
             items: departments,
-            errorMessage: errors.forwardToDepartment
+            errorMessage: errors.forwardTo
           }) }}
 
           {{ govukCharacterCount({

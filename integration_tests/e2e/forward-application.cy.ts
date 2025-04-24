@@ -83,4 +83,20 @@ context('Forward Application Page - Add emergency PIN phone credit', () => {
       page.continueButton().should('exist').and('contain.text', 'Continue')
     })
   })
+
+  describe('Form validation', () => {
+    it('should display an error if no department is selected and continue is clicked', () => {
+      page.continueButton().click()
+      page.errorSummary().should('be.visible')
+      page.errorSummary().should('contain.text', 'Choose where to send')
+    })
+
+    it('should display an error if the forwarding reason exceeds 1000 characters', () => {
+      const longReason = 'A'.repeat(1001)
+      page.forwardingReason().type(longReason)
+      page.continueButton().click()
+      page.errorSummary().should('be.visible')
+      page.errorSummary().should('contain.text', 'Reason must be 1000 characters or less')
+    })
+  })
 })
