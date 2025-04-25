@@ -45,4 +45,18 @@ export default {
       },
     })
   },
+
+  stubGetComments: ({ app }: { app: Application }): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/comments?page=1&size=20&createdBy=true`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: new TestData().commentsResponse,
+      },
+    })
+  },
 }
