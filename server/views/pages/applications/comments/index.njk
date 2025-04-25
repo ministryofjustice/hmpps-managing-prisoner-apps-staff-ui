@@ -1,5 +1,6 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -8,7 +9,20 @@
 
 {% block content %}
   <div class="govuk-body govuk-width-container">
-    <span class="govuk-caption-xl">Swap VOs for PIN credit</span>
+    {% if errors %}
+      {% set errorList = [] %}
+
+      {% if errors.comment %}
+        {% set errorList = errorList.concat([{ text: errors.comment.text, href: "#comment" }]) %}
+      {% endif %}
+
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: errorList
+      }) }}
+    {% endif %}
+
+    <span class="govuk-caption-xl">{{ applicationType.name }}</span>
     <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
 
     {% set activeTab = 'comments' %}
@@ -38,11 +52,11 @@
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
           {{ govukCharacterCount({
-            name: "appComment",
-            id: "app-comment",
+            name: "comment",
+            id: "comment",
             maxlength: 1000,
             threshold: 75,
-            value: "",
+            value: comment,
             label: {
               text: "Add a comment",
               classes: "govuk-label--s govuk-!-margin-bottom-4",
