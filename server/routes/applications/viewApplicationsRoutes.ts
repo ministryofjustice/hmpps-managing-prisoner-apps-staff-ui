@@ -88,9 +88,8 @@ export default function viewApplicationRoutes({
         }
       }
 
-      const appsWithNames = apps.map((app, index) => {
-        const prisoner = prisonerDetails[index]
-        const prisonerName = prisoner ? `${prisoner[0]?.lastName}, ${prisoner[0]?.firstName}` : 'Undefined'
+      const appsWithNames = apps.map(app => {
+        const prisonerName = `${app.requestedByLastName}, ${app.requestedByFirstName}`
         return { ...app, prisonerName }
       })
 
