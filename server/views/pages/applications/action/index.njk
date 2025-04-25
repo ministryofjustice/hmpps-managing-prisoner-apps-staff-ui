@@ -10,34 +10,38 @@
 
 {% block content %}
   <div class="govuk-body govuk-width-container">
-    {% if errors %}
-      {% set errorList = [] %}
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-half">
+        {% if errors %}
+          {% set errorList = [] %}
 
-      {% if errors.selectAction %}
-        {% set errorList = errorList.concat([{ text: errors.selectAction.text, href: "#selectAction" }]) %}
-      {% endif %}
+          {% if errors.selectAction %}
+            {% set errorList = errorList.concat([{ text: errors.selectAction.text, href: "#selectAction" }]) %}
+          {% endif %}
 
-      {% if errors.actionReplyReason %}
-        {% set errorList = errorList.concat([{ text: errors.actionReplyReason.text, href: "#actionReplyReason" }]) %}
-      {% endif %}
+          {% if errors.actionReplyReason %}
+            {% set errorList = errorList.concat([{ text: errors.actionReplyReason.text, href: "#actionReplyReason" }]) %}
+          {% endif %}
 
-      {{ govukErrorSummary({
-        titleText: "There is a problem",
-        errorList: errorList
-      }) }}
-    {% endif %}
+          {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          }) }}
+        {% endif %}
 
-    <span class="govuk-caption-xl">Swap VOs for PIN credit</span>
-    <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
+        <span class="govuk-caption-xl">{{ applicationType.name }}</span>
 
-    {% set activeTab = 'reply' %}
-    {% include "../partials/sub-navigation.njk" %}
+        <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
 
-    {% if isAppPending %}
-      {% include "./pending.njk" %}
-    {% else %}
-      {% include "./closed.njk" %}
-    {% endif %}
+        {% set activeTab = 'reply' %}
+        {% include "../partials/sub-navigation.njk" %}
 
+        {% if isAppPending %}
+          {% include "./pending.njk" %}
+        {% else %}
+          {% include "./closed.njk" %}
+        {% endif %}
+       </div> 
+    </div>
   </div>
 {% endblock %}

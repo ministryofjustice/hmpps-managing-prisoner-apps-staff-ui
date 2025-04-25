@@ -64,6 +64,7 @@ export default function actionAndReplyRoutes({
 
       return res.render(`pages/applications/action/index`, {
         application,
+        applicationType,
         isAppPending,
         response: formattedResponse,
         title: 'Action and reply',
@@ -84,12 +85,14 @@ export default function actionAndReplyRoutes({
         return res.redirect(`/applications`)
       }
 
+      const applicationType = getApplicationType(application.appType)
       const errors = validateActionAndReply(decision, reason)
       const isAppPending = application.status === APPLICATION_STATUS.PENDING
 
       if (Object.keys(errors).length > 0) {
         return res.render(`pages/applications/action/index`, {
           application,
+          applicationType,
           isAppPending,
           selectedAction: decision,
           textareaValue: reason,
