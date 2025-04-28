@@ -73,6 +73,8 @@ export type ViewApplicationsResponseApplication = {
   status: 'PENDING' | 'CLOSED'
   appType: ApplicationType
   requestedBy: string
+  requestedByFirstName: string
+  requestedByLastName: string
   requestedDate: string
   assignedGroup: {
     id: string
