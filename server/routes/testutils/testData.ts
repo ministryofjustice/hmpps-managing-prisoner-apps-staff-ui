@@ -147,6 +147,8 @@ export default class TestData {
         status: 'PENDING',
         appType: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
         requestedBy: 'A12345',
+        requestedByFirstName: 'John',
+        requestedByLastName: 'Smith',
         requestedDate: '2025-03-24T14:03:13Z',
         assignedGroup: {
           id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
@@ -159,6 +161,8 @@ export default class TestData {
         status: 'PENDING',
         appType: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
         requestedBy: 'A12345',
+        requestedByFirstName: 'John',
+        requestedByLastName: 'Smith',
         requestedDate: '2025-03-23T14:03:13Z',
         assignedGroup: {
           id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
@@ -171,6 +175,8 @@ export default class TestData {
         status: 'PENDING',
         appType: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
         requestedBy: 'A12345',
+        requestedByFirstName: 'John',
+        requestedByLastName: 'Smith',
         requestedDate: '2025-03-21T14:03:13Z',
         assignedGroup: {
           id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',

@@ -58,3 +58,9 @@
   justify-content: space-between;
   border-bottom: 1px solid $govuk-border-colour;
 }
+
+.govuk-table__subtext {
+  display: block;
+  margin-bottom: 0;
+  color: $govuk-secondary-text-colour;
+}
