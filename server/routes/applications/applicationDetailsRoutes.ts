@@ -16,15 +16,19 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
         correlationId: req.id,
       })
 
-      const applicationType = getApplicationType(req.session.applicationData?.type.apiValue)
+      const { applicationData } = req.session
+
+      const applicationType = getApplicationType(applicationData?.type.apiValue)
 
       if (!applicationType) {
         return res.redirect(URLS.APPLICATION_TYPE)
       }
 
+      const formValues = applicationData?.additionalData || {}
       return res.render(`pages/log-application/application-details/index`, {
         title: 'Log details',
         applicationType,
+        formValues,
       })
     }),
   )

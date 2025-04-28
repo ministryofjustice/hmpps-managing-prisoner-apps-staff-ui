@@ -1,17 +1,15 @@
-<h2 class="govuk-heading-m">Emergency credit details</h2>
+{{ appTypeSummaryList("Emergency credit to add", isUpdate) }}
 
 {{ govukSummaryList({
   classes: "govuk-!-margin-bottom-9",
   rows: [
     {
       key: { text: "Amount" },
-      value: { text: "£" + applicationData.request.amount },
-      actions: [{ href: "#", text: "Change", visuallyHiddenText: "amount" }]
+      value: { text: "£" + applicationData.request.amount }
     },
     {
       key: { text: "Reason" },
-      value: { text: applicationData.request.reason },
-      actions: [{ href: "#", text: "Change", visuallyHiddenText: "reason" }]
+      value: { text: applicationData.request.reason }
     }
   ]
 }) }}
