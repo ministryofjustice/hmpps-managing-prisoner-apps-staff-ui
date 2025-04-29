@@ -3,7 +3,7 @@
   id: "details",
   maxlength: 1000,
   threshold: 75,
-  value: application.requests[0].details,
+  value: application.details or application.requests[0].details,
   label: {
     text: "Details (optional)",
     classes: "govuk-label--s",
