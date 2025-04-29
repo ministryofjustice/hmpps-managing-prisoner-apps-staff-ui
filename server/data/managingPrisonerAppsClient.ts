@@ -38,7 +38,12 @@ export default class ManagingPrisonerAppsApiClient {
 
   async forwardApp(applicationId: string, groupId: string, message?: string): Promise<void> {
     try {
-      const payload = message?.trim() ? { message } : {}
+      const payload: Record<string, unknown> = {}
+
+      if (message && message.trim()) {
+        payload.forwardingReason = message.trim()
+      }
+
       await this.restClient.post({
         path: `/v1/apps/${applicationId}/forward/groups/${groupId}`,
         data: payload,
