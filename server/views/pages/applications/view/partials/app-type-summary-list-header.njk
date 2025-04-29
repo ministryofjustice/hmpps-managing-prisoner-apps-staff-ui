@@ -1,8 +1,8 @@
-{% macro appTypeSummaryListHeader(title, username, appId, status) %}
+{% macro appTypeSummaryListHeader(title, username, appId, isClosed) %}
   <div class="govuk-summary-list--header">
     <h2 class="govuk-heading-m">{{ title }}</h2>
 
-    {% if status !== 'Closed' %}
+    {% if not isClosed %}
       <a href="/applications/{{ username }}/{{ appId }}/change" class="govuk-body">
         Change <span class="govuk-visually-hidden">reason</span>
       </a>

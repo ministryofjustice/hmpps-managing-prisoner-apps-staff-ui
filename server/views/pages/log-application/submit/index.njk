@@ -5,12 +5,18 @@
 {% set pageTitle = applicationName + " - " + title %}
 {% set mainClasses = "app-container govuk-body applications-landing-page" %}
 
+{% if isUpdated %}
+  {% set panelTitle = "Check details page updated" %}
+{% else %}
+  {% set panelTitle = "Application submitted" %}
+{% endif %}
+
 {% block content %}
   <div class="govuk-body govuk-width-container">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         {{ govukPanel({
-          titleText: "Application submitted",
+          titleText: panelTitle,
           text: title
         }) }}
       </div>
