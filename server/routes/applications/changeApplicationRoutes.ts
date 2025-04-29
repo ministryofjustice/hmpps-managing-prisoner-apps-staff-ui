@@ -135,7 +135,40 @@ export default function changeApplicationRoutes({
         user,
       )
 
-      return res.redirect(`/applications/${prisonerId}/${applicationId}`)
+      return res.redirect(`/applications/${prisonerId}/${applicationId}/change/submit`)
+    }),
+  )
+
+  router.get(
+    '/applications/:prisonerId/:applicationId/change/submit',
+    asyncMiddleware(async (req: Request, res: Response) => {
+      const { applicationId, prisonerId } = req.params
+      const { user } = res.locals
+
+      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
+
+      if (!application) {
+        res.redirect('/applications')
+        return
+      }
+
+      const applicationType = getApplicationType(application.appType)
+
+      if (!applicationType) {
+        res.redirect('/applications?error=unknown-type')
+        return
+      }
+
+      await auditService.logPageView(Page.SUBMIT_APPLICATION_CHANGE_PAGE, {
+        who: res.locals.user.username,
+        correlationId: req.id,
+      })
+
+      res.render(`pages/log-application/submit/index`, {
+        title: applicationType.name,
+        application,
+        isUpdated: true,
+      })
     }),
   )
 

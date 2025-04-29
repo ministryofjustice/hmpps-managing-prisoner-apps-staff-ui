@@ -169,16 +169,16 @@ export default function viewApplicationRoutes({
         return res.redirect(`/applications`)
       }
 
-      await auditService.logPageView(Page.VIEW_APPLICATION_PAGE, {
-        who: user.username,
-        correlationId: req.id,
-      })
-
       const applicationType = getApplicationType(application.appType)
 
       if (!applicationType) {
         return res.redirect(`/applications?error=unknown-type`)
       }
+
+      await auditService.logPageView(Page.VIEW_APPLICATION_PAGE, {
+        who: user.username,
+        correlationId: req.id,
+      })
 
       return res.render('pages/applications/view/index', {
         title: applicationType.name,
@@ -186,8 +186,9 @@ export default function viewApplicationRoutes({
         application: {
           ...application,
           requestedDate: format(new Date(application.requestedDate), 'd MMMM yyyy'),
-          status: application.status === 'PENDING' ? convertToTitleCase(application.status) : 'Closed',
+          status: application.status === APPLICATION_STATUS.PENDING ? convertToTitleCase(application.status) : 'Closed',
         },
+        isClosed: application.status !== APPLICATION_STATUS.PENDING,
       })
     }),
   )
