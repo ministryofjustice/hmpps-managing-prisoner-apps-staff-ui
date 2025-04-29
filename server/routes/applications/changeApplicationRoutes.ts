@@ -152,17 +152,17 @@ export default function changeApplicationRoutes({
         return
       }
 
-      await auditService.logPageView(Page.SUBMIT_APPLICATION_PAGE, {
-        who: res.locals.user.username,
-        correlationId: req.id,
-      })
-
       const applicationType = getApplicationType(application.appType)
 
       if (!applicationType) {
         res.redirect('/applications?error=unknown-type')
         return
       }
+
+      await auditService.logPageView(Page.SUBMIT_APPLICATION_CHANGE_PAGE, {
+        who: res.locals.user.username,
+        correlationId: req.id,
+      })
 
       res.render(`pages/log-application/submit/index`, {
         title: applicationType.name,
