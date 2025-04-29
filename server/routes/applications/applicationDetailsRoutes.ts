@@ -11,12 +11,12 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
   router.get(
     URLS.APPLICATION_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
+      const { applicationData } = req.session
+
       await auditService.logPageView(Page.LOG_DETAILS_PAGE, {
         who: res.locals.user.username,
         correlationId: req.id,
       })
-
-      const { applicationData } = req.session
 
       const applicationType = getApplicationType(applicationData?.type.apiValue)
 
@@ -24,11 +24,10 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
         return res.redirect(URLS.APPLICATION_TYPE)
       }
 
-      const formValues = applicationData?.additionalData || {}
       return res.render(`pages/log-application/application-details/index`, {
         title: 'Log details',
         applicationType,
-        formValues,
+        formValues: applicationData?.additionalData || {},
       })
     }),
   )

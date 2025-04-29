@@ -19,6 +19,7 @@ export default function changeApplicationRoutes({
     '/applications/:prisonerId/:applicationId/change',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { prisonerId, applicationId } = req.params
+      const { applicationData } = req.session
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
@@ -38,13 +39,9 @@ export default function changeApplicationRoutes({
         return res.redirect(`/applications?error=unknown-type`)
       }
 
-      const { applicationData } = req.session
-      if (applicationData?.additionalData) {
-        Object.assign(application, applicationData.additionalData)
-      }
-
       return res.render(`pages/applications/change/index`, {
         application,
+        sessionData: applicationData?.additionalData || {},
         applicationType,
         backLink: `/applications/${prisonerId}/${applicationId}`,
         title: applicationType.name,
