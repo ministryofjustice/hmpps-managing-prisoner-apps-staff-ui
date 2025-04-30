@@ -36,10 +36,12 @@
         <div class="app-messages govuk-!-margin-bottom-4">
           {% if comments and comments.length > 0 %}
             {% for comment in comments %}
-              <div class="app-message">
-                <div class="app-message--metadata">Comment by {{ comment.staffName }} | {{ comment.date }} at {{ comment.time }}</div>
-                <div class="app-message--content">{{ comment.message }}</div>
-              </div>
+              {% if comment.message %}
+                <div class="app-message">
+                  <div class="app-message--metadata">Comment by {{ comment.staffName }} | {{ comment.date }} at {{ comment.time }}</div>
+                  <div class="app-message--content">{{ comment.message }}</div>
+                </div>
+              {% endif %}
             {% endfor %}
           {% else %}
             <div class="app-message">
