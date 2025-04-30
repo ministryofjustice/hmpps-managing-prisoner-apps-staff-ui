@@ -32,7 +32,7 @@ describe('ManagingPrisonerAppsApiClient', () => {
 
   it('should forward an application to another department', async () => {
     fakeManagingPrisonerAppApi
-      .get('/v1/apps/app-id/forward/groups/group-id')
+      .post('/v1/apps/app-id/forward/groups/group-id', { message: '' })
       .matchHeader('authorization', `Bearer ${user.token}`)
       .reply(200, undefined)
 

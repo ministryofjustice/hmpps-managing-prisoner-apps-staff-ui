@@ -48,10 +48,10 @@ describe('ManagingPrisonerAppsService', () => {
 
   describe('forwardApp', () => {
     it('should forward an application to the specified group', async () => {
-      const result = await service.forwardApp('application-id', 'group-id', user)
+      const result = await service.forwardApp('application-id', 'group-id', user, '')
 
       expect(result).toBeUndefined()
-      expect(mockClientMethods.forwardApp).toHaveBeenCalledWith('application-id', 'group-id')
+      expect(mockClientMethods.forwardApp).toHaveBeenCalledWith('application-id', 'group-id', '')
     })
   })
 
