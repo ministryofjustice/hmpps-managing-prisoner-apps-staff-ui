@@ -38,10 +38,12 @@ export default function forwardApplicationRoutes({
         return res.redirect(`/applications?error=unknown-type`)
       }
 
-      const departments = groups.map(group => ({
-        value: group.id,
-        text: group.name,
-      }))
+      const departments = groups
+        .filter(group => group.id !== application.assignedGroup.id)
+        .map(group => ({
+          value: group.id,
+          text: group.name,
+        }))
 
       return res.render('pages/applications/forward/index', {
         application,
@@ -71,10 +73,12 @@ export default function forwardApplicationRoutes({
       const applicationType = getApplicationType(application.appType)
       const errors = validateForwardingApplication(forwardTo, forwardingReason)
 
-      const departments = groups.map(group => ({
-        value: group.id,
-        text: group.name,
-      }))
+      const departments = groups
+        .filter(group => group.id !== application.assignedGroup.id)
+        .map(group => ({
+          value: group.id,
+          text: group.name,
+        }))
 
       if (Object.keys(errors).length > 0) {
         return res.render('pages/applications/forward/index', {
@@ -88,7 +92,7 @@ export default function forwardApplicationRoutes({
         })
       }
 
-      await managingPrisonerAppsService.forwardApp(applicationId, forwardTo, user)
+      await managingPrisonerAppsService.forwardApp(applicationId, forwardTo, user, forwardingReason)
 
       return res.redirect(`/applications/${prisonerId}/${applicationId}`)
     }),

@@ -36,10 +36,15 @@ export default class ManagingPrisonerAppsApiClient {
     }
   }
 
-  async forwardApp(applicationId: string, groupId: string): Promise<void> {
+  async forwardApp(applicationId: string, groupId: string, message?: string): Promise<void> {
     try {
-      await this.restClient.get({
+      const payload = {
+        message: message?.trim() || '',
+      }
+
+      await this.restClient.post({
         path: `/v1/apps/${applicationId}/forward/groups/${groupId}`,
+        data: payload,
       })
     } catch (error) {
       logger.error(`Error updating department for applicationId: ${applicationId}, department: ${groupId}`, error)
