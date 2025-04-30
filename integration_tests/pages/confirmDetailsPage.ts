@@ -9,13 +9,13 @@ export default class ConfirmDetailsPage extends Page {
 
   pageTitle = () => cy.title()
 
-  applicationType = () => cy.get('.govuk-summary-list__row').contains('Application Type').next()
+  applicationType = () => cy.get('.govuk-summary-list__row').contains('Application type').next()
 
-  changeApplicationType = () => cy.get('.govuk-summary-list__row').contains('Application Type').parent().find('a')
+  changeApplicationType = () => cy.get('.govuk-summary-list__row').contains('Application type').parent().find('a')
 
   prisonerName = () => cy.get('.govuk-summary-list__row').contains('Prisoner').next()
 
-  changePrisoner = () => cy.get('.govuk-summary-list__row').contains('Prisoner').parent().find('a')
+  changePrisoner = () => cy.contains('h2', 'Application details').parent().find('a:contains("Change")')
 
   submittedOn = () => cy.get('.govuk-summary-list__row').contains('Submitted on').next()
 

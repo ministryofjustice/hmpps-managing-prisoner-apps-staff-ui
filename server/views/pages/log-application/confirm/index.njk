@@ -1,6 +1,7 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "pages/log-application/confirm/partials/app-type-summary-list-header.njk" import appTypeSummaryListHeader %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -23,27 +24,30 @@
           classes: "govuk-!-margin-bottom-9",
           rows: [
             {
-              key: { text: "Application Type" },
+              key: { text: "Application type" },
               value: { text: applicationData.type.name },
-              actions: { items: [] if isUpdate else [{ href: "#", text: "Change", visuallyHiddenText: "application type" }] }
+              actions: { items: [] if isUpdate else [{ href: "/log/application-type", text: "Change", visuallyHiddenText: "application type" }] }
             }
           ]
         }) }}
 
-        <h2 class="govuk-heading-m">Application details</h2>
-
+        <div class="govuk-summary-list--header">
+          <h2 class="govuk-heading-m">Application details</h2>
+          {% if not isUpdate %}
+            <a href="/log/prisoner-details" class="govuk-body">Change <span class="govuk-visually-hidden">prisoner</span></a>
+          {% endif %}  
+        </div>
+     
         {{ govukSummaryList({
           classes: "govuk-!-margin-bottom-9",
           rows: [
             {
               key: { text: "Prisoner" },
-              value: { text: applicationData.prisoner },
-              actions: { items: [] if isUpdate else [{ href: "#", text: "Change", visuallyHiddenText: "prisoner" }] }
+              value: { text: applicationData.prisoner }
             },
             {
               key: { text: "Submitted on" },
-              value: { text: applicationData.date },
-              actions: { items: [] if isUpdate else [{ href: "#", text: "Change", visuallyHiddenText: "submitted on" }] }
+              value: { text: applicationData.date }
             }
           ]
         }) }}

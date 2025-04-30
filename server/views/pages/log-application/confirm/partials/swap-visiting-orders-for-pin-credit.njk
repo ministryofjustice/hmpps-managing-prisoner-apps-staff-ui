@@ -1,12 +1,11 @@
-<h2 class="govuk-heading-m">VOs to swap</h2>
+{{ appTypeSummaryListHeader("VOs to swap", isUpdate) }}
 
 {{ govukSummaryList({
   classes: "govuk-!-margin-bottom-9",
   rows: [
     {
       key: { text: "Details" },
-      value: { text: applicationData.request.details },
-      actions: [{ href: "#", text: "Change", visuallyHiddenText: "details" }]
+      value: { text: applicationData.request.details }
     }
   ]
 }) }}

@@ -65,10 +65,6 @@ context('Confirm Details Page', () => {
         page.submittedOn().should('exist')
       })
 
-      it(`should ${hasChangeLinks ? '' : 'not '}allow changing the submission date`, () => {
-        page.changeSubmittedOn().should(hasChangeLinks ? 'exist' : 'not.exist')
-      })
-
       it('should render a Continue button with the correct text', () => {
         page.continueButton().should('contain.text', 'Continue')
       })
