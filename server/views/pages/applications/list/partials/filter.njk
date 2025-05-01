@@ -40,14 +40,14 @@
 
   {% set categories = [] %}
 
-  {% if filters.selectedFilters.groups.length %}
+  {% if filters.selectedFilters.groups | length %}
     {% set categories = categories.concat([{
       heading: { text: "Department" },
       items: filters.selectedFilters.groups
     }]) %}
   {% endif %}
 
-  {% if filters.selectedFilters.types.length %}
+  {% if filters.selectedFilters.types | length %}
     {% set categories = categories.concat([{
       heading: { text: "Application type" },
       items: filters.selectedFilters.types
