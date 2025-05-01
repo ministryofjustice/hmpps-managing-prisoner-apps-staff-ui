@@ -1,62 +1,80 @@
 {%- from "../../../../components/accessibleAutocomplete/macro.njk" import accessibleAutocomplete -%}
 
-{%- set filterOptionsHtml %}
-  {{ accessibleAutocomplete({
-    label: "Search by prisoner",
-    nonce: cspNonce,
-    selectedLabel: filters.selectedPrisonerLabel,
-    selectedValue: filters.selectedPrisonerId
-  }) }}
-
-  {{ govukCheckboxes({
-    idPrefix: "group",
-    name: "group",
-    classes: "govuk-checkboxes--small",
-    fieldset: {
-      legend: {
-        text: "Department",
-        classes: "govuk-fieldset__legend--s"
-      }
-    },
-    items: filters.groups
-  }) }}
-
-  {{ govukCheckboxes({
-    idPrefix: "type",
-    name: "type",
-    classes: "govuk-checkboxes--small",
-    fieldset: {
-      legend: {
-        text: "Application type",
-        classes: "govuk-fieldset__legend--s"
-      }
-    },
-    items: filters.appTypes
-  }) }}
-{% endset -%}
-
 <form novalidate>
   <input type="hidden" name="status" value="{{ status }}">
-  
-  {{ mojFilter({
-    heading: { text: "Filter" },
-    submit: {
-      attributes: { "data-test-id": "submit-button" }
-    },
-    selectedFilters: {
-      heading: { text: "Selected filters" },
-      clearLink: { text: "Clear filters", href: "/applications" },
-      categories: [
-        {
-          heading: { text: "Department" },
-          items: filters.selectedFilters.groups
-        },
-        {
-          heading: { text: "Application type" },
-          items: filters.selectedFilters.types
+
+  {%- set filterOptionsHtml %}
+    {{ accessibleAutocomplete({
+      label: "Search by prisoner",
+      nonce: cspNonce,
+      selectedLabel: filters.selectedPrisonerLabel,
+      selectedValue: filters.selectedPrisonerId
+    }) }}
+
+    {{ govukCheckboxes({
+      idPrefix: "group",
+      name: "group",
+      classes: "govuk-checkboxes--small",
+      fieldset: {
+        legend: {
+          text: "Department",
+          classes: "govuk-fieldset__legend--s"
         }
-      ]
-    },
-    optionsHtml: filterOptionsHtml
-  }) }}
+      },
+      items: filters.groups
+    }) }}
+
+    {{ govukCheckboxes({
+      idPrefix: "type",
+      name: "type",
+      classes: "govuk-checkboxes--small",
+      fieldset: {
+        legend: {
+          text: "Application type",
+          classes: "govuk-fieldset__legend--s"
+        }
+      },
+      items: filters.appTypes
+    }) }}
+  {% endset -%}
+
+  {% set categories = [] %}
+
+  {% if filters.selectedFilters.groups.length %}
+    {% set categories = categories.concat([{
+      heading: { text: "Department" },
+      items: filters.selectedFilters.groups
+    }]) %}
+  {% endif %}
+
+  {% if filters.selectedFilters.types.length %}
+    {% set categories = categories.concat([{
+      heading: { text: "Application type" },
+      items: filters.selectedFilters.types
+    }]) %}
+  {% endif %}
+
+  {% if filters.selectedPrisonerLabel or categories.length %}
+    {{ mojFilter({
+      heading: { text: "Filter" },
+      submit: {
+        attributes: { "data-test-id": "submit-button" }
+      },
+      optionsHtml: filterOptionsHtml,
+      selectedFilters: {
+        heading: { text: "Selected filters" },
+        clearLink: { text: "Clear filters", href: "/applications" },
+        categories: categories
+      }
+    }) }}
+  {% else %}
+    {{ mojFilter({
+      heading: { text: "Filter" },
+      submit: {
+        attributes: { "data-test-id": "submit-button" }
+      },
+      optionsHtml: filterOptionsHtml
+    }) }}
+  {% endif %}
 </form>
+
