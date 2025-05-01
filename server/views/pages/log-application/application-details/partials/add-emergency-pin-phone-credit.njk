@@ -14,7 +14,7 @@
     text: "Use only multiples of £1, with a limit of £5"
   },
   inputmode: "numeric",
-  value: formValues.amount,
+  value: amount or formValues.amount,
   errorMessage: errors.Amount
 }) }}
 
@@ -23,7 +23,7 @@
   id: "reason",
   maxlength: 1000,
   threshold: 75,
-  value: formValues.reason,
+  value: reason or formValues.reason,
   label: {
     text: "Reason",
     classes: "govuk-label--s"
