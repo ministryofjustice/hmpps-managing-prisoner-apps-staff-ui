@@ -53,6 +53,8 @@ export default function confirmDetailsRoutes({
 
       const application = await managingPrisonerAppsService.submitPrisonerApp(applicationData, user)
 
+      delete req.session.applicationData
+
       return res.redirect(`/log/submit/${applicationData.prisonerId}/${application.id}`)
     }),
   )
