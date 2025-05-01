@@ -36,25 +36,27 @@
 {% endset -%}
 
 <form novalidate>
-{{ mojFilter({
-  heading: { text: "Filter" },
-  submit: {
-    attributes: { "data-test-id": "submit-button" }
-  },
-  selectedFilters: {
-    heading: { text: "Selected filters" },
-    clearLink: { text: "Clear filters", href: "/applications" },
-    categories: [
-      {
-        heading: { text: "Department" },
-        items: filters.selectedFilters.groups
-      },
-      {
-        heading: { text: "Application type" },
-        items: filters.selectedFilters.types
-      }
-    ]
-  },
-  optionsHtml: filterOptionsHtml
-}) }}
+  <input type="hidden" name="status" value="{{ status }}">
+  
+  {{ mojFilter({
+    heading: { text: "Filter" },
+    submit: {
+      attributes: { "data-test-id": "submit-button" }
+    },
+    selectedFilters: {
+      heading: { text: "Selected filters" },
+      clearLink: { text: "Clear filters", href: "/applications" },
+      categories: [
+        {
+          heading: { text: "Department" },
+          items: filters.selectedFilters.groups
+        },
+        {
+          heading: { text: "Application type" },
+          items: filters.selectedFilters.types
+        }
+      ]
+    },
+    optionsHtml: filterOptionsHtml
+  }) }}
 </form>
