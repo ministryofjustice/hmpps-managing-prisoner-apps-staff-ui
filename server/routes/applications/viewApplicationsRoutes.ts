@@ -111,6 +111,9 @@ export default function viewApplicationRoutes({
           })),
       }
 
+      const hasSelectedFilters =
+        selectedFilters.prisonerId || selectedFilterTags.groups.length > 0 || selectedFilterTags.types.length > 0
+
       await auditService.logPageView(Page.VIEW_APPLICATIONS_PAGE, {
         who: user.username,
         correlationId: req.id,
@@ -121,6 +124,7 @@ export default function viewApplicationRoutes({
         filters: {
           appTypes,
           groups,
+          hasSelectedFilters,
           selectedFilters: selectedFilterTags,
           selectedPrisonerLabel: selectedFilters.prisonerLabel,
           selectedPrisonerId: selectedFilters.prisonerId,
