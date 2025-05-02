@@ -1,6 +1,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -9,27 +10,32 @@
 
 {% block content %}
   <div class="govuk-body govuk-width-container">
-    {% if errors %}
-      {% set errorList = [] %}
-
-      {% if errors.comment %}
-        {% set errorList = errorList.concat([{ text: errors.comment.text, href: "#comment" }]) %}
-      {% endif %}
-
-      {{ govukErrorSummary({
-        titleText: "There is a problem",
-        errorList: errorList
-      }) }}
-    {% endif %}
-
-    <span class="govuk-caption-xl">{{ applicationType.name }}</span>
-    <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
-
-    {% set activeTab = 'comments' %}
-    {% include "../partials/sub-navigation.njk" %}
-
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
+        {% if errors %}
+          {% set errorMessage = [] %}
+
+          {% if errors.Comments %}
+            {% set errorMessage = { text: errors.Comments.text }  %}
+          {% endif %}  
+
+          {% set errorList = [] %}
+
+          {% if errors.Comments %}
+            {% set errorList = errorList.concat([{ text: errors.Comments.text, href: "#comment" }]) %}
+          {% endif %}
+
+          {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          }) }}
+        {% endif %}
+
+        <span class="govuk-caption-xl">{{ applicationType.name }}</span>
+        <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
+
+        {% set activeTab = 'comments' %}
+        {% include "../partials/sub-navigation.njk" %}
         <h2 class="govuk-heading-m">Comments about this application</h2>
         <p class="govuk-body">Only staff will see these comments</p>
 
@@ -63,7 +69,8 @@
               text: "Add a comment",
               classes: "govuk-label--s govuk-!-margin-bottom-4",
               isPageHeading: true
-            }
+            },
+            errorMessage: errorMessage
           }) }}
 
           {{ govukButton({
