@@ -5,7 +5,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { getApplicationType } from '../../utils/getApplicationType'
-import { validateComment } from '../validate/validateComment'
+import { validateTextField } from '../validate/validateTextField'
 
 export default function commentsRoutes({
   auditService,
@@ -67,7 +67,7 @@ export default function commentsRoutes({
       const { comment } = req.body
       const { user } = res.locals
 
-      const errors = validateComment(comment)
+      const errors = validateTextField(comment, 'Comments', true)
 
       if (Object.keys(errors).length > 0) {
         const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)

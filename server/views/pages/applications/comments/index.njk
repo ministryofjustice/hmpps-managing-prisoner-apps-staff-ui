@@ -13,10 +13,16 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         {% if errors %}
+          {% set errorMessage = [] %}
+
+          {% if errors.Comments %}
+            {% set errorMessage = { text: errors.Comments.text }  %}
+          {% endif %}  
+
           {% set errorList = [] %}
 
-          {% if errors.comment %}
-            {% set errorList = errorList.concat([{ text: errors.comment.text, href: "#comment" }]) %}
+          {% if errors.Comments %}
+            {% set errorList = errorList.concat([{ text: errors.Comments.text, href: "#comment" }]) %}
           {% endif %}
 
           {{ govukErrorSummary({
@@ -64,7 +70,7 @@
               classes: "govuk-label--s govuk-!-margin-bottom-4",
               isPageHeading: true
             },
-            errorMessage: { text: errors.comment.text } if errors.comment.text else undefined
+            errorMessage: errorMessage
           }) }}
 
           {{ govukButton({
