@@ -26,9 +26,17 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
       }
 
       const additionalData = applicationData?.additionalData || {}
-      const details = (additionalData as SwapVOsForPinCreditDetails).details || ''
-      const amount = (additionalData as AddEmergencyPinPhoneCreditDetails).amount || ''
-      const reason = (additionalData as AddEmergencyPinPhoneCreditDetails).reason || ''
+
+      let details = ''
+      let amount = ''
+      let reason = ''
+
+      if (applicationType.apiValue === 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS') {
+        details = (additionalData as SwapVOsForPinCreditDetails).details || ''
+      } else if (applicationType.apiValue === 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP') {
+        amount = (additionalData as AddEmergencyPinPhoneCreditDetails).amount || ''
+        reason = (additionalData as AddEmergencyPinPhoneCreditDetails).reason || ''
+      }
 
       return res.render(`pages/log-application/application-details/index`, {
         title: 'Log details',
