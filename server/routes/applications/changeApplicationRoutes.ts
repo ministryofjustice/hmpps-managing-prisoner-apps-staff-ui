@@ -1,6 +1,6 @@
 import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
-import { AddEmergencyPinPhoneCreditDetails } from 'express-session'
+import { AddEmergencyPinPhoneCreditDetails, SwapVOsForPinCreditDetails } from 'express-session'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
@@ -40,24 +40,22 @@ export default function changeApplicationRoutes({
         return res.redirect(`/applications?error=unknown-type`)
       }
 
+      const additionalData = applicationData?.additionalData || {}
+      const details = (additionalData as SwapVOsForPinCreditDetails).details || application.requests[0].details || ''
       const amount =
-        (applicationData?.additionalData as AddEmergencyPinPhoneCreditDetails)?.amount ||
-        application.requests[0].amount ||
-        ''
+        (additionalData as AddEmergencyPinPhoneCreditDetails).amount || application.requests[0].amount || ''
       const reason =
-        (applicationData?.additionalData as AddEmergencyPinPhoneCreditDetails)?.reason ||
-        application.requests[0].reason ||
-        ''
+        (additionalData as AddEmergencyPinPhoneCreditDetails).reason || application.requests[0].reason || ''
 
       return res.render(`pages/applications/change/index`, {
         application,
-        sessionData: applicationData?.additionalData || {},
         applicationType,
         backLink: `/applications/${prisonerId}/${applicationId}`,
         title: applicationType.name,
         errors: null,
         amount,
         reason,
+        details,
       })
     }),
   )

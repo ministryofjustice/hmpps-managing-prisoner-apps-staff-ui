@@ -1,4 +1,5 @@
 import { Request, Response, Router } from 'express'
+import { AddEmergencyPinPhoneCreditDetails, SwapVOsForPinCreditDetails } from 'express-session'
 import { URLS } from '../../constants/urls'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
@@ -24,10 +25,17 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
         return res.redirect(URLS.APPLICATION_TYPE)
       }
 
+      const additionalData = applicationData?.additionalData || {}
+      const details = (additionalData as SwapVOsForPinCreditDetails).details || ''
+      const amount = (additionalData as AddEmergencyPinPhoneCreditDetails).amount || ''
+      const reason = (additionalData as AddEmergencyPinPhoneCreditDetails).reason || ''
+
       return res.render(`pages/log-application/application-details/index`, {
         title: 'Log details',
         applicationType,
-        formValues: applicationData?.additionalData || {},
+        details,
+        amount,
+        reason,
       })
     }),
   )
