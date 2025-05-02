@@ -41,11 +41,18 @@ export default function changeApplicationRoutes({
       }
 
       const additionalData = applicationData?.additionalData || {}
-      const details = (additionalData as SwapVOsForPinCreditDetails).details || application.requests[0].details || ''
-      const amount =
-        (additionalData as AddEmergencyPinPhoneCreditDetails).amount || application.requests[0].amount || ''
-      const reason =
-        (additionalData as AddEmergencyPinPhoneCreditDetails).reason || application.requests[0].reason || ''
+
+      let details = ''
+      let amount = ''
+      let reason = ''
+
+      if (applicationType.apiValue === 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS') {
+        details = (additionalData as SwapVOsForPinCreditDetails).details || application.requests[0].details || ''
+      } else if (applicationType.apiValue === 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP') {
+        amount =
+          (additionalData as AddEmergencyPinPhoneCreditDetails).amount || String(application.requests[0].amount || '')
+        reason = (additionalData as AddEmergencyPinPhoneCreditDetails).reason || application.requests[0].reason || ''
+      }
 
       return res.render(`pages/applications/change/index`, {
         application,
@@ -53,9 +60,9 @@ export default function changeApplicationRoutes({
         backLink: `/applications/${prisonerId}/${applicationId}`,
         title: applicationType.name,
         errors: null,
+        details,
         amount,
         reason,
-        details,
       })
     }),
   )
