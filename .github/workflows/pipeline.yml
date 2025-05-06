@@ -81,7 +81,7 @@ jobs:
     name: Deploy to the staging environment
     needs:
       - build
-      - helm_lint
+      - deploy_dev
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2 # WORKFLOW_VERSION
     secrets: inherit
     with:
