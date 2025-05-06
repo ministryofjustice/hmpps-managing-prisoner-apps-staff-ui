@@ -1,0 +1,23 @@
+---
+# Per environment values which override defaults in hmpps-managing-prisoner-apps-staff-ui/values.yaml
+
+generic-service:
+  replicaCount: 2
+
+  ingress:
+    host: managing-prisoner-apps-staff-ui-staging.hmpps.service.justice.gov.uk
+
+  env:
+    INGRESS_URL: 'https://managing-prisoner-apps-staff-ui-staging.hmpps.service.justice.gov.uk'
+    HMPPS_AUTH_URL: 'https://sign-in-dev.hmpps.service.justice.gov.uk/auth'
+    TOKEN_VERIFICATION_API_URL: 'https://token-verification-api-dev.prison.service.justice.gov.uk'
+    COMPONENT_API_URL: 'https://frontend-components-dev.hmpps.service.justice.gov.uk'
+    DPS_URL: 'https://dps-dev.prison.service.justice.gov.uk/'
+    HMPPS_MANAGE_USERS_API_URL: 'https://manage-users-api-dev.hmpps.service.justice.gov.uk'
+    MANAGING_PRISONER_APPS_API_URL: 'https://managing-prisoner-apps-api-staging.hmpps.service.justice.gov.uk'
+    PRISON_API_URL: 'https://prison-api-dev.prison.service.justice.gov.uk'
+    ENVIRONMENT_NAME: STAGING
+    AUDIT_ENABLED: 'false'
+
+generic-prometheus-alerts:
+  alertSeverity: hmpps-launchpad-nonprod
