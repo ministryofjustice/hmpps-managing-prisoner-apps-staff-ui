@@ -2,6 +2,7 @@
 {% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -15,23 +16,42 @@
       href: backLink
     }) }}
 
-    <span class="govuk-caption-xl">{{ title }}</span>
-    <h1 class="govuk-heading-xl govuk-!-margin-top-0">Log details</h1>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-half">
+        {% if errors %}
+          {% set errorList = [] %}
 
-    <div class="govuk-width-container">
-      <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-half">
-          <form method="POST" id="log-swap-vos-pin-credit-details">
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+          {% if errors.Details %}
+            {% set errorList = errorList.concat([{ text: errors.Details.text, href: "#details" }]) %}
+          {% endif %}
 
-            {% include "./partials/" + applicationType.value + ".njk" %}
+          {% if errors.Amount %}
+            {% set errorList = errorList.concat([{ text: errors.Amount.text, href: "#amount" }]) %}
+          {% endif %}
 
-            {{ govukButton({
-              text: "Continue",
-              classes: "govuk-button--primary"
-            }) }}
-          </form>
-        </div>
+          {% if errors.Reason %}
+            {% set errorList = errorList.concat([{ text: errors.Reason.text, href: "#reason" }]) %}
+          {% endif %}
+
+          {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          }) }}
+        {% endif %}
+
+        <span class="govuk-caption-xl">{{ title }}</span>
+        <h1 class="govuk-heading-xl govuk-!-margin-top-0">Log details</h1>
+        
+        <form method="POST" id="log-swap-vos-pin-credit-details">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+          {% include "./partials/" + applicationType.value + ".njk" %}
+
+          {{ govukButton({
+            text: "Continue",
+            classes: "govuk-button--primary"
+          }) }}
+        </form>
       </div>
     </div>
   </div>

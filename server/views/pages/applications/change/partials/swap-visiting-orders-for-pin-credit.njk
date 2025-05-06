@@ -3,7 +3,7 @@
   id: "details",
   maxlength: 1000,
   threshold: 75,
-  value: sessionData.details or application.requests[0].details,
+  value: details,
   label: {
     text: "Details (optional)",
     classes: "govuk-label--s",
@@ -11,5 +11,6 @@
   },
   hint: {
     text: "Add a brief summary, for example, if this person is a Foreign National"
-  }
+  },
+  errorMessage: errors.Details
 }) }}
