@@ -9,6 +9,8 @@ export default class LogPrisonerDetailsPage extends Page {
 
   pageTitle = () => cy.title()
 
+  caption = () => cy.get('.govuk-caption-xl')
+
   form = () => cy.get('form#log-prisoner-details')
 
   csrfToken = () => cy.get('input[name="_csrf"]')
