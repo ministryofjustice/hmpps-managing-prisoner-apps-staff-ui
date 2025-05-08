@@ -1,14 +1,11 @@
+import applicationTypesData from '../fixtures/applicationTypes.json'
 import LogPrisonerDetailsPage from '../pages/logPrisonerDetails'
 import Page from '../pages/page'
 
-const appTypes = [
-  'Add emergency PIN phone credit',
-  'Supply list of PIN phone contacts',
-  'Swap visiting orders (VOs) for PIN credit',
-]
+const appTypes = applicationTypesData.applicationTypes
 
 appTypes.forEach(appType => {
-  context(`${appType} Log Prisoner Details Page`, () => {
+  context(`${appType.name} Log Prisoner Details Page`, () => {
     let page: LogPrisonerDetailsPage
 
     beforeEach(() => {
@@ -18,7 +15,7 @@ appTypes.forEach(appType => {
 
       cy.visit('/log/prisoner-details')
 
-      cy.contains(appType).click()
+      cy.contains(appType.name).click()
       cy.contains('button', 'Continue').click()
 
       page = Page.verifyOnPage(LogPrisonerDetailsPage)
@@ -29,7 +26,7 @@ appTypes.forEach(appType => {
     })
 
     it('should show the correct app type caption', () => {
-      page.caption().should('have.text', appType)
+      page.caption().should('have.text', appType.name)
     })
 
     it('should display the correct page title', () => {
