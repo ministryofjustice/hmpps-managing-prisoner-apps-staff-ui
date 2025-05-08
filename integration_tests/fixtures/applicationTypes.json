@@ -1,6 +1,7 @@
 {
   "applicationTypes": [
     { "name": "Add emergency PIN phone credit", "value": "add-emergency-pin-phone-credit" },
+    { "name": "Supply list of PIN phone contacts", "value": "supply-list-of-pin-phone-contacts" },
     { "name": "Swap visiting orders (VOs) for PIN credit", "value": "swap-visiting-orders-for-pin-credit" }
   ]
 }
