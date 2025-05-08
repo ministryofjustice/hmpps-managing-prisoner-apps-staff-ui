@@ -21,7 +21,10 @@ export declare module 'express-session' {
     apiValue: string
   }
 
-  type AdditionalApplicationData = SwapVOsForPinCreditDetails | AddEmergencyPinPhoneCreditDetails
+  type AdditionalApplicationData =
+    | SwapVOsForPinCreditDetails
+    | AddEmergencyPinPhoneCreditDetails
+    | SupplyListOfPinPhoneContactsDetails
 
   interface SwapVOsForPinCreditDetails {
     details?: string
@@ -30,6 +33,10 @@ export declare module 'express-session' {
   interface AddEmergencyPinPhoneCreditDetails {
     amount?: string
     reason?: string
+  }
+
+  interface SupplyListOfPinPhoneContactsDetails {
+    details?: string
   }
 }
 

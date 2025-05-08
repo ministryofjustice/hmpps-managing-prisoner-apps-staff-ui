@@ -29,7 +29,7 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
   switch (applicationType.value) {
     case APPLICATION_TYPE_VALUES.PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS: {
       const { details } = req.body
-      const detailErrors = validateTextField(details, 'Details')
+      const detailErrors = validateTextField({ fieldValue: details, fieldName: 'Details', isRequired: false })
 
       if (Object.keys(detailErrors).length === 0) {
         additionalData.details = details
@@ -43,7 +43,7 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
     case APPLICATION_TYPE_VALUES.PIN_PHONE_EMERGENCY_CREDIT_TOP_UP: {
       const { amount, reason } = req.body
       const { errors: amountErrors, value: sanitizedAmount } = validateAmountField(amount, 'Amount', true)
-      const reasonErrors = validateTextField(reason, 'Reason', true)
+      const reasonErrors = validateTextField({ fieldValue: reason, fieldName: 'Reason', isRequired: false })
 
       const fieldErrors = {
         ...amountErrors,
@@ -62,6 +62,19 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
       }
 
       Object.assign(errors, fieldErrors)
+      break
+    }
+
+    case APPLICATION_TYPE_VALUES.PIN_PHONE_SUPPLY_LIST_OF_CONTACTS: {
+      const { details } = req.body
+      const detailErrors = validateTextField({ fieldValue: details, fieldName: 'Details', isRequired: false })
+
+      if (Object.keys(detailErrors).length === 0) {
+        additionalData.details = details
+      } else {
+        Object.assign(errors, detailErrors)
+        templateData.details = details
+      }
       break
     }
 
