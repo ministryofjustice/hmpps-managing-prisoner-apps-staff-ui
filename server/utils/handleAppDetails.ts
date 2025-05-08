@@ -43,7 +43,7 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
     case APPLICATION_TYPE_VALUES.PIN_PHONE_EMERGENCY_CREDIT_TOP_UP: {
       const { amount, reason } = req.body
       const { errors: amountErrors, value: sanitizedAmount } = validateAmountField(amount, 'Amount', true)
-      const reasonErrors = validateTextField({ fieldValue: reason, fieldName: 'Reason', isRequired: false })
+      const reasonErrors = validateTextField({ fieldValue: reason, fieldName: 'Reason', isRequired: true })
 
       const fieldErrors = {
         ...amountErrors,
