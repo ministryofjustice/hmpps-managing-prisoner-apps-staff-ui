@@ -1,7 +1,22 @@
 {
   "applicationTypes": [
-    { "name": "Add emergency PIN phone credit", "value": "add-emergency-pin-phone-credit" },
-    { "name": "Supply list of PIN phone contacts", "value": "supply-list-of-pin-phone-contacts" },
-    { "name": "Swap visiting orders (VOs) for PIN credit", "value": "swap-visiting-orders-for-pin-credit" }
+    {
+      "name": "Add emergency PIN phone credit",
+      "value": "add-emergency-pin-phone-credit",
+      "type": "amount",
+      "hint": "Add a brief summary"
+    },
+    {
+      "name": "Supply list of PIN phone contacts",
+      "value": "supply-list-of-pin-phone-contacts",
+      "type": "textarea",
+      "hint": "Add a brief summary"
+    },
+    {
+      "name": "Swap visiting orders (VOs) for PIN credit",
+      "value": "swap-visiting-orders-for-pin-credit",
+      "type": "textarea",
+      "hint": "Add a brief summary, for example, if this person is a Foreign National"
+    }
   ]
 }

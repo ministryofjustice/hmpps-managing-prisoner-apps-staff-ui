@@ -1,5 +1,11 @@
+type ValidateTextField = {
+  fieldValue: string
+  fieldName: string
+  isRequired?: boolean
+}
+
 // eslint-disable-next-line import/prefer-default-export
-export const validateTextField = (fieldValue: string, fieldName: string, isRequired: boolean = false) => {
+export const validateTextField = ({ fieldValue, fieldName, isRequired = false }: ValidateTextField) => {
   const errors: Record<string, { text: string }> = {}
 
   const errorMessages: Record<string, string> = {
