@@ -1,10 +1,10 @@
 import { Request, Response, Router } from 'express'
-import { AddEmergencyPinPhoneCreditDetails, SwapVOsForPinCreditDetails } from 'express-session'
 import { URLS } from '../../constants/urls'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import { getApplicationType } from '../../utils/getApplicationType'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
+import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
 
 export default function applicationDetailsRoutes({ auditService }: { auditService: AuditService }): Router {
   const router = Router()
@@ -21,23 +21,15 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
 
       const applicationType = getApplicationType(applicationData?.type.apiValue)
 
-      if (!applicationType) {
+      const additionalData = applicationData?.additionalData || {}
+
+      const data = applicationType ? getAppTypeLogDetailsData(applicationType, additionalData) : null
+
+      if (!applicationType || !data) {
         return res.redirect(URLS.APPLICATION_TYPE)
       }
 
-      const additionalData = applicationData?.additionalData || {}
-
-      let details = ''
-      let amount = ''
-      let reason = ''
-
-      if (applicationType.apiValue === 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS') {
-        details = (additionalData as SwapVOsForPinCreditDetails).details || ''
-      } else if (applicationType.apiValue === 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP') {
-        amount = (additionalData as AddEmergencyPinPhoneCreditDetails).amount || ''
-        reason = (additionalData as AddEmergencyPinPhoneCreditDetails).reason || ''
-      }
-
+      const { details, amount, reason } = data
       return res.render(`pages/log-application/application-details/index`, {
         title: 'Log details',
         applicationType,

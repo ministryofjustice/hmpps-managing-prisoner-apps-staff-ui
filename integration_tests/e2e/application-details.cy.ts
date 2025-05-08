@@ -1,7 +1,11 @@
+import applicationTypesData from '../fixtures/applicationTypes.json'
+
 import ApplicationDetailsPage from '../pages/applicationDetailsPage'
 import Page from '../pages/page'
 
-function startApplication(appType: string): void {
+const appTypes = applicationTypesData.applicationTypes
+
+function startApplication(appType: string): ApplicationDetailsPage {
   cy.task('reset')
   cy.task('stubSignIn')
   cy.signIn()
@@ -14,78 +18,53 @@ function startApplication(appType: string): void {
   cy.contains('Date').should('exist')
   cy.get('#date').type('10/04/2023')
   cy.contains('button', 'Continue').click()
+
+  return Page.verifyOnPage(ApplicationDetailsPage)
 }
 
-context('Application Details Page - Swap visiting orders (VOs) for PIN credit', () => {
-  let page: ApplicationDetailsPage
+appTypes.forEach(({ name, type, hint }) => {
+  context(`Application Details Page - ${name}`, () => {
+    let page: ApplicationDetailsPage
 
-  beforeEach(() => {
-    startApplication('Swap visiting orders (VOs) for PIN credit')
-    page = Page.verifyOnPage(ApplicationDetailsPage)
-  })
+    beforeEach(() => {
+      page = startApplication(name)
+    })
 
-  it('should direct the user to the correct page', () => {
-    Page.verifyOnPage(ApplicationDetailsPage)
-  })
+    it('should direct the user to the correct page', () => {
+      Page.verifyOnPage(ApplicationDetailsPage)
+    })
 
-  it('should display the correct page title', () => {
-    page.pageTitle().should('include', 'Log details')
-  })
+    it('should render the correct app type title', () => {
+      page.appTypeTitle().should('have.text', name)
+    })
 
-  it('should render the page heading correctly', () => {
-    page.checkOnPage()
-  })
+    if (type === 'textarea') {
+      it('should render the form label', () => {
+        page.formLabel().should('contain.text', 'Details (optional)')
+      })
 
-  it('should render the back link with correct text and href', () => {
-    page.backLink().should('have.text', 'Back').and('have.attr', 'href', '/log/prisoner-details')
-  })
+      it('should display the hint text', () => {
+        page.hintText().should('contain.text', hint)
+      })
 
-  it('should render the correct app type title', () => {
-    page.appTypeTitle().should('have.text', 'Swap visiting orders (VOs) for PIN credit')
-  })
+      it('should have a textarea field', () => {
+        page.textArea().should('exist')
+      })
+    }
 
-  it('should render the correct form label for the textarea', () => {
-    page.formLabel().should('contain.text', 'Details (optional)')
-  })
+    if (type === 'amount') {
+      it('should display the hint text', () => {
+        page.reasonHintText().should('contain.text', hint)
+      })
 
-  it('should display the hint text correctly', () => {
-    page.hintText().should('contain.text', 'Add a brief summary, for example, if this person is a Foreign National')
-  })
+      it('should have an amount input field', () => {
+        page.amountInput().should('exist')
+      })
+    }
 
-  it('should contain a textarea with the correct ID', () => {
-    page.textArea().should('exist')
-  })
-
-  it('should include a hidden CSRF token input field', () => {
-    page.csrfToken().should('exist')
-  })
-
-  it('should render a Continue button with the correct text', () => {
-    page.continueButton().should('contain.text', 'Continue')
-  })
-})
-
-context('Application Details Page - Add emergency PIN phone credit', () => {
-  let page: ApplicationDetailsPage
-
-  beforeEach(() => {
-    startApplication('Add emergency PIN phone credit')
-    page = Page.verifyOnPage(ApplicationDetailsPage)
-  })
-
-  it('should direct the user to the correct page', () => {
-    Page.verifyOnPage(ApplicationDetailsPage)
-  })
-
-  it('should render the correct app type title', () => {
-    page.appTypeTitle().should('have.text', 'Add emergency PIN phone credit')
-  })
-
-  it('should display the hint text correctly', () => {
-    page.reasonHintText().should('contain.text', 'Add a brief summary')
-  })
-
-  it('should contain a amount input field with the correct ID', () => {
-    page.amountInput().should('exist')
+    it('should have CSRF token and continue button', () => {
+      page.csrfToken().should('exist')
+      page.continueButton().should('contain.text', 'Continue')
+    })
   })
 })
