@@ -4,6 +4,7 @@ import {
   Comment,
   CommentsResponse,
   Group,
+  History,
   Response,
   ViewApplicationsResponse,
 } from '../../@types/managingAppsApi'
@@ -241,4 +242,31 @@ export default class TestData {
     },
     appliesTo: ['9242f1d0-3c4f-49f2-84e1-dcfefe5113d0'],
   }
+
+  historyResponse: History[] = [
+    {
+      id: 'b6377911-0a0d-4a0b-a4f0-9d61292259ef',
+      appId: 'd07c3112-2d4a-494b-835f-c83541dcefbb',
+      entityId: 'd07c3112-2d4a-494b-835f-c83541dcefbb',
+      entityType: 'APP',
+      activityMessage: 'App request submitted by Sweety John',
+      createdDate: '2025-05-09T14:23:05Z',
+    },
+    {
+      id: '2e9dfd6e-fec7-486a-a5aa-671111c60e10',
+      appId: 'd07c3112-2d4a-494b-835f-c83541dcefbb',
+      entityId: '617fed1b-8cec-487a-9fb0-d52587089c13',
+      entityType: 'COMMENT',
+      activityMessage: 'Comment added by Sweety John',
+      createdDate: '2025-05-09T14:23:30Z',
+    },
+    {
+      id: 'fb75823e-5dab-41bf-abc7-96753b848ee9',
+      appId: 'd07c3112-2d4a-494b-835f-c83541dcefbb',
+      entityId: 'e754b465-69cd-42c3-9885-104f965c296a',
+      entityType: 'RESPONSE',
+      activityMessage: 'App Declined by Sweety John',
+      createdDate: '2025-05-09T14:23:54Z',
+    },
+  ]
 }

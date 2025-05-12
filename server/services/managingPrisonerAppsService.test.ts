@@ -12,6 +12,7 @@ const mockClientMethods = {
   getGroups: jest.fn(),
   getPrisonerApp: jest.fn(),
   getResponse: jest.fn(),
+  getHistory: jest.fn(),
 }
 
 const testData = new TestData()
@@ -117,6 +118,15 @@ describe('ManagingPrisonerAppsService', () => {
 
       expect(result).toBeUndefined()
       expect(mockClientMethods.getResponse).toHaveBeenCalledWith('prisoner-id', 'application-id', 'response-id')
+    })
+  })
+
+  describe('getHistory', () => {
+    it('should fetch the history for an application', async () => {
+      const result = await service.getHistory('prisoner-id', 'application-id', user)
+
+      expect(result).toBeUndefined()
+      expect(mockClientMethods.getHistory).toHaveBeenCalledWith('prisoner-id', 'application-id')
     })
   })
 
