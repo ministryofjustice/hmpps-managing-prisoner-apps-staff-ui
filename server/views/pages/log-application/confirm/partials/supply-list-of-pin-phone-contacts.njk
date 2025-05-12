@@ -1,6 +1,11 @@
-{{ appTypeSummaryListHeader("", isUpdate) }}
+{{ appTypeSummaryListHeader("Supply contact list", isUpdate) }}
 
 {{ govukSummaryList({
   classes: "govuk-!-margin-bottom-9",
-  rows: []
+  rows: [
+    {
+      key: { text: "Details" },
+      value: { text: applicationData.request.details }
+    }
+  ]
 }) }}
