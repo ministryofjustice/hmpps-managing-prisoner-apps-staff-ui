@@ -66,7 +66,7 @@ context('Confirm Details Page', () => {
       })
 
       it('should render a Continue button with the correct text', () => {
-        page.continueButton().should('contain.text', 'Continue')
+        page.continueButton().should('contain.text', 'Save')
       })
     })
   }
