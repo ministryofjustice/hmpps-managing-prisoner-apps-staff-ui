@@ -20,8 +20,12 @@
         {% for item in history %}
           <div class="app-message govuk-body">
             <div class="app-message--metadata">
-              {{ item.activityMessage }} | {{ item.date }} at {{ item.time }}
+              {{ item.activityMessage.header }} | {{ item.date }} at {{ item.time }}
             </div>
+
+            {% if item.activityMessage.body %}
+              <div class="app-message--content">{{ item.activityMessage.body }}</div>
+            {% endif %}
 
             {% if item.commentMessage %}
               <div class="app-message--content">{{ item.commentMessage }}</div>

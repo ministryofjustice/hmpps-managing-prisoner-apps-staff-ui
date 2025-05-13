@@ -245,28 +245,46 @@ export default class TestData {
 
   historyResponse: History[] = [
     {
-      id: 'b6377911-0a0d-4a0b-a4f0-9d61292259ef',
-      appId: 'd07c3112-2d4a-494b-835f-c83541dcefbb',
-      entityId: 'd07c3112-2d4a-494b-835f-c83541dcefbb',
-      entityType: 'APP',
-      activityMessage: 'App request submitted by Sweety John',
-      createdDate: '2025-05-09T14:23:05Z',
+      id: 'd8d267c0-42ac-42bf-a72f-2f826e1ee049',
+      appId: '4d122405-27a1-4603-80cc-d7252a4e43ee',
+      entityId: '1ebf7110-82cf-4dc1-b872-92c7d71847fc',
+      entityType: 'ASSIGNED_GROUP',
+      activityMessage: {
+        header: 'Logged by Sweety John',
+        body: 'Assigned to OMU',
+      },
+      createdDate: '2025-05-13T08:44:02Z',
     },
     {
-      id: '2e9dfd6e-fec7-486a-a5aa-671111c60e10',
-      appId: 'd07c3112-2d4a-494b-835f-c83541dcefbb',
-      entityId: '617fed1b-8cec-487a-9fb0-d52587089c13',
+      id: '26aae683-6dcb-432f-bf5d-f46752d809f1',
+      appId: '4d122405-27a1-4603-80cc-d7252a4e43ee',
+      entityId: '343a7876-07b9-4ef8-947c-7cf554fae864',
+      entityType: 'ASSIGNED_GROUP',
+      activityMessage: {
+        header: 'Forwarded to group Business Hub by Sweety John',
+        body: 'Assigned to BH',
+      },
+      createdDate: '2025-05-13T10:11:23Z',
+    },
+    {
+      id: '1084ce95-b2f2-4e5e-8e49-9b60c0d5e643',
+      appId: '4d122405-27a1-4603-80cc-d7252a4e43ee',
+      entityId: '59927020-5141-4df8-baef-3f327397ed70',
       entityType: 'COMMENT',
-      activityMessage: 'Comment added by Sweety John',
-      createdDate: '2025-05-09T14:23:30Z',
+      activityMessage: {
+        header: 'Comment added by Sweety John',
+      },
+      createdDate: '2025-05-13T10:12:22Z',
     },
     {
-      id: 'fb75823e-5dab-41bf-abc7-96753b848ee9',
-      appId: 'd07c3112-2d4a-494b-835f-c83541dcefbb',
-      entityId: 'e754b465-69cd-42c3-9885-104f965c296a',
+      id: 'bca2a226-ef95-41ce-951d-dac63f2bb827',
+      appId: '4d122405-27a1-4603-80cc-d7252a4e43ee',
+      entityId: '973b3526-18d4-420d-a721-6345887680ee',
       entityType: 'RESPONSE',
-      activityMessage: 'App Declined by Sweety John',
-      createdDate: '2025-05-09T14:23:54Z',
+      activityMessage: {
+        header: 'Marked as declined by Sweety John',
+      },
+      createdDate: '2025-05-13T10:17:36Z',
     },
   ]
 }

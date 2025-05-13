@@ -126,7 +126,10 @@ export type History = {
   appId: string
   entityId: string
   entityType: string
-  activityMessage: string
+  activityMessage: {
+    header: string
+    body?: string
+  }
   createdDate: string
 }
 
