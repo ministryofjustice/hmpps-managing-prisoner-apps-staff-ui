@@ -1,5 +1,3 @@
-import { format } from 'date-fns'
-
 import { Request, Response, Router } from 'express'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
