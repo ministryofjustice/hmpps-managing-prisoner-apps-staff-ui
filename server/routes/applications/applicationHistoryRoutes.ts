@@ -5,6 +5,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { getApplicationType } from '../../utils/getApplicationType'
+import formatApplicationHistory from '../../utils/formatApplicationHistory'
 
 export default function applicationHistoryRoutes({
   auditService,
@@ -49,32 +50,7 @@ export default function applicationHistoryRoutes({
         ),
       )
 
-      const formattedHistory = history.map(historyItem => {
-        const dateObj = new Date(historyItem.createdDate)
-        const formattedDate = format(dateObj, 'd MMMM yyyy')
-        const formattedTime = format(dateObj, 'HH:mm')
-
-        let commentMessage: string | null = null
-        let responseMessage: string | null = null
-
-        if (historyItem.entityType === 'COMMENT') {
-          const commentFound = commentItems.find(commentItem => commentItem.id === historyItem.entityId)
-          commentMessage = commentFound?.message || null
-        }
-
-        if (historyItem.entityType === 'RESPONSE') {
-          const responseFound = responses.find(responseItem => responseItem?.id === historyItem.entityId)
-          responseMessage = responseFound?.reason || null
-        }
-
-        return {
-          ...historyItem,
-          date: formattedDate,
-          time: formattedTime,
-          commentMessage,
-          responseMessage,
-        }
-      })
+      const formattedHistory = formatApplicationHistory(history, commentItems, responses)
 
       return res.render(`pages/applications/history/index`, {
         application,

@@ -4,7 +4,7 @@ import TestData from '../../server/routes/testutils/testData'
 import Page from '../pages/page'
 import ApplicationHistoryPage from '../pages/applicationHistoryPage'
 
-const appTypes = applicationTypesData.applicationTypes
+const { applicationTypes } = applicationTypesData
 
 context('Application History Page', () => {
   let page: ApplicationHistoryPage
@@ -38,7 +38,7 @@ context('Application History Page', () => {
   })
 
   it('should display the application type name in the caption', () => {
-    const appType = appTypes.find(type => type.apiValue === app.appType)
+    const appType = applicationTypes.find(type => type.apiValue === app.appType)
     page.pageCaption().should('include.text', appType.name)
   })
 })
