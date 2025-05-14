@@ -19,7 +19,5 @@ export default class ForwardApplicationPage extends Page {
     this.forwardToDepartment().find(`input[value="${department}"]`).check()
   }
 
-  swapVosCaption = () => cy.get('.govuk-caption-xl').contains('Swap visiting orders (VOs) for PIN credit')
-
-  emergencyPinCreditCaption = () => cy.get('.govuk-caption-xl').contains('Add emergency PIN phone credit')
+  caption = () => cy.get('.govuk-caption-xl')
 }
