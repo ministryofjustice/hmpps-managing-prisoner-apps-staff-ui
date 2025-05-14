@@ -67,7 +67,7 @@ export default function commentsRoutes({
       const { comment } = req.body
       const { user } = res.locals
 
-      const errors = validateTextField({ fieldValue: 'comment', fieldName: 'Comments', isRequired: true })
+      const errors = validateTextField({ fieldValue: comment, fieldName: 'Comments', isRequired: true })
 
       if (Object.keys(errors).length > 0) {
         const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
