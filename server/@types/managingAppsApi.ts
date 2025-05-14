@@ -121,6 +121,18 @@ export type Comment = {
   createdBy: StaffUser
 }
 
+export type History = {
+  id: string
+  appId: string
+  entityId: string
+  entityType: string
+  activityMessage: {
+    header: string
+    body?: string
+  }
+  createdDate: string
+}
+
 export type TargetUser = {
   id: string
 }

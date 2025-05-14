@@ -6,6 +6,7 @@ import {
   AppResponsePayload,
   Comment,
   CommentsResponse,
+  History,
   Group,
   Response,
   PrisonerSearchResult,
@@ -129,6 +130,17 @@ export default class ManagingPrisonerAppsApiClient {
       })
     } catch (error) {
       logger.error(`Failed to fetch comments for prisoner ${prisonerId} on app ${appId}`, error)
+      return null
+    }
+  }
+
+  async getHistory(prisonerId: string, appId: string): Promise<History[] | null> {
+    try {
+      return await this.restClient.get({
+        path: `/v1/prisoners/${prisonerId}/apps/${appId}/history`,
+      })
+    } catch (error) {
+      logger.error(`Failed to fetch history for prisoner ${prisonerId} on app ${appId}`, error)
       return null
     }
   }
