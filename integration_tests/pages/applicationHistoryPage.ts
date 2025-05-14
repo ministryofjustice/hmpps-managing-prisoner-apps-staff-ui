@@ -2,12 +2,12 @@ import Page from './page'
 
 export default class ApplicationHistoryPage extends Page {
   constructor() {
-    super('Swap visiting orders (VOs) for PIN credit')
+    super('History')
   }
 
-  pageTitle = () => cy.title()
+  pageTitle = () => cy.get('h1')
 
   historyTab = () => cy.contains('.moj-sub-navigation__link', 'History')
 
-  pageText = () => cy.get('h2.govuk-heading-m')
+  pageCaption = () => cy.get('.govuk-caption-xl')
 }

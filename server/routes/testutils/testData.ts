@@ -4,6 +4,7 @@ import {
   Comment,
   CommentsResponse,
   Group,
+  History,
   Response,
   ViewApplicationsResponse,
 } from '../../@types/managingAppsApi'
@@ -241,4 +242,49 @@ export default class TestData {
     },
     appliesTo: ['9242f1d0-3c4f-49f2-84e1-dcfefe5113d0'],
   }
+
+  historyResponse: History[] = [
+    {
+      id: 'd8d267c0-42ac-42bf-a72f-2f826e1ee049',
+      appId: '4d122405-27a1-4603-80cc-d7252a4e43ee',
+      entityId: '1ebf7110-82cf-4dc1-b872-92c7d71847fc',
+      entityType: 'ASSIGNED_GROUP',
+      activityMessage: {
+        header: 'Logged by Sweety John',
+        body: 'Assigned to OMU',
+      },
+      createdDate: '2025-05-13T08:44:02Z',
+    },
+    {
+      id: '26aae683-6dcb-432f-bf5d-f46752d809f1',
+      appId: '4d122405-27a1-4603-80cc-d7252a4e43ee',
+      entityId: '343a7876-07b9-4ef8-947c-7cf554fae864',
+      entityType: 'ASSIGNED_GROUP',
+      activityMessage: {
+        header: 'Forwarded to group Business Hub by Sweety John',
+        body: 'Assigned to BH',
+      },
+      createdDate: '2025-05-13T10:11:23Z',
+    },
+    {
+      id: '1084ce95-b2f2-4e5e-8e49-9b60c0d5e643',
+      appId: '4d122405-27a1-4603-80cc-d7252a4e43ee',
+      entityId: '59927020-5141-4df8-baef-3f327397ed70',
+      entityType: 'COMMENT',
+      activityMessage: {
+        header: 'Comment added by Sweety John',
+      },
+      createdDate: '2025-05-13T10:12:22Z',
+    },
+    {
+      id: 'bca2a226-ef95-41ce-951d-dac63f2bb827',
+      appId: '4d122405-27a1-4603-80cc-d7252a4e43ee',
+      entityId: '973b3526-18d4-420d-a721-6345887680ee',
+      entityType: 'RESPONSE',
+      activityMessage: {
+        header: 'Marked as declined by Sweety John',
+      },
+      createdDate: '2025-05-13T10:17:36Z',
+    },
+  ]
 }

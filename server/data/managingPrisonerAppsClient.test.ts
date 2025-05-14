@@ -11,7 +11,7 @@ describe('ManagingPrisonerAppsApiClient', () => {
   let fakeManagingPrisonerAppApi: nock.Scope
   let client: ManagingPrisonerAppsApiClient
 
-  const { app, appSearchPayload, appSearchResponse, response, submitPrisonerAppData, user } = testData
+  const { app, appSearchPayload, appSearchResponse, response, submitPrisonerAppData, historyResponse, user } = testData
 
   beforeEach(() => {
     fakeManagingPrisonerAppApi = nock(config.apis.managingPrisonerApps.url)
@@ -94,5 +94,15 @@ describe('ManagingPrisonerAppsApiClient', () => {
 
     const output = await client.changeApp('prisoner-id', 'app-id', payload)
     expect(output).toEqual({ ...app, requests: payload })
+  })
+
+  it('should fetch the history for an application', async () => {
+    fakeManagingPrisonerAppApi
+      .get('/v1/prisoners/prisoner-id/apps/app-id/history')
+      .matchHeader('authorization', `Bearer ${user.token}`)
+      .reply(200, historyResponse)
+
+    const output = await client.getHistory('prisoner-id', 'app-id')
+    expect(output).toEqual(historyResponse)
   })
 })

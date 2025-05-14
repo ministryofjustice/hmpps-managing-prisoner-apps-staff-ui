@@ -7,8 +7,8 @@
 
 {% block content %}
   <div class="govuk-body govuk-width-container govuk!">
-    <span class="govuk-caption-xl">Business Hub applications</span>
-    <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
+    <span class="govuk-caption-xl">{{ title }}</span>
+    <h1 class="govuk-heading-xl govuk-!-margin-top-0">History</h1>
 
     {% set activeTab = 'history' %}
     {% include "../partials/sub-navigation.njk" %}
@@ -16,22 +16,27 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <h2 class="govuk-heading-m">History of this application</h2>
+
+        {% for item in history %}
+          <div class="app-message govuk-body">
+            <div class="app-message--metadata">
+              {{ item.activityMessage.header }} | {{ item.date }} at {{ item.time }}
+            </div>
+
+            {% if item.activityMessage.body %}
+              <div class="app-message--content">{{ item.activityMessage.body }}</div>
+            {% endif %}
+
+            {% if item.commentMessage %}
+              <div class="app-message--content">{{ item.commentMessage }}</div>
+            {% endif %}
+
+            {% if item.responseMessage %}
+              <div class="app-message--content">{{ item.responseMessage }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
         
-        <div class="app-messages">
-          <div class="app-message">
-            <div class="app-message--content">No history</div>
-          </div>
-
-          <div class="app-message govuk-body">
-            <div class="app-message--metadata">J. Smith | 14 March 2025 at 09:18</div>
-            <div class="app-message--content">Logged with Business Hub.</div> 
-          </div>
-
-          <div class="app-message govuk-body">
-            <div class="app-message--metadata">J. Smith | 14 March 2025 at 09:18</div>
-            <div class="app-message--content">Logged with Business Hub.</div> 
-          </div>
-        </div>
       </div>
     </div>
   </div>  

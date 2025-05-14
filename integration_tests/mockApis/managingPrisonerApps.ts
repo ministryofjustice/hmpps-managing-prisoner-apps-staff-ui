@@ -59,4 +59,18 @@ export default {
       },
     })
   },
+
+  stubGetHistory: ({ app }: { app: Application }): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        url: `/managingPrisonerApps/v1/applications/${app.requestedBy.username}/apps/${app.id}/history`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: new TestData().historyResponse,
+      },
+    })
+  },
 }
