@@ -38,9 +38,9 @@
         rows: [
           { 
             key: { text: "Prisoner" }, 
-            value: { text: application.requestedByLastName + ", " + application.requestedByFirstName }, 
+            value: { text: application.requestedByLastName + ", " + application.requestedByFirstName + " (" + application.requestedBy.username + ")" }, 
             actions: { items: [{ 
-              href: "#", 
+              href:  dpsPrisonerUrl + "prisoner/" + application.requestedBy.username, 
               text: "View profile", 
               visuallyHiddenText: "prisoner" 
             }] } 
@@ -48,9 +48,9 @@
           { key: { text: "Location" }, value: { text: application.requestedBy.location } },
           { 
             key: { text: "Alerts" }, 
-            value: { text: "" }, 
+            value: { text: application.requestedBy.alerts or 0 }, 
             actions: { items: [{ 
-              href: "#", 
+              href: dpsPrisonerUrl + "prisoner/" + application.requestedBy.username + "/alerts/active", 
               text: "View alerts", 
               visuallyHiddenText: "alerts" 
             }] } 

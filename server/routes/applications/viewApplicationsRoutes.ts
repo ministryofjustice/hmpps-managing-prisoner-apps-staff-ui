@@ -17,6 +17,7 @@ import { getApplicationType } from '../../utils/getApplicationType'
 import { getStatusesForQuery } from '../../utils/getStatusesForQuery'
 import { getPaginationData } from '../../utils/pagination'
 import { convertToTitleCase } from '../../utils/utils'
+import config from '../../config'
 
 import logger from '../../../logger'
 
@@ -193,6 +194,7 @@ export default function viewApplicationRoutes({
           status: application.status === APPLICATION_STATUS.PENDING ? convertToTitleCase(application.status) : 'Closed',
         },
         isClosed: application.status !== APPLICATION_STATUS.PENDING,
+        dpsPrisonerUrl: config.dpsPrisoner,
       })
     }),
   )

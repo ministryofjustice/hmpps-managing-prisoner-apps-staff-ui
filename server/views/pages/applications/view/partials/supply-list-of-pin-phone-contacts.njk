@@ -1,5 +1,10 @@
-{{ appTypeSummaryListHeader("", application.requestedBy.username, application.id, isClosed) }}
+{{ appTypeSummaryListHeader("Supply contact list", application.requestedBy.username, application.id, isClosed) }}
 
 {{ govukSummaryList({
-  rows: []
+  rows: [
+    { 
+      key: { text: "Details" }, 
+      value: { text: application.requests[0].details }  
+    }
+  ]
 }) }}
