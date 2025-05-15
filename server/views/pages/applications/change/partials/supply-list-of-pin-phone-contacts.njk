@@ -1,1 +1,17 @@
-Form fields here
+{{ govukCharacterCount({
+  name: "details",
+  id: "details",
+  maxlength: 1000,
+  threshold: 75,
+  value: details,
+  label: {
+    text: "Details (optional)",
+    classes: "govuk-label--s",
+    isPageHeading: true
+  },
+  hint: {
+    text: "Add a brief summary"
+  },
+  errorMessage: errors.Details
+}) }}
+
