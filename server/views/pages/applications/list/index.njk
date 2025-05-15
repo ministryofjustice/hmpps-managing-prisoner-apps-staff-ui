@@ -47,52 +47,11 @@
           </ul>
 
           {% if status == "PENDING" %}
-            <div class="govuk-tabs__panel {{ 'govuk-tabs__panel--selected' if status == 'PENDING' else '' }}" id="pending-applications">
-              <h2 class="govuk-heading-m">Pending applications</h2>
-              
-              <div class="app-results-table">
-                {{ govukTable({
-                  head: [
-                    { text: "Date", attributes: { "aria-sort": "ascending" } },
-                    { text: "Application type" },
-                    { text: "From" },
-                    { text: "Department" },
-                    { text: "" }
-                  ],
-                  rows: apps,
-                  attributes: { "data-qa": "app-results-table", "data-module": "moj-sortable-table" }
-                }) }}
-              </div>
-
-              {% if pagination.totalPages > 1 %}
-                {{ govukPagination( pagination | toPagination( query )) }}
-              {% endif %}
-            </div>
+            {% include './partials/pending.njk' %}
           {% endif %}
           
           {% if status == "CLOSED" %}
-            <div class="govuk-tabs__panel {{ 'govuk-tabs__panel--selected' if status == 'CLOSED' else '' }}" id="closed-applications">
-              <h2 class="govuk-heading-m">Closed applications</h2>
-              
-              <div class="app-results-table">
-                {{ govukTable({
-                  head: [
-                    { text: "Date", attributes: { "aria-sort": "descending" } },
-                    { text: "Application type" },
-                    { text: "From" },
-                    { text: "Department" },
-                    { text: "Decision" },
-                    { text: "" }
-                  ],
-                  rows: apps,
-                  attributes: { "data-qa": "app-results-table", "data-module": "moj-sortable-table" }
-                }) }}
-              </div>
-              
-              {% if pagination.totalPages > 1 %}
-                {{ govukPagination( pagination | toPagination( query )) }}
-              {% endif %}
-            </div>
+            {% include './partials/closed.njk' %}
           {% endif %}
         </div>
       </div>
