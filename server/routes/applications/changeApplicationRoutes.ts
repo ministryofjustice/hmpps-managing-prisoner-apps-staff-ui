@@ -1,11 +1,11 @@
 import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
-import { AddEmergencyPinPhoneCreditDetails, SwapVOsForPinCreditDetails } from 'express-session'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { getApplicationType } from '../../utils/getApplicationType'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
+import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
 
 export default function changeApplicationRoutes({
   auditService,
@@ -41,18 +41,7 @@ export default function changeApplicationRoutes({
       }
 
       const additionalData = applicationData?.additionalData || {}
-
-      let details = ''
-      let amount = ''
-      let reason = ''
-
-      if (applicationType.apiValue === 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS') {
-        details = (additionalData as SwapVOsForPinCreditDetails).details || application.requests[0].details || ''
-      } else if (applicationType.apiValue === 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP') {
-        amount =
-          (additionalData as AddEmergencyPinPhoneCreditDetails).amount || String(application.requests[0].amount || '')
-        reason = (additionalData as AddEmergencyPinPhoneCreditDetails).reason || application.requests[0].reason || ''
-      }
+      const formData = getAppTypeLogDetailsData(applicationType, additionalData)
 
       return res.render(`pages/applications/change/index`, {
         application,
@@ -60,9 +49,9 @@ export default function changeApplicationRoutes({
         backLink: `/applications/${prisonerId}/${applicationId}`,
         title: applicationType.name,
         errors: null,
-        details,
-        amount,
-        reason,
+        details: formData?.details || application.requests[0].details || '',
+        amount: formData?.amount || String(application.requests[0].amount || ''),
+        reason: formData?.reason || application.requests[0].reason || '',
       })
     }),
   )
@@ -116,6 +105,7 @@ export default function changeApplicationRoutes({
       })
 
       return res.render(`pages/log-application/confirm/index`, {
+        application,
         applicationData: {
           date: format(new Date(application.requestedDate), 'd MMMM yyyy'),
           prisoner: `${application.requestedBy.firstName} ${application.requestedBy.lastName}`,
