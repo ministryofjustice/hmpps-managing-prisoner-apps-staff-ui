@@ -61,7 +61,7 @@ context('Confirm Details Page', () => {
         page.changePrisoner().should(hasChangeLinks ? 'exist' : 'not.exist')
       })
 
-      it('should display the submitted on date', () => {
+      it('should display the date sent date', () => {
         page.submittedOn().should('exist')
       })
 
