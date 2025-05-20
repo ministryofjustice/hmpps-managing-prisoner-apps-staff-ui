@@ -43,8 +43,8 @@ context('Application Type Page', () => {
 
   it('should display the error message when no radio button is selected', () => {
     cy.get('.govuk-button').click()
-    cy.get('.govuk-error-summary').should('exist').and('contain', 'Choose one')
-    cy.get('.govuk-error-message').should('exist').and('contain', 'Choose one')
+    cy.get('.govuk-error-summary').should('exist').and('contain', 'Choose one application type')
+    cy.get('.govuk-error-message').should('exist').and('contain', 'Choose one application type')
   })
 
   it('should ensure links are functional (if paths are set)', () => {
