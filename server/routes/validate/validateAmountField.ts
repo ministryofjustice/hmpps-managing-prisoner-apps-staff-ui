@@ -22,7 +22,7 @@ export const validateAmountField = (
 
   const numericAmount = parseFloat(sanitizedAmount)
 
-  if (Number.isNaN(numericAmount) || !Number.isInteger(numericAmount) || numericAmount <= 0 || numericAmount > 5) {
+  if (Number.isNaN(numericAmount) || !Number.isInteger(numericAmount) || numericAmount <= 0) {
     errors[fieldName] = { text: amountErrorMessage }
     return { errors }
   }
