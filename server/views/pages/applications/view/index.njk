@@ -1,9 +1,32 @@
+{%- from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs -%}
 {%- from "govuk/components/summary-list/macro.njk" import govukSummaryList -%}
 {% from "pages/applications/view/partials/app-type-summary-list-header.njk" import appTypeSummaryListHeader %}
+
 {% extends "../../../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + title %}
 {% set mainClasses = "app-container govuk-body applications-landing-page" %}
+
+{% block beforeContent %}
+  <div class="govuk-body govuk-width-container">
+    {{ govukBreadcrumbs({
+      items: [
+        {
+          text: "Digital Prisons Services",
+          href: dpsUrl
+        },
+        {
+          text: "Applications",
+          href: "/"
+        },
+        {
+          text: "View all applications",
+          href: "/applications"
+        }
+      ]
+    }) }}
+  </div>
+{% endblock %}
 
 {% block content %}
 <div class="govuk-body govuk-width-container">
