@@ -17,9 +17,9 @@ export default class ConfirmDetailsPage extends Page {
 
   changePrisoner = () => cy.contains('h2', 'Application details').parent().find('a:contains("Change")')
 
-  submittedOn = () => cy.get('.govuk-summary-list__row').contains('Submitted on').next()
+  submittedOn = () => cy.get('.govuk-summary-list__row').contains('Date sent').next()
 
-  changeSubmittedOn = () => cy.get('.govuk-summary-list__row').contains('Submitted on').parent().find('a')
+  changeSubmittedOn = () => cy.get('.govuk-summary-list__row').contains('Date sent').parent().find('a')
 
   swapVOsDetails = () => cy.get('.govuk-summary-list__row').contains('Details').next()
 
