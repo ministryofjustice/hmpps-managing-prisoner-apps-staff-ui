@@ -1,8 +1,9 @@
+{%- from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs -%}
 {%- from "govuk/components/checkboxes/macro.njk" import govukCheckboxes -%}
 {%- from "govuk/components/input/macro.njk" import govukInput -%}
 {%- from "govuk/components/table/macro.njk" import govukTable -%}
-{% from "govuk/components/pagination/macro.njk" import govukPagination %}
-{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{%- from "govuk/components/pagination/macro.njk" import govukPagination -%}
+{%- from "govuk/components/error-summary/macro.njk" import govukErrorSummary -%}
 
 {%- from "moj/components/filter/macro.njk" import mojFilter -%}
 
@@ -10,6 +11,23 @@
 
 {% set pageTitle = "Applications" %}
 {% set mainClasses = "app-container govuk-body applications-list-page" %}
+
+{% block beforeContent %}
+  <div class="govuk-body govuk-width-container">
+    {{ govukBreadcrumbs({
+      items: [
+        {
+          text: "Digital Prisons Services",
+          href: dpsUrl
+        },
+        {
+          text: "Applications",
+          href: "/"
+        }
+      ]
+    }) }}
+  </div>
+{% endblock %}
 
 {% block content %}
   <div class="govuk-body govuk-width-container govuk-!-padding-top-5 govuk-!-padding-bottom-5">
