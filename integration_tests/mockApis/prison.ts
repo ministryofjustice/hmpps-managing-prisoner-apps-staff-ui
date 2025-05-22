@@ -1,9 +1,9 @@
 import { SuperAgentRequest } from 'superagent'
-import TestData from '../../server/routes/testutils/testData'
 import { stubFor } from './wiremock'
+import TestData from '../../server/routes/testutils/testData'
 
 export default {
-  stubGetPrisonerByPrisonNumber: (prisonNumber = 'G3682UE'): SuperAgentRequest => {
+  stubGetPrisonerByPrisonNumber: (prisonNumber): SuperAgentRequest => {
     return stubFor({
       request: {
         method: 'GET',

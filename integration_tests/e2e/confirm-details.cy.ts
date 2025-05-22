@@ -10,6 +10,7 @@ context('Confirm Details Page', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.signIn()
+    cy.task('stubGetPrisonerByPrisonNumber', 'A0000AA')
   })
 
   const testConfirmDetailsPage = (title, route, backLink, hasChangeLinks) => {
@@ -24,7 +25,7 @@ context('Confirm Details Page', () => {
           cy.contains('Swap visiting orders (VOs) for PIN credit').click()
           cy.contains('button', 'Continue').click()
           cy.contains('Prison number').should('exist')
-          cy.get('#prison-number').type('G9812CC')
+          cy.get('#prison-number').type('A0000AA')
           cy.contains('Date').should('exist')
           cy.get('#date').type('10/04/2023')
           cy.contains('button', 'Continue').click()
