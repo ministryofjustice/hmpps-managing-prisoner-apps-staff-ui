@@ -1,0 +1,90 @@
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
+
+{% macro pagination(pagination, query) %}
+  {% if pagination.totalPages > 1 %}
+    {% set currentPage = pagination.page %}
+    {% set totalPages = pagination.totalPages %}
+    {% set baseUrl = "/applications?" %}
+    {% set queryParams = [] %}
+
+    {% for key, value in query %}
+      {% if key != 'page' %}
+        {% if value is iterable and value is not string %}
+          {% for v in value %}
+            {% set _ = queryParams.push(key ~ '=' ~ v) %}
+          {% endfor %}
+        {% else %}
+          {% set _ = queryParams.push(key ~ '=' ~ value) %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% set queryString = queryParams | join('&') %}
+    {% if queryString %}
+      {% set pageLink = baseUrl ~ queryString ~ '&page=' %}
+    {% else %}
+      {% set pageLink = baseUrl ~ 'page=' %}
+    {% endif %}
+
+    {% set pages = [] %}
+    {% if totalPages <= 7 %}
+      {% for i in range(1, totalPages + 1) %}
+        {% set _ = pages.push(i) %}
+      {% endfor %}
+    {% else %}
+      {% set _ = pages.push(1) %}
+
+      {% if currentPage > 4 %}
+        {% set _ = pages.push('...') %}
+      {% endif %}
+
+      {% for i in range(currentPage - 1, currentPage + 2) %}
+        {% if i > 1 and i < totalPages %}
+          {% set _ = pages.push(i) %}
+        {% endif %}
+      {% endfor %}
+
+      {% if currentPage < totalPages - 3 %}
+        {% set _ = pages.push('...') %}
+      {% endif %}
+
+      {% set _ = pages.push(totalPages) %}
+    {% endif %}
+
+    {% set items = [] %}
+    {% for p in pages %}
+      {% if p == '...' %}
+        {% set _ = items.push({ ellipsis: true }) %}
+      {% else %}
+        {% set _ = items.push({
+          number: p,
+          current: p == currentPage,
+          href: pageLink ~ p
+        }) %}
+      {% endif %}
+    {% endfor %}
+
+    {% set previous = null %}
+    {% if currentPage > 1 %}
+      {% set previous = {
+        href: pageLink ~ (currentPage - 1),
+        text: "Previous"
+      } %}
+    {% endif %}
+
+    {% set next = null %}
+    {% if currentPage < totalPages %}
+      {% set next = {
+        href: pageLink ~ (currentPage + 1),
+        text: "Next"
+      } %}
+    {% endif %}
+
+
+    {{ govukPagination({
+      previous: previous,
+      next: next,
+      items: items
+    }) }}
+  {% endif %}
+{% endmacro %}
