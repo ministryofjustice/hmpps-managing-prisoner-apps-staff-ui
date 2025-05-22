@@ -35,7 +35,7 @@ export default function confirmDetailsRoutes({
       return res.render(`pages/log-application/confirm/index`, {
         applicationData: {
           date: format(new Date(applicationData.date), 'd MMMM yyyy'),
-          prisoner: applicationData.prisonerName,
+          prisoner: `${applicationData.prisonerName} (${applicationData.prisonerId})`,
           request: applicationData.additionalData,
           type: applicationType,
         },

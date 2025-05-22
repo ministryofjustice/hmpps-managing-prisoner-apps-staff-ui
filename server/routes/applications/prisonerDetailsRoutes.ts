@@ -67,9 +67,17 @@ export default function prisonerDetailsRoutes({
   router.post(
     '/log/prisoner-details',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { prisonerName, prisonNumber, date: dateString } = req.body
+      const { prisonNumber, date: dateString } = req.body
 
       const errors = validatePrisonerDetails(prisonNumber, dateString)
+      if (Object.keys(errors).length === 0) {
+        const prisoner = await prisonService.getPrisonerByPrisonNumber(prisonNumber, res.locals.user)
+        if (!prisoner || prisoner.length === 0) {
+          errors.prisonNumber = { text: 'Enter a valid prison number' }
+        } else {
+          req.body.prisonerName = `${prisoner[0].lastName} ${prisoner[0].firstName}`
+        }
+      }
 
       if (Object.keys(errors).length > 0) {
         return res.render('pages/log-application/prisoner-details/index', {
@@ -99,7 +107,7 @@ export default function prisonerDetailsRoutes({
       }
 
       updateSessionData(req, {
-        prisonerName,
+        prisonerName: req.body.prisonerName,
         date,
         prisonerId: prisonNumber,
       })
