@@ -65,7 +65,11 @@
             actions: { items: [{ 
               href:  dpsPrisonerUrl + "prisoner/" + application.requestedBy.username, 
               text: "View profile", 
-              visuallyHiddenText: "prisoner" 
+              visuallyHiddenText: "prisoner", 
+              attributes: {
+                target: "_blank",
+                rel: "noopener noreferrer"
+              }
             }] } 
           },
           { key: { text: "Location" }, value: { text: application.requestedBy.location } },
@@ -75,7 +79,11 @@
             actions: { items: [{ 
               href: dpsPrisonerUrl + "prisoner/" + application.requestedBy.username + "/alerts/active", 
               text: "View alerts", 
-              visuallyHiddenText: "alerts" 
+              visuallyHiddenText: "alerts",
+              attributes: {
+                target: "_blank",
+                rel: "noopener noreferrer"
+              }
             }] } 
           },
           { key: { text: "IEP" }, value: { text: application.requestedBy.iep } }

@@ -28,4 +28,8 @@ export default class ViewApplicationPage extends Page {
   actionAndReplyTab = () => cy.contains('.moj-sub-navigation__link', 'Action and reply')
 
   historyTab = () => cy.contains('.moj-sub-navigation__link', 'History')
+
+  viewProfileLink = () => cy.contains('a', 'View profile')
+
+  viewAlertsLink = () => cy.contains('a', 'View alerts')
 }
