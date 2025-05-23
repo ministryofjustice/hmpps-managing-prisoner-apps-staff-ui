@@ -1,3 +1,5 @@
+{% from "../../../../components/pagination/macro.njk" import pagination as paginationMacro %}
+
 <div class="govuk-tabs__panel {{ 'govuk-tabs__panel--selected' if status == 'CLOSED' else '' }}" id="closed-applications">
   <h2 class="govuk-heading-m">Closed applications</h2>
   
@@ -20,7 +22,5 @@
     {% endif %}
   </div>
   
-  {% if pagination.totalPages > 1 %}
-    {{ govukPagination( pagination | toPagination( query )) }}
-  {% endif %}
+  {{ paginationMacro(pagination, query) }}
 </div>

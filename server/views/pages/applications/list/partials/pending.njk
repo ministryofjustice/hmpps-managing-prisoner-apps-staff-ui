@@ -1,3 +1,5 @@
+{% from "../../../../components/pagination/macro.njk" import pagination as paginationMacro %}
+
 <div class="govuk-tabs__panel {{ 'govuk-tabs__panel--selected' if status == 'PENDING' else '' }}" id="pending-applications">
   <h2 class="govuk-heading-m">Pending applications</h2>
   
@@ -19,7 +21,5 @@
     {% endif %}
   </div>
 
-  {% if pagination.totalPages > 1 %}
-    {{ govukPagination( pagination | toPagination( query )) }}
-  {% endif %}
+  {{ paginationMacro(pagination, query) }}
 </div>
