@@ -56,6 +56,20 @@ applicationTypes.forEach(({ name, apiValue }) => {
       page.applicationId().should('exist')
     })
 
+    it('should display View profile and View alerts links opening in a new tab', () => {
+      page
+        .viewProfileLink()
+        .should('exist')
+        .should('have.attr', 'target', '_blank')
+        .and('have.attr', 'rel', 'noopener noreferrer')
+
+      page
+        .viewAlertsLink()
+        .should('exist')
+        .should('have.attr', 'target', '_blank')
+        .and('have.attr', 'rel', 'noopener noreferrer')
+    })
+
     it('should allow navigating to the Comments section', () => {
       page
         .commentsTab()
