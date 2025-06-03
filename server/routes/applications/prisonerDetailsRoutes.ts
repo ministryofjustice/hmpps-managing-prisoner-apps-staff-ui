@@ -72,7 +72,7 @@ export default function prisonerDetailsRoutes({
       const errors = validatePrisonerDetails(prisonNumber, dateString)
 
       if (prisonerLookupButton !== 'true') {
-        errors.prisonerLookupButton = { text: 'Click Find prisoner to continue' }
+        errors.prisonerLookupButton = { text: 'Find prisoner to continue' }
       }
 
       if (Object.keys(errors).length === 0) {

@@ -73,7 +73,7 @@ appTypes.forEach(appType => {
     it('should show an error if "Find prisoner" button is not clicked', () => {
       page.prisonNumberInput().type('A1234AA')
       page.continueButton().click()
-      cy.get('.govuk-error-message').should('exist').and('contain.text', 'Click Find prisoner to continue')
+      cy.get('.govuk-error-message').should('exist').and('contain.text', 'Find prisoner to continue')
     })
   })
 })
