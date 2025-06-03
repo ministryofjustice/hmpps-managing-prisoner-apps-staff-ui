@@ -67,9 +67,14 @@ export default function prisonerDetailsRoutes({
   router.post(
     '/log/prisoner-details',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { prisonNumber, date: dateString } = req.body
+      const { prisonNumber, date: dateString, prisonerLookupButtonInput } = req.body
 
       const errors = validatePrisonerDetails(prisonNumber, dateString)
+
+      if (prisonerLookupButtonInput !== 'true') {
+        errors.prisonerLookupButtonInput = { text: 'Click Find prisoner to continue' }
+      }
+
       if (Object.keys(errors).length === 0) {
         const prisoner = await prisonService.getPrisonerByPrisonNumber(prisonNumber, res.locals.user)
         if (!prisoner || prisoner.length === 0) {

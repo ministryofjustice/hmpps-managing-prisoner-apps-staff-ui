@@ -27,6 +27,10 @@
             {% set errorList = errorList.concat([{ text: errors.prisonNumber.text, href: "#prisonNumber" }]) %}
           {% endif %}
 
+          {% if errors.prisonerLookupButtonInput %}
+            {% set errorList = errorList.concat([{ text: errors.prisonerLookupButtonInput.text, href: "#prisoner-lookup-button-input" }]) %}
+          {% endif %}
+
           {% if errors.dateString %}
             {% set errorList = errorList.concat([{ text: errors.dateString.text, href: "#date" }]) %}
           {% endif %}
@@ -42,6 +46,7 @@
 
         <form method="POST" id="log-prisoner-details">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+          <input type="hidden" name="prisonerLookupButtonInput" id="prisoner-lookup-button-input" value="false">
 
           <div class="govuk-form-group govuk-!-margin-bottom-0 {% if errors.prisonNumber %} govuk-form-group--error {% endif %}">
             <label class="govuk-label govuk-label--s" for="prisonNumber">
@@ -51,6 +56,12 @@
             {% if errors.prisonNumber %}
               <p class="govuk-error-message" id="prison-mumber-error">
                 <span class="govuk-visually-hidden">Error:</span> {{ errors.prisonNumber.text }}
+              </p>
+            {% endif %}
+
+            {% if errors.prisonerLookupButtonInput %}
+              <p class="govuk-error-message" id="prisoner-lookup-button-input-error">
+                <span class="govuk-visually-hidden">Error:</span> {{ errors.prisonerLookupButtonInput.text }}
               </p>
             {% endif %}
 

@@ -17,6 +17,7 @@ function startApplication(appType: string): ApplicationDetailsPage {
   cy.contains('button', 'Continue').click()
   cy.contains('Prison number').should('exist')
   cy.get('#prison-number').type('A0000AA')
+  cy.contains('button', 'Find prisoner').click()
   cy.contains('Date').should('exist')
   cy.get('#date').type('10/04/2023')
   cy.contains('button', 'Continue').click()
