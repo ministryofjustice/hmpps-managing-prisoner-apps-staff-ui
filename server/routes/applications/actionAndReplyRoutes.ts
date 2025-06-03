@@ -109,7 +109,7 @@ export default function actionAndReplyRoutes({
 
       await managingPrisonerAppsService.addResponse(prisonerId, applicationId, payload, user)
 
-      return res.redirect(`/applications/${prisonerId}/${applicationId}`)
+      return res.redirect(`/applications/${prisonerId}/${applicationId}/reply`)
     }),
   )
 
