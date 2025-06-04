@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
   const prisonerNumberInput = document.getElementById('prison-number')
   const prisonerNameInput = document.getElementById('prisoner-name')
   const prisonerNameDisplay = document.getElementById('prisoner-name-display')
+  const findPrisonerLookupButton = document.getElementById('prisoner-lookup-button')
 
   if (!findPrisonerButton) {
     return
@@ -21,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
     if (!prisonNumber) {
       prisonerNameDisplay.innerText = 'Prisoner name: Not found'
       prisonerNameDisplay.classList.remove('govuk-!-display-none')
+      findPrisonerLookupButton.value = 'true'
       return
     }
 
@@ -42,6 +44,8 @@ document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
       prisonerNameInput.value = ''
       prisonerNameDisplay.innerText = 'Prisoner name: Not found'
     }
+
+    findPrisonerLookupButton.value = 'true'
   }
 
   findPrisonerButton.addEventListener('click', handlePrisonerLookup)
