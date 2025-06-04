@@ -20,5 +20,10 @@ generic-service:
     ENVIRONMENT_NAME: PRE-PRODUCTION
     AUDIT_ENABLED: 'false'
 
+  allowlist:
+    groups:
+      - internal
+      - prisons
+
 generic-prometheus-alerts:
   alertSeverity: hmpps-launchpad-nonprod
