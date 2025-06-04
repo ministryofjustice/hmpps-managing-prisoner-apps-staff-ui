@@ -35,6 +35,7 @@ export default function setUpHealthChecks(
           name: applicationInfo.applicationName,
         },
         productId: applicationInfo.productId,
+        uptime: Math.floor(process.uptime()),
         activeAgencies,
       })
     } catch {
