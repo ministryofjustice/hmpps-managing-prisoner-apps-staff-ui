@@ -26,6 +26,17 @@ export default class ManagingPrisonerAppsApiClient {
     )
   }
 
+  async getActiveAgencies(): Promise<string[]> {
+    try {
+      return await this.restClient.get({
+        path: `/v1/establishments`,
+      })
+    } catch (error) {
+      logger.error(`Error fetching establishments.`, error)
+      return null
+    }
+  }
+
   async getPrisonerApp(prisonerId: string, applicationId: string): Promise<Application | null> {
     try {
       return await this.restClient.get({

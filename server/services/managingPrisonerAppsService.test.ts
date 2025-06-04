@@ -7,6 +7,7 @@ const mockClientMethods = {
   addResponse: jest.fn(),
   changeApp: jest.fn(),
   forwardApp: jest.fn(),
+  getActiveAgencies: jest.fn(),
   getApps: jest.fn(),
   getComments: jest.fn(),
   getGroups: jest.fn(),
@@ -35,6 +36,15 @@ describe('ManagingPrisonerAppsService', () => {
   })
 
   afterEach(() => jest.clearAllMocks())
+
+  describe('getSupportedPrisonIds', () => {
+    it('should fetch a list of active establishments/agencies', async () => {
+      const result = await service.getSupportedPrisonIds(undefined)
+
+      expect(result).toBeUndefined()
+      expect(mockClientMethods.getActiveAgencies).toHaveBeenCalledWith()
+    })
+  })
 
   describe('getPrisonerApp', () => {
     it('should retrieve a prisoner application using the client', async () => {
