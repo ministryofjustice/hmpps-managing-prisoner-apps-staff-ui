@@ -3,10 +3,10 @@
 
 generic-service:
   ingress:
-    host: managing-prisoner-apps-staff-ui.hmpps.service.justice.gov.uk
+    host: managing-prisoner-apps-staff.hmpps.service.justice.gov.uk
 
   env:
-    INGRESS_URL: 'https://managing-prisoner-apps-staff-ui.hmpps.service.justice.gov.uk'
+    INGRESS_URL: 'https://managing-prisoner-apps-staff.hmpps.service.justice.gov.uk'
     HMPPS_AUTH_URL: 'https://sign-in.hmpps.service.justice.gov.uk/auth'
     TOKEN_VERIFICATION_API_URL: 'https://token-verification-api.prison.service.justice.gov.uk'
     COMPONENT_API_URL: 'https://frontend-components.hmpps.service.justice.gov.uk'
@@ -15,6 +15,11 @@ generic-service:
     HMPPS_MANAGE_USERS_API_URL: 'https://manage-users-api.hmpps.service.justice.gov.uk'
     MANAGING_PRISONER_APPS_API_URL: 'https://managing-prisoner-apps-api.hmpps.service.justice.gov.uk'
     AUDIT_ENABLED: 'false'
+
+  allowlist:
+    groups:
+      - internal
+      - prisons
 
 generic-prometheus-alerts:
   alertSeverity: hmpps-launchpad
