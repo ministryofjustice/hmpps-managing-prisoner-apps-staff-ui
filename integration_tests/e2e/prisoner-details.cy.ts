@@ -69,5 +69,11 @@ appTypes.forEach(appType => {
     it('should render the continue button with the correct text', () => {
       page.continueButton().should('exist').and('include.text', 'Continue').and('have.class', 'govuk-button--primary')
     })
+
+    it('should show an error if "Find prisoner" button is not clicked', () => {
+      page.prisonNumberInput().type('A1234AA')
+      page.continueButton().click()
+      cy.get('.govuk-error-message').should('exist').and('contain.text', 'Find prisoner to continue')
+    })
   })
 })
