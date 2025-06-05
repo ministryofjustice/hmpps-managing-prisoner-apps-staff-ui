@@ -7,6 +7,15 @@ import { BaseUser } from '../interfaces/hmppsUser'
 export default class ManagingPrisonerAppsService {
   constructor(private readonly hmppsAuthClient: HmppsAuthClient) {}
 
+  async getActiveAgencies(): Promise<string[]> {
+    return this.getSupportedPrisonIds(undefined)
+  }
+
+  async getSupportedPrisonIds(username: string): Promise<string[]> {
+    const token = await this.hmppsAuthClient.getSystemClientToken(username)
+    return new ManagingPrisonerAppsApiClient(token).getActiveAgencies()
+  }
+
   async getPrisonerApp(prisonerId: string, applicationId: string, user: BaseUser) {
     const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
     return new ManagingPrisonerAppsApiClient(token).getPrisonerApp(prisonerId, applicationId)

@@ -32,7 +32,7 @@ export default function createApp(services: Services): express.Application {
   app.locals.dpsUrl = config.dpsHome
 
   app.use(appInsightsMiddleware())
-  app.use(setUpHealthChecks(services.applicationInfo))
+  app.use(setUpHealthChecks(services.applicationInfo, services.managingPrisonerAppsService))
   app.use(setUpWebSecurity())
   app.use(setUpWebSession())
   app.use(setUpWebRequestParsing())
