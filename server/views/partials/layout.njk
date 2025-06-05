@@ -32,7 +32,7 @@
 {% endblock %}
 
 {% block footer %}
-    {% if feComponents.footer %}
+  {% if feComponents.footer %}
     {{ feComponents.footer | safe }}
   {% else %}
     {% include "./footer.njk" %}

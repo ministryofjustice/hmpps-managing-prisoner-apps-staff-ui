@@ -20,6 +20,16 @@ describe('ManagingPrisonerAppsApiClient', () => {
 
   afterEach(() => nock.cleanAll())
 
+  it('should fetch the active establishments/agencies', async () => {
+    fakeManagingPrisonerAppApi
+      .get('/v1/establishments')
+      .matchHeader('authorization', `Bearer ${user.token}`)
+      .reply(200, ['CKI'])
+
+    const output = await client.getActiveAgencies()
+    expect(output).toEqual(['CKI'])
+  })
+
   it('should retrieve a specific prisoner application by prisoner and application ID', async () => {
     fakeManagingPrisonerAppApi
       .get('/v1/prisoners/prisoner-id/apps/app-id?requestedBy=true&assignedGroup=true')
