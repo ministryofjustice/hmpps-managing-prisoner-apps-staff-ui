@@ -1,0 +1,131 @@
+{% extends "partials/layout.njk" %}
+
+{% set pageTitle = "Accessibility statement" %}
+
+{% block content %}
+  <div class="govuk-body govuk-width-container">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-half">
+
+        <h1 class="govuk-heading-xl govuk-!-margin-top-6">
+          Accessibility statement for Manage Applications 
+        </h1>
+
+        <p>(Holding statement for Private Beta-May 20 2025)</p>
+
+        <h2 class="govuk-heading-l">{{ pageTitle }}</h2>
+
+        <p>
+          This accessibility statement applies to the Manage applications service (part of Digital Prison Services).
+        </p>
+
+        <p>
+          This service is run by HM Prison and Probations Service (HMPPS). We want as many people as possible to be able to use this service. 
+          For example, that means you should be able to: 
+        </p>
+
+        <ul>
+          <li>change colours, contrast levels, and fonts using browser or device settings</li>
+          <li>navigate most of the service using a keyboard or speech recognition software</li>
+          <li>listen to most of the service using a screen reader (including the most recent versions of JAWS, NVDA, and VoiceOver)</li>
+        </ul>
+
+        <p>We’ve also made the service text as simple as possible to understand.</p>
+
+        <p>
+          <a href="https://mcmw.abilitynet.org.uk/" target="_blank">
+            AbilityNet
+          </a> has advice on making your device easier to use if you have a disability.
+        </p>
+
+        <h2 class="govuk-heading-l">How accessible this service is</h2>
+
+        <div class="govuk-inset-text">
+          <p>We know some parts of this website are not fully accessible</p>
+        </div>
+
+        <p>
+          This service will produce PDFs for print purposes. Future services may include an end-to-end digital solution, although printing PDFs may remain as an alternative.
+        </p> 
+
+        <p>
+          Keyboard users may find some weak colour contrast in the service when some controls are focused, 
+          and text in the primary navigation gets cut off at 400%. These issues are under review.
+        </p>
+
+        <h2 class="govuk-heading-l">Feedback and contact information</h2>
+
+        <p>
+          We’re always looking to improve the accessibility of this service. If you find any problems not listed on this page or think we’re not meeting accessibility requirements, contact: 
+          <a href="mailto:prisoner-digital-applications@justice.gov.uk">
+            prisoner-digital-applications@justice.gov.uk 
+          </a>
+        </p>
+
+        <h2 class="govuk-heading-l">Enforcement procedure</h2>
+
+        <p>
+          The Equality and Human Rights Commission (EHRC) is responsible for enforcing the Public Sector Bodies 
+          (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018 (the ‘accessibility regulations’). 
+          If you’re not happy with how we respond to your complaint, 
+          <a href="https://www.equalityadvisoryservice.com/" target="_blank">
+            contact the Equality Advisory and Support Service (EASS)
+          </a>.
+        </p>
+
+        <h2 class="govuk-heading-l">Technical information about this service’s accessibility</h2>
+
+        <p>
+          HM Prison and Probation Service is committed to making its website accessible, in accordance with the Public Sector Bodies 
+          (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018. 
+        </p>
+
+        <h2 class="govuk-heading-l">Compliance status</h2>
+
+        <p>
+          The website has been tested against the Web Content Accessibility Guidelines (WCAG) 2.2 AA standard.
+        </p>
+
+        <p>
+          This website is partially compliant with the 
+          <a href="https://www.w3.org/TR/WCAG22/" target="_blank">
+            Web Content Accessibility Guidelines version 2.2
+          </a> 
+          AA standard, due to ‘the non-compliances’ listed below. 
+        </p>
+
+        <h2 class="govuk-heading-m">Non-compliance with the accessibility regulations</h2>
+
+        <p>We know some parts of this service are not fully accessible:</p>
+
+        <ul>
+          <li>
+            Some areas have weak colour contrast when keyboard focus and hover is combined. This fails WCAG 2.2 success criterion 1.4.3 Contrast (Minimum).
+          </li>
+          <li>
+            Some text areas, eg ‘Menu’ und the Search button, may be cut off at 400% zoom, this is under review. This fails WCAG 2.2 success criterion 1.4.10 Reflow.
+          </li>
+          <li>
+            The datepicker and sortable table components have 
+            <a href="https://design-patterns.service.justice.gov.uk/components/date-picker/#:~:text=Accessibility%20issues" target="_blank">
+              known accessibility issues
+            </a>
+            and are in review. This fails WCAG 2.2 success criterion 2.4.7 Focus Visible.
+          </li>
+          <li>
+            Controls in the sub navigation have weak colour contrast on hover and are under review. This fails WCAG 2.2 success criterion 1.4.3 Contrast (Minimum).
+          </li>
+        </ul>
+
+        <h2 class="govuk-heading-l">Preparation of this accessibility statement</h2>
+        
+        <p>This statement was prepared on [May 20 2025]. It was last reviewed on [XXX XXX 2025 (pilot go live date)].</p>
+
+        <p>This service was last reviewed on April 2 2025 against the WCAG 2.2 AA standard.</p>
+        
+        <p>This review was carried out by the in-house Justice Digital accessibility team. </p>
+
+      </div>
+    </div>
+  </div>
+{% endblock %} 
