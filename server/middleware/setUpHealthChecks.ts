@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import express, { Router } from 'express'
 
 import { monitoringMiddleware, endpointHealthComponent } from '@ministryofjustice/hmpps-monitoring'
@@ -21,26 +22,19 @@ export default function setUpHealthChecks(
 
   router.get('/health', middleware.health)
 
-  router.get('/info', async (req, res) => {
-    try {
-      const activeAgencies = await managingPrisonerAppsService.getActiveAgencies()
-
-      res.json({
-        git: {
-          branch: applicationInfo.branchName,
-        },
-        build: {
-          artifact: applicationInfo.applicationName,
-          version: applicationInfo.buildNumber,
-          name: applicationInfo.applicationName,
-        },
-        productId: applicationInfo.productId,
-        activeAgencies,
-      })
-    } catch {
-      res.status(503).send()
-    }
-  })
+  router.get(
+    '/info',
+    async (req, res, next) => {
+      try {
+        const activeAgencies = await managingPrisonerAppsService.getActiveAgencies()
+        applicationInfo.additionalFields = { activeAgencies }
+        next()
+      } catch {
+        res.status(503).send()
+      }
+    },
+    middleware.info,
+  )
 
   router.get('/ping', middleware.ping)
 
