@@ -17,7 +17,6 @@ export default {
       },
     })
   },
-
   stubGetGroups: (): SuperAgentRequest => {
     return stubFor({
       request: {
@@ -31,7 +30,6 @@ export default {
       },
     })
   },
-
   stubGetAppResponse: ({ app }: { app: Application }): SuperAgentRequest => {
     return stubFor({
       request: {
@@ -45,7 +43,6 @@ export default {
       },
     })
   },
-
   stubGetComments: ({ app }: { app: Application }): SuperAgentRequest => {
     return stubFor({
       request: {
@@ -59,7 +56,6 @@ export default {
       },
     })
   },
-
   stubGetHistory: ({ app }: { app: Application }): SuperAgentRequest => {
     return stubFor({
       request: {
@@ -70,6 +66,31 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: new TestData().historyResponse,
+      },
+    })
+  },
+  stubGetActiveAgencies: (): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        url: '/managingPrisonerApps/v1/establishments',
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: new TestData().supportedPrisonIds,
+      },
+    })
+  },
+  stubGetActiveAgenciesError: (): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        url: '/managingPrisonerApps/v1/establishments',
+      },
+      response: {
+        status: 500,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       },
     })
   },

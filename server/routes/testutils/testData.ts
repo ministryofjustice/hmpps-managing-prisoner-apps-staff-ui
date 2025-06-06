@@ -287,4 +287,6 @@ export default class TestData {
       createdDate: '2025-05-13T10:17:36Z',
     },
   ]
+
+  supportedPrisonIds = ({ prisonIds = ['HEI', 'BLI'] } = {}): string[] => prisonIds
 }

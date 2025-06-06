@@ -129,9 +129,8 @@ const token = (userToken: UserToken) =>
 export default {
   getSignInUrl,
   stubAuthPing: ping,
+  stubAuthToken: token,
   stubAuthManageDetails: manageDetails,
-  stubSignIn: (
-    userToken = { roles: ['ROLE_MANAGING_PRISONER_APPS'] },
-  ): Promise<[Response, Response, Response, Response, Response]> =>
+  stubSignIn: (userToken = { roles: ['ROLE_PRISON'] }): Promise<[Response, Response, Response, Response, Response]> =>
     Promise.all([favicon(), redirect(), signOut(), token(userToken), tokenVerification.stubVerifyToken()]),
 }

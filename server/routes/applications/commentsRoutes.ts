@@ -5,6 +5,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { getApplicationType } from '../../utils/getApplicationType'
+import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { validateTextField } from '../validate/validateTextField'
 
 export default function commentsRoutes({
@@ -19,20 +20,16 @@ export default function commentsRoutes({
   router.get(
     '/applications/:prisonerId/:applicationId/comments',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { prisonerId, applicationId } = req.params
+      const { prisonerId } = req.params
       const { user } = res.locals
 
-      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
-
-      if (!application) {
-        return res.redirect(`/applications`)
-      }
-
-      const applicationType = getApplicationType(application.appType)
-
-      if (!applicationType) {
-        return res.redirect(`/applications?error=unknown-type`)
-      }
+      const { application, applicationType } = await getValidApplicationOrRedirect(
+        req,
+        res,
+        auditService,
+        managingPrisonerAppsService,
+        Page.COMMENTS_PAGE,
+      )
 
       const comments = await managingPrisonerAppsService.getComments(prisonerId, application.id, user)
 
@@ -45,11 +42,6 @@ export default function commentsRoutes({
             time: format(createdDate, 'HH:mm'),
           }
         }) ?? []
-
-      await auditService.logPageView(Page.COMMENTS_PAGE, {
-        who: res.locals.user.username,
-        correlationId: req.id,
-      })
 
       return res.render(`pages/applications/comments/index`, {
         application,

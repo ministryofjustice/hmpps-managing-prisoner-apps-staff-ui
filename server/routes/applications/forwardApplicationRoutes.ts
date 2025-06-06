@@ -4,6 +4,7 @@ import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { getApplicationType } from '../../utils/getApplicationType'
 import { validateForwardingApplication } from '../validate/validateForwardingApplication'
+import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 
 export default function forwardApplicationRoutes({
   auditService,
@@ -17,26 +18,17 @@ export default function forwardApplicationRoutes({
   router.get(
     '/applications/:prisonerId/:applicationId/forward',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { prisonerId, applicationId } = req.params
       const { user } = res.locals
 
-      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
+      const { application, applicationType } = await getValidApplicationOrRedirect(
+        req,
+        res,
+        auditService,
+        managingPrisonerAppsService,
+        Page.FORWARD_APPLICATION_PAGE,
+      )
+
       const groups = await managingPrisonerAppsService.getGroups(user)
-
-      if (!application) {
-        return res.redirect(`/applications`)
-      }
-
-      await auditService.logPageView(Page.FORWARD_APPLICATION_PAGE, {
-        who: user.username,
-        correlationId: req.id,
-      })
-
-      const applicationType = getApplicationType(application.appType)
-
-      if (!applicationType) {
-        return res.redirect(`/applications?error=unknown-type`)
-      }
 
       const departments = groups
         .filter(group => group.id !== application.assignedGroup.id)
