@@ -2,7 +2,6 @@ import { Request, Response, Router } from 'express'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
-import { getApplicationType } from '../../utils/getApplicationType'
 import formatApplicationHistory from '../../utils/formatApplicationHistory'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 
