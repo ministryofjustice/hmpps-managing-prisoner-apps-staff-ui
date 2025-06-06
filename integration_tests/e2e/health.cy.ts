@@ -4,6 +4,8 @@ context('Healthcheck', () => {
       cy.task('reset')
       cy.task('stubAuthPing')
       cy.task('stubTokenVerificationPing')
+
+      cy.task('stubAuthToken', {})
     })
 
     it('Health check page is visible and UP', () => {
@@ -14,7 +16,9 @@ context('Healthcheck', () => {
       cy.request('/ping').its('body.status').should('equal', 'UP')
     })
 
-    it('Info is visible', () => {
+    it('Info is visible and should contain activeAgencies', () => {
+      cy.task('stubGetActiveAgenciesError')
+
       cy.request('/info').its('body').should('exist')
     })
   })
