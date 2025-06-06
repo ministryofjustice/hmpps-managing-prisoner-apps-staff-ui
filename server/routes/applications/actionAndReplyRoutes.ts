@@ -9,6 +9,7 @@ import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsServ
 import { getApplicationType } from '../../utils/getApplicationType'
 import { convertToTitleCase } from '../../utils/utils'
 import { validateActionAndReply } from '../validate/validateActionAndReply'
+import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 
 export default function actionAndReplyRoutes({
   auditService,
@@ -25,22 +26,13 @@ export default function actionAndReplyRoutes({
       const { prisonerId, applicationId } = req.params
       const { user } = res.locals
 
-      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
-
-      if (!application) {
-        return res.redirect(`/applications`)
-      }
-
-      await auditService.logPageView(Page.ACTION_AND_REPLY_PAGE, {
-        who: res.locals.user.username,
-        correlationId: req.id,
-      })
-
-      const applicationType = getApplicationType(application.appType)
-
-      if (!applicationType) {
-        return res.redirect(`/applications?error=unknown-type`)
-      }
+      const { application, applicationType } = await getValidApplicationOrRedirect(
+        req,
+        res,
+        auditService,
+        managingPrisonerAppsService,
+        Page.ACTION_AND_REPLY_PAGE,
+      )
 
       const isAppPending = application.status === APPLICATION_STATUS.PENDING
 

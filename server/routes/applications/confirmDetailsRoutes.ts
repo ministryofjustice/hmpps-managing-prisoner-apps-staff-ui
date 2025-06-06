@@ -21,16 +21,16 @@ export default function confirmDetailsRoutes({
     asyncMiddleware(async (req: Request, res: Response) => {
       const { applicationData } = req.session
 
-      await auditService.logPageView(Page.CONFIRM_DETAILS_PAGE, {
-        who: res.locals.user.username,
-        correlationId: req.id,
-      })
-
       const applicationType = getApplicationType(applicationData?.type.apiValue)
 
       if (!applicationType) {
         return res.redirect(URLS.APPLICATION_TYPE)
       }
+
+      await auditService.logPageView(Page.CONFIRM_DETAILS_PAGE, {
+        who: res.locals.user.username,
+        correlationId: req.id,
+      })
 
       return res.render(`pages/log-application/confirm/index`, {
         applicationData: {
