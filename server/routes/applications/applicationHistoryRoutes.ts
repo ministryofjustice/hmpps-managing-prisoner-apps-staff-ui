@@ -4,6 +4,7 @@ import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { getApplicationType } from '../../utils/getApplicationType'
 import formatApplicationHistory from '../../utils/formatApplicationHistory'
+import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 
 export default function applicationHistoryRoutes({
   auditService,
@@ -19,22 +20,13 @@ export default function applicationHistoryRoutes({
       const { prisonerId, applicationId } = req.params
       const { user } = res.locals
 
-      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
-
-      if (!application) {
-        return res.redirect(`/applications`)
-      }
-
-      await auditService.logPageView(Page.APPLICATION_HISTORY_PAGE, {
-        who: res.locals.user.username,
-        correlationId: req.id,
-      })
-
-      const applicationType = getApplicationType(application.appType)
-
-      if (!applicationType) {
-        return res.redirect(`/applications?error=unknown-type`)
-      }
+      const { application, applicationType } = await getValidApplicationOrRedirect(
+        req,
+        res,
+        auditService,
+        managingPrisonerAppsService,
+        Page.APPLICATION_HISTORY_PAGE,
+      )
 
       const history = (await managingPrisonerAppsService.getHistory(prisonerId, applicationId, user)) || []
 

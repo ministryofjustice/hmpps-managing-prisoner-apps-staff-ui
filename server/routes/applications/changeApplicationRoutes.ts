@@ -4,8 +4,9 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { getApplicationType } from '../../utils/getApplicationType'
-import { handleApplicationDetails } from '../../utils/handleAppDetails'
 import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
+import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
+import { handleApplicationDetails } from '../../utils/handleAppDetails'
 
 export default function changeApplicationRoutes({
   auditService,
@@ -21,24 +22,14 @@ export default function changeApplicationRoutes({
     asyncMiddleware(async (req: Request, res: Response) => {
       const { prisonerId, applicationId } = req.params
       const { applicationData } = req.session
-      const { user } = res.locals
 
-      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
-
-      if (!application) {
-        return res.redirect(`/applications`)
-      }
-
-      await auditService.logPageView(Page.CHANGE_APPLICATION_PAGE, {
-        who: user.username,
-        correlationId: req.id,
-      })
-
-      const applicationType = getApplicationType(application.appType)
-
-      if (!applicationType) {
-        return res.redirect(`/applications?error=unknown-type`)
-      }
+      const { application, applicationType } = await getValidApplicationOrRedirect(
+        req,
+        res,
+        auditService,
+        managingPrisonerAppsService,
+        Page.CHANGE_APPLICATION_PAGE,
+      )
 
       const additionalData = applicationData?.additionalData || {}
       const formData = getAppTypeLogDetailsData(applicationType, additionalData)
@@ -81,28 +72,14 @@ export default function changeApplicationRoutes({
     asyncMiddleware(async (req: Request, res: Response) => {
       const { prisonerId, applicationId } = req.params
       const { applicationData } = req.session
-      const { user } = res.locals
 
-      if (!applicationData) {
-        return res.redirect(`/applications/${prisonerId}/${applicationId}/change?error=session-expired`)
-      }
-
-      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
-
-      if (!application) {
-        return res.redirect(`/applications`)
-      }
-
-      const applicationType = getApplicationType(application.appType)
-
-      if (!applicationType) {
-        return res.redirect(`/applications?error=unknown-type`)
-      }
-
-      await auditService.logPageView(Page.CHANGE_APPLICATION_PAGE, {
-        who: user.username,
-        correlationId: req.id,
-      })
+      const { application, applicationType } = await getValidApplicationOrRedirect(
+        req,
+        res,
+        auditService,
+        managingPrisonerAppsService,
+        Page.CHANGE_APPLICATION_PAGE,
+      )
 
       return res.render(`pages/log-application/confirm/index`, {
         application,
@@ -151,27 +128,13 @@ export default function changeApplicationRoutes({
   router.get(
     '/applications/:prisonerId/:applicationId/change/submit',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { applicationId, prisonerId } = req.params
-      const { user } = res.locals
-
-      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
-
-      if (!application) {
-        res.redirect('/applications')
-        return
-      }
-
-      const applicationType = getApplicationType(application.appType)
-
-      if (!applicationType) {
-        res.redirect('/applications?error=unknown-type')
-        return
-      }
-
-      await auditService.logPageView(Page.SUBMIT_APPLICATION_CHANGE_PAGE, {
-        who: res.locals.user.username,
-        correlationId: req.id,
-      })
+      const { application, applicationType } = await getValidApplicationOrRedirect(
+        req,
+        res,
+        auditService,
+        managingPrisonerAppsService,
+        Page.SUBMIT_APPLICATION_CHANGE_PAGE,
+      )
 
       res.render(`pages/log-application/submit/index`, {
         title: applicationType.name,

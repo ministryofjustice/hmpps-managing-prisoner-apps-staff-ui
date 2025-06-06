@@ -20,6 +20,7 @@ import { convertToTitleCase } from '../../utils/utils'
 import config from '../../config'
 
 import logger from '../../../logger'
+import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 
 export default function viewApplicationRoutes({
   auditService,
@@ -165,25 +166,13 @@ export default function viewApplicationRoutes({
   router.get(
     '/applications/:prisonerId/:applicationId',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { prisonerId, applicationId } = req.params
-      const { user } = res.locals
-
-      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
-
-      if (!application) {
-        return res.redirect(`/applications`)
-      }
-
-      const applicationType = getApplicationType(application.appType)
-
-      if (!applicationType) {
-        return res.redirect(`/applications?error=unknown-type`)
-      }
-
-      await auditService.logPageView(Page.VIEW_APPLICATION_PAGE, {
-        who: user.username,
-        correlationId: req.id,
-      })
+      const { application, applicationType } = await getValidApplicationOrRedirect(
+        req,
+        res,
+        auditService,
+        managingPrisonerAppsService,
+        Page.VIEW_APPLICATION_PAGE,
+      )
 
       return res.render('pages/applications/view/index', {
         title: applicationType.name,
