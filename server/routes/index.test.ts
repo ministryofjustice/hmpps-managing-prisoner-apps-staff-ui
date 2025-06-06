@@ -37,3 +37,15 @@ describe('GET /', () => {
       })
   })
 })
+
+describe('GET /accessibility-statement', () => {
+  it('should render accessibility statement page', () => {
+    return request(app)
+      .get('/accessibility-statement')
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('Accessibility statement for Manage Applications')
+      })
+  })
+})
