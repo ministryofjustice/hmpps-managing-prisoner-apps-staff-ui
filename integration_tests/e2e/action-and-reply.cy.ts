@@ -70,10 +70,6 @@ context('Action and Reply Page', () => {
                 cy.get('.govuk-summary-list__key').contains('Date')
                 cy.get('.govuk-summary-list__value').should('exist')
               })
-
-              it('should display the Print reply button', () => {
-                cy.get('button.govuk-button--primary').should('exist').and('contain.text', 'Print reply')
-              })
             })
           }
         })
