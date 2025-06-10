@@ -36,6 +36,7 @@ export default function prisonerDetailsRoutes({
         prisonNumber: prisonerId,
         dateString: formattedDate,
         errors: null,
+        prisonerName: req.session.applicationData.prisonerName || '',
       })
     }),
   )
@@ -59,7 +60,7 @@ export default function prisonerDetailsRoutes({
       }
 
       res.json({
-        prisonerName: `${prisoner[0].firstName} ${prisoner[0].lastName}`,
+        prisonerName: `${prisoner[0].lastName}, ${prisoner[0].firstName}`,
       })
     }),
   )
@@ -71,7 +72,7 @@ export default function prisonerDetailsRoutes({
 
       const errors = validatePrisonerDetails(prisonNumber, dateString)
 
-      if (prisonerLookupButton !== 'true') {
+      if (prisonerLookupButton !== 'true' && !req.session.applicationData.prisonerName) {
         errors.prisonerLookupButton = { text: 'Find prisoner to continue' }
       }
 
@@ -80,7 +81,8 @@ export default function prisonerDetailsRoutes({
         if (!prisoner || prisoner.length === 0) {
           errors.prisonNumber = { text: 'Enter a valid prison number' }
         } else {
-          req.body.prisonerName = `${prisoner[0].lastName} ${prisoner[0].firstName}`
+          req.body.prisonerName = `${prisoner[0].lastName}, ${prisoner[0].firstName}`
+          req.session.applicationData.prisonerName = req.body.prisonerName
         }
       }
 
@@ -90,6 +92,8 @@ export default function prisonerDetailsRoutes({
           prisonNumber,
           dateString,
           errors,
+          prisonerName: req.body.prisonerName || '',
+          prisonerLookupButton,
         })
       }
 

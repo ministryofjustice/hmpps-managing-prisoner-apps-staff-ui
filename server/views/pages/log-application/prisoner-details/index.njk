@@ -46,8 +46,8 @@
 
         <form method="POST" id="log-prisoner-details">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-          <input type="hidden" name="prisonerLookupButton" id="prisoner-lookup-button" value="false">
-
+          <input type="hidden" name="prisonerLookupButton" id="prisoner-lookup-button" value="{{ prisonerLookupButton | default('false') }}" />
+          
           <div class="govuk-form-group govuk-!-margin-bottom-0 {% if errors.prisonNumber %} govuk-form-group--error {% endif %}">
             <label class="govuk-label govuk-label--s" for="prisonNumber">
               Prison number
@@ -77,9 +77,17 @@
             </button>
           </div>
 
+          {% if prisonerName %}
+            {% set insetText = "Prisoner name: " + prisonerName %}
+            {% set insetClasses = "govuk-!-margin-top-0" %}
+          {% else %}
+            {% set insetText = "" %}
+            {% set insetClasses = "govuk-!-margin-top-0 govuk-!-display-none" %}
+          {% endif %}
+
           {{ govukInsetText({
-            text: "",
-            classes: "govuk-!-margin-top-0 govuk-!-display-none",
+            text: insetText,
+            classes: insetClasses,
             attributes: { 
               id: "prisoner-name-display", 
               "aria-live": "assertive",
@@ -87,7 +95,7 @@
             }
           }) }}
 
-          <input type="hidden" id="prisoner-name" name="prisonerName" value="">
+          <input type="hidden" id="prisoner-name" name="prisonerName" value="{{ prisonerName | default('') }}">
 
           {{ mojDatePicker({
             id: "date",
