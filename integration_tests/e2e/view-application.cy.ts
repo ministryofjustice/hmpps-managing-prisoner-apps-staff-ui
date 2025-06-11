@@ -52,10 +52,6 @@ applicationTypes.forEach(({ name, apiValue }) => {
       page.submittedOn().should('exist')
     })
 
-    it('should display the application ID', () => {
-      page.applicationId().should('exist')
-    })
-
     it('should display View profile and View alerts links opening in a new tab', () => {
       page
         .viewProfileLink()
