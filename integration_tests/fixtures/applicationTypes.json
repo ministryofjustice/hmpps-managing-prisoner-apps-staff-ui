@@ -1,17 +1,15 @@
 {
   "applicationTypes": [
     {
+      "name": "Add new social PIN phone contact",
+      "value": "add-social-pin-phone-contact",
+      "apiValue": "PIN_PHONE_ADD_NEW_CONTACT"
+    },
+    {
       "name": "Add emergency PIN phone credit",
       "value": "add-emergency-pin-phone-credit",
       "apiValue": "PIN_PHONE_EMERGENCY_CREDIT_TOP_UP",
       "type": "amount",
-      "hint": "Add a brief summary"
-    },
-    {
-      "name": "Supply list of PIN phone contacts",
-      "value": "supply-list-of-pin-phone-contacts",
-      "apiValue": "PIN_PHONE_SUPPLY_LIST_OF_CONTACTS",
-      "type": "textarea",
       "hint": "Add a brief summary"
     },
     {
@@ -22,9 +20,11 @@
       "hint": "Add a brief summary, for example, if this person is a Foreign National"
     },
     {
-      "name": "Add new social PIN phone contact",
-      "value": "add-social-pin-phone-contact",
-      "apiValue": "PIN_PHONE_ADD_NEW_CONTACT"
+      "name": "Supply list of PIN phone contacts",
+      "value": "supply-list-of-pin-phone-contacts",
+      "apiValue": "PIN_PHONE_SUPPLY_LIST_OF_CONTACTS",
+      "type": "textarea",
+      "hint": "Add a brief summary"
     }
   ]
 }
