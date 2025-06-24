@@ -3,6 +3,7 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 
 {%- from "moj/components/date-picker/macro.njk" import mojDatePicker -%}
 
@@ -35,13 +36,17 @@
             {% set errorList = errorList.concat([{ text: errors.dateString.text, href: "#date" }]) %}
           {% endif %}
 
+          {% if errors.earlyDaysCentre %}
+            {% set errorList = errorList.concat([{ text: errors.earlyDaysCentre.text, href: "#earlyDaysCentre" }]) %}
+          {% endif %}
+
           {{ govukErrorSummary({
             titleText: "There is a problem",
             errorList: errorList
           }) }}
         {% endif %}
 
-        <span class="govuk-caption-xl">{{ appTypeTitle }}</span>
+        <span class="govuk-caption-xl">{{ applicationType.name }}</span>
         <h1 class="govuk-heading-xl govuk-!-margin-top-0">Log prisoner details</h1>
 
         <form method="POST" id="log-prisoner-details">
@@ -107,6 +112,32 @@
             errorMessage: { text: errors.dateString.text } if errors.dateString.text else undefined,
             value: dateString | default('')
           }) }}
+
+          {% if applicationType.value === 'add-social-pin-phone-contact' %}
+            {{ govukRadios({
+              classes: "govuk-radios--inline",
+              name: "earlyDaysCentre",
+              fieldset: {
+                legend: {
+                  text: "Is this person in the first night or early days centre?",
+                  isPageHeading: false,
+                  classes: "govuk-fieldset__legend--s"
+                }
+              },
+              items: [
+                {
+                  value: "yes",
+                  text: "Yes"
+                },
+                {
+                  value: "no",
+                  text: "No"
+                }
+              ],
+              value: earlyDaysCentre or '',
+              errorMessage: { text: errors.earlyDaysCentre.text } if errors.earlyDaysCentre else undefined
+            }) }}
+          {% endif %}
 
           {{ govukButton({
             text: "Continue",

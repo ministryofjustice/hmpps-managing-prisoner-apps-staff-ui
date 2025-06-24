@@ -10,7 +10,7 @@ const isValidDate = (dateString: string): boolean => {
   return isValid(parsedDate)
 }
 
-const validatePrisonerDetails = (prisonNumber: string, dateString: string) => {
+const validatePrisonerDetails = (prisonNumber: string, dateString: string, earlyDaysCentre: boolean) => {
   const errors: Record<string, { text: string }> = {}
 
   if (!prisonNumber || !isValidPrisonNumber(prisonNumber)) {
@@ -19,6 +19,10 @@ const validatePrisonerDetails = (prisonNumber: string, dateString: string) => {
 
   if (!dateString || !isValidDate(dateString)) {
     errors.dateString = { text: 'Enter or select a valid date' }
+  }
+
+  if (!earlyDaysCentre) {
+    errors.earlyDaysCentre = { text: 'Select if this person is in the first night or early days centre' }
   }
 
   return errors

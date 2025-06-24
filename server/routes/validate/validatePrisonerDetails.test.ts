@@ -1,58 +1,66 @@
 import validatePrisonerDetails from './validatePrisonerDetails'
 
 describe('validatePrisonerDetails', () => {
-  it('should return an empty object when there are no errors', () => {
-    const errors = validatePrisonerDetails('A1234CC', '10/04/2023')
+  const VALID_PRISON_NUMBER = 'A1234CC'
+  const VALID_DATE = '10/04/2023'
 
-    expect(errors).toEqual({})
-  })
+  const ERRORS = {
+    prisonNumber: { text: 'Enter a valid prison number' },
+    dateString: { text: 'Enter or select a valid date' },
+    earlyDaysCentre: { text: 'Select if this person is in the first night or early days centre' },
+  }
 
-  it('should return an error for missing prisonNumber', () => {
-    const errors = validatePrisonerDetails('', '10/04/2023')
-
-    expect(errors).toEqual({
-      prisonNumber: { text: 'Enter a valid prison number' },
+  describe('when inputs are valid', () => {
+    it('returns no errors', () => {
+      const errors = validatePrisonerDetails(VALID_PRISON_NUMBER, VALID_DATE, true)
+      expect(errors).toEqual({})
     })
   })
 
-  it('should return an error for invalid prisonNumber', () => {
-    const errors = validatePrisonerDetails('A12345CC', '10/04/2023')
+  describe('prisonNumber validation', () => {
+    it('returns an error if prisonNumber is missing', () => {
+      const errors = validatePrisonerDetails('', VALID_DATE, true)
+      expect(errors).toEqual({ prisonNumber: ERRORS.prisonNumber })
+    })
 
-    expect(errors).toEqual({
-      prisonNumber: { text: 'Enter a valid prison number' },
+    it('returns an error if prisonNumber format is invalid', () => {
+      const errors = validatePrisonerDetails('A12345CC', VALID_DATE, true)
+      expect(errors).toEqual({ prisonNumber: ERRORS.prisonNumber })
+    })
+
+    it('returns an error if prisonNumber contains lowercase letters', () => {
+      const errors = validatePrisonerDetails('a1234bc', VALID_DATE, true)
+      expect(errors).toEqual({ prisonNumber: ERRORS.prisonNumber })
     })
   })
 
-  it('should return an error for prison number with lowercase letters', () => {
-    const errors = validatePrisonerDetails('a1234bc', '10/04/2023')
+  describe('dateString validation', () => {
+    it('returns an error if dateString format is invalid', () => {
+      const errors = validatePrisonerDetails(VALID_PRISON_NUMBER, '2023-04-10', true)
+      expect(errors).toEqual({ dateString: ERRORS.dateString })
+    })
 
-    expect(errors).toEqual({
-      prisonNumber: { text: 'Enter a valid prison number' },
+    it('returns an error if dateString is missing', () => {
+      const errors = validatePrisonerDetails(VALID_PRISON_NUMBER, '', true)
+      expect(errors).toEqual({ dateString: ERRORS.dateString })
     })
   })
 
-  it('should return an error for invalid date format', () => {
-    const errors = validatePrisonerDetails('A1234CC', '2023-04-10')
-
-    expect(errors).toEqual({
-      dateString: { text: 'Enter or select a valid date' },
+  describe('earlyDaysCentre validation', () => {
+    it('returns an error if earlyDaysCentre is undefined', () => {
+      const errors = validatePrisonerDetails(VALID_PRISON_NUMBER, VALID_DATE, undefined)
+      expect(errors).toEqual({ earlyDaysCentre: ERRORS.earlyDaysCentre })
     })
   })
 
-  it('should return an error for missing date field', () => {
-    const errors = validatePrisonerDetails('A1234CC', '')
-
-    expect(errors).toEqual({
-      dateString: { text: 'Enter or select a valid date' },
-    })
-  })
-
-  it('should return errors for both missing prisonNumber and dateString', () => {
-    const errors = validatePrisonerDetails('', '')
-
-    expect(errors).toEqual({
-      prisonNumber: { text: 'Enter a valid prison number' },
-      dateString: { text: 'Enter or select a valid date' },
+  describe('when multiple fields are invalid', () => {
+    it('returns all relevant errors', () => {
+      const errors = validatePrisonerDetails('', '', undefined)
+      expect(errors).toEqual({
+        prisonNumber: ERRORS.prisonNumber,
+        dateString: ERRORS.dateString,
+        earlyDaysCentre: ERRORS.earlyDaysCentre,
+      })
     })
   })
 })
