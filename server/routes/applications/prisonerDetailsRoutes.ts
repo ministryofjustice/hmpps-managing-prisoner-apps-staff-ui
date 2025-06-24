@@ -78,7 +78,7 @@ export default function prisonerDetailsRoutes({
       const { applicationData } = req.session
 
       const applicationType = getApplicationType(applicationData?.type.apiValue)
-      const errors = validatePrisonerDetails(prisonNumber, dateString, earlyDaysCentre)
+      const errors = validatePrisonerDetails(applicationType, prisonNumber, dateString, earlyDaysCentre)
 
       if (prisonerLookupButton !== 'true' && !req.session.applicationData.prisonerName && !errors.prisonNumber) {
         errors.prisonerLookupButton = { text: 'Find prisoner to continue' }
