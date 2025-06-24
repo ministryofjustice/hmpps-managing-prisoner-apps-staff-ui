@@ -2,7 +2,7 @@ import { APPLICATION_TYPES } from '../../constants/applicationTypes'
 import validatePrisonerDetails from './validatePrisonerDetails'
 
 describe('validatePrisonerDetails', () => {
-  const APPLICATION_TYPE = APPLICATION_TYPES.find(type => type.apiValue === 'PIN_PHONE_SOCIAL_CONTACT')!
+  const APPLICATION_TYPE = APPLICATION_TYPES.find(type => type.apiValue === 'PIN_PHONE_ADD_NEW_CONTACT')!
   const VALID_PRISON_NUMBER = 'A1234CC'
   const VALID_DATE = '10/04/2023'
 

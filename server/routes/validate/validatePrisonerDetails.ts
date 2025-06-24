@@ -27,7 +27,7 @@ const validatePrisonerDetails = (
     errors.dateString = { text: 'Enter or select a valid date' }
   }
 
-  if (!earlyDaysCentre && applicationType.value === APPLICATION_TYPE_VALUES.PIN_PHONE_SOCIAL_CONTACT) {
+  if (!earlyDaysCentre && applicationType.value === APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_CONTACT) {
     errors.earlyDaysCentre = { text: 'Select if this person is in the first night or early days centre' }
   }
 

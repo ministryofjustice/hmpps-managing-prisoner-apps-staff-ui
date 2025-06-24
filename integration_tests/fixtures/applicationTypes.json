@@ -20,6 +20,11 @@
       "apiValue": "PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS",
       "type": "textarea",
       "hint": "Add a brief summary, for example, if this person is a Foreign National"
+    },
+    {
+      "name": "Add new social PIN phone contact",
+      "value": "add-social-pin-phone-contact",
+      "apiValue": "PIN_PHONE_ADD_NEW_CONTACT"
     }
   ]
 }
