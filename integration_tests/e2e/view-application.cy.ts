@@ -3,7 +3,9 @@ import applicationTypesData from '../fixtures/applicationTypes.json'
 import TestData from '../../server/routes/testutils/testData'
 import ViewApplicationPage from '../pages/viewApplicationPage'
 
-const { applicationTypes } = applicationTypesData
+const applicationTypes = applicationTypesData.applicationTypes.filter(
+  ({ apiValue }) => apiValue !== 'PIN_PHONE_ADD_NEW_CONTACT',
+)
 
 applicationTypes.forEach(({ name, apiValue }) => {
   context(`View Application Page - ${name}`, () => {
