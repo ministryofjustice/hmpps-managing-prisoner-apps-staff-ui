@@ -5,6 +5,7 @@ import AuditService, { Page } from '../../services/auditService'
 import PrisonService from '../../services/prisonService'
 import { updateSessionData } from '../../utils/session'
 import validatePrisonerDetails from '../validate/validatePrisonerDetails'
+import { getApplicationType } from '../../utils/getApplicationType'
 
 export default function prisonerDetailsRoutes({
   auditService,
@@ -18,22 +19,27 @@ export default function prisonerDetailsRoutes({
   router.get(
     '/log/prisoner-details',
     asyncMiddleware(async (req: Request, res: Response) => {
+      const { applicationData } = req.session
+
       await auditService.logPageView(Page.LOG_PRISONER_DETAILS_PAGE, {
         who: res.locals.user.username,
         correlationId: req.id,
       })
 
-      if (!req.session.applicationData?.type) {
+      const applicationType = getApplicationType(applicationData?.type.apiValue)
+
+      if (!applicationType) {
         return res.redirect('/log/application-type')
       }
 
-      const { prisonerId, date } = req.session.applicationData
-      const formattedDate = date ? new Intl.DateTimeFormat('en-GB').format(new Date(date)) : ''
+      const formattedDate = applicationData.date
+        ? new Intl.DateTimeFormat('en-GB').format(new Date(applicationData.date))
+        : ''
 
       return res.render('pages/log-application/prisoner-details/index', {
         title: 'Log prisoner details',
-        appTypeTitle: req.session.applicationData.type.name,
-        prisonNumber: prisonerId,
+        applicationType,
+        prisonNumber: applicationData.prisonerId,
         dateString: formattedDate,
         errors: null,
         prisonerName: req.session.applicationData.prisonerName || '',
@@ -68,16 +74,19 @@ export default function prisonerDetailsRoutes({
   router.post(
     '/log/prisoner-details',
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { prisonNumber, date: dateString, prisonerLookupButton } = req.body
+      const { prisonNumber, date: dateString, earlyDaysCentre, prisonerLookupButton } = req.body
+      const { applicationData } = req.session
 
-      const errors = validatePrisonerDetails(prisonNumber, dateString)
+      const applicationType = getApplicationType(applicationData?.type.apiValue)
+      const errors = validatePrisonerDetails(applicationType, prisonNumber, dateString, earlyDaysCentre)
 
-      if (prisonerLookupButton !== 'true' && !req.session.applicationData.prisonerName) {
+      if (prisonerLookupButton !== 'true' && !req.session.applicationData.prisonerName && !errors.prisonNumber) {
         errors.prisonerLookupButton = { text: 'Find prisoner to continue' }
       }
 
       if (Object.keys(errors).length === 0) {
         const prisoner = await prisonService.getPrisonerByPrisonNumber(prisonNumber, res.locals.user)
+
         if (!prisoner || prisoner.length === 0) {
           errors.prisonNumber = { text: 'Enter a valid prison number' }
         } else {
@@ -88,9 +97,10 @@ export default function prisonerDetailsRoutes({
 
       if (Object.keys(errors).length > 0) {
         return res.render('pages/log-application/prisoner-details/index', {
-          appTypeTitle: req.session.applicationData.type.name,
+          applicationType,
           prisonNumber,
           dateString,
+          earlyDaysCentre,
           errors,
           prisonerName: req.body.prisonerName || '',
           prisonerLookupButton,
@@ -119,6 +129,7 @@ export default function prisonerDetailsRoutes({
         prisonerName: req.body.prisonerName,
         date,
         prisonerId: prisonNumber,
+        earlyDaysCentre,
       })
 
       return res.redirect(`/log/application-details`)

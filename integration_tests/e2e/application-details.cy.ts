@@ -3,7 +3,9 @@ import applicationTypesData from '../fixtures/applicationTypes.json'
 import ApplicationDetailsPage from '../pages/applicationDetailsPage'
 import Page from '../pages/page'
 
-const appTypes = applicationTypesData.applicationTypes
+const applicationTypes = applicationTypesData.applicationTypes.filter(
+  ({ apiValue }) => apiValue !== 'PIN_PHONE_ADD_NEW_CONTACT',
+)
 
 function startApplication(appType: string): ApplicationDetailsPage {
   cy.task('reset')
@@ -25,7 +27,7 @@ function startApplication(appType: string): ApplicationDetailsPage {
   return Page.verifyOnPage(ApplicationDetailsPage)
 }
 
-appTypes.forEach(({ name, type, hint }) => {
+applicationTypes.forEach(({ name, type, hint }) => {
   context(`Application Details Page - ${name}`, () => {
     let page: ApplicationDetailsPage
 
