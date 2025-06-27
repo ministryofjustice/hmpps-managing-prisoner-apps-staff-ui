@@ -4,6 +4,10 @@
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -32,6 +36,34 @@
 
           {% if errors.Reason %}
             {% set errorList = errorList.concat([{ text: errors.Reason.text, href: "#reason" }]) %}
+          {% endif %}
+
+          {% if errors.firstName %}
+            {% set errorList = errorList.concat([{ text: errors.firstName.text, href: "#firstName" }]) %}
+          {% endif %}
+
+          {% if errors.lastName %}
+            {% set errorList = errorList.concat([{ text: errors.lastName.text, href: "#lastName" }]) %}
+          {% endif %}
+
+          {% if errors.dateOfBirthOrAge %}
+            {% set errorList = errorList.concat([{ text: errors.dateOfBirthOrAge.text, href: "#dateOfBirthOrAge" }]) %}
+          {% endif %}
+
+          {% if errors.dob %}
+            {% set errorList = errorList.concat([{ text: errors.dob.text, href: "#dob" }]) %}
+          {% endif %}
+
+          {% if errors.age %}
+            {% set errorList = errorList.concat([{ text: errors.age.text, href: "#age" }]) %}
+          {% endif %}
+
+          {% if errors.relationship %}
+            {% set errorList = errorList.concat([{ text: errors.relationship.text, href: "#relationship" }]) %}
+          {% endif %}
+          
+          {% if errors.telephone1 %}
+            {% set errorList = errorList.concat([{ text: errors.telephone1.text, href: "#telephone1" }]) %}
           {% endif %}
 
           {{ govukErrorSummary({

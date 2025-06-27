@@ -1,9 +1,10 @@
 import { Request, Response } from 'express'
-import { ApplicationType } from 'express-session'
+import { ApplicationType, AddNewSocialPinPhoneContactDetails } from 'express-session'
 
 import { APPLICATION_TYPE_VALUES } from '../constants/applicationTypes'
 import { validateAmountField } from '../routes/validate/validateAmountField'
 import { validateTextField } from '../routes/validate/validateTextField'
+import { validateAddNewSocialContact } from '../routes/validate/validateNewSocialPinPhoneContact'
 import { updateSessionData } from './session'
 
 type ContextOptions = {
@@ -74,6 +75,36 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
       } else {
         Object.assign(errors, detailErrors)
         templateData.details = details
+      }
+      break
+    }
+
+    case APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_CONTACT: {
+      const formData: AddNewSocialPinPhoneContactDetails = req.body
+      const formErrors = validateAddNewSocialContact(formData)
+
+      if (Object.keys(formErrors).length === 0) {
+        additionalData.firstName = formData.firstName
+        additionalData.lastName = formData.lastName
+        additionalData.dateOfBirthOrAge = formData.dateOfBirthOrAge
+        additionalData.dob = formData.dob
+        additionalData.age = formData.age
+        additionalData.relationship = formData.relationship
+        additionalData.addressLine1 = formData.addressLine1
+        additionalData.addressLine2 = formData.addressLine2
+        additionalData.townOrCity = formData.townOrCity
+        additionalData.postcode = formData.postcode
+        additionalData.country = formData.country
+        additionalData.telephone1 = formData.telephone1
+        additionalData.telephone2 = formData.telephone2
+      } else {
+        Object.assign(errors, formErrors)
+        Object.assign(templateData, {
+          ...formData,
+          dob: formData.dob || { day: '', month: '', year: '' },
+          age: formData.age || '',
+          dateOfBirthOrAge: formData.dateOfBirthOrAge || '',
+        })
       }
       break
     }

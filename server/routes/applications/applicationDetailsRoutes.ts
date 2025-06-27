@@ -5,8 +5,18 @@ import AuditService, { Page } from '../../services/auditService'
 import { getApplicationType } from '../../utils/getApplicationType'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
 import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
+import { countries } from '../../constants/countries'
+import PersonalRelationshipsService from '../../services/personalRelationshipsService'
+import { PERSONAL_RELATIONSHIPS_GROUP_CODES } from '../../constants/personalRelationshipsGroupCodes'
+import { relationshipDropdownOptions } from '../../constants/personalRelationshipsList'
 
-export default function applicationDetailsRoutes({ auditService }: { auditService: AuditService }): Router {
+export default function applicationDetailsRoutes({
+  auditService,
+  personalRelationshipsService,
+}: {
+  auditService: AuditService
+  personalRelationshipsService: PersonalRelationshipsService
+}): Router {
   const router = Router()
 
   router.get(
@@ -29,13 +39,51 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
         return res.redirect(URLS.APPLICATION_TYPE)
       }
 
-      const { details, amount, reason } = data
+      const {
+        details,
+        amount,
+        reason,
+        firstName,
+        lastName,
+        dateOfBirthOrAge,
+        dob,
+        age,
+        relationship,
+        addressLine1,
+        addressLine2,
+        townOrCity,
+        postcode,
+        country,
+        telephone1,
+        telephone2,
+      } = data
+
+      const relationshipList = await personalRelationshipsService.getRelationshipList(
+        PERSONAL_RELATIONSHIPS_GROUP_CODES.SOCIAL_RELATIONSHIP,
+      )
+      const formmattedRelationshipList = relationshipDropdownOptions(relationshipList)
+
       return res.render(`pages/log-application/application-details/index`, {
         title: 'Log details',
         applicationType,
         details,
         amount,
         reason,
+        firstName,
+        lastName,
+        dateOfBirthOrAge,
+        dob,
+        age,
+        relationship,
+        addressLine1,
+        addressLine2,
+        townOrCity,
+        postcode,
+        country,
+        telephone1,
+        telephone2,
+        countries,
+        formmattedRelationshipList,
       })
     }),
   )
