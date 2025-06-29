@@ -14,15 +14,18 @@ import applicationHistoryRoutes from './applicationHistoryRoutes'
 import prisonerDetailsRoutes from './prisonerDetailsRoutes'
 import submitApplicationRoutes from './submitApplicationRoutes'
 import viewApplicationRoutes from './viewApplicationsRoutes'
+import PersonalRelationshipsService from '../../services/personalRelationshipsService'
 
 export default function applicationsRoutes({
   auditService,
   managingPrisonerAppsService,
   prisonService,
+  personalRelationshipsService,
 }: {
   auditService: AuditService
   managingPrisonerAppsService: ManagingPrisonerAppsService
   prisonService: PrisonService
+  personalRelationshipsService: PersonalRelationshipsService
 }): Router {
   const router = Router()
 
@@ -39,7 +42,7 @@ export default function applicationsRoutes({
   )
 
   router.use(actionAndReplyRoutes({ auditService, managingPrisonerAppsService }))
-  router.use(applicationDetailsRoutes({ auditService }))
+  router.use(applicationDetailsRoutes({ auditService, personalRelationshipsService }))
   router.use(applicationTypeRoutes({ auditService }))
   router.use(changeApplicationRoutes({ auditService, managingPrisonerAppsService }))
   router.use(commentsRoutes({ auditService, managingPrisonerAppsService }))

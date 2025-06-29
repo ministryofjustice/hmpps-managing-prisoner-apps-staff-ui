@@ -17,6 +17,7 @@ generic-service:
     HMPPS_MANAGE_USERS_API_URL: 'https://manage-users-api-dev.hmpps.service.justice.gov.uk'
     MANAGING_PRISONER_APPS_API_URL: 'https://managing-prisoner-apps-api-staging.hmpps.service.justice.gov.uk'
     PRISON_API_URL: 'https://prison-api-dev.prison.service.justice.gov.uk'
+    PERSONAL_RELATIONSHIPS_API_URL: 'https://personal-relationships-api-dev.hmpps.service.justice.gov.uk'
     ENVIRONMENT_NAME: STAGING
     AUDIT_ENABLED: 'false'
 
