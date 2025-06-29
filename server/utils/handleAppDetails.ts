@@ -9,9 +9,15 @@ import { updateSessionData } from './session'
 
 type ContextOptions = {
   getAppType: (req: Request, res: Response) => ApplicationType
-  getTemplateData: (req: Request, res: Response, appType: ApplicationType) => Record<string, unknown>
+  getTemplateData: (req: Request, res: Response, appType: ApplicationType) => Promise<Record<string, unknown>>
   renderPath: string
   successRedirect: (req: Request, res: Response) => string
+}
+
+type SelectOption = {
+  value: string
+  text: string
+  selected?: boolean
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -22,7 +28,7 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
   const additionalData: Record<string, unknown> = {}
 
   const templateData: Record<string, unknown> = {
-    ...options.getTemplateData(req, res, applicationType),
+    ...(await options.getTemplateData(req, res, applicationType)),
     title: applicationType.name,
     applicationType,
   }
@@ -80,7 +86,14 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
     }
 
     case APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_CONTACT: {
-      const formData: AddNewSocialPinPhoneContactDetails = req.body
+      const formData: AddNewSocialPinPhoneContactDetails = {
+        ...req.body,
+        dob: {
+          day: req.body['dob-day'] || '',
+          month: req.body['dob-month'] || '',
+          year: req.body['dob-year'] || '',
+        },
+      }
       const formErrors = validateAddNewSocialContact(formData)
 
       if (Object.keys(formErrors).length === 0) {
@@ -97,10 +110,27 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
         additionalData.country = formData.country
         additionalData.telephone1 = formData.telephone1
         additionalData.telephone2 = formData.telephone2
+
+        Object.assign(templateData, {
+          dateOfBirthOrAge: formData.dateOfBirthOrAge,
+        })
       } else {
         Object.assign(errors, formErrors)
+
+        const updatedCountries = ((templateData.countries as SelectOption[]) ?? []).map(item => ({
+          ...item,
+          selected: item.value === formData.country,
+        }))
+
+        const updatedRelationships = ((templateData.formattedRelationshipList as SelectOption[]) ?? []).map(item => ({
+          ...item,
+          selected: item.value === formData.relationship,
+        }))
+
         Object.assign(templateData, {
           ...formData,
+          countries: updatedCountries,
+          formattedRelationshipList: updatedRelationships,
           dob: formData.dob || { day: '', month: '', year: '' },
           age: formData.age || '',
           dateOfBirthOrAge: formData.dateOfBirthOrAge || '',

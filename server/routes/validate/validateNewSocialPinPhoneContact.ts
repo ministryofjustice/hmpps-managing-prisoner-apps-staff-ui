@@ -1,18 +1,17 @@
-type AddNewSocialPinPhoneContactForm = {
+export type AddNewSocialPinPhoneContactForm = {
   firstName: string
   lastName: string
   dateOfBirthOrAge: 'dateofbirth' | 'age' | 'donotknow'
-  dob?: {
-    day: string
-    month: string
-    year: string
-  }
+  'dob-day'?: string
+  'dob-month'?: string
+  'dob-year'?: string
   age?: string
   relationship: string
   telephone1: string
 }
 
-// eslint-disable-next-line import/prefer-default-export
+const isValidNumber = (value: string) => /^\d+$/.test(value)
+
 export const validateAddNewSocialContact = (form: AddNewSocialPinPhoneContactForm) => {
   const errors: Record<string, { text: string }> = {}
 
@@ -27,30 +26,44 @@ export const validateAddNewSocialContact = (form: AddNewSocialPinPhoneContactFor
   if (!form.dateOfBirthOrAge) {
     errors.dateOfBirthOrAge = { text: 'Select an answer about the contact’s date of birth' }
   } else if (form.dateOfBirthOrAge === 'dateofbirth') {
-    const { day, month, year } = form.dob || {}
+    const day = form['dob-day']
+    const month = form['dob-month']
+    const year = form['dob-year']
+    const isDayInValid = !day || day.trim() === '' || !isValidNumber(day.trim())
+    const isMonthInValid = !month || month.trim() === '' || !isValidNumber(day.trim())
+    const isYearInValid = !year || year.trim() === '' || !isValidNumber(day.trim())
 
-    if (!day && !month && !year) {
-      errors.dob = { text: 'Enter the contact’s date of birth' }
-    } else if (!day || !month || !year) {
-      errors.dob = { text: 'Date must include a day, month and year' }
+    if (isDayInValid || isMonthInValid || isYearInValid) {
+      const dobErrorMessage = 'Date must include a day, month and year'
+
+      errors.dob = { text: dobErrorMessage }
+      if (isDayInValid) errors['dob-day'] = { text: dobErrorMessage }
+      if (isMonthInValid) errors['dob-month'] = { text: dobErrorMessage }
+      if (isYearInValid) errors['dob-year'] = { text: dobErrorMessage }
     } else {
-      const currentYear = new Date().getFullYear()
-      const enteredYear = parseInt(year, 10)
+      const enteredDate = new Date(`${year}-${month}-${day}`)
+      const today = new Date()
 
-      if (enteredYear > currentYear) {
-        errors.dob = { text: 'The date must be in the past' }
+      if (enteredDate > today) {
+        const dobErrorMessage = 'The date must be in the past'
+
+        errors.dob = { text: dobErrorMessage }
+        errors['dob-day'] = { text: dobErrorMessage }
+        errors['dob-month'] = { text: dobErrorMessage }
+        errors['dob-year'] = { text: dobErrorMessage }
       }
     }
   } else if (form.dateOfBirthOrAge === 'age') {
-    if (!form.age || form.age.trim() === '') {
+    if (!form.age || form.age.trim() === '' || !isValidNumber(form.age.trim())) {
       errors.age = { text: 'Enter the contact’s age' }
     }
   }
+
   if (!form.relationship || form.relationship === '') {
     errors.relationship = { text: 'Select a relationship' }
   }
 
-  if (!form.telephone1 || form.telephone1.trim() === '') {
+  if (!form.telephone1 || form.telephone1.trim() === '' || !isValidNumber(form.telephone1.trim())) {
     errors.telephone1 = { text: 'Select the contact’s phone number' }
   }
 

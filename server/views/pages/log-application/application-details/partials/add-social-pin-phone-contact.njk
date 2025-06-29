@@ -1,5 +1,20 @@
 <h2 class="govuk-heading-m">New social contact to add</h2>
 
+{% set dayClass = "govuk-input--width-2" %}
+{% if errors['dob-day'] %}
+  {% set dayClass = dayClass + " govuk-input--error" %}
+{% endif %}
+
+{% set monthClass = "govuk-input--width-2" %}
+{% if errors['dob-month'] %}
+  {% set monthClass = monthClass + " govuk-input--error" %}
+{% endif %}
+
+{% set yearClass = "govuk-input--width-4" %}
+{% if errors['dob-year'] %}
+  {% set yearClass = yearClass + " govuk-input--error" %}
+{% endif %}
+
 {{ govukInput({
   id: "firstName",
   name: "firstName",
@@ -41,18 +56,24 @@
     items: [
       {
         name: "day",
-        classes: "govuk-input--width-2",
-        autocomplete: "dob-day"
+        classes: dayClass,
+        autocomplete: "dob-day",
+        value: dob.day,
+        errorMessage: errors['dob-day']
       },
       {
         name: "month",
-        classes: "govuk-input--width-2",
-        autocomplete: "dob-month"
+        classes: monthClass,
+        autocomplete: "dob-month",
+        value: dob.month,
+        errorMessage: errors['dob-month']
       },
       {
         name: "year",
-        classes: "govuk-input--width-4",
-        autocomplete: "dob-year"
+        classes: yearClass,
+        autocomplete: "dob-year",
+        value: dob.year,
+        errorMessage: errors['dob-year']
       }
     ]
   }) }}
@@ -97,7 +118,7 @@
       text: "Age",
       checked: (dateOfBirthOrAge is defined and dateOfBirthOrAge == 'age'),
       conditional: {
-      html: ageHtml
+        html: ageHtml
       }
       },
     {
@@ -115,7 +136,7 @@
     text: "Relationship",
      classes: "govuk-label--s"
   },
-  items: formmattedRelationshipList,
+  items: formattedRelationshipList,
   errorMessage: errors.relationship
 }) }}
 
@@ -123,20 +144,22 @@
 
 {{ govukInput({
   id: "addressline1",
-  name: "AddressLine1",
+  name: "addressLine1",
   label: {
     text: "Address line 1 (optional)",
     classes: "govuk-label--s"
-  }
+  },
+  value: addressLine1
 }) }}
 
 {{ govukInput({
   id: "addressline2",
-  name: "AddressLine2",
+  name: "addressLine2",
   label: {
     text: "Address line 2 (optional)",
     classes: "govuk-label--s"
-  }
+  },
+  value: addressLine2
 }) }}
 
 {{ govukInput({
@@ -146,6 +169,7 @@
     text: "Town or city (optional)",
     classes: "govuk-label--s"
   },
+  value: townOrCity,
   classes: "govuk-input--width-20"
 }) }}
 
@@ -156,6 +180,7 @@
     text: "Postcode (optional)",
     classes: "govuk-label--s"
   },
+  value: postcode,
   classes: "govuk-!-width-one-half"
 }) }}
 

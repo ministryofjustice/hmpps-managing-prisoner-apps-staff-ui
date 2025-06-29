@@ -34,15 +34,29 @@ export default function changeApplicationRoutes({
       const additionalData = applicationData?.additionalData || {}
       const formData = getAppTypeLogDetailsData(applicationType, additionalData)
 
+      const details =
+        formData?.type === 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS' ||
+        formData?.type === 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS'
+          ? formData.details
+          : application.requests[0].details || ''
+
+      const { amount, reason } =
+        formData?.type === 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP'
+          ? { amount: formData.amount, reason: formData.reason }
+          : {
+              amount: String(application.requests[0].amount || ''),
+              reason: application.requests[0].reason || '',
+            }
+
       return res.render(`pages/applications/change/index`, {
         application,
         applicationType,
         backLink: `/applications/${prisonerId}/${applicationId}`,
         title: applicationType.name,
         errors: null,
-        details: formData?.details || application.requests[0].details || '',
-        amount: formData?.amount || String(application.requests[0].amount || ''),
-        reason: formData?.reason || application.requests[0].reason || '',
+        details,
+        amount,
+        reason,
       })
     }),
   )
@@ -57,7 +71,7 @@ export default function changeApplicationRoutes({
 
       return handleApplicationDetails(req, res, {
         getAppType: () => getApplicationType(application.appType),
-        getTemplateData: () => ({
+        getTemplateData: async () => ({
           application,
           backLink: `/applications/${prisonerId}/${applicationId}`,
         }),

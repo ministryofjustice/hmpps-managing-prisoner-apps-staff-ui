@@ -7,8 +7,9 @@ import { handleApplicationDetails } from '../../utils/handleAppDetails'
 import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
 import { countries } from '../../constants/countries'
 import PersonalRelationshipsService from '../../services/personalRelationshipsService'
-import { PERSONAL_RELATIONSHIPS_GROUP_CODES } from '../../constants/personalRelationshipsGroupCodes'
-import { relationshipDropdownOptions } from '../../constants/personalRelationshipsList'
+import { getFormattedRelationshipDropdown } from '../../utils/formatRelationshipList'
+import { getFormattedCountries } from '../../utils/formatCountryList'
+import { getApplicationDetails } from '../../utils/getAppDetails'
 
 export default function applicationDetailsRoutes({
   auditService,
@@ -39,51 +40,12 @@ export default function applicationDetailsRoutes({
         return res.redirect(URLS.APPLICATION_TYPE)
       }
 
-      const {
-        details,
-        amount,
-        reason,
-        firstName,
-        lastName,
-        dateOfBirthOrAge,
-        dob,
-        age,
-        relationship,
-        addressLine1,
-        addressLine2,
-        townOrCity,
-        postcode,
-        country,
-        telephone1,
-        telephone2,
-      } = data
-
-      const relationshipList = await personalRelationshipsService.getRelationshipList(
-        PERSONAL_RELATIONSHIPS_GROUP_CODES.SOCIAL_RELATIONSHIP,
-      )
-      const formmattedRelationshipList = relationshipDropdownOptions(relationshipList)
+      const templateFields = await getApplicationDetails(data, { personalRelationshipsService })
 
       return res.render(`pages/log-application/application-details/index`, {
         title: 'Log details',
+        ...templateFields,
         applicationType,
-        details,
-        amount,
-        reason,
-        firstName,
-        lastName,
-        dateOfBirthOrAge,
-        dob,
-        age,
-        relationship,
-        addressLine1,
-        addressLine2,
-        townOrCity,
-        postcode,
-        country,
-        telephone1,
-        telephone2,
-        countries,
-        formmattedRelationshipList,
       })
     }),
   )
@@ -95,7 +57,16 @@ export default function applicationDetailsRoutes({
 
       return handleApplicationDetails(req, res, {
         getAppType: () => getApplicationType(applicationData?.type.apiValue),
-        getTemplateData: (_req, _res, appType) => ({ applicationType: appType }),
+        getTemplateData: async (_req, _res, appType) => {
+          const formattedRelationshipList = await getFormattedRelationshipDropdown(personalRelationshipsService)
+          const formattedCountryList = getFormattedCountries(countries, req.body.country)
+
+          return {
+            applicationType: appType,
+            formattedRelationshipList,
+            countries: formattedCountryList,
+          }
+        },
         renderPath: 'pages/log-application/application-details/index',
         successRedirect: () => '/log/confirm',
       })
