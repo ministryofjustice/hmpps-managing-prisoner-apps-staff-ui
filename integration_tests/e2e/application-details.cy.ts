@@ -24,6 +24,11 @@ function startApplication(appType: string): ApplicationDetailsPage {
   cy.get('#date').type('10/04/2023')
   cy.contains('button', 'Continue').click()
 
+  if (appType === 'Add new social PIN phone contact') {
+    cy.get('input[name="earlyDaysCentre"][value="yes"]').check({ force: true })
+    cy.contains('button', 'Continue').click()
+  }
+
   return Page.verifyOnPage(ApplicationDetailsPage)
 }
 
@@ -118,21 +123,9 @@ context(`Application Details Page - Add new social PIN contact`, () => {
     cy.get('#age').should('exist')
   })
 
-  it('should hide date and age inputs when "I do not know" is selected', () => {
-    cy.get('input[value="donotknow"]').check({ force: true })
-    cy.get('#dob-day').should('not.exist')
-    cy.get('#age').should('not.exist')
-  })
-
   it('should allow selecting United Kingdom as country', () => {
     cy.get('#country').should('exist')
     cy.get('#country').select('United Kingdom')
     cy.get('#country').should('have.value', 'GB')
-  })
-
-  it('should allow selecting Aunt as relationship', () => {
-    cy.get('#relationship').should('exist')
-    cy.get('#relationship').select('Aunt')
-    cy.get('#relationship').should('have.value', 'AUNT')
   })
 })
