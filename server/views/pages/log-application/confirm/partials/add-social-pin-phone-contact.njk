@@ -1,0 +1,51 @@
+{{ appTypeSummaryListHeader("New social contact to add", application.requestedBy.username, application.id, isUpdate) }}
+
+{{ govukSummaryList({
+  classes: "govuk-!-margin-bottom-9",
+  rows: [
+    {
+      key: { text: "First name" },
+      value: applicationData.request.firstName
+    },
+    {
+      key: { text: "Last name" },
+      value: applicationData.request.lastName
+    },
+    {
+      key: { text: "Date of birth or age" },
+      value: applicationData.request.dateOfBirthOrAge
+    },
+    {
+      key: { text: "Relationship" },
+      value: applicationData.request.relationship
+    },
+    {
+      key: { text: "Address line 1" },
+      value: applicationData.request.addressLine1
+    },
+    {
+      key: { text: "Address line 2" },
+      value: applicationData.request.addressLine2
+    },
+    {
+      key: { text: "Town or city" },
+      value: applicationData.request.townOrCity
+    },
+    {
+      key: { text: "Postcode" },
+      value: applicationData.request.postcode
+    },
+    {
+      key: { text: "Country" },
+      value: applicationData.request.country
+    },
+    {
+      key: { text: "Telephone number 1" },
+      value: applicationData.request.telephone1
+    },
+    {
+      key: { text: "Telephone number 2" },
+      value: applicationData.request.telephone2
+    }
+  ]
+}) }}
