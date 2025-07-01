@@ -5,8 +5,19 @@ import AuditService, { Page } from '../../services/auditService'
 import { getApplicationType } from '../../utils/getApplicationType'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
 import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
+import { countries } from '../../constants/countries'
+import PersonalRelationshipsService from '../../services/personalRelationshipsService'
+import { getFormattedRelationshipDropdown } from '../../utils/formatRelationshipList'
+import { getFormattedCountries } from '../../utils/formatCountryList'
+import { getApplicationDetails } from '../../utils/getAppDetails'
 
-export default function applicationDetailsRoutes({ auditService }: { auditService: AuditService }): Router {
+export default function applicationDetailsRoutes({
+  auditService,
+  personalRelationshipsService,
+}: {
+  auditService: AuditService
+  personalRelationshipsService: PersonalRelationshipsService
+}): Router {
   const router = Router()
 
   router.get(
@@ -29,13 +40,12 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
         return res.redirect(URLS.APPLICATION_TYPE)
       }
 
-      const { details, amount, reason } = data
+      const templateFields = await getApplicationDetails(data, { personalRelationshipsService })
+
       return res.render(`pages/log-application/application-details/index`, {
         title: 'Log details',
+        ...templateFields,
         applicationType,
-        details,
-        amount,
-        reason,
       })
     }),
   )
@@ -47,7 +57,16 @@ export default function applicationDetailsRoutes({ auditService }: { auditServic
 
       return handleApplicationDetails(req, res, {
         getAppType: () => getApplicationType(applicationData?.type.apiValue),
-        getTemplateData: (_req, _res, appType) => ({ applicationType: appType }),
+        getTemplateData: async (_req, _res, applicationType) => {
+          const formattedRelationshipList = await getFormattedRelationshipDropdown(personalRelationshipsService)
+          const formattedCountryList = getFormattedCountries(countries, req.body.country)
+
+          return {
+            applicationType,
+            formattedRelationshipList,
+            countries: formattedCountryList,
+          }
+        },
         renderPath: 'pages/log-application/application-details/index',
         successRedirect: () => '/log/confirm',
       })

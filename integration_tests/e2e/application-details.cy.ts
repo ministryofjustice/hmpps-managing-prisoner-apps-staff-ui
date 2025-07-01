@@ -1,6 +1,7 @@
 import applicationTypesData from '../fixtures/applicationTypes.json'
 
 import ApplicationDetailsPage from '../pages/applicationDetailsPage'
+import { applicationTypeLabels } from '../../server/constants/applicationTypes'
 import Page from '../pages/page'
 
 const applicationTypes = applicationTypesData.applicationTypes.filter(
@@ -23,6 +24,11 @@ function startApplication(appType: string): ApplicationDetailsPage {
   cy.contains('Date').should('exist')
   cy.get('#date').type('10/04/2023')
   cy.contains('button', 'Continue').click()
+
+  if (appType === applicationTypeLabels.PIN_PHONE_ADD_NEW_CONTACT) {
+    cy.get('input[name="earlyDaysCentre"][value="yes"]').check({ force: true })
+    cy.contains('button', 'Continue').click()
+  }
 
   return Page.verifyOnPage(ApplicationDetailsPage)
 }
@@ -71,5 +77,56 @@ applicationTypes.forEach(({ name, type, hint }) => {
       page.csrfToken().should('exist')
       page.continueButton().should('contain.text', 'Continue')
     })
+  })
+})
+
+context(`Application Details Page - Add new social PIN contact`, () => {
+  let page: ApplicationDetailsPage
+
+  beforeEach(() => {
+    page = startApplication('Add new social PIN phone contact')
+  })
+
+  it('should direct the user to the correct page', () => {
+    Page.verifyOnPage(ApplicationDetailsPage)
+  })
+
+  it('should render the correct app type title', () => {
+    page.appTypeTitle().should('have.text', 'Add new social PIN phone contact')
+  })
+
+  it('should render the form fields', () => {
+    cy.get('#firstName').should('exist')
+    cy.get('#lastName').should('exist')
+    cy.get('input[value="dateofbirth"]').should('exist')
+    cy.get('input[value="age"]').should('exist')
+    cy.get('input[value="donotknow"]').should('exist')
+    cy.get('#addressline1').should('exist')
+    cy.get('#addressline2').should('exist')
+    cy.get('#townorcity').should('exist')
+    cy.get('#postcode').should('exist')
+    cy.get('#country').should('exist')
+    cy.get('#relationship').should('exist')
+    cy.get('#telephone1').should('exist')
+    cy.get('#telephone2').should('exist')
+  })
+
+  it('should display date of birth inputs when selected', () => {
+    cy.get('input[value="dateofbirth"]').check({ force: true })
+    cy.get('#dob-day').should('exist')
+    cy.get('#dob-month').should('exist')
+    cy.get('#dob-year').should('exist')
+    cy.get('.govuk-hint').should('contain', 'For example, 7/10/2002')
+  })
+
+  it('should display age input when selected', () => {
+    cy.get('input[value="age"]').check({ force: true })
+    cy.get('#age').should('exist')
+  })
+
+  it('should allow selecting United Kingdom as country', () => {
+    cy.get('#country').should('exist')
+    cy.get('#country').select('United Kingdom')
+    cy.get('#country').should('have.value', 'GB')
   })
 })
