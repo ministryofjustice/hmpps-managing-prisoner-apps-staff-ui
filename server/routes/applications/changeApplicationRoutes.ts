@@ -7,13 +7,17 @@ import { getApplicationType } from '../../utils/getApplicationType'
 import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
+import { getApplicationDetails } from '../../utils/getAppDetails'
+import PersonalRelationshipsService from '../../services/personalRelationshipsService'
 
 export default function changeApplicationRoutes({
   auditService,
   managingPrisonerAppsService,
+  personalRelationshipsService,
 }: {
   auditService: AuditService
   managingPrisonerAppsService: ManagingPrisonerAppsService
+  personalRelationshipsService: PersonalRelationshipsService
 }): Router {
   const router = Router()
 
@@ -33,6 +37,7 @@ export default function changeApplicationRoutes({
 
       const additionalData = applicationData?.additionalData || {}
       const formData = getAppTypeLogDetailsData(applicationType, additionalData)
+      const templateData = await getApplicationDetails(formData, { personalRelationshipsService }, application)
 
       return res.render(`pages/applications/change/index`, {
         application,
@@ -40,9 +45,7 @@ export default function changeApplicationRoutes({
         backLink: `/applications/${prisonerId}/${applicationId}`,
         title: applicationType.name,
         errors: null,
-        details: formData?.details || application.requests[0].details || '',
-        amount: formData?.amount || String(application.requests[0].amount || ''),
-        reason: formData?.reason || application.requests[0].reason || '',
+        ...templateData,
       })
     }),
   )
@@ -57,7 +60,7 @@ export default function changeApplicationRoutes({
 
       return handleApplicationDetails(req, res, {
         getAppType: () => getApplicationType(application.appType),
-        getTemplateData: () => ({
+        getTemplateData: async () => ({
           application,
           backLink: `/applications/${prisonerId}/${applicationId}`,
         }),

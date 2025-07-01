@@ -26,6 +26,7 @@ export declare module 'express-session' {
     | SwapVOsForPinCreditDetails
     | AddEmergencyPinPhoneCreditDetails
     | SupplyListOfPinPhoneContactsDetails
+    | AddNewSocialPinPhoneContactDetails
 
   interface SwapVOsForPinCreditDetails {
     details?: string
@@ -38,6 +39,26 @@ export declare module 'express-session' {
 
   interface SupplyListOfPinPhoneContactsDetails {
     details?: string
+  }
+
+  interface AddNewSocialPinPhoneContactDetails {
+    firstName: string
+    lastName: string
+    dateOfBirthOrAge: 'dateofbirth' | 'age' | 'donotknow'
+    dob?: {
+      day: string
+      month: string
+      year: string
+    }
+    age?: string
+    relationship: string
+    addressLine1?: string
+    addressLine2?: string
+    townOrCity?: string
+    postcode?: string
+    country?: string
+    telephone1: string
+    telephone2?: string
   }
 }
 
