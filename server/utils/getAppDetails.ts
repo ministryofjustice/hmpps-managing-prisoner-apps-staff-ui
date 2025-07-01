@@ -4,6 +4,7 @@ import { getFormattedCountries } from './formatCountryList'
 import { countries } from '../constants/countries'
 import PersonalRelationshipsService from '../services/personalRelationshipsService'
 import logger from '../../logger'
+import { Application } from '../@types/managingAppsApi'
 
 // eslint-disable-next-line import/prefer-default-export
 export async function getApplicationDetails(
@@ -11,8 +12,13 @@ export async function getApplicationDetails(
   services?: {
     personalRelationshipsService?: PersonalRelationshipsService
   },
+  application?: Application,
 ): Promise<Record<string, unknown>> {
-  switch (data?.type) {
+  const request: Partial<{ amount?: number; reason?: string; details?: string }> = application?.requests?.[0] || {}
+
+  if (!data) return {}
+
+  switch (data.type) {
     case 'PIN_PHONE_ADD_NEW_CONTACT': {
       const personalRelationshipsService = services?.personalRelationshipsService
       if (!personalRelationshipsService) {
@@ -46,14 +52,14 @@ export async function getApplicationDetails(
 
     case 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP':
       return {
-        amount: data.amount,
-        reason: data.reason,
+        amount: data.amount || String(request.amount || ''),
+        reason: data.reason || request.reason || '',
       }
 
     case 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS':
     case 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS':
       return {
-        details: data.details,
+        details: data.details || request.details || '',
       }
 
     default:

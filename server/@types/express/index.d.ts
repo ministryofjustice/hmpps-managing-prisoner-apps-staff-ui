@@ -51,15 +51,12 @@ export declare module 'express-session' {
       year: string
     }
     age?: string
-
     relationship: string
-
     addressLine1?: string
     addressLine2?: string
     townOrCity?: string
     postcode?: string
     country?: string
-
     telephone1: string
     telephone2?: string
   }

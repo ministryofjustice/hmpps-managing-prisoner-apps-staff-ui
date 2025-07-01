@@ -7,7 +7,7 @@ export async function getFormattedRelationshipDropdown(
   personalRelationshipsService: PersonalRelationshipsService,
   selectedValue?: string,
 ): Promise<RelationshipDropdownList[]> {
-  const relationshipList = await personalRelationshipsService.getRelationshipList(
+  const relationshipList = await personalRelationshipsService.relationshipList(
     PERSONAL_RELATIONSHIPS_GROUP_CODES.SOCIAL_RELATIONSHIP,
   )
   return relationshipDropdownOptions(relationshipList, 'Select a relationship', selectedValue)

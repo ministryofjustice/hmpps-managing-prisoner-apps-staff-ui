@@ -96,20 +96,26 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
       }
       const formErrors = validateAddNewSocialContact(formData)
 
+      const formFields = [
+        'firstName',
+        'lastName',
+        'dateOfBirthOrAge',
+        'dob',
+        'age',
+        'relationship',
+        'addressLine1',
+        'addressLine2',
+        'townOrCity',
+        'postcode',
+        'country',
+        'telephone1',
+        'telephone2',
+      ] as const
+
       if (Object.keys(formErrors).length === 0) {
-        additionalData.firstName = formData.firstName
-        additionalData.lastName = formData.lastName
-        additionalData.dateOfBirthOrAge = formData.dateOfBirthOrAge
-        additionalData.dob = formData.dob
-        additionalData.age = formData.age
-        additionalData.relationship = formData.relationship
-        additionalData.addressLine1 = formData.addressLine1
-        additionalData.addressLine2 = formData.addressLine2
-        additionalData.townOrCity = formData.townOrCity
-        additionalData.postcode = formData.postcode
-        additionalData.country = formData.country
-        additionalData.telephone1 = formData.telephone1
-        additionalData.telephone2 = formData.telephone2
+        for (const field of formFields) {
+          additionalData[field] = formData[field]
+        }
 
         Object.assign(templateData, {
           dateOfBirthOrAge: formData.dateOfBirthOrAge,

@@ -1,6 +1,7 @@
 import applicationTypesData from '../fixtures/applicationTypes.json'
 
 import ApplicationDetailsPage from '../pages/applicationDetailsPage'
+import { applicationTypeLabels } from '../../server/constants/applicationTypes'
 import Page from '../pages/page'
 
 const applicationTypes = applicationTypesData.applicationTypes.filter(
@@ -24,7 +25,7 @@ function startApplication(appType: string): ApplicationDetailsPage {
   cy.get('#date').type('10/04/2023')
   cy.contains('button', 'Continue').click()
 
-  if (appType === 'Add new social PIN phone contact') {
+  if (appType === applicationTypeLabels.PIN_PHONE_ADD_NEW_CONTACT) {
     cy.get('input[name="earlyDaysCentre"][value="yes"]').check({ force: true })
     cy.contains('button', 'Continue').click()
   }

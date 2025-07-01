@@ -7,13 +7,17 @@ import { getApplicationType } from '../../utils/getApplicationType'
 import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
+import { getApplicationDetails } from '../../utils/getAppDetails'
+import PersonalRelationshipsService from '../../services/personalRelationshipsService'
 
 export default function changeApplicationRoutes({
   auditService,
   managingPrisonerAppsService,
+  personalRelationshipsService,
 }: {
   auditService: AuditService
   managingPrisonerAppsService: ManagingPrisonerAppsService
+  personalRelationshipsService: PersonalRelationshipsService
 }): Router {
   const router = Router()
 
@@ -33,20 +37,7 @@ export default function changeApplicationRoutes({
 
       const additionalData = applicationData?.additionalData || {}
       const formData = getAppTypeLogDetailsData(applicationType, additionalData)
-
-      const details =
-        formData?.type === 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS' ||
-        formData?.type === 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS'
-          ? formData.details
-          : application.requests[0].details || ''
-
-      const { amount, reason } =
-        formData?.type === 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP'
-          ? { amount: formData.amount, reason: formData.reason }
-          : {
-              amount: String(application.requests[0].amount || ''),
-              reason: application.requests[0].reason || '',
-            }
+      const templateData = await getApplicationDetails(formData, { personalRelationshipsService }, application)
 
       return res.render(`pages/applications/change/index`, {
         application,
@@ -54,9 +45,7 @@ export default function changeApplicationRoutes({
         backLink: `/applications/${prisonerId}/${applicationId}`,
         title: applicationType.name,
         errors: null,
-        details,
-        amount,
-        reason,
+        ...templateData,
       })
     }),
   )

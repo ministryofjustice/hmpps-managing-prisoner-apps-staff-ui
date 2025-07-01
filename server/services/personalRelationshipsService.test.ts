@@ -8,7 +8,7 @@ jest.mock('../data/personalRelationshipsClient')
 describe('PersonalRelationshipsService', () => {
   let service: PersonalRelationshipsService
   const mockGetSystemClientToken = jest.fn()
-  const mockGetRelationshipList = jest.fn()
+  const mockRelationshipList = jest.fn()
 
   beforeEach(() => {
     const mockHmppsAuthClient = {
@@ -17,7 +17,7 @@ describe('PersonalRelationshipsService', () => {
 
     service = new PersonalRelationshipsService(mockHmppsAuthClient)
     ;(PersonalRelationshipsApiClient as jest.Mock).mockImplementation(() => ({
-      getRelationshipList: mockGetRelationshipList,
+      relationshipList: mockRelationshipList,
     }))
   })
 
@@ -34,12 +34,12 @@ describe('PersonalRelationshipsService', () => {
       { code: 'BOF', description: 'Boyfriend', isActive: true },
     ]
 
-    mockGetRelationshipList.mockResolvedValue(apiResponse)
+    mockRelationshipList.mockResolvedValue(apiResponse)
 
-    const result = await service.getRelationshipList('someGroupCode')
+    const result = await service.relationshipList('someGroupCode')
 
     expect(mockGetSystemClientToken).toHaveBeenCalled()
-    expect(mockGetRelationshipList).toHaveBeenCalledWith('someGroupCode')
+    expect(mockRelationshipList).toHaveBeenCalledWith('someGroupCode')
     expect(result).toEqual([
       { code: 'AUNT', description: 'Aunt' },
       { code: 'BOF', description: 'Boyfriend' },
@@ -48,9 +48,9 @@ describe('PersonalRelationshipsService', () => {
 
   it('should return an empty array if API client returns null', async () => {
     mockGetSystemClientToken.mockResolvedValue('fake-token')
-    mockGetRelationshipList.mockResolvedValue(null)
+    mockRelationshipList.mockResolvedValue(null)
 
-    const result = await service.getRelationshipList('someGroupCode')
+    const result = await service.relationshipList('someGroupCode')
 
     expect(result).toEqual([])
   })

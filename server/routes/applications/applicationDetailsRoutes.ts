@@ -57,12 +57,12 @@ export default function applicationDetailsRoutes({
 
       return handleApplicationDetails(req, res, {
         getAppType: () => getApplicationType(applicationData?.type.apiValue),
-        getTemplateData: async (_req, _res, appType) => {
+        getTemplateData: async (_req, _res, applicationType) => {
           const formattedRelationshipList = await getFormattedRelationshipDropdown(personalRelationshipsService)
           const formattedCountryList = getFormattedCountries(countries, req.body.country)
 
           return {
-            applicationType: appType,
+            applicationType,
             formattedRelationshipList,
             countries: formattedCountryList,
           }

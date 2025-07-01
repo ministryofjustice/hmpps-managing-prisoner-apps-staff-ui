@@ -1,6 +1,7 @@
 import nock from 'nock'
 import config from '../config'
 import PersonalRelationshipsApiClient from './personalRelationshipsClient'
+import { PERSONAL_RELATIONSHIPS_GROUP_CODES } from '../constants/personalRelationshipsGroupCodes'
 
 jest.mock('../../logger')
 
@@ -19,7 +20,7 @@ describe('PersonalRelationshipsApiClient', () => {
   })
 
   it('should return relationship list from the api', async () => {
-    const groupCode = 'SOCIAL_RELATIONSHIPS'
+    const groupCode = PERSONAL_RELATIONSHIPS_GROUP_CODES.SOCIAL_RELATIONSHIP
     const mockResponse = [
       { code: 'AUNT', description: 'Aunt' },
       { code: 'UNCLE', description: 'Uncle' },
@@ -30,7 +31,7 @@ describe('PersonalRelationshipsApiClient', () => {
       .matchHeader('authorization', `Bearer ${token}`)
       .reply(200, mockResponse)
 
-    const result = await client.getRelationshipList(groupCode)
+    const result = await client.relationshipList(groupCode)
 
     expect(result).toEqual(mockResponse)
   })
