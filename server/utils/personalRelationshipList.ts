@@ -12,9 +12,9 @@ export function relationshipDropdownOptions(
   return [
     { value: '', text: defaultText, selected: !selectedValue },
     ...data.map(item => ({
-      value: item.code,
+      value: item.description,
       text: item.description,
-      selected: item.code === selectedValue,
+      selected: item.description === selectedValue,
     })),
   ]
 }
