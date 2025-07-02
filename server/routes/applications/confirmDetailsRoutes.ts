@@ -6,6 +6,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { getApplicationType } from '../../utils/getApplicationType'
+import { convertToTitleCase } from '../../utils/utils'
 
 export default function confirmDetailsRoutes({
   auditService,
@@ -35,6 +36,7 @@ export default function confirmDetailsRoutes({
       return res.render(`pages/log-application/confirm/index`, {
         applicationData: {
           date: format(new Date(applicationData.date), 'd MMMM yyyy'),
+          earlyDaysCentre: convertToTitleCase(applicationData.earlyDaysCentre.toString()),
           prisoner: `${applicationData.prisonerName} (${applicationData.prisonerId})`,
           request: applicationData.additionalData,
           type: applicationType,
