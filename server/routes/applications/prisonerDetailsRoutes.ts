@@ -37,12 +37,13 @@ export default function prisonerDetailsRoutes({
         : ''
 
       return res.render('pages/log-application/prisoner-details/index', {
-        title: 'Log prisoner details',
         applicationType,
-        prisonNumber: applicationData.prisonerId,
         dateString: formattedDate,
-        errors: null,
+        earlyDaysCentre: req.session.applicationData.earlyDaysCentre || '',
         prisonerName: req.session.applicationData.prisonerName || '',
+        prisonNumber: applicationData.prisonerId,
+        title: 'Log prisoner details',
+        errors: null,
       })
     }),
   )
