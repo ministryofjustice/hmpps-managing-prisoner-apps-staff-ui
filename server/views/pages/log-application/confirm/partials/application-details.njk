@@ -1,0 +1,23 @@
+{% set rows = [] %}
+
+{% set _ = rows.push({
+  key: { text: "Prisoner" },
+  value: { text: applicationData.prisoner }
+}) %}
+
+{% set _ = rows.push({
+  key: { text: "Date sent" },
+  value: { text: applicationData.date }
+}) %}
+
+{% if applicationData.type.value === 'add-social-pin-phone-contact' %}
+  {% set _ = rows.push({
+    key: { text: "First night centre" },
+    value: { text: applicationData.earlyDaysCentre }
+  }) %}
+{% endif %}
+
+{{ govukSummaryList({
+  classes: "govuk-!-margin-bottom-9",
+  rows: rows
+}) }}
