@@ -38,20 +38,7 @@
           {% endif %}  
         </div>
      
-        {{ govukSummaryList({
-          classes: "govuk-!-margin-bottom-9",
-          rows: [
-            {
-              key: { text: "Prisoner" },
-              value: { text: applicationData.prisoner }
-            },
-            {
-              key: { text: "Date sent" },
-              value: { text: applicationData.date }
-            }
-          ]
-        }) }}
-
+        {% include "./partials/application-details.njk" %}
         {% include "./partials/" + applicationData.type.value + ".njk" %}
 
         <form method="POST">
