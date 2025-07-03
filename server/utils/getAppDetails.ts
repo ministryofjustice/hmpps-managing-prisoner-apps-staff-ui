@@ -1,6 +1,6 @@
 import { AppTypeData } from './getAppTypeLogDetails'
 import { getFormattedRelationshipDropdown } from './formatRelationshipList'
-import { getFormattedCountries } from './formatCountryList'
+import { getFormattedCountries, getCountryNameByCode } from './formatCountryList'
 import { countries } from '../constants/countries'
 import PersonalRelationshipsService from '../services/personalRelationshipsService'
 import logger from '../../logger'
@@ -44,6 +44,7 @@ export async function getApplicationDetails(
         townOrCity: data.townOrCity,
         postcode: data.postcode,
         countries: formattedCountryList,
+        country: getCountryNameByCode(data.country),
         telephone1: data.telephone1,
         telephone2: data.telephone2,
         formattedRelationshipList,
