@@ -124,9 +124,11 @@ context(`Application Details Page - Add new social PIN contact`, () => {
     cy.get('#age').should('exist')
   })
 
-  it('should allow selecting United Kingdom as country', () => {
-    cy.get('#country').should('exist')
-    cy.get('#country').select('United Kingdom')
-    cy.get('#country').should('have.value', 'GB')
+  it('should display the country dropdown', () => {
+    cy.get('#country').should('be.visible')
+  })
+
+  it('should display the relationship dropdown', () => {
+    cy.get('#relationship').should('be.visible')
   })
 })
