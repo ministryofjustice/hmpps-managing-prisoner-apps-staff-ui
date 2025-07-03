@@ -1,13 +1,14 @@
 export interface Country {
   value: string
   text: string
+  disabled?: boolean
 }
 
 export const countries: Country[] = [
   { value: '', text: 'Select a country' },
   { value: 'GB', text: 'United Kingdom' },
   { value: 'IE', text: 'Ireland' },
-  { value: '<---------------------------->', text: '<---------------------------->' },
+  { value: '<---------------------------->', text: '<---------------------------->', disabled: true },
   { value: 'AF', text: 'Afghanistan' },
   { value: 'AL', text: 'Albania' },
   { value: 'DZ', text: 'Algeria' },
