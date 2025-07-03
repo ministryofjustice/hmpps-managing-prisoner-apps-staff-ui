@@ -1,12 +1,17 @@
-import { Country } from '../constants/countries'
+import { Country, countries } from '../constants/countries'
 
-// eslint-disable-next-line import/prefer-default-export
 export function getFormattedCountries(
   countryList: Country[],
   selectedValue?: string,
 ): (Country & { selected?: boolean })[] {
-  return countryList.map(country => ({
-    ...country,
-    selected: country.value === selectedValue,
+  return countryList.map(item => ({
+    ...item,
+    selected: item.text === selectedValue,
   }))
+}
+
+export function getCountryNameByCode(code?: string): string {
+  if (!code) return ''
+  const matchedCountry = countries.find(c => c.value === code)
+  return matchedCountry?.text || code
 }
