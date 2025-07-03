@@ -6,6 +6,7 @@ import { validateAmountField } from '../routes/validate/validateAmountField'
 import { validateTextField } from '../routes/validate/validateTextField'
 import { validateAddNewSocialContact } from '../routes/validate/validateNewSocialPinPhoneContact'
 import { updateSessionData } from './session'
+import { getCountryNameByCode } from './formatCountryList'
 
 type ContextOptions = {
   getAppType: (req: Request, res: Response) => ApplicationType
@@ -114,7 +115,11 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
 
       if (Object.keys(formErrors).length === 0) {
         for (const field of formFields) {
-          additionalData[field] = formData[field]
+          if (field === 'country') {
+            additionalData.country = getCountryNameByCode(formData.country)
+          } else {
+            additionalData[field] = formData[field]
+          }
         }
 
         Object.assign(templateData, {
