@@ -2,13 +2,17 @@ export interface Country {
   value: string
   text: string
   disabled?: boolean
+  isTop?: boolean
 }
 
-export const countries: Country[] = [
+export const topItems: Country[] = [
   { value: '', text: 'Select a country' },
-  { value: 'GB', text: 'United Kingdom' },
-  { value: 'IE', text: 'Ireland' },
+  { value: 'GB', text: 'United Kingdom', isTop: true },
+  { value: 'IE', text: 'Ireland', isTop: true },
   { value: '<---------------------------->', text: '<---------------------------->', disabled: true },
+]
+
+export const allCountries: Country[] = [
   { value: 'AF', text: 'Afghanistan' },
   { value: 'AL', text: 'Albania' },
   { value: 'DZ', text: 'Algeria' },
@@ -205,3 +209,5 @@ export const countries: Country[] = [
   { value: 'ZM', text: 'Zambia' },
   { value: 'ZW', text: 'Zimbabwe' },
 ]
+
+export const countries: Country[] = [...topItems, ...allCountries]
