@@ -46,8 +46,8 @@ applicationTypes.forEach(({ name, apiValue }) => {
       page.prisonerName().should('exist')
     })
 
-    it('should display the prisoner location', () => {
-      page.prisonerLocation().should('exist')
+    it('should display the prisoner cell location', () => {
+      page.prisonerCellLocation().should('exist')
     })
 
     it('should display the date the application was submitted', () => {
