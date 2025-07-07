@@ -1,11 +1,10 @@
 import applicationTypesData from '../fixtures/applicationTypes.json'
 
-import { APPLICATION_TYPE_VALUES } from '../../server/constants/applicationTypes'
 import TestData from '../../server/routes/testutils/testData'
 import ViewApplicationPage from '../pages/viewApplicationPage'
 
 const applicationTypes = applicationTypesData.applicationTypes.filter(
-  ({ key }) => key !== APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT,
+  ({ key }) => key !== 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
 )
 
 applicationTypes.forEach(({ name, key }) => {
@@ -20,6 +19,7 @@ applicationTypes.forEach(({ name, key }) => {
       cy.task('stubGetPrisonerApp', {
         app,
       })
+      cy.task('stubGetAppTypes')
       cy.signIn()
 
       cy.visit(`/applications/${app.requestedBy.username}/${app.id}`)

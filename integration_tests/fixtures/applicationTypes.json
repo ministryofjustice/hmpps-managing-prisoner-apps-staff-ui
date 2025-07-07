@@ -1,16 +1,16 @@
 {
   "applicationTypes": [
     {
-      "name": "Add new social PIN phone contact",
-      "value": "add-social-pin-phone-contact",
-      "key": "PIN_PHONE_ADD_NEW_SOCIAL_CONTACT"
-    },
-    {
       "name": "Add emergency PIN phone credit",
       "value": "add-emergency-pin-phone-credit",
       "key": "PIN_PHONE_EMERGENCY_CREDIT_TOP_UP",
       "type": "amount",
       "hint": "Add a brief summary"
+    },
+    {
+      "name": "Add new social PIN phone contact",
+      "value": "add-social-pin-phone-contact",
+      "key": "PIN_PHONE_ADD_NEW_SOCIAL_CONTACT"
     },
     {
       "name": "Swap visiting orders (VOs) for PIN credit",

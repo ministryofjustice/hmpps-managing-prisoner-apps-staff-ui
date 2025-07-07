@@ -1,18 +1,16 @@
+import { applicationTypeLabels } from '../../server/constants/applicationTypes'
 import applicationTypesData from '../fixtures/applicationTypes.json'
-
 import ApplicationDetailsPage from '../pages/applicationDetailsPage'
-import { APPLICATION_TYPE_VALUES, applicationTypeLabels } from '../../server/constants/applicationTypes'
 import Page from '../pages/page'
 
-const applicationTypes = applicationTypesData.applicationTypes.filter(
-  ({ key }) => key !== APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT,
-)
+const { applicationTypes } = applicationTypesData
 
 function startApplication(appType: string): ApplicationDetailsPage {
   cy.task('reset')
   cy.task('stubSignIn')
   cy.signIn()
   cy.task('stubGetPrisonerByPrisonNumber', 'A0000AA')
+  cy.task('stubGetAppTypes')
 
   cy.visit('/log/application-details')
 

@@ -19,6 +19,7 @@ applicationTypes.forEach(({ name, key }) => {
         app,
       })
       cy.task('stubGetGroups')
+      cy.task('stubGetAppTypes')
       cy.signIn()
       cy.visit(`/applications/${app.requestedBy.username}/${app.id}/forward`)
       page = Page.verifyOnPage(ForwardApplicationPage)

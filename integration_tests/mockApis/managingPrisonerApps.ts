@@ -94,4 +94,17 @@ export default {
       },
     })
   },
+  stubGetAppTypes: (): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        url: `/managingPrisonerApps/v1/establishments/apps/types`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: new TestData().appTypes,
+      },
+    })
+  },
 }

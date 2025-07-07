@@ -15,6 +15,7 @@ context('Application History Page', () => {
     cy.task('stubSignIn')
     cy.task('stubGetPrisonerApp', { app })
     cy.task('stubGetHistory', { app })
+    cy.task('stubGetAppTypes')
     cy.signIn()
 
     cy.visit(`/applications/${app.requestedBy.username}/${app.id}/history`, { failOnStatusCode: false })
