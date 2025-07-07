@@ -17,7 +17,7 @@ describe('validateAddNewSocialContact', () => {
     const result = validateAddNewSocialContact({ ...validForm, firstName: '' })
 
     expect(result).toMatchObject({
-      firstName: { text: "Enter the contact's first name" },
+      firstName: { text: 'Enter the contact’s first name' },
     })
   })
 
@@ -25,7 +25,7 @@ describe('validateAddNewSocialContact', () => {
     const result = validateAddNewSocialContact({ ...validForm, lastName: '' })
 
     expect(result).toMatchObject({
-      lastName: { text: "Enter the contact's last name" },
+      lastName: { text: 'Enter the contact’s last name' },
     })
   })
 
@@ -37,6 +37,22 @@ describe('validateAddNewSocialContact', () => {
     })
   })
 
+  it('should return error if date fields are empty', () => {
+    const result = validateAddNewSocialContact({
+      ...validForm,
+      'dob-day': '',
+      'dob-month': '',
+      'dob-year': '',
+    })
+
+    expect(result).toMatchObject({
+      dob: { text: 'Enter the contact’s date of birth' },
+      'dob-day': { text: 'Enter the contact’s date of birth' },
+      'dob-month': { text: 'Enter the contact’s date of birth' },
+      'dob-year': { text: 'Enter the contact’s date of birth' },
+    })
+  })
+
   it('should return error if day or month is missing', () => {
     const result = validateAddNewSocialContact({
       ...validForm,
@@ -45,9 +61,9 @@ describe('validateAddNewSocialContact', () => {
     })
 
     expect(result).toMatchObject({
-      dob: { text: 'Date must include a day, month and year' },
-      'dob-day': { text: 'Date must include a day, month and year' },
-      'dob-month': { text: 'Date must include a day, month and year' },
+      dob: { text: 'Date must include a day, a month and a year' },
+      'dob-day': { text: 'Date must include a day, a month and a year' },
+      'dob-month': { text: 'Date must include a day, a month and a year' },
     })
   })
 
@@ -61,10 +77,10 @@ describe('validateAddNewSocialContact', () => {
     })
 
     expect(result).toMatchObject({
-      dob: { text: 'The date must be in the past' },
-      'dob-day': { text: 'The date must be in the past' },
-      'dob-month': { text: 'The date must be in the past' },
-      'dob-year': { text: 'The date must be in the past' },
+      dob: { text: 'Date must be in the past' },
+      'dob-day': { text: 'Date must be in the past' },
+      'dob-month': { text: 'Date must be in the past' },
+      'dob-year': { text: 'Date must be in the past' },
     })
   })
 
@@ -80,7 +96,7 @@ describe('validateAddNewSocialContact', () => {
     const result = validateAddNewSocialContact({ ...validForm, telephone1: '' })
 
     expect(result).toMatchObject({
-      telephone1: { text: 'Select the contact’s phone number' },
+      telephone1: { text: 'Enter the contact’s phone number' },
     })
   })
 
@@ -88,7 +104,7 @@ describe('validateAddNewSocialContact', () => {
     const result = validateAddNewSocialContact({ ...validForm, telephone1: 'ABC123' })
 
     expect(result).toMatchObject({
-      telephone1: { text: 'Select the contact’s phone number' },
+      telephone1: { text: 'Enter the contact’s phone number' },
     })
   })
 })

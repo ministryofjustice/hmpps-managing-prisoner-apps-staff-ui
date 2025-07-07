@@ -11,46 +11,57 @@ export type AddNewSocialPinPhoneContactForm = {
 }
 
 const isValidNumber = (value: string) => /^\d+$/.test(value)
+const isValidPhoneNumber = (value: string) => /^[\d+\-()\s]+$/.test(value)
 
 export const validateAddNewSocialContact = (form: AddNewSocialPinPhoneContactForm) => {
   const errors: Record<string, { text: string }> = {}
 
   if (!form.firstName || form.firstName.trim() === '') {
-    errors.firstName = { text: "Enter the contact's first name" }
+    errors.firstName = { text: 'Enter the contact’s first name' }
   }
 
   if (!form.lastName || form.lastName.trim() === '') {
-    errors.lastName = { text: "Enter the contact's last name" }
+    errors.lastName = { text: 'Enter the contact’s last name' }
   }
 
   if (!form.dateOfBirthOrAge) {
     errors.dateOfBirthOrAge = { text: 'Select an answer about the contact’s date of birth' }
   } else if (form.dateOfBirthOrAge === 'dateofbirth') {
-    const day = form['dob-day']
-    const month = form['dob-month']
-    const year = form['dob-year']
-    const isDayInValid = !day || day.trim() === '' || !isValidNumber(day.trim())
-    const isMonthInValid = !month || month.trim() === '' || !isValidNumber(day.trim())
-    const isYearInValid = !year || year.trim() === '' || !isValidNumber(day.trim())
+    const day = form['dob-day']?.trim()
+    const month = form['dob-month']?.trim()
+    const year = form['dob-year']?.trim()
 
-    if (isDayInValid || isMonthInValid || isYearInValid) {
-      const dobErrorMessage = 'Date must include a day, month and year'
+    const isDayMissing = !day
+    const isMonthMissing = !month
+    const isYearMissing = !year
 
+    if (isDayMissing && isMonthMissing && isYearMissing) {
+      const dobErrorMessage = 'Enter the contact’s date of birth'
       errors.dob = { text: dobErrorMessage }
-      if (isDayInValid) errors['dob-day'] = { text: dobErrorMessage }
-      if (isMonthInValid) errors['dob-month'] = { text: dobErrorMessage }
-      if (isYearInValid) errors['dob-year'] = { text: dobErrorMessage }
+      errors['dob-day'] = { text: dobErrorMessage }
+      errors['dob-month'] = { text: dobErrorMessage }
+      errors['dob-year'] = { text: dobErrorMessage }
     } else {
-      const enteredDate = new Date(`${year}-${month}-${day}`)
-      const today = new Date()
+      const isDayInValid = !day || !isValidNumber(day)
+      const isMonthInValid = !month || !isValidNumber(month)
+      const isYearInValid = !year || !isValidNumber(year)
 
-      if (enteredDate > today) {
-        const dobErrorMessage = 'The date must be in the past'
-
+      if (isDayInValid || isMonthInValid || isYearInValid) {
+        const dobErrorMessage = 'Date must include a day, a month and a year'
         errors.dob = { text: dobErrorMessage }
-        errors['dob-day'] = { text: dobErrorMessage }
-        errors['dob-month'] = { text: dobErrorMessage }
-        errors['dob-year'] = { text: dobErrorMessage }
+        if (isDayInValid) errors['dob-day'] = { text: dobErrorMessage }
+        if (isMonthInValid) errors['dob-month'] = { text: dobErrorMessage }
+        if (isYearInValid) errors['dob-year'] = { text: dobErrorMessage }
+      } else {
+        const enteredDate = new Date(`${year}-${month}-${day}`)
+        const today = new Date()
+        if (enteredDate > today) {
+          const dobErrorMessage = 'Date must be in the past'
+          errors.dob = { text: dobErrorMessage }
+          errors['dob-day'] = { text: dobErrorMessage }
+          errors['dob-month'] = { text: dobErrorMessage }
+          errors['dob-year'] = { text: dobErrorMessage }
+        }
       }
     }
   } else if (form.dateOfBirthOrAge === 'age') {
@@ -63,8 +74,8 @@ export const validateAddNewSocialContact = (form: AddNewSocialPinPhoneContactFor
     errors.relationship = { text: 'Select a relationship' }
   }
 
-  if (!form.telephone1 || form.telephone1.trim() === '' || !isValidNumber(form.telephone1.trim())) {
-    errors.telephone1 = { text: 'Select the contact’s phone number' }
+  if (!form.telephone1 || form.telephone1.trim() === '' || !isValidPhoneNumber(form.telephone1.trim())) {
+    errors.telephone1 = { text: 'Enter the contact’s phone number' }
   }
 
   return errors
