@@ -1,11 +1,11 @@
 import applicationTypesData from '../fixtures/applicationTypes.json'
 
 import ApplicationDetailsPage from '../pages/applicationDetailsPage'
-import { applicationTypeLabels } from '../../server/constants/applicationTypes'
+import { APPLICATION_TYPE_VALUES, applicationTypeLabels } from '../../server/constants/applicationTypes'
 import Page from '../pages/page'
 
 const applicationTypes = applicationTypesData.applicationTypes.filter(
-  ({ apiValue }) => apiValue !== 'PIN_PHONE_ADD_NEW_CONTACT',
+  ({ key }) => key !== APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT,
 )
 
 function startApplication(appType: string): ApplicationDetailsPage {
@@ -25,7 +25,7 @@ function startApplication(appType: string): ApplicationDetailsPage {
   cy.get('#date').type('10/04/2023')
   cy.contains('button', 'Continue').click()
 
-  if (appType === applicationTypeLabels.PIN_PHONE_ADD_NEW_CONTACT) {
+  if (appType === applicationTypeLabels.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT) {
     cy.get('input[name="earlyDaysCentre"][value="yes"]').check({ force: true })
     cy.contains('button', 'Continue').click()
   }

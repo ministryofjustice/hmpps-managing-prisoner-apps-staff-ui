@@ -1,8 +1,33 @@
+import { HmppsAuthClient } from '../data'
+import { HmppsUser } from '../interfaces/hmppsUser'
 import TestData from '../routes/testutils/testData'
+import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
 import { formatAppsToRows } from './apps'
 
+jest.mock('../helpers/getAppType', () => ({
+  getAppType: jest.fn(() => new TestData().appTypes[2]),
+}))
+
 describe('formatAppsToRows', () => {
-  it('should correctly format applications', () => {
+  let managingPrisonerAppsService: ManagingPrisonerAppsService
+
+  const mockGetSystemClientToken = jest.fn()
+
+  const mockUser: HmppsUser = {
+    ...new TestData().user,
+    authSource: 'nomis',
+    staffId: 12345,
+  }
+
+  beforeEach(() => {
+    const mockHmppsAuthClient = {
+      getSystemClientToken: mockGetSystemClientToken,
+    } as unknown as jest.Mocked<HmppsAuthClient>
+
+    managingPrisonerAppsService = new ManagingPrisonerAppsService(mockHmppsAuthClient)
+  })
+
+  it('should correctly format applications', async () => {
     const applications = [
       {
         ...new TestData().appSearchResponse.apps[0],
@@ -10,7 +35,7 @@ describe('formatAppsToRows', () => {
       },
     ]
 
-    const result = formatAppsToRows(applications)
+    const result = await formatAppsToRows(managingPrisonerAppsService, mockUser, applications)
 
     expect(result).toEqual([
       [

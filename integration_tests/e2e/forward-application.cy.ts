@@ -6,11 +6,11 @@ import Page from '../pages/page'
 
 const { applicationTypes } = applicationTypesData
 
-applicationTypes.forEach(({ name, apiValue }) => {
+applicationTypes.forEach(({ name, key }) => {
   context(`Forward Application Page - ${name}`, () => {
     let page: ForwardApplicationPage
     const { app: baseApp, group } = new TestData()
-    const app = { ...baseApp, appType: apiValue }
+    const app = { ...baseApp, appType: key }
 
     const visitPage = () => {
       cy.task('reset')

@@ -6,10 +6,10 @@ import { APPLICATION_STATUS } from '../../constants/applicationStatus'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
-import { getApplicationType } from '../../utils/getApplicationType'
+import { getAppType } from '../../helpers/getAppType'
+import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { convertToTitleCase } from '../../utils/utils'
 import { validateActionAndReply } from '../validate/validateActionAndReply'
-import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 
 export default function actionAndReplyRoutes({
   auditService,
@@ -77,7 +77,8 @@ export default function actionAndReplyRoutes({
         return res.redirect(`/applications`)
       }
 
-      const applicationType = getApplicationType(application.appType)
+      const applicationType = await getAppType(managingPrisonerAppsService, user, application.appType)
+
       const errors = validateActionAndReply(decision, reason)
       const isAppPending = application.status === APPLICATION_STATUS.PENDING
 

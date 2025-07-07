@@ -1,17 +1,18 @@
 import applicationTypesData from '../fixtures/applicationTypes.json'
 
+import { APPLICATION_TYPE_VALUES } from '../../server/constants/applicationTypes'
 import TestData from '../../server/routes/testutils/testData'
 import ViewApplicationPage from '../pages/viewApplicationPage'
 
 const applicationTypes = applicationTypesData.applicationTypes.filter(
-  ({ apiValue }) => apiValue !== 'PIN_PHONE_ADD_NEW_CONTACT',
+  ({ key }) => key !== APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT,
 )
 
-applicationTypes.forEach(({ name, apiValue }) => {
+applicationTypes.forEach(({ name, key }) => {
   context(`View Application Page - ${name}`, () => {
     let page: ViewApplicationPage
     const { app: baseApp } = new TestData()
-    const app = { ...baseApp, appType: apiValue }
+    const app = { ...baseApp, appType: key }
 
     beforeEach(() => {
       cy.task('reset')

@@ -85,7 +85,7 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
       break
     }
 
-    case APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_CONTACT: {
+    case APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT: {
       const formData: AddNewSocialPinPhoneContactDetails = {
         ...req.body,
         dob: {
