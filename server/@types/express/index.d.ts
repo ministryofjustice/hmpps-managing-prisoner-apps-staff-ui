@@ -17,9 +17,9 @@ export declare module 'express-session' {
   }
 
   interface ApplicationType {
-    value: string
+    key: string
     name: string
-    apiValue: string
+    value: string
   }
 
   type AdditionalApplicationData =

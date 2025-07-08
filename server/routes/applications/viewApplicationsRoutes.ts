@@ -13,12 +13,14 @@ import PrisonService from '../../services/prisonService'
 
 import config from '../../config'
 import { formatAppsToRows } from '../../utils/apps'
-import { extractQueryParamArray, formatAppTypes, formatGroups, removeFilterFromHref } from '../../utils/filters'
+import { checkSelectedFilters, extractQueryParamArray, removeFilterFromHref } from '../../utils/filters'
 import { getStatusesForQuery } from '../../utils/getStatusesForQuery'
 import { getPaginationData } from '../../utils/pagination'
 import { convertToTitleCase } from '../../utils/utils'
 
 import logger from '../../../logger'
+import { formatAppTypesForFilters } from '../../helpers/formatAppTypesForFilters'
+import { formatGroupsForFilters } from '../../helpers/formatGroupsForFilters'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 
 export default function viewApplicationRoutes({
@@ -94,8 +96,8 @@ export default function viewApplicationRoutes({
         return { ...app, prisonerName }
       })
 
-      const appTypes = formatAppTypes(types, selectedFilters)
-      const groups = formatGroups(assignedGroups, selectedFilters)
+      const appTypes = await formatAppTypesForFilters(managingPrisonerAppsService, user, types, selectedFilters)
+      const groups = formatGroupsForFilters(assignedGroups, selectedFilters)
 
       const selectedFilterTags = {
         groups: assignedGroups
@@ -112,8 +114,7 @@ export default function viewApplicationRoutes({
           })),
       }
 
-      const hasSelectedFilters =
-        selectedFilters.prisonerId || selectedFilterTags.groups.length > 0 || selectedFilterTags.types.length > 0
+      const hasSelectedFilters = checkSelectedFilters(selectedFilters, selectedFilterTags)
 
       await auditService.logPageView(Page.VIEW_APPLICATIONS_PAGE, {
         who: user.username,
@@ -121,7 +122,7 @@ export default function viewApplicationRoutes({
       })
 
       return res.render('pages/applications/list/index', {
-        apps: formatAppsToRows(appsWithNames),
+        apps: await formatAppsToRows(managingPrisonerAppsService, user, appsWithNames),
         filters: {
           appTypes,
           groups,

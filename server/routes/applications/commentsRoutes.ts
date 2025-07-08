@@ -2,10 +2,13 @@ import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
+
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
-import { getApplicationType } from '../../utils/getApplicationType'
+
+import { getAppType } from '../../helpers/getAppType'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
+
 import { validateTextField } from '../validate/validateTextField'
 
 export default function commentsRoutes({
@@ -69,7 +72,7 @@ export default function commentsRoutes({
           return res.redirect(`/applications`)
         }
 
-        const applicationType = getApplicationType(application.appType)
+        const applicationType = await getAppType(managingPrisonerAppsService, user, application.appType)
 
         const formattedComments =
           comments?.contents?.map(({ message, createdBy, createdDate }) => {

@@ -1,8 +1,6 @@
 import { Request } from 'express'
 import { ParsedQs } from 'qs'
 
-import { APPLICATION_TYPES } from '../constants/applicationTypes'
-
 export const removeFilterFromHref = (req: Request, filterKey: string, valueToRemove: string) => {
   const newQuery = new URLSearchParams(req.query as Record<string, string | string[]>)
 
@@ -33,28 +31,25 @@ export const extractQueryParamArray = (
   return []
 }
 
-export const formatAppTypes = (types: Record<string, number>, selectedFilters: { types: string[] }) => {
-  return Object.entries(types)
-    .map(([apiValue, count]) => {
-      const matchingType = APPLICATION_TYPES.find(type => type.apiValue === apiValue)
-
-      return matchingType
-        ? {
-            value: matchingType.apiValue,
-            text: `${matchingType.name} (${count})`,
-            checked: selectedFilters.types.includes(matchingType.apiValue),
-          }
-        : null
-    })
-    .filter(Boolean)
+type SelectedFilters = {
+  groups: string[]
+  types: string[]
+  prisonerLabel: string
+  prisonerId: string
 }
 
-export const formatGroups = (
-  assignedGroups: { id: string; name: string; count: number }[],
-  selectedFilters: { groups: string[] },
-) =>
-  assignedGroups.map(group => ({
-    value: group.id,
-    text: `${group.name} (${group.count})`,
-    checked: selectedFilters.groups.includes(group.id),
-  }))
+type SelectedFilterTags = {
+  groups: LinkText[]
+  types: LinkText[]
+}
+
+type LinkText = {
+  href: string
+  text: string
+}
+
+export const checkSelectedFilters = (
+  selectedFilters: SelectedFilters,
+  selectedFilterTags: SelectedFilterTags,
+): boolean =>
+  Boolean(selectedFilters.prisonerId || selectedFilterTags.groups.length > 0 || selectedFilterTags.types.length > 0)

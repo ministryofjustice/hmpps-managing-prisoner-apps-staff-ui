@@ -1,10 +1,13 @@
 import { Request, Response, Router } from 'express'
+
 import asyncMiddleware from '../../middleware/asyncMiddleware'
+
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
-import { getApplicationType } from '../../utils/getApplicationType'
-import { validateForwardingApplication } from '../validate/validateForwardingApplication'
+
+import { getAppType } from '../../helpers/getAppType'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
+import { validateForwardingApplication } from '../validate/validateForwardingApplication'
 
 export default function forwardApplicationRoutes({
   auditService,
@@ -62,7 +65,7 @@ export default function forwardApplicationRoutes({
         return res.redirect(`/applications`)
       }
 
-      const applicationType = getApplicationType(application.appType)
+      const applicationType = await getAppType(managingPrisonerAppsService, user, application.appType)
       const errors = validateForwardingApplication(forwardTo, forwardingReason)
 
       const departments = groups

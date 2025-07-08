@@ -2,10 +2,13 @@ import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
 
 import { URLS } from '../../constants/urls'
+
 import asyncMiddleware from '../../middleware/asyncMiddleware'
+
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
-import { getApplicationType } from '../../utils/getApplicationType'
+
+import { getAppType } from '../../helpers/getAppType'
 import { convertToTitleCase } from '../../utils/utils'
 
 export default function confirmDetailsRoutes({
@@ -20,9 +23,10 @@ export default function confirmDetailsRoutes({
   router.get(
     URLS.CONFIRM_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
+      const { user } = res.locals
       const { applicationData } = req.session
 
-      const applicationType = getApplicationType(applicationData?.type.apiValue)
+      const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.key)
 
       if (!applicationType) {
         return res.redirect(URLS.APPLICATION_TYPE)

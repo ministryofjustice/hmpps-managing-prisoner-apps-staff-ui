@@ -12,6 +12,7 @@ appTypes.forEach(appType => {
       cy.task('reset')
       cy.task('stubSignIn')
       cy.signIn()
+      cy.task('stubGetAppTypes')
 
       cy.visit('/log/prisoner-details')
 

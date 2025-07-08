@@ -1,14 +1,17 @@
 import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
+
 import asyncMiddleware from '../../middleware/asyncMiddleware'
+
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
-import { getApplicationType } from '../../utils/getApplicationType'
+import PersonalRelationshipsService from '../../services/personalRelationshipsService'
+
+import { getApplicationDetails } from '../../utils/getAppDetails'
+import { getAppType } from '../../helpers/getAppType'
 import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
-import { getApplicationDetails } from '../../utils/getAppDetails'
-import PersonalRelationshipsService from '../../services/personalRelationshipsService'
 
 export default function changeApplicationRoutes({
   auditService,
@@ -57,9 +60,10 @@ export default function changeApplicationRoutes({
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
+      const applicationType = await getAppType(managingPrisonerAppsService, user, application.appType)
 
       return handleApplicationDetails(req, res, {
-        getAppType: () => getApplicationType(application.appType),
+        getAppType: () => applicationType,
         getTemplateData: async () => ({
           application,
           backLink: `/applications/${prisonerId}/${applicationId}`,

@@ -12,6 +12,7 @@ context('Application Submitted Page', () => {
     cy.task('stubGetPrisonerApp', {
       app,
     })
+    cy.task('stubGetAppTypes')
     cy.signIn()
 
     cy.visit(`/log/submit/${app.requestedBy.username}/${app.id}`)

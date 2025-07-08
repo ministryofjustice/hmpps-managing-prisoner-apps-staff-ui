@@ -3,6 +3,7 @@ context('Application Type Page', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.signIn()
+    cy.task('stubGetAppTypes')
     cy.visit('/log/application-type')
   })
 

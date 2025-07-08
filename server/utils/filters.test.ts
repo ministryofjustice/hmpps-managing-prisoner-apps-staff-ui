@@ -1,6 +1,5 @@
 import { Request } from 'express'
-import { formatAppTypes, formatGroups, removeFilterFromHref } from './filters'
-import { APPLICATION_TYPES } from '../constants/applicationTypes'
+import { removeFilterFromHref } from './filters'
 
 describe('removeFilterFromHref', () => {
   const mockReq = (query: Record<string, string | string[]>): Request => ({ query }) as Request
@@ -75,58 +74,5 @@ describe('removeFilterFromHref', () => {
     const req = mockReq({})
     const result = removeFilterFromHref(req, 'type', 'business-hub')
     expect(result).toBe('/applications?')
-  })
-})
-
-describe('formatAppTypes', () => {
-  it('should format app types correctly', () => {
-    const types = {
-      PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS: 3,
-      PIN_PHONE_EMERGENCY_CREDIT_TOP_UP: 2,
-    }
-    const selectedFilters = { types: ['PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS'] }
-
-    const result = formatAppTypes(types, selectedFilters)
-
-    const expected = [
-      {
-        value: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
-        text: `${APPLICATION_TYPES.find(type => type.apiValue === 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS')?.name} (3)`,
-        checked: true,
-      },
-      {
-        value: 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP',
-        text: `${APPLICATION_TYPES.find(type => type.apiValue === 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP')?.name} (2)`,
-        checked: false,
-      },
-    ]
-
-    expect(result).toEqual(expected)
-  })
-
-  it('should return an empty array if no matching types are found', () => {
-    const types = { UNKNOWN_TYPE: 3 }
-    const selectedFilters = { types: ['non-existing'] }
-
-    const result = formatAppTypes(types, selectedFilters)
-
-    expect(result).toEqual([])
-  })
-})
-
-describe('formatGroups', () => {
-  it('should format groups correctly', () => {
-    const assignedGroups = [
-      { id: 'group1', name: 'Group 1', count: 2 },
-      { id: 'group2', name: 'Group 2', count: 3 },
-    ]
-    const selectedFilters = { groups: ['group1'] }
-
-    const result = formatGroups(assignedGroups, selectedFilters)
-
-    expect(result).toEqual([
-      { value: 'group1', text: 'Group 1 (2)', checked: true },
-      { value: 'group2', text: 'Group 2 (3)', checked: false },
-    ])
   })
 })

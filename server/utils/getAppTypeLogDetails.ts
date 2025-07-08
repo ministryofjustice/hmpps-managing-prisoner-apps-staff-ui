@@ -23,7 +23,7 @@ export type SupplyListOfContactsAppType = {
 }
 
 export type AddNewContactAppType = {
-  type: 'PIN_PHONE_ADD_NEW_CONTACT'
+  type: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT'
   firstName: string
   lastName: string
   dateOfBirthOrAge: 'dateofbirth' | 'age' | 'donotknow'
@@ -51,11 +51,11 @@ export type AppTypeData =
   | null
 
 export function getAppTypeLogDetailsData(applicationType: ApplicationType, additionalData: unknown): AppTypeData {
-  switch (applicationType.apiValue) {
-    case 'PIN_PHONE_ADD_NEW_CONTACT': {
+  switch (applicationType.key) {
+    case 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT': {
       const formData = additionalData as AddNewSocialPinPhoneContactDetails
       return {
-        type: 'PIN_PHONE_ADD_NEW_CONTACT',
+        type: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
         firstName: formData.firstName || '',
         lastName: formData.lastName || '',
         dateOfBirthOrAge: formData.dateOfBirthOrAge,

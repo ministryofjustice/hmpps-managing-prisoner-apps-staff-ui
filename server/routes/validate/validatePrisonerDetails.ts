@@ -1,5 +1,6 @@
 import { isValid, parse } from 'date-fns'
-import { APPLICATION_TYPE_VALUES, ApplicationType } from '../../constants/applicationTypes'
+import { ApplicationType } from 'express-session'
+import { APPLICATION_TYPE_VALUES } from '../../constants/applicationTypes'
 
 const isValidPrisonNumber = (prisonNumber: string): boolean => {
   const prisonNumberRegex = /^[A-Z]\d{4}[A-Z]{2}$/
@@ -27,7 +28,7 @@ const validatePrisonerDetails = (
     errors.dateString = { text: 'Enter or select a valid date' }
   }
 
-  if (!earlyDaysCentre && applicationType.value === APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_CONTACT) {
+  if (!earlyDaysCentre && applicationType.value === APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT) {
     errors.earlyDaysCentre = { text: 'Select if this person is in the first night or early days centre' }
   }
 

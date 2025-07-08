@@ -54,12 +54,17 @@ export type ApplicationSearchPayload = {
   assignedGroups: string[] | null
 }
 
-type ApplicationType =
-  | 'PIN_PHONE_CREDIT_TOP_UP'
+export type ApplicationType = {
+  key: ApplicationTypeKey
+  name: string
+  value: string
+}
+
+type ApplicationTypeKey =
   | 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP'
-  | 'PIN_PHONE_ADD_NEW_CONTACT'
-  | 'PIN_PHONE_REMOVE_CONTACT'
+  | 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT'
   | 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS'
+  | 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS'
 
 export type ViewApplicationsResponseAssignedGroup = {
   id: string
@@ -71,7 +76,7 @@ export type ViewApplicationsResponseApplication = {
   id: string
   establishmentId: string
   status: 'PENDING' | 'CLOSED'
-  appType: ApplicationType
+  appType: ApplicationTypeKey
   requestedBy: string
   requestedByFirstName: string
   requestedByLastName: string
@@ -86,7 +91,7 @@ export type ViewApplicationsResponse = {
   page: number
   totalRecords: number
   exhausted: boolean
-  types: Record<ApplicationType, number>
+  types: Record<ApplicationTypeKey, number>
   assignedGroups: ViewApplicationsResponseAssignedGroup[]
   apps: ViewApplicationsResponseApplication[]
 }

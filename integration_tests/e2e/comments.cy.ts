@@ -12,6 +12,7 @@ context('Comments Page', () => {
     cy.task('stubSignIn')
     cy.task('stubGetPrisonerApp', { app })
     cy.task('stubGetComments', { app })
+    cy.task('stubGetAppTypes')
 
     cy.signIn()
 

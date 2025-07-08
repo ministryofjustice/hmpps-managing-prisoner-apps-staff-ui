@@ -1,21 +1,24 @@
 import { Request, Response, Router } from 'express'
+import { countries } from '../../constants/countries'
 import { URLS } from '../../constants/urls'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
-import { getApplicationType } from '../../utils/getApplicationType'
-import { handleApplicationDetails } from '../../utils/handleAppDetails'
-import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
-import { countries } from '../../constants/countries'
+import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PersonalRelationshipsService from '../../services/personalRelationshipsService'
-import { getFormattedRelationshipDropdown } from '../../utils/formatRelationshipList'
 import { getFormattedCountries } from '../../utils/formatCountryList'
+import { getFormattedRelationshipDropdown } from '../../utils/formatRelationshipList'
 import { getApplicationDetails } from '../../utils/getAppDetails'
+import { getAppType } from '../../helpers/getAppType'
+import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
+import { handleApplicationDetails } from '../../utils/handleAppDetails'
 
 export default function applicationDetailsRoutes({
   auditService,
+  managingPrisonerAppsService,
   personalRelationshipsService,
 }: {
   auditService: AuditService
+  managingPrisonerAppsService: ManagingPrisonerAppsService
   personalRelationshipsService: PersonalRelationshipsService
 }): Router {
   const router = Router()
@@ -23,24 +26,27 @@ export default function applicationDetailsRoutes({
   router.get(
     URLS.APPLICATION_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
+      const { user } = res.locals
       const { applicationData } = req.session
+
+      const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.key)
+
+      if (!applicationType) {
+        return res.redirect(URLS.APPLICATION_TYPE)
+      }
+
+      const logDetails = getAppTypeLogDetailsData(applicationType, applicationData?.additionalData || {})
+
+      if (!logDetails) {
+        return res.redirect(URLS.APPLICATION_TYPE)
+      }
+
+      const templateFields = await getApplicationDetails(logDetails, { personalRelationshipsService })
 
       await auditService.logPageView(Page.LOG_DETAILS_PAGE, {
         who: res.locals.user.username,
         correlationId: req.id,
       })
-
-      const applicationType = getApplicationType(applicationData?.type.apiValue)
-
-      const additionalData = applicationData?.additionalData || {}
-
-      const data = applicationType ? getAppTypeLogDetailsData(applicationType, additionalData) : null
-
-      if (!applicationType || !data) {
-        return res.redirect(URLS.APPLICATION_TYPE)
-      }
-
-      const templateFields = await getApplicationDetails(data, { personalRelationshipsService })
 
       return res.render(`pages/log-application/application-details/index`, {
         title: 'Log details',
@@ -52,12 +58,15 @@ export default function applicationDetailsRoutes({
 
   router.post(
     URLS.APPLICATION_DETAILS,
-    asyncMiddleware((req, res) => {
+    asyncMiddleware(async (req, res) => {
+      const { user } = res.locals
       const { applicationData } = req.session
 
+      const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.key)
+
       return handleApplicationDetails(req, res, {
-        getAppType: () => getApplicationType(applicationData?.type.apiValue),
-        getTemplateData: async (_req, _res, applicationType) => {
+        getAppType: () => applicationType,
+        getTemplateData: async () => {
           const formattedRelationshipList = await getFormattedRelationshipDropdown(personalRelationshipsService)
           const formattedCountryList = getFormattedCountries(countries, req.body.country)
 

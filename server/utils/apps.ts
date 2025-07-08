@@ -1,28 +1,47 @@
 import { format, getTime } from 'date-fns'
 
 import { ViewApplicationsResponseApplication } from '../@types/managingAppsApi'
-import { APPLICATION_TYPES } from '../constants/applicationTypes'
+import { HmppsUser } from '../interfaces/hmppsUser'
+import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
+import { getAppType } from '../helpers/getAppType'
+import { APPLICATION_STATUS } from '../constants/applicationStatus'
 
 type ViewAppsResponseAppWithName = ViewApplicationsResponseApplication & {
   prisonerName: string
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export function formatAppsToRows(applications: ViewAppsResponseAppWithName[]) {
-  return applications.map(({ requestedDate, appType, requestedBy, assignedGroup, status, id, prisonerName }) => {
-    const date = new Date(requestedDate)
-    const formattedDate = format(date, 'd MMMM yyyy')
-    const sortValue = getTime(date)
-    const type = APPLICATION_TYPES.find(t => t.apiValue === appType)?.name || 'N/A'
-    const statusText = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
+export const formatAppsToRows = async (
+  managingPrisonerAppsService: ManagingPrisonerAppsService,
+  user: HmppsUser,
+  applications: ViewAppsResponseAppWithName[],
+) => {
+  return Promise.all(
+    applications.map(async application => {
+      const { requestedDate, appType, requestedBy, assignedGroup, status, id, prisonerName } = application
 
-    return [
-      { text: formattedDate, attributes: { 'data-sort-value': sortValue.toString() } },
-      { text: type },
-      { html: `${prisonerName}<br/><span class="govuk-table__subtext govuk-body-s">${requestedBy}</span>` },
-      { text: assignedGroup?.name || 'N/A' },
-      status !== 'PENDING' ? { text: statusText } : null,
-      { html: `<a href="/applications/${requestedBy}/${id}" class="govuk-link">View</a>` },
-    ].filter(Boolean)
-  })
+      const date = new Date(requestedDate)
+      const formattedDate = format(date, 'd MMMM yyyy')
+      const sortValue = getTime(date).toString()
+
+      const type = await getAppType(managingPrisonerAppsService, user, appType)
+      const statusText =
+        status === APPLICATION_STATUS.PENDING ? null : status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
+
+      const row = [
+        { text: formattedDate, attributes: { 'data-sort-value': sortValue } },
+        { text: type?.name },
+        {
+          html: `${prisonerName}<br/><span class="govuk-table__subtext govuk-body-s">${requestedBy}</span>`,
+        },
+        { text: assignedGroup?.name || 'N/A' },
+        statusText && { text: statusText },
+        {
+          html: `<a href="/applications/${requestedBy}/${id}" class="govuk-link">View</a>`,
+        },
+      ]
+
+      return row.filter(Boolean)
+    }),
+  )
 }

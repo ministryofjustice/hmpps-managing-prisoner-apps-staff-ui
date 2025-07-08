@@ -15,6 +15,7 @@ context('Application History Page', () => {
     cy.task('stubSignIn')
     cy.task('stubGetPrisonerApp', { app })
     cy.task('stubGetHistory', { app })
+    cy.task('stubGetAppTypes')
     cy.signIn()
 
     cy.visit(`/applications/${app.requestedBy.username}/${app.id}/history`, { failOnStatusCode: false })
@@ -38,7 +39,7 @@ context('Application History Page', () => {
   })
 
   it('should display the application type name in the caption', () => {
-    const appType = applicationTypes.find(type => type.apiValue === app.appType)
+    const appType = applicationTypes.find(type => type.key === app.appType)
     page.pageCaption().should('include.text', appType.name)
   })
 })
