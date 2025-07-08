@@ -1,4 +1,4 @@
-import { ApplicationData } from 'express-session'
+import { ApplicationData, ApplicationType } from 'express-session'
 import logger from '../../logger'
 import {
   Application,
@@ -69,7 +69,7 @@ export default class ManagingPrisonerAppsApiClient {
 
       const payload = {
         reference: '',
-        type: type.apiValue,
+        type: type.key,
         requestedDate,
         requests: [additionalData],
       }
@@ -190,6 +190,17 @@ export default class ManagingPrisonerAppsApiClient {
       })
     } catch (error) {
       logger.error(`Error fetching response for application.`, error)
+      return null
+    }
+  }
+
+  async getAppTypes(): Promise<ApplicationType[] | null> {
+    try {
+      return await this.restClient.get({
+        path: `/v1/establishments/apps/types`,
+      })
+    } catch (error) {
+      logger.error(`Error fetching application types.`, error)
       return null
     }
   }

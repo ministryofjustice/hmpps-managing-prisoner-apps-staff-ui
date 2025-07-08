@@ -1,6 +1,7 @@
 import {
   Application,
   ApplicationSearchPayload,
+  ApplicationType,
   Comment,
   CommentsResponse,
   Group,
@@ -10,6 +11,7 @@ import {
 } from '../../@types/managingAppsApi'
 import { PrisonerDetail } from '../../@types/prisonApi'
 import { APPLICATION_STATUS } from '../../constants/applicationStatus'
+import { APPLICATION_TYPE_VALUES, applicationTypeLabels } from '../../constants/applicationTypes'
 import { BaseUser } from '../../interfaces/hmppsUser'
 
 export default class TestData {
@@ -101,7 +103,7 @@ export default class TestData {
     type: {
       value: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
       name: 'Swap visiting orders (VOs) for PIN credit',
-      apiValue: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
+      key: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
     },
     prisonerId: 'G4567',
     prisonerName: 'Emily Brown',
@@ -123,11 +125,10 @@ export default class TestData {
     totalRecords: 3,
     exhausted: true,
     types: {
-      PIN_PHONE_CREDIT_TOP_UP: 0,
       PIN_PHONE_EMERGENCY_CREDIT_TOP_UP: 0,
-      PIN_PHONE_ADD_NEW_CONTACT: 0,
-      PIN_PHONE_REMOVE_CONTACT: 0,
+      PIN_PHONE_ADD_NEW_SOCIAL_CONTACT: 0,
       PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS: 3,
+      PIN_PHONE_SUPPLY_LIST_OF_CONTACTS: 0,
     },
     assignedGroups: [
       {
@@ -194,7 +195,7 @@ export default class TestData {
       id: 'TEST_ESTABLISHMENT_FIRST',
       name: 'TEST_ESTABLISHMENT_FIRST',
     },
-    initialApp: 'PIN_PHONE_ADD_NEW_CONTACT',
+    initialApp: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
     type: 'WING',
   }
 
@@ -289,4 +290,27 @@ export default class TestData {
   ]
 
   supportedPrisonIds = ({ prisonIds = ['HEI', 'BLI'] } = {}): string[] => prisonIds
+
+  appTypes: ApplicationType[] = [
+    {
+      key: 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP',
+      value: APPLICATION_TYPE_VALUES.PIN_PHONE_EMERGENCY_CREDIT_TOP_UP,
+      name: applicationTypeLabels.PIN_PHONE_EMERGENCY_CREDIT_TOP_UP,
+    },
+    {
+      key: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
+      value: APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT,
+      name: applicationTypeLabels.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT,
+    },
+    {
+      key: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
+      value: APPLICATION_TYPE_VALUES.PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS,
+      name: applicationTypeLabels.PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS,
+    },
+    {
+      key: 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS',
+      value: APPLICATION_TYPE_VALUES.PIN_PHONE_SUPPLY_LIST_OF_CONTACTS,
+      name: applicationTypeLabels.PIN_PHONE_SUPPLY_LIST_OF_CONTACTS,
+    },
+  ]
 }

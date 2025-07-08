@@ -21,27 +21,27 @@ describe(updateSessionData.name, () => {
 
   it('should update an existing field without removing other fields', () => {
     req.session.applicationData = {
-      type: { name: 'Swap VOs', value: 'swap-vos', apiValue: 'swap-vos' },
+      type: { name: 'Swap VOs', value: 'swap-vos', key: 'swap-vos' },
       prisonerName: 'Jane Doe',
     }
 
     updateSessionData(req, { prisonerName: 'John Doe' })
 
     expect(req.session.applicationData).toEqual({
-      type: { name: 'Swap VOs', value: 'swap-vos', apiValue: 'swap-vos' },
+      type: { name: 'Swap VOs', value: 'swap-vos', key: 'swap-vos' },
       prisonerName: 'John Doe',
     })
   })
 
   it('should add new fields while keeping existing ones', () => {
     req.session.applicationData = {
-      type: { name: 'Swap VOs', value: 'swap-vos', apiValue: 'swap-vos' },
+      type: { name: 'Swap VOs', value: 'swap-vos', key: 'swap-vos' },
     }
 
     updateSessionData(req, { prisonerName: 'John Doe', date: '2024-02-05T00:00:00Z' })
 
     expect(req.session.applicationData).toEqual({
-      type: { name: 'Swap VOs', value: 'swap-vos', apiValue: 'swap-vos' },
+      type: { name: 'Swap VOs', value: 'swap-vos', key: 'swap-vos' },
       prisonerName: 'John Doe',
       date: '2024-02-05T00:00:00Z',
     })
@@ -49,7 +49,7 @@ describe(updateSessionData.name, () => {
 
   it('should not overwrite nested objects but merge updates', () => {
     req.session.applicationData = {
-      type: { name: 'Swap VOs', value: 'swap-vos', apiValue: 'swap-vos' },
+      type: { name: 'Swap VOs', value: 'swap-vos', key: 'swap-vos' },
       additionalData: { details: 'Old value' },
     }
 
@@ -58,7 +58,7 @@ describe(updateSessionData.name, () => {
     })
 
     expect(req.session.applicationData).toEqual({
-      type: { name: 'Swap VOs', value: 'swap-vos', apiValue: 'swap-vos' },
+      type: { name: 'Swap VOs', value: 'swap-vos', key: 'swap-vos' },
       additionalData: { details: 'New value' },
     })
   })

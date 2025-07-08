@@ -2,16 +2,19 @@ import { Request, Response, Router } from 'express'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
+import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PrisonService from '../../services/prisonService'
+import { getAppType } from '../../helpers/getAppType'
 import { updateSessionData } from '../../utils/session'
 import validatePrisonerDetails from '../validate/validatePrisonerDetails'
-import { getApplicationType } from '../../utils/getApplicationType'
 
 export default function prisonerDetailsRoutes({
   auditService,
+  managingPrisonerAppsService,
   prisonService,
 }: {
   auditService: AuditService
+  managingPrisonerAppsService: ManagingPrisonerAppsService
   prisonService: PrisonService
 }): Router {
   const router = Router()
@@ -19,6 +22,7 @@ export default function prisonerDetailsRoutes({
   router.get(
     '/log/prisoner-details',
     asyncMiddleware(async (req: Request, res: Response) => {
+      const { user } = res.locals
       const { applicationData } = req.session
 
       await auditService.logPageView(Page.LOG_PRISONER_DETAILS_PAGE, {
@@ -26,7 +30,7 @@ export default function prisonerDetailsRoutes({
         correlationId: req.id,
       })
 
-      const applicationType = getApplicationType(applicationData?.type.apiValue)
+      const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.key)
 
       if (!applicationType) {
         return res.redirect('/log/application-type')
@@ -75,10 +79,12 @@ export default function prisonerDetailsRoutes({
   router.post(
     '/log/prisoner-details',
     asyncMiddleware(async (req: Request, res: Response) => {
+      const { user } = res.locals
       const { prisonNumber, date: dateString, earlyDaysCentre, prisonerLookupButton } = req.body
       const { applicationData } = req.session
 
-      const applicationType = getApplicationType(applicationData?.type.apiValue)
+      const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.key)
+
       const errors = validatePrisonerDetails(applicationType, prisonNumber, dateString, earlyDaysCentre)
 
       if (prisonerLookupButton !== 'true' && !req.session.applicationData.prisonerName && !errors.prisonNumber) {

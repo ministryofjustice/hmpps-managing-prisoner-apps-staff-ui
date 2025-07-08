@@ -11,6 +11,7 @@ context('Confirm Details Page', () => {
     cy.task('stubSignIn')
     cy.signIn()
     cy.task('stubGetPrisonerByPrisonNumber', 'A0000AA')
+    cy.task('stubGetAppTypes')
   })
 
   const testConfirmDetailsPage = (title, route, backLink, hasChangeLinks) => {

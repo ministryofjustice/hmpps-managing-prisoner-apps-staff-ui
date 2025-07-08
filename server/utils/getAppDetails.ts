@@ -19,10 +19,10 @@ export async function getApplicationDetails(
   if (!data) return {}
 
   switch (data.type) {
-    case 'PIN_PHONE_ADD_NEW_CONTACT': {
+    case 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT': {
       const personalRelationshipsService = services?.personalRelationshipsService
       if (!personalRelationshipsService) {
-        logger.error('PersonalRelationshipsService is required for PIN_PHONE_ADD_NEW_CONTACT')
+        logger.error('PersonalRelationshipsService is required for PIN_PHONE_ADD_NEW_SOCIAL_CONTACT')
         return {}
       }
 

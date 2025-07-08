@@ -1,18 +1,16 @@
-import applicationTypesData from '../fixtures/applicationTypes.json'
-
-import ApplicationDetailsPage from '../pages/applicationDetailsPage'
 import { applicationTypeLabels } from '../../server/constants/applicationTypes'
+import applicationTypesData from '../fixtures/applicationTypes.json'
+import ApplicationDetailsPage from '../pages/applicationDetailsPage'
 import Page from '../pages/page'
 
-const applicationTypes = applicationTypesData.applicationTypes.filter(
-  ({ apiValue }) => apiValue !== 'PIN_PHONE_ADD_NEW_CONTACT',
-)
+const { applicationTypes } = applicationTypesData
 
 function startApplication(appType: string): ApplicationDetailsPage {
   cy.task('reset')
   cy.task('stubSignIn')
   cy.signIn()
   cy.task('stubGetPrisonerByPrisonNumber', 'A0000AA')
+  cy.task('stubGetAppTypes')
 
   cy.visit('/log/application-details')
 
@@ -25,7 +23,7 @@ function startApplication(appType: string): ApplicationDetailsPage {
   cy.get('#date').type('10/04/2023')
   cy.contains('button', 'Continue').click()
 
-  if (appType === applicationTypeLabels.PIN_PHONE_ADD_NEW_CONTACT) {
+  if (appType === applicationTypeLabels.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT) {
     cy.get('input[name="earlyDaysCentre"][value="yes"]').check({ force: true })
     cy.contains('button', 'Continue').click()
   }
