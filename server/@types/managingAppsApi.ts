@@ -55,7 +55,7 @@ export type ApplicationSearchPayload = {
 }
 
 export type ApplicationType = {
-  key: ApplicationTypeKey
+  key: string
   name: string
   value: string
 }
