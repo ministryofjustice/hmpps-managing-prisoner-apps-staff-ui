@@ -3,6 +3,10 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { updateSessionData } from '../../utils/session'
+import { ApplicationType } from '../../@types/managingAppsApi'
+import { URLS } from '../../constants/urls'
+
+const ERROR_MESSAGE = 'Choose one application type'
 
 export default function applicationTypeRoutes({
   auditService,
@@ -13,28 +17,28 @@ export default function applicationTypeRoutes({
 }): Router {
   const router = Router()
 
+  const buildApplicationTypes = (appTypes: ApplicationType[], selectedValue: string | null) =>
+    appTypes.map(appType => ({
+      ...appType,
+      text: appType.name,
+      checked: selectedValue === appType.value,
+    }))
+
   router.get(
     '/log/application-type',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
-
       await auditService.logPageView(Page.LOG_APPLICATION_TYPE_PAGE, {
         who: user.username,
         correlationId: req.id,
       })
 
       const appTypes = await managingPrisonerAppsService.getAppTypes(user)
-      const selectedAppType = req.session?.applicationData?.type || null
+      const selectedValue = req.session?.applicationData?.type?.value || null
 
-      const applicationTypes = appTypes.map(appType => ({
-        ...appType,
-        text: appType.name,
-        checked: selectedAppType?.value === appType.value,
-      }))
-
-      res.render('pages/log-application/select-application-type/index', {
+      res.render(URLS.VIEW_SELECT_APPLICATION_TYPE, {
         title: 'Select application type',
-        applicationTypes,
+        applicationTypes: buildApplicationTypes(appTypes, selectedValue),
         errorMessage: null,
       })
     }),
@@ -44,28 +48,21 @@ export default function applicationTypeRoutes({
     '/log/application-type',
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
-
+      const selectedValue = req.body.applicationType
       const appTypes = await managingPrisonerAppsService.getAppTypes(user)
-      const selectedAppType = appTypes.find(type => type.value === req.body.applicationType)
-
-      const applicationTypes = appTypes.map(appType => ({
-        ...appType,
-        text: appType.name,
-        checked: selectedAppType?.value === appType.value,
-      }))
+      const selectedAppType = appTypes.find(type => type.value === selectedValue)
 
       if (!selectedAppType) {
-        return res.render('pages/log-application/select-application-type/index', {
+        return res.render(URLS.VIEW_SELECT_APPLICATION_TYPE, {
           title: 'Select application type',
-          applicationTypes,
-          errorMessage: 'Choose one application type',
-          errorSummary: [{ text: 'Choose one application type', href: '#applicationType' }],
+          applicationTypes: buildApplicationTypes(appTypes, null),
+          errorMessage: ERROR_MESSAGE,
+          errorSummary: [{ text: ERROR_MESSAGE, href: '#applicationType' }],
         })
       }
 
       updateSessionData(req, { type: selectedAppType })
-
-      return res.redirect(`/log/prisoner-details`)
+      return res.redirect('/log/prisoner-details')
     }),
   )
 
