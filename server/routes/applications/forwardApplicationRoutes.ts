@@ -1,13 +1,19 @@
 import { Request, Response, Router } from 'express'
 
+import { PATHS } from '../../constants/paths'
+import { URLS } from '../../constants/urls'
+
+import { getAppType } from '../../helpers/getAppType'
+
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
-import { getAppType } from '../../helpers/getAppType'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { validateForwardingApplication } from '../validate/validateForwardingApplication'
+
+const PAGE_TITLE = 'Forward this application'
 
 export default function forwardApplicationRoutes({
   auditService,
@@ -19,7 +25,7 @@ export default function forwardApplicationRoutes({
   const router = Router()
 
   router.get(
-    '/applications/:prisonerId/:applicationId/forward',
+    `${URLS.APPLICATIONS}/:prisonerId/:applicationId/forward`,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
 
@@ -40,19 +46,19 @@ export default function forwardApplicationRoutes({
           text: group.name,
         }))
 
-      return res.render('pages/applications/forward/index', {
+      return res.render(PATHS.APPLICATIONS.FORWARD, {
         application,
         applicationType,
         departments,
         textareaValue: '',
-        title: 'Forward this application',
+        title: PAGE_TITLE,
         errors: null,
       })
     }),
   )
 
   router.post(
-    '/applications/:prisonerId/:applicationId/forward',
+    `${URLS.APPLICATIONS}/:prisonerId/:applicationId/forward`,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { prisonerId, applicationId } = req.params
       const { forwardTo, forwardingReason } = req.body
@@ -61,9 +67,7 @@ export default function forwardApplicationRoutes({
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
       const groups = await managingPrisonerAppsService.getGroups(user)
 
-      if (!application) {
-        return res.redirect(`/applications`)
-      }
+      if (!application) return res.redirect(URLS.APPLICATIONS)
 
       const applicationType = await getAppType(managingPrisonerAppsService, user, application.appType)
       const errors = validateForwardingApplication(forwardTo, forwardingReason)
@@ -76,20 +80,20 @@ export default function forwardApplicationRoutes({
         }))
 
       if (Object.keys(errors).length > 0) {
-        return res.render('pages/applications/forward/index', {
+        return res.render(PATHS.APPLICATIONS.FORWARD, {
           application,
           applicationType,
           departments,
           forwardTo,
           textareaValue: forwardingReason,
-          title: 'Forward this application',
+          title: PAGE_TITLE,
           errors,
         })
       }
 
       await managingPrisonerAppsService.forwardApp(applicationId, forwardTo, user, forwardingReason)
 
-      return res.redirect(`/applications/${prisonerId}/${applicationId}`)
+      return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}`)
     }),
   )
 

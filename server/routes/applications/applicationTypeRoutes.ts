@@ -1,10 +1,16 @@
 import { Request, Response, Router } from 'express'
+
+import { ApplicationType } from '../../@types/managingAppsApi'
+
+import { PATHS } from '../../constants/paths'
+import { URLS } from '../../constants/urls'
+
 import asyncMiddleware from '../../middleware/asyncMiddleware'
+
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
+
 import { updateSessionData } from '../../utils/session'
-import { ApplicationType } from '../../@types/managingAppsApi'
-import { URLS } from '../../constants/urls'
 
 const ERROR_MESSAGE = 'Choose one application type'
 
@@ -25,7 +31,7 @@ export default function applicationTypeRoutes({
     }))
 
   router.get(
-    '/log/application-type',
+    URLS.LOG_APPLICATION_TYPE,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
       await auditService.logPageView(Page.LOG_APPLICATION_TYPE_PAGE, {
@@ -36,7 +42,7 @@ export default function applicationTypeRoutes({
       const appTypes = await managingPrisonerAppsService.getAppTypes(user)
       const selectedValue = req.session?.applicationData?.type?.value || null
 
-      res.render(URLS.VIEW_SELECT_APPLICATION_TYPE, {
+      res.render(PATHS.LOG_APPLICATION.SELECT_TYPE, {
         title: 'Select application type',
         applicationTypes: buildApplicationTypes(appTypes, selectedValue),
         errorMessage: null,
@@ -45,7 +51,7 @@ export default function applicationTypeRoutes({
   )
 
   router.post(
-    '/log/application-type',
+    URLS.LOG_APPLICATION_TYPE,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
       const selectedValue = req.body.applicationType
@@ -53,7 +59,7 @@ export default function applicationTypeRoutes({
       const selectedAppType = appTypes.find(type => type.value === selectedValue)
 
       if (!selectedAppType) {
-        return res.render(URLS.VIEW_SELECT_APPLICATION_TYPE, {
+        return res.render(PATHS.LOG_APPLICATION.SELECT_TYPE, {
           title: 'Select application type',
           applicationTypes: buildApplicationTypes(appTypes, null),
           errorMessage: ERROR_MESSAGE,
@@ -62,7 +68,7 @@ export default function applicationTypeRoutes({
       }
 
       updateSessionData(req, { type: selectedAppType })
-      return res.redirect('/log/prisoner-details')
+      return res.redirect(URLS.LOG_PRISONER_DETAILS)
     }),
   )
 

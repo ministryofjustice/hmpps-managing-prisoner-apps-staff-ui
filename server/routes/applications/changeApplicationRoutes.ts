@@ -1,6 +1,11 @@
 import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
 
+import { PATHS } from '../../constants/paths'
+import { URLS } from '../../constants/urls'
+
+import { getAppType } from '../../helpers/getAppType'
+
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
 import AuditService, { Page } from '../../services/auditService'
@@ -8,7 +13,6 @@ import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsServ
 import PersonalRelationshipsService from '../../services/personalRelationshipsService'
 
 import { getApplicationDetails } from '../../utils/getAppDetails'
-import { getAppType } from '../../helpers/getAppType'
 import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
@@ -25,7 +29,7 @@ export default function changeApplicationRoutes({
   const router = Router()
 
   router.get(
-    '/applications/:prisonerId/:applicationId/change',
+    `${URLS.APPLICATIONS}/:prisonerId/:applicationId/change`,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { prisonerId, applicationId } = req.params
       const { applicationData } = req.session
@@ -42,10 +46,10 @@ export default function changeApplicationRoutes({
       const formData = getAppTypeLogDetailsData(applicationType, additionalData)
       const templateData = await getApplicationDetails(formData, { personalRelationshipsService }, application)
 
-      return res.render(`pages/applications/change/index`, {
+      return res.render(PATHS.APPLICATIONS.CHANGE_DETAILS, {
         application,
         applicationType,
-        backLink: `/applications/${prisonerId}/${applicationId}`,
+        backLink: `${URLS.APPLICATIONS}/${prisonerId}/${applicationId}`,
         title: applicationType.name,
         errors: null,
         ...templateData,
@@ -54,7 +58,7 @@ export default function changeApplicationRoutes({
   )
 
   router.post(
-    '/applications/:prisonerId/:applicationId/change',
+    `${URLS.APPLICATIONS}/:prisonerId/:applicationId/change`,
     asyncMiddleware(async (req, res) => {
       const { prisonerId, applicationId } = req.params
       const { user } = res.locals
@@ -66,16 +70,16 @@ export default function changeApplicationRoutes({
         getAppType: () => applicationType,
         getTemplateData: async () => ({
           application,
-          backLink: `/applications/${prisonerId}/${applicationId}`,
+          backLink: `${URLS.APPLICATIONS}/${prisonerId}/${applicationId}`,
         }),
-        renderPath: 'pages/applications/change/index',
-        successRedirect: () => `/applications/${prisonerId}/${applicationId}/change/confirm`,
+        renderPath: PATHS.APPLICATIONS.CHANGE_DETAILS,
+        successRedirect: () => `${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/change/confirm`,
       })
     }),
   )
 
   router.get(
-    '/applications/:prisonerId/:applicationId/change/confirm',
+    `${URLS.APPLICATIONS}/:prisonerId/:applicationId/change/confirm`,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { prisonerId, applicationId } = req.params
       const { applicationData } = req.session
@@ -88,7 +92,7 @@ export default function changeApplicationRoutes({
         Page.CHANGE_APPLICATION_PAGE,
       )
 
-      return res.render(`pages/log-application/confirm/index`, {
+      return res.render(PATHS.LOG_APPLICATION.CONFIRM_DETAILS, {
         application,
         applicationData: {
           date: format(new Date(application.requestedDate), 'd MMMM yyyy'),
@@ -96,7 +100,7 @@ export default function changeApplicationRoutes({
           request: applicationData.additionalData,
           type: applicationType,
         },
-        backLink: `/applications/${prisonerId}/${applicationId}/change`,
+        backLink: `${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/change`,
         isUpdate: true,
         title: applicationType.name,
       })
@@ -104,7 +108,7 @@ export default function changeApplicationRoutes({
   )
 
   router.post(
-    '/applications/:prisonerId/:applicationId/change/confirm',
+    `${URLS.APPLICATIONS}/:prisonerId/:applicationId/change/confirm`,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { prisonerId, applicationId } = req.params
       const { applicationData } = req.session
@@ -113,7 +117,7 @@ export default function changeApplicationRoutes({
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
 
       if (!application) {
-        return res.redirect(`/applications`)
+        return res.redirect(URLS.APPLICATIONS)
       }
 
       await managingPrisonerAppsService.changeApp(
@@ -128,12 +132,12 @@ export default function changeApplicationRoutes({
         user,
       )
 
-      return res.redirect(`/applications/${prisonerId}/${applicationId}/change/submit`)
+      return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/change/submit`)
     }),
   )
 
   router.get(
-    '/applications/:prisonerId/:applicationId/change/submit',
+    `${URLS.APPLICATIONS}/:prisonerId/:applicationId/change/submit`,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { application, applicationType } = await getValidApplicationOrRedirect(
         req,
@@ -143,7 +147,7 @@ export default function changeApplicationRoutes({
         Page.SUBMIT_APPLICATION_CHANGE_PAGE,
       )
 
-      res.render(`pages/log-application/submit/index`, {
+      res.render(PATHS.LOG_APPLICATION.SUBMIT, {
         title: applicationType.name,
         application,
         isUpdated: true,

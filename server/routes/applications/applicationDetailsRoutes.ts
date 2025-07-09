@@ -1,14 +1,20 @@
 import { Request, Response, Router } from 'express'
+
 import { countries } from '../../constants/countries'
+import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
+
+import { getAppType } from '../../helpers/getAppType'
+
 import asyncMiddleware from '../../middleware/asyncMiddleware'
+
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PersonalRelationshipsService from '../../services/personalRelationshipsService'
+
 import { getFormattedCountries } from '../../utils/formatCountryList'
 import { getFormattedRelationshipDropdown } from '../../utils/formatRelationshipList'
 import { getApplicationDetails } from '../../utils/getAppDetails'
-import { getAppType } from '../../helpers/getAppType'
 import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
 
@@ -24,7 +30,7 @@ export default function applicationDetailsRoutes({
   const router = Router()
 
   router.get(
-    URLS.APPLICATION_DETAILS,
+    URLS.LOG_APPLICATION_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
       const { applicationData } = req.session
@@ -32,13 +38,13 @@ export default function applicationDetailsRoutes({
       const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.key)
 
       if (!applicationType) {
-        return res.redirect(URLS.APPLICATION_TYPE)
+        return res.redirect(URLS.LOG_APPLICATION_TYPE)
       }
 
       const logDetails = getAppTypeLogDetailsData(applicationType, applicationData?.additionalData || {})
 
       if (!logDetails) {
-        return res.redirect(URLS.APPLICATION_TYPE)
+        return res.redirect(URLS.LOG_APPLICATION_TYPE)
       }
 
       const templateFields = await getApplicationDetails(logDetails, { personalRelationshipsService })
@@ -48,7 +54,7 @@ export default function applicationDetailsRoutes({
         correlationId: req.id,
       })
 
-      return res.render(`pages/log-application/application-details/index`, {
+      return res.render(PATHS.LOG_APPLICATION.APPLICATION_DETAILS, {
         title: 'Log details',
         ...templateFields,
         applicationType,
@@ -57,7 +63,7 @@ export default function applicationDetailsRoutes({
   )
 
   router.post(
-    URLS.APPLICATION_DETAILS,
+    URLS.LOG_APPLICATION_DETAILS,
     asyncMiddleware(async (req, res) => {
       const { user } = res.locals
       const { applicationData } = req.session
@@ -76,8 +82,8 @@ export default function applicationDetailsRoutes({
             countries: formattedCountryList,
           }
         },
-        renderPath: 'pages/log-application/application-details/index',
-        successRedirect: () => '/log/confirm',
+        renderPath: PATHS.LOG_APPLICATION.APPLICATION_DETAILS,
+        successRedirect: () => URLS.LOG_CONFIRM_DETAILS,
       })
     }),
   )

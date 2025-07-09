@@ -1,14 +1,16 @@
 import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
 
+import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
+
+import { getAppType } from '../../helpers/getAppType'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
-import { getAppType } from '../../helpers/getAppType'
 import { convertToTitleCase } from '../../utils/utils'
 
 export default function confirmDetailsRoutes({
@@ -21,23 +23,21 @@ export default function confirmDetailsRoutes({
   const router = Router()
 
   router.get(
-    URLS.CONFIRM_DETAILS,
+    URLS.LOG_CONFIRM_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
       const { applicationData } = req.session
 
       const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.key)
 
-      if (!applicationType) {
-        return res.redirect(URLS.APPLICATION_TYPE)
-      }
+      if (!applicationType) return res.redirect(URLS.LOG_APPLICATION_TYPE)
 
       await auditService.logPageView(Page.CONFIRM_DETAILS_PAGE, {
         who: res.locals.user.username,
         correlationId: req.id,
       })
 
-      return res.render(`pages/log-application/confirm/index`, {
+      return res.render(PATHS.LOG_APPLICATION.CONFIRM_DETAILS, {
         applicationData: {
           date: format(new Date(applicationData.date), 'd MMMM yyyy'),
           earlyDaysCentre: convertToTitleCase(applicationData.earlyDaysCentre?.toString()),
@@ -45,14 +45,14 @@ export default function confirmDetailsRoutes({
           request: applicationData.additionalData,
           type: applicationType,
         },
-        backLink: URLS.APPLICATION_DETAILS,
+        backLink: URLS.LOG_APPLICATION_DETAILS,
         title: applicationType.name,
       })
     }),
   )
 
   router.post(
-    URLS.CONFIRM_DETAILS,
+    URLS.LOG_CONFIRM_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { applicationData } = req.session
       const { user } = res.locals
@@ -61,7 +61,7 @@ export default function confirmDetailsRoutes({
 
       delete req.session.applicationData
 
-      return res.redirect(`/log/submit/${applicationData.prisonerId}/${application.id}`)
+      return res.redirect(`${URLS.LOG_SUBMIT_APPLICATION}/${applicationData.prisonerId}/${application.id}`)
     }),
   )
 

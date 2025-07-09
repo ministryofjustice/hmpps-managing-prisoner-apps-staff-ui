@@ -1,7 +1,12 @@
 import { Request, Response, Router } from 'express'
+
+import { PATHS } from '../../constants/paths'
+
 import asyncMiddleware from '../../middleware/asyncMiddleware'
+
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
+
 import formatApplicationHistory from '../../utils/formatApplicationHistory'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 
@@ -41,7 +46,7 @@ export default function applicationHistoryRoutes({
 
       const formattedHistory = formatApplicationHistory(history, commentItems, responses)
 
-      return res.render(`pages/applications/history/index`, {
+      return res.render(PATHS.APPLICATIONS.HISTORY, {
         application,
         history: formattedHistory,
         title: applicationType.name,
