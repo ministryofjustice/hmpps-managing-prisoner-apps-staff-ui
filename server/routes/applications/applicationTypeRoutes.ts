@@ -48,10 +48,16 @@ export default function applicationTypeRoutes({
       const appTypes = await managingPrisonerAppsService.getAppTypes(user)
       const selectedAppType = appTypes.find(type => type.value === req.body.applicationType)
 
+      const applicationTypes = appTypes.map(appType => ({
+        ...appType,
+        text: appType.name,
+        checked: selectedAppType?.value === appType.value,
+      }))
+
       if (!selectedAppType) {
         return res.render('pages/log-application/select-application-type/index', {
           title: 'Select application type',
-          applicationTypes: appTypes,
+          applicationTypes,
           errorMessage: 'Choose one application type',
           errorSummary: [{ text: 'Choose one application type', href: '#applicationType' }],
         })
