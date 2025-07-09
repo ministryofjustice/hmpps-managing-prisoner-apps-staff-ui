@@ -82,8 +82,12 @@
             </button>
           </div>
 
-          {% if prisonerName %}
-            {% set insetText = "Prisoner name: " + prisonerName %}
+          {% if prisonerName or prisonerLookupButton == 'true' %}
+            {% if prisonerName %}
+              {% set insetText = "Prisoner name: " + prisonerName %}
+            {% else %}
+              {% set insetText = "Prisoner name: Not found" %}
+            {% endif %}  
             {% set insetClasses = "govuk-!-margin-top-0" %}
           {% else %}
             {% set insetText = "" %}
