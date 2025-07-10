@@ -8,6 +8,7 @@ import {
   History,
   Response,
   ViewApplicationsResponse,
+  ViewApplicationsResponseAssignedGroup,
 } from '../../@types/managingAppsApi'
 import { PrisonerDetail } from '../../@types/prisonApi'
 import { APPLICATION_STATUS } from '../../constants/applicationStatus'
@@ -311,6 +312,34 @@ export default class TestData {
       key: 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS',
       value: APPLICATION_TYPE_VALUES.PIN_PHONE_SUPPLY_LIST_OF_CONTACTS,
       name: applicationTypeLabels.PIN_PHONE_SUPPLY_LIST_OF_CONTACTS,
+    },
+  ]
+
+  assignedGroups: ViewApplicationsResponseAssignedGroup[] = [
+    {
+      id: '343a7876-07b9-4ef8-947c-7cf554fae864',
+      name: 'Business Hub',
+      count: 10,
+    },
+    {
+      id: '2262b27d-ad93-43e2-98f9-542297135eb3',
+      name: 'Chaplaincy',
+      count: 0,
+    },
+    {
+      id: '1ebf7110-82cf-4dc1-b872-92c7d71847fc',
+      name: 'OMU',
+      count: 10,
+    },
+    {
+      id: '3db3fb1a-a542-419b-99e2-3d24009293b8',
+      name: 'Safer Custody',
+      count: 0,
+    },
+    {
+      id: 'e9515b3e-8ad1-4029-b4fb-ac9a2474db34',
+      name: 'Security',
+      count: 0,
     },
   ]
 }

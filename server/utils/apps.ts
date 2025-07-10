@@ -3,7 +3,7 @@ import { format, getTime } from 'date-fns'
 import { ViewApplicationsResponseApplication } from '../@types/managingAppsApi'
 import { HmppsUser } from '../interfaces/hmppsUser'
 import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
-import { getAppType } from '../helpers/getAppType'
+import { getAppType } from '../helpers/application/getAppType'
 import { APPLICATION_STATUS } from '../constants/applicationStatus'
 
 type ViewAppsResponseAppWithName = ViewApplicationsResponseApplication & {

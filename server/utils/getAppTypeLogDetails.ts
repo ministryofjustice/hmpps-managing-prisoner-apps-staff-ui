@@ -27,11 +27,7 @@ export type AddNewContactAppType = {
   firstName: string
   lastName: string
   dateOfBirthOrAge: 'dateofbirth' | 'age' | 'donotknow'
-  dob?: {
-    day: string
-    month: string
-    year: string
-  }
+  dob?: { day: string; month: string; year: string }
   age?: string
   relationship: string
   addressLine1?: string
@@ -53,46 +49,62 @@ export type AppTypeData =
 export function getAppTypeLogDetailsData(applicationType: ApplicationType, additionalData: unknown): AppTypeData {
   switch (applicationType.key) {
     case 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT': {
-      const formData = additionalData as AddNewSocialPinPhoneContactDetails
+      const {
+        firstName = '',
+        lastName = '',
+        dateOfBirthOrAge,
+        dob,
+        age,
+        relationship = '',
+        addressLine1,
+        addressLine2,
+        townOrCity,
+        postcode,
+        country,
+        telephone1 = '',
+        telephone2 = '',
+      } = additionalData as AddNewSocialPinPhoneContactDetails
+
       return {
         type: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
-        firstName: formData.firstName || '',
-        lastName: formData.lastName || '',
-        dateOfBirthOrAge: formData.dateOfBirthOrAge,
-        dob: formData.dob,
-        age: formData.age,
-        relationship: formData.relationship || '',
-        addressLine1: formData.addressLine1,
-        addressLine2: formData.addressLine2,
-        townOrCity: formData.townOrCity,
-        postcode: formData.postcode,
-        country: formData.country,
-        telephone1: formData.telephone1 || '',
-        telephone2: formData.telephone2 || '',
+        firstName,
+        lastName,
+        dateOfBirthOrAge,
+        dob,
+        age,
+        relationship,
+        addressLine1,
+        addressLine2,
+        townOrCity,
+        postcode,
+        country,
+        telephone1,
+        telephone2,
       }
     }
+
     case 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS': {
-      const data = additionalData as SwapVOsForPinCreditDetails
+      const { details = '' } = additionalData as SwapVOsForPinCreditDetails
       return {
         type: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
-        details: data.details || '',
+        details,
       }
     }
 
     case 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP': {
-      const data = additionalData as AddEmergencyPinPhoneCreditDetails
+      const { amount = '', reason = '' } = additionalData as AddEmergencyPinPhoneCreditDetails
       return {
         type: 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP',
-        amount: data.amount || '',
-        reason: data.reason || '',
+        amount,
+        reason,
       }
     }
 
     case 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS': {
-      const data = additionalData as SupplyListOfPinPhoneContactsDetails
+      const { details = '' } = additionalData as SupplyListOfPinPhoneContactsDetails
       return {
         type: 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS',
-        details: data.details || '',
+        details,
       }
     }
 

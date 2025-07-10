@@ -1,10 +1,16 @@
 import { Request, Response, Router } from 'express'
 
+import { URLS } from '../../constants/urls'
+import { PATHS } from '../../constants/paths'
+
+import { getAppType } from '../../helpers/application/getAppType'
+
 import asyncMiddleware from '../../middleware/asyncMiddleware'
+
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PrisonService from '../../services/prisonService'
-import { getAppType } from '../../helpers/getAppType'
+
 import { updateSessionData } from '../../utils/session'
 import validatePrisonerDetails from '../validate/validatePrisonerDetails'
 
@@ -20,7 +26,7 @@ export default function prisonerDetailsRoutes({
   const router = Router()
 
   router.get(
-    '/log/prisoner-details',
+    URLS.LOG_PRISONER_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
       const { applicationData } = req.session
@@ -32,15 +38,13 @@ export default function prisonerDetailsRoutes({
 
       const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.key)
 
-      if (!applicationType) {
-        return res.redirect('/log/application-type')
-      }
+      if (!applicationType) return res.redirect(URLS.LOG_APPLICATION_TYPE)
 
       const formattedDate = applicationData.date
         ? new Intl.DateTimeFormat('en-GB').format(new Date(applicationData.date))
         : ''
 
-      return res.render('pages/log-application/prisoner-details/index', {
+      return res.render(PATHS.LOG_APPLICATION.PRISONER_DETAILS, {
         applicationType,
         dateString: formattedDate,
         earlyDaysCentre: req.session.applicationData.earlyDaysCentre || '',
@@ -53,7 +57,7 @@ export default function prisonerDetailsRoutes({
   )
 
   router.get(
-    '/log/prisoner-details/find/:prisonNumber',
+    `${URLS.LOG_PRISONER_DETAILS}/find/:prisonNumber`,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { prisonNumber } = req.params
       const { user } = res.locals
@@ -77,7 +81,7 @@ export default function prisonerDetailsRoutes({
   )
 
   router.post(
-    '/log/prisoner-details',
+    URLS.LOG_PRISONER_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
       const { prisonNumber, date: dateString, earlyDaysCentre, prisonerLookupButton } = req.body
@@ -103,7 +107,7 @@ export default function prisonerDetailsRoutes({
       }
 
       if (Object.keys(errors).length > 0) {
-        return res.render('pages/log-application/prisoner-details/index', {
+        return res.render(PATHS.LOG_APPLICATION.PRISONER_DETAILS, {
           applicationType,
           prisonNumber,
           dateString,
@@ -139,7 +143,7 @@ export default function prisonerDetailsRoutes({
         earlyDaysCentre,
       })
 
-      return res.redirect(`/log/application-details`)
+      return res.redirect(URLS.LOG_APPLICATION_DETAILS)
     }),
   )
 

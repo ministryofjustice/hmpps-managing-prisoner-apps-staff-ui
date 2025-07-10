@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import AuditService, { Page } from '../services/auditService'
 import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
-import { getAppType } from '../helpers/getAppType'
+import { getAppType } from '../helpers/application/getAppType'
 
 export default async function getValidApplicationOrRedirect(
   req: Request,
