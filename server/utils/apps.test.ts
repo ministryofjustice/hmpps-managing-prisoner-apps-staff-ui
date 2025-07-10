@@ -4,7 +4,7 @@ import TestData from '../routes/testutils/testData'
 import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
 import { formatAppsToRows } from './apps'
 
-jest.mock('../helpers/getAppType', () => ({
+jest.mock('../helpers/application/getAppType', () => ({
   getAppType: jest.fn(() => new TestData().appTypes[2]),
 }))
 

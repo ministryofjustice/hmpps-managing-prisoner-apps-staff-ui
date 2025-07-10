@@ -7,7 +7,7 @@ import { APPLICATION_STATUS } from '../../constants/applicationStatus'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
-import { getAppType } from '../../helpers/getAppType'
+import { getAppType } from '../../helpers/application/getAppType'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
 import AuditService, { Page } from '../../services/auditService'

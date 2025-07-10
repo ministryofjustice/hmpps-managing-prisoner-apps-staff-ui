@@ -3,7 +3,7 @@ import { Request, Response, Router } from 'express'
 import { URLS } from '../../constants/urls'
 import { PATHS } from '../../constants/paths'
 
-import { getAppType } from '../../helpers/getAppType'
+import { getAppType } from '../../helpers/application/getAppType'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 

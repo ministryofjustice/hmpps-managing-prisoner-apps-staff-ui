@@ -7,8 +7,8 @@ import { APPLICATION_STATUS } from '../../constants/applicationStatus'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
-import { formatAppTypesForFilters } from '../../helpers/formatAppTypesForFilters'
-import { formatGroupsForFilters } from '../../helpers/formatGroupsForFilters'
+import { formatAppTypesForFilters } from '../../helpers/filters/formatAppTypesForFilters'
+import { formatGroupsForFilters } from '../../helpers/filters/formatGroupsForFilters'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 

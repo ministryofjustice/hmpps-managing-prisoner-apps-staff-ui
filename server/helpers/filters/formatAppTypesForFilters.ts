@@ -1,11 +1,5 @@
-import { HmppsUser } from '../interfaces/hmppsUser'
-import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
-
-type FilterOption = {
-  value: string
-  text: string
-  checked: boolean
-}
+import { HmppsUser } from '../../interfaces/hmppsUser'
+import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
 // eslint-disable-next-line import/prefer-default-export
 export const formatAppTypesForFilters = async (
@@ -13,7 +7,7 @@ export const formatAppTypesForFilters = async (
   user: HmppsUser,
   types: Record<string, number>,
   selectedFilters: { types: string[] },
-): Promise<FilterOption[]> => {
+) => {
   const appTypes = await managingPrisonerAppsService.getAppTypes(user)
 
   return Object.entries(types)
@@ -27,5 +21,5 @@ export const formatAppTypesForFilters = async (
         checked: selectedFilters.types.includes(matchingType.key),
       }
     })
-    .filter((item): item is FilterOption => Boolean(item))
+    .filter(item => Boolean(item))
 }
