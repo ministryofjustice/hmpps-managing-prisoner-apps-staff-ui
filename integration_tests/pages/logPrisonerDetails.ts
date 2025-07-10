@@ -19,6 +19,8 @@ export default class LogPrisonerDetailsPage extends Page {
 
   findPrisonerButton = () => cy.get('[data-test="find-prisoner-button"]')
 
+  findPrisonerButtonErrorMessage = () => cy.get('.govuk-error-message').contains('Find prisoner to continue')
+
   prisonerNameInsetText = () => cy.get('.govuk-inset-text')
 
   dateInput = () => cy.get('#date')
@@ -26,4 +28,15 @@ export default class LogPrisonerDetailsPage extends Page {
   dateLabel = () => cy.get('label[for="date"]')
 
   continueButton = () => cy.get('[data-test="continue-button"]')
+
+  firstNightOrEarlyDaysCentre = () => cy.get('input[type="radio"]')
+
+  firstNightOrEarlyDaysCentreLabel = () => cy.contains('Is this person in the first night or early days centre?')
+
+  firstNightOrEarlyDaysCentreYes = () => cy.get('input[type="radio"][value="yes"]')
+
+  firstNightOrEarlyDaysCentreNo = () => cy.get('input[type="radio"][value="no"]')
+
+  firstNightOrEarlyDaysCentreErrorMessage = () =>
+    cy.get('.govuk-error-message').contains('Select if this person is in the first night or early days centre')
 }
