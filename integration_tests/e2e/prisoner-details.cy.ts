@@ -4,8 +4,6 @@ import Page from '../pages/page'
 
 const { applicationTypes } = applicationTypesData
 
-// const appTypes = applicationTypesData.applicationTypes
-
 applicationTypes.forEach(appType => {
   context(`${appType.name} Log Prisoner Details Page`, () => {
     let page: LogPrisonerDetailsPage
