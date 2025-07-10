@@ -4,6 +4,11 @@ import { Request, Response, Router } from 'express'
 import { ApplicationSearchPayload } from '../../@types/managingAppsApi'
 
 import { APPLICATION_STATUS } from '../../constants/applicationStatus'
+import { PATHS } from '../../constants/paths'
+import { URLS } from '../../constants/urls'
+
+import { formatAppTypesForFilters } from '../../helpers/filters/formatAppTypesForFilters'
+import { formatGroupsForFilters } from '../../helpers/filters/formatGroupsForFilters'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
@@ -11,17 +16,15 @@ import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PrisonService from '../../services/prisonService'
 
-import config from '../../config'
 import { formatAppsToRows } from '../../utils/apps'
 import { checkSelectedFilters, extractQueryParamArray, removeFilterFromHref } from '../../utils/filters'
 import { getStatusesForQuery } from '../../utils/getStatusesForQuery'
+import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { getPaginationData } from '../../utils/pagination'
 import { convertToTitleCase } from '../../utils/utils'
 
 import logger from '../../../logger'
-import { formatAppTypesForFilters } from '../../helpers/formatAppTypesForFilters'
-import { formatGroupsForFilters } from '../../helpers/formatGroupsForFilters'
-import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
+import config from '../../config'
 
 export default function viewApplicationRoutes({
   auditService,
@@ -35,7 +38,7 @@ export default function viewApplicationRoutes({
   const router = Router()
 
   router.get(
-    '/applications',
+    URLS.APPLICATIONS,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
 
@@ -121,7 +124,7 @@ export default function viewApplicationRoutes({
         correlationId: req.id,
       })
 
-      return res.render('pages/applications/list/index', {
+      return res.render(PATHS.APPLICATIONS.LIST, {
         apps: await formatAppsToRows(managingPrisonerAppsService, user, appsWithNames),
         filters: {
           appTypes,
@@ -139,7 +142,7 @@ export default function viewApplicationRoutes({
     }),
   )
 
-  router.get('/applications/search-prisoners', async (req: Request, res: Response): Promise<void> => {
+  router.get(`${URLS.SEARCH_PRISONERS}`, async (req: Request, res: Response): Promise<void> => {
     const query = req.query.prisoner?.toString()
     const { user } = res.locals
 
@@ -164,7 +167,7 @@ export default function viewApplicationRoutes({
   })
 
   router.get(
-    '/applications/:prisonerId/:applicationId',
+    `${URLS.APPLICATIONS}/:prisonerId/:applicationId`,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { application, applicationType } = await getValidApplicationOrRedirect(
         req,
@@ -174,7 +177,7 @@ export default function viewApplicationRoutes({
         Page.VIEW_APPLICATION_PAGE,
       )
 
-      return res.render('pages/applications/view/index', {
+      return res.render(PATHS.APPLICATIONS.VIEW, {
         title: applicationType.name,
         applicationType,
         application: {

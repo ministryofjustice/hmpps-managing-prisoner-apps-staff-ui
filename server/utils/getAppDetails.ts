@@ -6,64 +6,89 @@ import PersonalRelationshipsService from '../services/personalRelationshipsServi
 import logger from '../../logger'
 import { Application } from '../@types/managingAppsApi'
 
+type Services = {
+  personalRelationshipsService?: PersonalRelationshipsService
+}
+
+type RequestSummary = Partial<{
+  amount: number
+  reason: string
+  details: string
+}>
+
 // eslint-disable-next-line import/prefer-default-export
 export async function getApplicationDetails(
-  data: AppTypeData,
-  services?: {
-    personalRelationshipsService?: PersonalRelationshipsService
-  },
+  applicationDetails: AppTypeData,
+  services?: Services,
   application?: Application,
 ): Promise<Record<string, unknown>> {
-  const request: Partial<{ amount?: number; reason?: string; details?: string }> = application?.requests?.[0] || {}
+  if (!applicationDetails) return {}
 
-  if (!data) return {}
+  const { amount, reason, details }: RequestSummary = application?.requests?.[0] ?? {}
 
-  switch (data.type) {
-    case 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT': {
-      const personalRelationshipsService = services?.personalRelationshipsService
-      if (!personalRelationshipsService) {
-        logger.error('PersonalRelationshipsService is required for PIN_PHONE_ADD_NEW_SOCIAL_CONTACT')
-        return {}
-      }
-
-      const formattedRelationshipList = await getFormattedRelationshipDropdown(
-        personalRelationshipsService,
-        data.relationship,
-      )
-      const formattedCountryList = getFormattedCountries(countries, data.country)
-
-      return {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        dateOfBirthOrAge: data.dateOfBirthOrAge,
-        dob: data.dob,
-        age: data.age,
-        relationship: data.relationship,
-        addressLine1: data.addressLine1,
-        addressLine2: data.addressLine2,
-        townOrCity: data.townOrCity,
-        postcode: data.postcode,
-        countries: formattedCountryList,
-        country: getCountryNameByCode(data.country),
-        telephone1: data.telephone1,
-        telephone2: data.telephone2,
-        formattedRelationshipList,
-      }
-    }
+  switch (applicationDetails.type) {
+    case 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT':
+      return handleAddNewContact(applicationDetails, services?.personalRelationshipsService)
 
     case 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP':
       return {
-        amount: data.amount || String(request.amount || ''),
-        reason: data.reason || request.reason || '',
+        amount: applicationDetails.amount || String(amount ?? ''),
+        reason: applicationDetails.reason || reason || '',
       }
 
     case 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS':
     case 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS':
       return {
-        details: data.details || request.details || '',
+        details: applicationDetails.details || details || '',
       }
 
     default:
       return {}
+  }
+}
+
+async function handleAddNewContact(
+  applicationDetails: Extract<AppTypeData, { type: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT' }>,
+  personalRelationshipsService?: PersonalRelationshipsService,
+): Promise<Record<string, unknown>> {
+  if (!personalRelationshipsService) {
+    logger.error('PersonalRelationshipsService is required for PIN_PHONE_ADD_NEW_SOCIAL_CONTACT')
+    return {}
+  }
+
+  const {
+    firstName,
+    lastName,
+    dateOfBirthOrAge,
+    dob,
+    age,
+    relationship,
+    addressLine1,
+    addressLine2,
+    townOrCity,
+    postcode,
+    country,
+    telephone1,
+    telephone2,
+  } = applicationDetails
+
+  const formattedRelationshipList = await getFormattedRelationshipDropdown(personalRelationshipsService, relationship)
+
+  return {
+    firstName,
+    lastName,
+    dateOfBirthOrAge,
+    dob,
+    age,
+    relationship,
+    addressLine1,
+    addressLine2,
+    townOrCity,
+    postcode,
+    countries: getFormattedCountries(countries, country),
+    country: getCountryNameByCode(country),
+    telephone1,
+    telephone2,
+    formattedRelationshipList,
   }
 }

@@ -1,12 +1,16 @@
 import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
 
+import { PATHS } from '../../constants/paths'
+import { URLS } from '../../constants/urls'
+
+import { getAppType } from '../../helpers/application/getAppType'
+
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
-import { getAppType } from '../../helpers/getAppType'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 
 import { validateTextField } from '../validate/validateTextField'
@@ -46,7 +50,7 @@ export default function commentsRoutes({
           }
         }) ?? []
 
-      return res.render(`pages/applications/comments/index`, {
+      return res.render(PATHS.APPLICATIONS.COMMENTS, {
         application,
         applicationType,
         comments: formattedComments,
@@ -69,7 +73,7 @@ export default function commentsRoutes({
         const comments = await managingPrisonerAppsService.getComments(prisonerId, application.id, user)
 
         if (!application) {
-          return res.redirect(`/applications`)
+          return res.redirect(URLS.APPLICATIONS)
         }
 
         const applicationType = await getAppType(managingPrisonerAppsService, user, application.appType)
@@ -84,7 +88,7 @@ export default function commentsRoutes({
             }
           }) ?? []
 
-        return res.render('pages/applications/comments/index', {
+        return res.render(PATHS.APPLICATIONS.COMMENTS, {
           application,
           applicationType,
           comment,
@@ -101,7 +105,7 @@ export default function commentsRoutes({
         user,
       )
 
-      return res.redirect(`/applications/${prisonerId}/${applicationId}/comments`)
+      return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/comments`)
     }),
   )
 

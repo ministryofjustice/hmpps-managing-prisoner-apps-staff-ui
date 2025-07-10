@@ -1,5 +1,5 @@
-import { HmppsUser } from '../interfaces/hmppsUser'
-import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
+import { HmppsUser } from '../../interfaces/hmppsUser'
+import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
 // eslint-disable-next-line import/prefer-default-export
 export const getAppType = async (
