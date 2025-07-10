@@ -1,6 +1,7 @@
 import applicationTypesData from '../fixtures/applicationTypes.json'
 import LogPrisonerDetailsPage from '../pages/logPrisonerDetails'
 import Page from '../pages/page'
+import { APPLICATION_TYPE_VALUES } from '../../server/constants/applicationTypes'
 
 const { applicationTypes } = applicationTypesData
 
@@ -77,7 +78,7 @@ applicationTypes.forEach(appType => {
       page.findPrisonerButtonErrorMessage().should('exist')
     })
 
-    if (appType.value === 'add-social-pin-phone-contact') {
+    if (appType.value === APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT) {
       it('should render the first night or early days centre radio buttons', () => {
         page
           .firstNightOrEarlyDaysCentreLabel()
