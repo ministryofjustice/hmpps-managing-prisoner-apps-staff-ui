@@ -29,7 +29,7 @@ const validatePrisonerDetails = (
   }
 
   if (!earlyDaysCentre && applicationType.value === APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT) {
-    errors.earlyDaysCentre = { text: 'Select if this person is in the first night or early days centre' }
+    errors.earlyDaysCentre = { text: 'Select yes if this person is in the first night or early days centre' }
   }
 
   return errors
