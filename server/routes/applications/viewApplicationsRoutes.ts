@@ -177,6 +177,8 @@ export default function viewApplicationRoutes({
         Page.VIEW_APPLICATION_PAGE,
       )
 
+      console.log({ application: JSON.stringify(application, null, 2) })
+
       return res.render(PATHS.APPLICATIONS.VIEW, {
         title: applicationType.name,
         applicationType,

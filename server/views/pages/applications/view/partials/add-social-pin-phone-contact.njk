@@ -1,0 +1,95 @@
+{{ appTypeSummaryListHeader("New social contact to add", application.requestedBy.username, application.id, isClosed) }}
+
+{% set rows = [] %}
+
+{% set _ = rows.push({
+  key: { text: "First name" },
+  value: { text: application.requests[0].firstName }
+}) %}
+
+{% set _ = rows.push({
+  key: { text: "Last name" },
+  value: { text: application.requests[0].lastName }
+}) %}
+
+{% if application.requests[0].dateOfBirthOrAge == "donotknow" %}
+  {% set _ = rows.push({
+    key: { text: "Date of birth or age" },
+    value: { text: "Do not know" }
+  }) %}
+{% elseif application.requests[0].dateOfBirthOrAge == "age" %}
+  {% set _ = rows.push({
+    key: { text: "Age" },
+    value: { text: application.requests[0].age }
+  }) %}
+{% else %}
+  {% set dob = application.requests[0].dob %}
+  {% if dob.day and dob.month and dob.year %}
+    {% set formattedDob = dob.day + '/' + dob.month + '/' + dob.year %}
+  {% else %}
+    {% set formattedDob = "Not provided" %}
+  {% endif %}
+  {% set _ = rows.push({
+    key: { text: "Date of birth" },
+    value: { text: formattedDob }
+  }) %}
+{% endif %}
+
+{% set _ = rows.push({
+  key: { text: "Relationship" },
+  value: { text: application.requests[0].relationship }
+}) %}
+
+{% if application.requests[0].addressLine1 %}
+  {% set _ = rows.push({
+    key: { text: "Address line 1" },
+    value: { text: application.requests[0].addressLine1 }
+  }) %}
+{% endif %}
+
+{% if application.requests[0].addressLine2 %}
+  {% set _ = rows.push({
+    key: { text: "Address line 2" },
+    value: { text: application.requests[0].addressLine2 }
+  }) %}
+{% endif %}
+
+{% if application.requests[0].townOrCity %}
+  {% set _ = rows.push({
+    key: { text: "Town or city" },
+    value: { text: application.requests[0].townOrCity }
+  }) %}
+{% endif %}
+
+{% if application.requests[0].postcode %}
+  {% set _ = rows.push({
+    key: { text: "Postcode" },
+    value: { text: application.requests[0].postcode }
+  }) %}
+{% endif %}
+
+{% if application.requests[0].country %}
+  {% set _ = rows.push({
+    key: { text: "Country" },
+    value: { text: application.requests[0].country }
+  }) %}
+{% endif %}
+
+{% if application.requests[0].telephone1 %}
+  {% set _ = rows.push({
+    key: { text: "Telephone number 1" },
+    value: { text: application.requests[0].telephone1 }
+  }) %}
+{% endif %}
+
+{% if application.requests[0].telephone2 %}
+  {% set _ = rows.push({
+    key: { text: "Telephone number 2" },
+    value: { text: application.requests[0].telephone2 }
+  }) %}
+{% endif %}
+
+{{ govukSummaryList({
+  classes: "govuk-!-margin-bottom-9",
+  rows: rows
+}) }}

@@ -37,60 +37,9 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <h2 class="govuk-heading-m">Application details</h2>
-      {{ govukSummaryList({
-        rows: [
-          { key: { text: "Status" }, value: { text: application.status } },
-          { 
-            key: { text: "Department" }, 
-            value: { text: application.assignedGroup.name }, 
-            actions: { items: [] if isClosed else [{ 
-              href: "/applications/" + application.requestedBy.username + "/" + application.id + "/forward", 
-              text: "Forward", 
-              visuallyHiddenText: "department" 
-            }] } 
-          },
-          { key: { text: "Application type" }, value: { text: title } },
-          { key: { text: "Date sent" }, value: { text: application.requestedDate } }
-        ]
-      }) }}
-
-      <h2 class="govuk-heading-m">Prisoner details</h2>
-      {{ govukSummaryList({
-        rows: [
-          { 
-            key: { text: "Prisoner" }, 
-            value: { text: application.requestedByLastName + ", " + application.requestedByFirstName + " (" + application.requestedBy.username + ")" }, 
-            actions: { items: [{ 
-              href:  dpsPrisonerUrl + "prisoner/" + application.requestedBy.username, 
-              text: "View profile", 
-              visuallyHiddenText: "prisoner", 
-              attributes: {
-                target: "_blank",
-                rel: "noopener noreferrer"
-              }
-            }] } 
-          },
-          { key: { text: "Location" }, value: { text: application.requestedBy.cellLocation } },
-          { 
-            key: { text: "Alerts" }, 
-            value: { text: application.requestedBy.alerts or 0 }, 
-            actions: { items: [{ 
-              href: dpsPrisonerUrl + "prisoner/" + application.requestedBy.username + "/alerts/active", 
-              text: "View alerts", 
-              visuallyHiddenText: "alerts",
-              attributes: {
-                target: "_blank",
-                rel: "noopener noreferrer"
-              }
-            }] } 
-          },
-          { key: { text: "IEP" }, value: { text: application.requestedBy.iep } }
-        ]
-      }) }}
-
+      {% include "./partials/application-details.njk" %}
+      {% include "./partials/prisoner-details.njk" %}
       {% include "./partials/" + applicationType.value + ".njk" %}
-
     </div>
   </div>
 </div>
