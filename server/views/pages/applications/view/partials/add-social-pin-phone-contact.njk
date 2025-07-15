@@ -14,80 +14,62 @@
 
 {% if application.requests[0].dateOfBirthOrAge == "donotknow" %}
   {% set _ = rows.push({
-    key: { text: "Date of birth or age" },
-    value: { text: "Do not know" }
+    key: { text: "Age or date of birth" },
+    value: { text: "‘I do not know their age or date of birth" }
   }) %}
 {% elseif application.requests[0].dateOfBirthOrAge == "age" %}
   {% set _ = rows.push({
-    key: { text: "Age" },
+    key: { text: "Age or date of birth" },
     value: { text: application.requests[0].age }
   }) %}
 {% else %}
   {% set dob = application.requests[0].dob %}
-  {% if dob.day and dob.month and dob.year %}
-    {% set formattedDob = dob.day + '/' + dob.month + '/' + dob.year %}
-  {% else %}
-    {% set formattedDob = "Not provided" %}
-  {% endif %}
+  {% set formattedDob = dob.day + '/' + dob.month + '/' + dob.year %}
   {% set _ = rows.push({
-    key: { text: "Date of birth" },
+    key: { text: "Age or date of birth" },
     value: { text: formattedDob }
   }) %}
 {% endif %}
 
 {% set _ = rows.push({
-  key: { text: "Relationship" },
+  key: { text: "Relation to prisoner" },
   value: { text: application.requests[0].relationship }
 }) %}
 
-{% if application.requests[0].addressLine1 %}
-  {% set _ = rows.push({
-    key: { text: "Address line 1" },
-    value: { text: application.requests[0].addressLine1 }
-  }) %}
-{% endif %}
+{% set _ = rows.push({
+  key: { text: "Address line 1" },
+  value: { text: application.requests[0].addressLine1 }
+}) %}
 
-{% if application.requests[0].addressLine2 %}
-  {% set _ = rows.push({
-    key: { text: "Address line 2" },
-    value: { text: application.requests[0].addressLine2 }
-  }) %}
-{% endif %}
+{% set _ = rows.push({
+  key: { text: "Address line 2" },
+  value: { text: application.requests[0].addressLine2 }
+}) %}
 
-{% if application.requests[0].townOrCity %}
-  {% set _ = rows.push({
-    key: { text: "Town or city" },
-    value: { text: application.requests[0].townOrCity }
-  }) %}
-{% endif %}
+{% set _ = rows.push({
+  key: { text: "Town or city" },
+  value: { text: application.requests[0].townOrCity }
+}) %}
 
-{% if application.requests[0].postcode %}
-  {% set _ = rows.push({
-    key: { text: "Postcode" },
-    value: { text: application.requests[0].postcode }
-  }) %}
-{% endif %}
+{% set _ = rows.push({
+  key: { text: "Postcode" },
+  value: { text: application.requests[0].postcode }
+}) %}
 
-{% if application.requests[0].country %}
-  {% set _ = rows.push({
-    key: { text: "Country" },
-    value: { text: application.requests[0].country }
-  }) %}
-{% endif %}
+{% set _ = rows.push({
+  key: { text: "Country" },
+  value: { text: application.requests[0].country }
+}) %}
 
-{% if application.requests[0].telephone1 %}
-  {% set _ = rows.push({
-    key: { text: "Telephone number 1" },
-    value: { text: application.requests[0].telephone1 }
-  }) %}
-{% endif %}
+{% set _ = rows.push({
+  key: { text: "Telephone number 1" },
+  value: { text: application.requests[0].telephone1 }
+}) %}
 
-{% if application.requests[0].telephone2 %}
-  {% set _ = rows.push({
-    key: { text: "Telephone number 2" },
-    value: { text: application.requests[0].telephone2 }
-  }) %}
-{% endif %}
+{% set _ = rows.push({
+  key: { text: "Telephone number 2" },
+  value: { text: application.requests[0].telephone2 }
+}) %}
 
 {{ govukSummaryList({
   classes: "govuk-!-margin-bottom-9",
