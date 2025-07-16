@@ -1,0 +1,51 @@
+<h2 class="govuk-heading-m">Prisoner details</h2>
+
+{% set rows = [] %}
+
+{% set _ = rows.push({
+  key: { text: "Prisoner" },
+  value: {
+    text: application.requestedByLastName + ", " + application.requestedByFirstName + " (" + application.requestedBy.username + ")"
+  },
+  actions: {
+    items: [{
+      href: dpsPrisonerUrl + "prisoner/" + application.requestedBy.username,
+      text: "View profile",
+      visuallyHiddenText: "prisoner",
+      attributes: {
+        target: "_blank",
+        rel: "noopener noreferrer"
+      }
+    }]
+  }
+}) %}
+
+{% set _ = rows.push({
+  key: { text: "Location" },
+  value: { text: application.requestedBy.cellLocation }
+}) %}
+
+{% set _ = rows.push({
+  key: { text: "Alerts" },
+  value: { text: application.requestedBy.alerts or 0 },
+  actions: {
+    items: [{
+      href: dpsPrisonerUrl + "prisoner/" + application.requestedBy.username + "/alerts/active",
+      text: "View alerts",
+      visuallyHiddenText: "alerts",
+      attributes: {
+        target: "_blank",
+        rel: "noopener noreferrer"
+      }
+    }]
+  }
+}) %}
+
+{% set _ = rows.push({
+  key: { text: "IEP" },
+  value: { text: application.requestedBy.iep }
+}) %}
+
+{{ govukSummaryList({
+  rows: rows
+}) }}
