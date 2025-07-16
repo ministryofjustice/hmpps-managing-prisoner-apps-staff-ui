@@ -14,25 +14,25 @@
 
 {% if application.requests[0].dateOfBirthOrAge == "donotknow" %}
   {% set _ = rows.push({
-    key: { text: "Age or date of birth" },
+    key: { text: "Date of birth or age" },
     value: { text: "‘I do not know their age or date of birth" }
   }) %}
 {% elseif application.requests[0].dateOfBirthOrAge == "age" %}
   {% set _ = rows.push({
-    key: { text: "Age or date of birth" },
+    key: { text: "Date of birth or age" },
     value: { text: application.requests[0].age }
   }) %}
 {% else %}
   {% set dob = application.requests[0].dob %}
   {% set formattedDob = dob.day + '/' + dob.month + '/' + dob.year %}
   {% set _ = rows.push({
-    key: { text: "Age or date of birth" },
+    key: { text: "Date of birth or age" },
     value: { text: formattedDob }
   }) %}
 {% endif %}
 
 {% set _ = rows.push({
-  key: { text: "Relation to prisoner" },
+  key: { text: "Relationship" },
   value: { text: application.requests[0].relationship }
 }) %}
 
