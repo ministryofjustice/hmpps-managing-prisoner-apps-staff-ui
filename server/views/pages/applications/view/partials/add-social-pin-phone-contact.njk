@@ -15,7 +15,7 @@
 {% if application.requests[0].dateOfBirthOrAge == "donotknow" %}
   {% set _ = rows.push({
     key: { text: "Date of birth or age" },
-    value: { text: "‘I do not know their age or date of birth" }
+    value: { text: "I do not know their age or date of birth" }
   }) %}
 {% elseif application.requests[0].dateOfBirthOrAge == "age" %}
   {% set _ = rows.push({
