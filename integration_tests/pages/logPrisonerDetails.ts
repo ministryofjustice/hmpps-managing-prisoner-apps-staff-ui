@@ -38,5 +38,5 @@ export default class LogPrisonerDetailsPage extends Page {
   firstNightOrEarlyDaysCentreNo = () => cy.get('input[type="radio"][value="no"]')
 
   firstNightOrEarlyDaysCentreErrorMessage = () =>
-    cy.get('.govuk-error-message').contains('Select if this person is in the first night or early days centre')
+    cy.get('.govuk-error-message').contains('Select yes if this person is in the first night or early days centre')
 }
