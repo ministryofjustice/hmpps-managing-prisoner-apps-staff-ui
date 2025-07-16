@@ -1,0 +1,41 @@
+<h2 class="govuk-heading-m">Application details</h2>
+
+{% set rows = [] %}
+
+{% set _ = rows.push({
+  key: { text: "Status" },
+  value: { text: application.status }
+}) %}
+
+{% set _ = rows.push({
+  key: { text: "Department" },
+  value: { text: application.assignedGroup.name },
+  actions: {
+    items: [] if isClosed else [{
+      href: "/applications/" + application.requestedBy.username + "/" + application.id + "/forward",
+      text: "Forward",
+      visuallyHiddenText: "department"
+    }]
+  }
+}) %}
+
+{% set _ = rows.push({
+  key: { text: "Application type" },
+  value: { text: title }
+}) %}
+
+{% set _ = rows.push({
+  key: { text: "Date sent" },
+  value: { text: application.requestedDate }
+}) %}
+
+{% if applicationType.value == "add-social-pin-phone-contact" %}
+  {% set _ = rows.push({
+    key: { text: "First night or early days centre" },
+    value: { text: application.earlyDaysCentre }
+  }) %}
+{% endif %}
+
+{{ govukSummaryList({
+  rows: rows
+}) }}

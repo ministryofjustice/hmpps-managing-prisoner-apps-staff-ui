@@ -3,9 +3,7 @@ import applicationTypesData from '../fixtures/applicationTypes.json'
 import TestData from '../../server/routes/testutils/testData'
 import ViewApplicationPage from '../pages/viewApplicationPage'
 
-const applicationTypes = applicationTypesData.applicationTypes.filter(
-  ({ key }) => key !== 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
-)
+const { applicationTypes } = applicationTypesData
 
 applicationTypes.forEach(({ name, key }) => {
   context(`View Application Page - ${name}`, () => {
