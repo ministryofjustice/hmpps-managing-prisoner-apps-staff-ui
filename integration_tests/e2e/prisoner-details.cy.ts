@@ -1,10 +1,11 @@
 import applicationTypesData from '../fixtures/applicationTypes.json'
 import LogPrisonerDetailsPage from '../pages/logPrisonerDetails'
 import Page from '../pages/page'
+import { APPLICATION_TYPE_VALUES } from '../../server/constants/applicationTypes'
 
-const appTypes = applicationTypesData.applicationTypes
+const { applicationTypes } = applicationTypesData
 
-appTypes.forEach(appType => {
+applicationTypes.forEach(appType => {
   context(`${appType.name} Log Prisoner Details Page`, () => {
     let page: LogPrisonerDetailsPage
 
@@ -74,7 +75,37 @@ appTypes.forEach(appType => {
     it('should show an error if "Find prisoner" button is not clicked', () => {
       page.prisonNumberInput().type('A1234AA')
       page.continueButton().click()
-      cy.get('.govuk-error-message').should('exist').and('contain.text', 'Find prisoner to continue')
+      page.findPrisonerButtonErrorMessage().should('exist')
     })
+
+    if (appType.value === APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT) {
+      it('should render the first night or early days centre radio buttons', () => {
+        page
+          .firstNightOrEarlyDaysCentreLabel()
+          .should('exist')
+          .and('include.text', 'Is this person in the first night or early days centre?')
+        page.firstNightOrEarlyDaysCentre().should('exist')
+        page.firstNightOrEarlyDaysCentreYes().should('exist')
+        page.firstNightOrEarlyDaysCentreNo().should('exist')
+      })
+
+      it('should allow the user to select "No" for first night or early days centre', () => {
+        page.firstNightOrEarlyDaysCentreNo().check({ force: true })
+        page.firstNightOrEarlyDaysCentreNo().should('be.checked')
+      })
+
+      it('should allow the user to select "Yes" for first night or early days centre', () => {
+        page.firstNightOrEarlyDaysCentreYes().check({ force: true })
+        page.firstNightOrEarlyDaysCentreYes().should('be.checked')
+      })
+
+      it('should show an error if first night or early days centre radio button is not selected', () => {
+        page.prisonNumberInput().type('A1234AA')
+        page.findPrisonerButton().click()
+        page.dateInput().type('01/01/2025')
+        page.continueButton().click()
+        page.firstNightOrEarlyDaysCentreErrorMessage().should('exist')
+      })
+    }
   })
 })
