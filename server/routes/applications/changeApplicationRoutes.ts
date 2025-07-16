@@ -62,16 +62,24 @@ export default function changeApplicationRoutes({
     asyncMiddleware(async (req, res) => {
       const { prisonerId, applicationId } = req.params
       const { user } = res.locals
+      const { applicationData } = req.session
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
       const applicationType = await getAppType(managingPrisonerAppsService, user, application.appType)
 
       return handleApplicationDetails(req, res, {
         getAppType: () => applicationType,
-        getTemplateData: async () => ({
-          application,
-          backLink: `${URLS.APPLICATIONS}/${prisonerId}/${applicationId}`,
-        }),
+        getTemplateData: async () => {
+          const additionalData = applicationData?.additionalData || {}
+          const formData = getAppTypeLogDetailsData(applicationType, additionalData)
+          const templateData = await getApplicationDetails(formData, { personalRelationshipsService }, application)
+          return {
+            application,
+            applicationType,
+            backLink: `${URLS.APPLICATIONS}/${prisonerId}/${applicationId}`,
+            ...templateData,
+          }
+        },
         renderPath: PATHS.APPLICATIONS.CHANGE_DETAILS,
         successRedirect: () => `${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/change/confirm`,
       })

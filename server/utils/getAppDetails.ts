@@ -16,6 +16,8 @@ type RequestSummary = Partial<{
   details: string
 }>
 
+type AddNewSocialContactRequest = Partial<Extract<AppTypeData, { type: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT' }>>
+
 // eslint-disable-next-line import/prefer-default-export
 export async function getApplicationDetails(
   applicationDetails: AppTypeData,
@@ -27,8 +29,25 @@ export async function getApplicationDetails(
   const { amount, reason, details }: RequestSummary = application?.requests?.[0] ?? {}
 
   switch (applicationDetails.type) {
-    case 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT':
-      return handleAddNewContact(applicationDetails, services?.personalRelationshipsService)
+    case 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT': {
+      const request = (application?.requests?.[0] as AddNewSocialContactRequest) ?? {}
+      const prefilledDetails: AddNewSocialContactRequest = {
+        firstName: applicationDetails.firstName || request.firstName || '',
+        lastName: applicationDetails.lastName || request.lastName || '',
+        dateOfBirthOrAge: applicationDetails.dateOfBirthOrAge || request.dateOfBirthOrAge || 'donotknow',
+        dob: applicationDetails.dob || request.dob,
+        age: applicationDetails.age || request.age || '',
+        relationship: applicationDetails.relationship || request.relationship || '',
+        addressLine1: applicationDetails.addressLine1 || request.addressLine1 || '',
+        addressLine2: applicationDetails.addressLine2 || request.addressLine2 || '',
+        townOrCity: applicationDetails.townOrCity || request.townOrCity || '',
+        postcode: applicationDetails.postcode || request.postcode || '',
+        country: applicationDetails.country || request.country || '',
+        telephone1: applicationDetails.telephone1 || request.telephone1 || '',
+        telephone2: applicationDetails.telephone2 || request.telephone2 || '',
+      }
+      return handleAddNewContact(prefilledDetails, services?.personalRelationshipsService)
+    }
 
     case 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP':
       return {
@@ -48,7 +67,7 @@ export async function getApplicationDetails(
 }
 
 async function handleAddNewContact(
-  applicationDetails: Extract<AppTypeData, { type: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT' }>,
+  applicationDetails: AddNewSocialContactRequest,
   personalRelationshipsService?: PersonalRelationshipsService,
 ): Promise<Record<string, unknown>> {
   if (!personalRelationshipsService) {
