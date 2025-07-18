@@ -54,6 +54,7 @@ export default class TestData {
       },
     ],
     status: APPLICATION_STATUS.PENDING,
+    firstNightCenter: true,
   }
 
   prisoner: PrisonerDetail = {
