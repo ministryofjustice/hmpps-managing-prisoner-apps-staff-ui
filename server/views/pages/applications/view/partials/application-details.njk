@@ -30,9 +30,14 @@
 }) %}
 
 {% if applicationType.value == "add-social-pin-phone-contact" %}
+  {% if application.firstNightCenter %}
+    {% set firstNightCenter = "Yes" %}
+  {% else %}
+    {% set firstNightCenter = "No" %}
+  {% endif %}
   {% set _ = rows.push({
     key: { text: "First night or early days centre" },
-    value: { text: application.earlyDaysCentre }
+    value: { text: firstNightCenter }
   }) %}
 {% endif %}
 
