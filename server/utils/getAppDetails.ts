@@ -16,6 +16,8 @@ type RequestSummary = Partial<{
   details: string
 }>
 
+type AddNewSocialContactRequest = Partial<Extract<AppTypeData, { type: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT' }>>
+
 // eslint-disable-next-line import/prefer-default-export
 export async function getApplicationDetails(
   applicationDetails: AppTypeData,
@@ -27,8 +29,36 @@ export async function getApplicationDetails(
   const { amount, reason, details }: RequestSummary = application?.requests?.[0] ?? {}
 
   switch (applicationDetails.type) {
-    case 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT':
-      return handleAddNewContact(applicationDetails, services?.personalRelationshipsService)
+    case 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT': {
+      const request = (application?.requests?.[0] as AddNewSocialContactRequest) ?? {}
+      const isValid = (v: unknown) => v !== undefined && v !== null && !(typeof v === 'string' && v.trim() === '')
+
+      const fallback = <T>(field: keyof AddNewSocialContactRequest, defaultValue: T): T => {
+        const formDetails = applicationDetails?.[field]
+        const formRequest = request?.[field]
+
+        if (isValid(formDetails)) return formDetails as T
+        if (isValid(formRequest)) return formRequest as T
+        return defaultValue
+      }
+
+      const prefilledDetails: AddNewSocialContactRequest = {
+        firstName: fallback('firstName', ''),
+        lastName: fallback('lastName', ''),
+        dateOfBirthOrAge: fallback('dateOfBirthOrAge', undefined),
+        dob: fallback('dob', undefined),
+        age: fallback('age', ''),
+        relationship: fallback('relationship', ''),
+        addressLine1: fallback('addressLine1', ''),
+        addressLine2: fallback('addressLine2', ''),
+        townOrCity: fallback('townOrCity', ''),
+        postcode: fallback('postcode', ''),
+        country: fallback('country', ''),
+        telephone1: fallback('telephone1', ''),
+        telephone2: fallback('telephone2', ''),
+      }
+      return handleAddNewContact(prefilledDetails, services?.personalRelationshipsService)
+    }
 
     case 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP':
       return {
@@ -48,7 +78,7 @@ export async function getApplicationDetails(
 }
 
 async function handleAddNewContact(
-  applicationDetails: Extract<AppTypeData, { type: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT' }>,
+  applicationDetails: AddNewSocialContactRequest,
   personalRelationshipsService?: PersonalRelationshipsService,
 ): Promise<Record<string, unknown>> {
   if (!personalRelationshipsService) {

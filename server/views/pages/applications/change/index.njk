@@ -3,6 +3,10 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "./partials/errors.njk" import renderErrorSummary %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -18,27 +22,7 @@
 
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-half">
-        {% if errors %}
-          {% set errorList = [] %}
-
-          {% if errors.Details %}
-            {% set errorList = errorList.concat([{ text: errors.Details.text, href: "#details" }]) %}
-          {% endif %}
-
-          {% if errors.Amount %}
-            {% set errorList = errorList.concat([{ text: errors.Amount.text, href: "#amount" }]) %}
-          {% endif %}
-
-          {% if errors.Reason %}
-            {% set errorList = errorList.concat([{ text: errors.Reason.text, href: "#reason" }]) %}
-          {% endif %}
-
-          {{ govukErrorSummary({
-            titleText: "There is a problem",
-            errorList: errorList
-          }) }}
-        {% endif %}
-
+        {{ renderErrorSummary(errors) }}
         <span class="govuk-caption-xl">{{ title }}</span>
         <h1 class="govuk-heading-xl govuk-!-margin-top-0">Log details</h1>
         
