@@ -105,6 +105,7 @@ export default function changeApplicationRoutes({
         applicationData: {
           date: format(new Date(application.requestedDate), 'd MMMM yyyy'),
           prisoner: `${application.requestedBy.firstName} ${application.requestedBy.lastName}`,
+          earlyDaysCentre: application.firstNightCenter ? 'Yes' : 'No',
           request: applicationData.additionalData,
           type: applicationType,
         },

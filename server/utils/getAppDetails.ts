@@ -31,20 +31,31 @@ export async function getApplicationDetails(
   switch (applicationDetails.type) {
     case 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT': {
       const request = (application?.requests?.[0] as AddNewSocialContactRequest) ?? {}
+      const isValid = (v: unknown) => v !== undefined && v !== null && !(typeof v === 'string' && v.trim() === '')
+
+      const fallback = <T>(field: keyof AddNewSocialContactRequest, defaultValue: T): T => {
+        const formDetails = applicationDetails?.[field]
+        const formRequest = request?.[field]
+
+        if (isValid(formDetails)) return formDetails as T
+        if (isValid(formRequest)) return formRequest as T
+        return defaultValue
+      }
+
       const prefilledDetails: AddNewSocialContactRequest = {
-        firstName: applicationDetails.firstName || request.firstName || '',
-        lastName: applicationDetails.lastName || request.lastName || '',
-        dateOfBirthOrAge: applicationDetails.dateOfBirthOrAge || request.dateOfBirthOrAge || 'donotknow',
-        dob: applicationDetails.dob || request.dob,
-        age: applicationDetails.age || request.age || '',
-        relationship: applicationDetails.relationship || request.relationship || '',
-        addressLine1: applicationDetails.addressLine1 || request.addressLine1 || '',
-        addressLine2: applicationDetails.addressLine2 || request.addressLine2 || '',
-        townOrCity: applicationDetails.townOrCity || request.townOrCity || '',
-        postcode: applicationDetails.postcode || request.postcode || '',
-        country: applicationDetails.country || request.country || '',
-        telephone1: applicationDetails.telephone1 || request.telephone1 || '',
-        telephone2: applicationDetails.telephone2 || request.telephone2 || '',
+        firstName: fallback('firstName', ''),
+        lastName: fallback('lastName', ''),
+        dateOfBirthOrAge: fallback('dateOfBirthOrAge', undefined),
+        dob: fallback('dob', undefined),
+        age: fallback('age', ''),
+        relationship: fallback('relationship', ''),
+        addressLine1: fallback('addressLine1', ''),
+        addressLine2: fallback('addressLine2', ''),
+        townOrCity: fallback('townOrCity', ''),
+        postcode: fallback('postcode', ''),
+        country: fallback('country', ''),
+        telephone1: fallback('telephone1', ''),
+        telephone2: fallback('telephone2', ''),
       }
       return handleAddNewContact(prefilledDetails, services?.personalRelationshipsService)
     }
