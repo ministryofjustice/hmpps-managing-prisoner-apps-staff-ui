@@ -1,3 +1,5 @@
+<h2 class="govuk-heading-m">New social contact to add</h2>
+
 {% set dayClass = "govuk-input--width-2" %}
 {% if errors['dob-day'] %}
   {% set dayClass = dayClass + " govuk-input--error" %}
@@ -138,13 +140,14 @@
   errorMessage: errors.relationship
 }) }}
 
-<h2 class="govuk-heading-m">Address</h2>
+<h2 class="govuk-heading-m govuk-!-margin-bottom-1">Address</h2>
+<p class="govuk-hint">Fill this in if your establishment requires it</p>
 
 {{ govukInput({
   id: "addressline1",
   name: "addressLine1",
   label: {
-    text: "Address line 1 (optional)",
+    text: "Address line 1",
     classes: "govuk-label--s"
   },
   value: addressLine1
@@ -154,7 +157,7 @@
   id: "addressline2",
   name: "addressLine2",
   label: {
-    text: "Address line 2 (optional)",
+    text: "Address line 2",
     classes: "govuk-label--s"
   },
   value: addressLine2
@@ -164,7 +167,7 @@
   id: "townorcity",
   name: "townOrCity",
   label: {
-    text: "Town or city (optional)",
+    text: "Town or city",
     classes: "govuk-label--s"
   },
   value: townOrCity,
@@ -175,7 +178,7 @@
   id: "postcode",
   name: "postcode",
   label: {
-    text: "Postcode (optional)",
+    text: "Postcode",
     classes: "govuk-label--s"
   },
   value: postcode,
@@ -186,7 +189,7 @@
   id: "country",
   name: "country",
   label: {
-    text: "Country (optional)",
+    text: "Country",
      classes: "govuk-label--s"
   },
   items: countries
