@@ -7,8 +7,10 @@ mojFrontend.initAll()
 document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
   const findPrisonerButton = document.getElementById('prisoner-number-lookup')
   const prisonerNumberInput = document.getElementById('prison-number')
-  const prisonerNameInput = document.getElementById('prisoner-name')
   const prisonerNameDisplay = document.getElementById('prisoner-name-display')
+  const prisonerNameInput = document.getElementById('prisoner-name')
+  const prisonerAlertCountInput = document.getElementById('prisoner-alert-count')
+
   const findPrisonerLookupButton = document.getElementById('prisoner-lookup-button')
 
   if (!findPrisonerButton) {
@@ -33,16 +35,31 @@ document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
       prisonerNameDisplay.classList.remove('govuk-!-display-none')
 
       if (response.ok) {
-        prisonerNameInput.value = data.prisonerName
-        prisonerNameDisplay.innerText = `Prisoner name: ${data.prisonerName}`
+        const { prisonerName, activeAlertCount } = data
+        prisonerNameInput.value = prisonerName
+        prisonerAlertCountInput.value = activeAlertCount
+
+        const dpsPrisonerUrlInput = document.getElementById('dps-prisoner-url')
+        const dpsPrisonerUrl = dpsPrisonerUrlInput.value
+
+        const alertsLink = `${dpsPrisonerUrl}prisoner/${prisonNumber}/alerts/active`
+
+        prisonerNameDisplay.innerHTML = `
+    <strong>Prisoner name: ${prisonerName}</strong><br>
+    ${activeAlertCount} alert${activeAlertCount === 1 ? '' : 's'} 
+    (<a href="${alertsLink}" target="_blank" rel="noopener noreferrer">View</a>)
+  `
       } else {
         prisonerNameInput.value = ''
-        prisonerNameDisplay.innerText = 'Prisoner name: Not found'
+        prisonerAlertCountInput.value = ''
+        prisonerNameDisplay.innerHTML = 'Prisoner name: Not found'
       }
+
       // eslint-disable-next-line no-unused-vars
     } catch (e) {
       prisonerNameInput.value = ''
-      prisonerNameDisplay.innerText = 'Prisoner name: Not found'
+      prisonerAlertCountInput.value = ''
+      prisonerNameDisplay.innerHTML = 'Prisoner name: Not found'
     }
 
     findPrisonerLookupButton.value = 'true'

@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express'
 
-import { URLS } from '../../constants/urls'
 import { PATHS } from '../../constants/paths'
+import { URLS } from '../../constants/urls'
 
 import { getAppType } from '../../helpers/application/getAppType'
 
@@ -11,6 +11,7 @@ import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PrisonService from '../../services/prisonService'
 
+import config from '../../config'
 import { updateSessionData } from '../../utils/session'
 import validatePrisonerDetails from '../validate/validatePrisonerDetails'
 
@@ -52,6 +53,7 @@ export default function prisonerDetailsRoutes({
         prisonNumber: applicationData.prisonerId,
         title: 'Log prisoner details',
         errors: null,
+        dpsPrisonerUrl: config.dpsPrisoner,
       })
     }),
   )
@@ -69,13 +71,14 @@ export default function prisonerDetailsRoutes({
 
       const prisoner = await prisonService.getPrisonerByPrisonNumber(prisonNumber, user)
 
-      if (!prisoner || prisoner.length === 0) {
+      if (!prisoner) {
         res.status(404).json({ error: 'Prisoner not found' })
         return
       }
 
       res.json({
-        prisonerName: `${prisoner[0].lastName}, ${prisoner[0].firstName}`,
+        prisonerName: `${prisoner.lastName}, ${prisoner.firstName}`,
+        activeAlertCount: prisoner.activeAlertCount ?? 0,
       })
     }),
   )
@@ -98,10 +101,10 @@ export default function prisonerDetailsRoutes({
       if (Object.keys(errors).length === 0) {
         const prisoner = await prisonService.getPrisonerByPrisonNumber(prisonNumber, res.locals.user)
 
-        if (!prisoner || prisoner.length === 0) {
+        if (!prisoner) {
           errors.prisonNumber = { text: 'Enter a valid prison number' }
         } else {
-          req.body.prisonerName = `${prisoner[0].lastName}, ${prisoner[0].firstName}`
+          req.body.prisonerName = `${prisoner.lastName}, ${prisoner.firstName}`
           req.session.applicationData.prisonerName = req.body.prisonerName
         }
       }

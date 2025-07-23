@@ -1,0 +1,28 @@
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% macro renderErrorSummary(errors) %}
+  {% if errors %}
+    {% set errorList = [] %}
+
+    {% if errors.prisonNumber %}
+      {% set errorList = errorList.concat([{ text: errors.prisonNumber.text, href: "#prisonNumber" }]) %}
+    {% endif %}
+
+    {% if errors.prisonerLookupButton %}
+      {% set errorList = errorList.concat([{ text: errors.prisonerLookupButton.text, href: "#prisoner-lookup-button" }]) %}
+    {% endif %}
+
+    {% if errors.dateString %}
+      {% set errorList = errorList.concat([{ text: errors.dateString.text, href: "#date" }]) %}
+    {% endif %}
+
+    {% if errors.earlyDaysCentre %}
+      {% set errorList = errorList.concat([{ text: errors.earlyDaysCentre.text, href: "#earlyDaysCentre" }]) %}
+    {% endif %}
+
+    {{ govukErrorSummary({
+      titleText: "There is a problem",
+      errorList: errorList
+    }) }}
+  {% endif %}
+{% endmacro %}
