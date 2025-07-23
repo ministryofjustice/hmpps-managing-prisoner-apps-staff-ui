@@ -1,8 +1,9 @@
 import { SuperAgentRequest } from 'superagent'
+import TestData from '../../server/routes/testutils/testData'
 import { stubFor } from './wiremock'
 
 export default {
-  stubGetPrisonerByPrisonNumber: (prisonerNumber): SuperAgentRequest => {
+  stubGetPrisonerByPrisonerNumber: (prisonerNumber: string): SuperAgentRequest => {
     return stubFor({
       request: {
         method: 'GET',
@@ -11,7 +12,7 @@ export default {
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: [],
+        jsonBody: new TestData().prisoner,
       },
     })
   },
