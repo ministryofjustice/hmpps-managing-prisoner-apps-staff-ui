@@ -25,4 +25,4 @@ generic-service:
       - prisons
 
 generic-prometheus-alerts:
-  alertSeverity: hmpps-launchpad
+  alertSeverity: hmpps-managing-prisoner-apps-prod

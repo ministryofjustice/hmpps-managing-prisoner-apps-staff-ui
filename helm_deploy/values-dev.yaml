@@ -22,4 +22,4 @@ generic-service:
     AUDIT_ENABLED: 'false'
 
 generic-prometheus-alerts:
-  alertSeverity: hmpps-launchpad-nonprod
+  alertSeverity: hmpps-managing-prisoner-apps-nonprod
