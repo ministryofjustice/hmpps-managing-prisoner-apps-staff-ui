@@ -9,7 +9,7 @@ function startApplication(appType: string): ApplicationDetailsPage {
   cy.task('reset')
   cy.task('stubSignIn')
   cy.signIn()
-  cy.task('stubGetPrisonerByPrisonNumber', 'A0000AA')
+  cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
   cy.task('stubGetAppTypes')
 
   cy.visit('/log/application-details')
@@ -17,7 +17,7 @@ function startApplication(appType: string): ApplicationDetailsPage {
   cy.contains(appType).click()
   cy.contains('button', 'Continue').click()
   cy.contains('Prison number').should('exist')
-  cy.get('#prison-number').type('A0000AA')
+  cy.get('#prison-number').type('A1234AA')
   cy.contains('button', 'Find prisoner').click()
   cy.contains('Date').should('exist')
   cy.get('#date').type('10/04/2023')

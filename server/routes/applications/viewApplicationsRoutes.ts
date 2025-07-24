@@ -83,7 +83,7 @@ export default function viewApplicationRoutes({
 
       if (selectedFilters.prisonerId) {
         const foundPrisoner = prisonerDetails.find(
-          prisoner => prisoner && prisoner[0]?.offenderNo === selectedFilters.prisonerId,
+          prisoner => prisoner && prisoner?.offenderNo === selectedFilters.prisonerId,
         )
 
         if (!foundPrisoner) {

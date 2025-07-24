@@ -7,7 +7,7 @@ const testData = new TestData()
 
 jest.mock('../../logger')
 
-describe('Managing Prisoner Apps API Client', () => {
+describe('Prison API Client', () => {
   let fakePrisonApi: nock.Scope
   let client: PrisonApiClient
   const { prisoner, user } = testData
@@ -21,7 +21,7 @@ describe('Managing Prisoner Apps API Client', () => {
 
   it('should return a response from the api', async () => {
     fakePrisonApi
-      .get('/api/prisoners/prisoner-id')
+      .get('/api/offenders/prisoner-id')
       .matchHeader('authorization', `Bearer ${user.token}`)
       .reply(200, prisoner)
 
