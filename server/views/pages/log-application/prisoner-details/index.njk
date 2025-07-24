@@ -2,10 +2,11 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
-{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 
 {%- from "moj/components/date-picker/macro.njk" import mojDatePicker -%}
+
+{% from "./partials/errors.njk" import renderErrorSummary %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -21,30 +22,7 @@
 
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-half">
-        {% if errors %}
-          {% set errorList = [] %}
-
-          {% if errors.prisonNumber %}
-            {% set errorList = errorList.concat([{ text: errors.prisonNumber.text, href: "#prisonNumber" }]) %}
-          {% endif %}
-
-          {% if errors.prisonerLookupButton %}
-            {% set errorList = errorList.concat([{ text: errors.prisonerLookupButton.text, href: "#prisoner-lookup-button" }]) %}
-          {% endif %}
-
-          {% if errors.dateString %}
-            {% set errorList = errorList.concat([{ text: errors.dateString.text, href: "#date" }]) %}
-          {% endif %}
-
-          {% if errors.earlyDaysCentre %}
-            {% set errorList = errorList.concat([{ text: errors.earlyDaysCentre.text, href: "#earlyDaysCentre" }]) %}
-          {% endif %}
-
-          {{ govukErrorSummary({
-            titleText: "There is a problem",
-            errorList: errorList
-          }) }}
-        {% endif %}
+        {{ renderErrorSummary(errors) }}
 
         <span class="govuk-caption-xl">{{ applicationType.name }}</span>
         <h1 class="govuk-heading-xl govuk-!-margin-top-0">Log prisoner details</h1>
@@ -84,24 +62,32 @@
 
           {% if prisonerName or prisonerLookupButton == 'true' %}
             {% set name = prisonerName or 'Not found' %}
-            {% set insetText = "Prisoner name: " + name %}
+            {% set insetHtml %}
+              <strong>Prisoner name: {{ name }}</strong><br>
+              {{ prisonerAlertCount | int }} alert{% if (prisonerAlertCount | int) != 1 %}s{% endif %}
+              {% if dpsPrisonerUrl and prisonNumber %}
+                (<a href="{{ dpsPrisonerUrl }}prisoner/{{ prisonNumber }}/alerts/active" target="_blank" rel="noopener noreferrer">View</a>)
+              {% endif %}
+            {% endset %}
             {% set insetClasses = "govuk-!-margin-top-0" %}
           {% else %}
-            {% set insetText = "" %}
+            {% set insetHtml = "" %}
             {% set insetClasses = "govuk-!-margin-top-0 govuk-!-display-none" %}
           {% endif %}
 
           {{ govukInsetText({
-            text: insetText,
+            html: insetHtml,
             classes: insetClasses,
-            attributes: { 
-              id: "prisoner-name-display", 
+            attributes: {
+              id: "prisoner-name-display",
               "aria-live": "assertive",
               role: "alert"
             }
           }) }}
 
           <input type="hidden" id="prisoner-name" name="prisonerName" value="{{ prisonerName | default('') }}">
+          <input type="hidden" id="prisoner-alert-count" name="prisonerAlertCount" value="{{ prisonerAlertCount | default('') }}">
+          <input type="hidden" id="dps-prisoner-url" value="{{ dpsPrisonerUrl }}">
 
           {{ mojDatePicker({
             id: "date",

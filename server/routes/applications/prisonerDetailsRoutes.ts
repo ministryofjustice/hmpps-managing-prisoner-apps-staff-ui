@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express'
 
-import { URLS } from '../../constants/urls'
 import { PATHS } from '../../constants/paths'
+import { URLS } from '../../constants/urls'
 
 import { getAppType } from '../../helpers/application/getAppType'
 
@@ -11,6 +11,7 @@ import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PrisonService from '../../services/prisonService'
 
+import config from '../../config'
 import { updateSessionData } from '../../utils/session'
 import validatePrisonerDetails from '../validate/validatePrisonerDetails'
 
@@ -29,19 +30,18 @@ export default function prisonerDetailsRoutes({
     URLS.LOG_PRISONER_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
-      const { applicationData } = req.session
 
       await auditService.logPageView(Page.LOG_PRISONER_DETAILS_PAGE, {
         who: res.locals.user.username,
         correlationId: req.id,
       })
 
-      const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.key)
+      const applicationType = await getAppType(managingPrisonerAppsService, user, req.session.applicationData?.type.key)
 
       if (!applicationType) return res.redirect(URLS.LOG_APPLICATION_TYPE)
 
-      const formattedDate = applicationData.date
-        ? new Intl.DateTimeFormat('en-GB').format(new Date(applicationData.date))
+      const formattedDate = req.session.applicationData.date
+        ? new Intl.DateTimeFormat('en-GB').format(new Date(req.session.applicationData.date))
         : ''
 
       return res.render(PATHS.LOG_APPLICATION.PRISONER_DETAILS, {
@@ -49,9 +49,11 @@ export default function prisonerDetailsRoutes({
         dateString: formattedDate,
         earlyDaysCentre: req.session.applicationData.earlyDaysCentre || '',
         prisonerName: req.session.applicationData.prisonerName || '',
-        prisonNumber: applicationData.prisonerId,
+        prisonerAlertCount: req.session.applicationData.prisonerAlertCount || '',
+        prisonNumber: req.session.applicationData.prisonerId,
         title: 'Log prisoner details',
         errors: null,
+        dpsPrisonerUrl: config.dpsPrisoner,
       })
     }),
   )
@@ -59,23 +61,21 @@ export default function prisonerDetailsRoutes({
   router.get(
     `${URLS.LOG_PRISONER_DETAILS}/find/:prisonNumber`,
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { prisonNumber } = req.params
-      const { user } = res.locals
-
-      if (!prisonNumber) {
+      if (!req.params.prisonNumber) {
         res.status(400).json({ error: 'Prison number is required' })
         return
       }
 
-      const prisoner = await prisonService.getPrisonerByPrisonNumber(prisonNumber, user)
+      const prisoner = await prisonService.getPrisonerByPrisonNumber(req.params.prisonNumber, res.locals.user)
 
-      if (!prisoner || prisoner.length === 0) {
+      if (!prisoner) {
         res.status(404).json({ error: 'Prisoner not found' })
         return
       }
 
       res.json({
-        prisonerName: `${prisoner[0].lastName}, ${prisoner[0].firstName}`,
+        prisonerName: `${prisoner.lastName}, ${prisoner.firstName}`,
+        activeAlertCount: prisoner.activeAlertCount ?? 0,
       })
     }),
   )
@@ -83,11 +83,13 @@ export default function prisonerDetailsRoutes({
   router.post(
     URLS.LOG_PRISONER_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { user } = res.locals
       const { prisonNumber, date: dateString, earlyDaysCentre, prisonerLookupButton } = req.body
-      const { applicationData } = req.session
 
-      const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.key)
+      const applicationType = await getAppType(
+        managingPrisonerAppsService,
+        res.locals.user,
+        req.session.applicationData?.type.key,
+      )
 
       const errors = validatePrisonerDetails(applicationType, prisonNumber, dateString, earlyDaysCentre)
 
@@ -98,10 +100,10 @@ export default function prisonerDetailsRoutes({
       if (Object.keys(errors).length === 0) {
         const prisoner = await prisonService.getPrisonerByPrisonNumber(prisonNumber, res.locals.user)
 
-        if (!prisoner || prisoner.length === 0) {
+        if (!prisoner) {
           errors.prisonNumber = { text: 'Enter a valid prison number' }
         } else {
-          req.body.prisonerName = `${prisoner[0].lastName}, ${prisoner[0].firstName}`
+          req.body.prisonerName = `${prisoner.lastName}, ${prisoner.firstName}`
           req.session.applicationData.prisonerName = req.body.prisonerName
         }
       }
@@ -109,12 +111,14 @@ export default function prisonerDetailsRoutes({
       if (Object.keys(errors).length > 0) {
         return res.render(PATHS.LOG_APPLICATION.PRISONER_DETAILS, {
           applicationType,
-          prisonNumber,
           dateString,
+          dpsPrisonerUrl: config.dpsPrisoner,
           earlyDaysCentre,
           errors,
-          prisonerName: req.body.prisonerName || '',
           prisonerLookupButton,
+          prisonerName: req.body.prisonerName || '',
+          prisonerAlertCount: req.body.prisonerAlertCount || '',
+          prisonNumber,
         })
       }
 
@@ -138,6 +142,7 @@ export default function prisonerDetailsRoutes({
 
       updateSessionData(req, {
         prisonerName: req.body.prisonerName,
+        prisonerAlertCount: req.body.prisonerAlertCount,
         date,
         prisonerId: prisonNumber,
         earlyDaysCentre,

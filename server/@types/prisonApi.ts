@@ -1,3 +1,3 @@
 import { components } from './prison-api'
 
-export type PrisonerDetail = components['schemas']['PrisonerDetail']
+export type InmateDetail = components['schemas']['InmateDetail']
