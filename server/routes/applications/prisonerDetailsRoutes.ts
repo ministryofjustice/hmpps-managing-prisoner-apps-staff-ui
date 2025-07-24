@@ -50,6 +50,7 @@ export default function prisonerDetailsRoutes({
         dateString: formattedDate,
         earlyDaysCentre: req.session.applicationData.earlyDaysCentre || '',
         prisonerName: req.session.applicationData.prisonerName || '',
+        prisonerAlertCount: req.session.applicationData.prisonerAlertCount || '',
         prisonNumber: applicationData.prisonerId,
         title: 'Log prisoner details',
         errors: null,
@@ -112,12 +113,14 @@ export default function prisonerDetailsRoutes({
       if (Object.keys(errors).length > 0) {
         return res.render(PATHS.LOG_APPLICATION.PRISONER_DETAILS, {
           applicationType,
-          prisonNumber,
           dateString,
+          dpsPrisonerUrl: config.dpsPrisoner,
           earlyDaysCentre,
           errors,
-          prisonerName: req.body.prisonerName || '',
           prisonerLookupButton,
+          prisonerName: req.body.prisonerName || '',
+          prisonerAlertCount: req.body.prisonerAlertCount || '',
+          prisonNumber,
         })
       }
 
@@ -141,6 +144,7 @@ export default function prisonerDetailsRoutes({
 
       updateSessionData(req, {
         prisonerName: req.body.prisonerName,
+        prisonerAlertCount: req.body.prisonerAlertCount,
         date,
         prisonerId: prisonNumber,
         earlyDaysCentre,

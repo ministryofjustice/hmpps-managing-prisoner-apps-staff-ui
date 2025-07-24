@@ -60,9 +60,24 @@
             </button>
           </div>
 
+          {% if prisonerName or prisonerLookupButton == 'true' %}
+            {% set name = prisonerName or 'Not found' %}
+            {% set insetHtml %}
+              <strong>Prisoner name: {{ name }}</strong><br>
+              {{ prisonerAlertCount | int }} alert{% if (prisonerAlertCount | int) != 1 %}s{% endif %}
+              {% if dpsPrisonerUrl and prisonNumber %}
+                (<a href="{{ dpsPrisonerUrl }}prisoner/{{ prisonNumber }}/alerts/active" target="_blank" rel="noopener noreferrer">View</a>)
+              {% endif %}
+            {% endset %}
+            {% set insetClasses = "govuk-!-margin-top-0" %}
+          {% else %}
+            {% set insetHtml = "" %}
+            {% set insetClasses = "govuk-!-margin-top-0 govuk-!-display-none" %}
+          {% endif %}
+
           {{ govukInsetText({
-            html: "",
-            classes: "govuk-!-margin-top-0 govuk-!-display-none",
+            html: insetHtml,
+            classes: insetClasses,
             attributes: {
               id: "prisoner-name-display",
               "aria-live": "assertive",

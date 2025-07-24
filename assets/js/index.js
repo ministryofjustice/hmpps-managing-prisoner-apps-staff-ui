@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
     const prisonNumber = prisonerNumberInput.value.trim()
     if (!prisonNumber) {
       prisonerNameDisplay.innerText = 'Prisoner name: Not found'
-      prisonerNameDisplay.classList.remove('govuk-!-display-none')
       findPrisonerLookupButton.value = 'true'
       return
     }
