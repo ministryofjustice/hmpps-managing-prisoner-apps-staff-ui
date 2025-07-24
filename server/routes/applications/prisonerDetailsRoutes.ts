@@ -30,19 +30,18 @@ export default function prisonerDetailsRoutes({
     URLS.LOG_PRISONER_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
-      const { applicationData } = req.session
 
       await auditService.logPageView(Page.LOG_PRISONER_DETAILS_PAGE, {
         who: res.locals.user.username,
         correlationId: req.id,
       })
 
-      const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.key)
+      const applicationType = await getAppType(managingPrisonerAppsService, user, req.session.applicationData?.type.key)
 
       if (!applicationType) return res.redirect(URLS.LOG_APPLICATION_TYPE)
 
-      const formattedDate = applicationData.date
-        ? new Intl.DateTimeFormat('en-GB').format(new Date(applicationData.date))
+      const formattedDate = req.session.applicationData.date
+        ? new Intl.DateTimeFormat('en-GB').format(new Date(req.session.applicationData.date))
         : ''
 
       return res.render(PATHS.LOG_APPLICATION.PRISONER_DETAILS, {
@@ -51,7 +50,7 @@ export default function prisonerDetailsRoutes({
         earlyDaysCentre: req.session.applicationData.earlyDaysCentre || '',
         prisonerName: req.session.applicationData.prisonerName || '',
         prisonerAlertCount: req.session.applicationData.prisonerAlertCount || '',
-        prisonNumber: applicationData.prisonerId,
+        prisonNumber: req.session.applicationData.prisonerId,
         title: 'Log prisoner details',
         errors: null,
         dpsPrisonerUrl: config.dpsPrisoner,
@@ -62,15 +61,12 @@ export default function prisonerDetailsRoutes({
   router.get(
     `${URLS.LOG_PRISONER_DETAILS}/find/:prisonNumber`,
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { prisonNumber } = req.params
-      const { user } = res.locals
-
-      if (!prisonNumber) {
+      if (!req.params.prisonNumber) {
         res.status(400).json({ error: 'Prison number is required' })
         return
       }
 
-      const prisoner = await prisonService.getPrisonerByPrisonNumber(prisonNumber, user)
+      const prisoner = await prisonService.getPrisonerByPrisonNumber(req.params.prisonNumber, res.locals.user)
 
       if (!prisoner) {
         res.status(404).json({ error: 'Prisoner not found' })
@@ -87,11 +83,13 @@ export default function prisonerDetailsRoutes({
   router.post(
     URLS.LOG_PRISONER_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { user } = res.locals
       const { prisonNumber, date: dateString, earlyDaysCentre, prisonerLookupButton } = req.body
-      const { applicationData } = req.session
 
-      const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.key)
+      const applicationType = await getAppType(
+        managingPrisonerAppsService,
+        res.locals.user,
+        req.session.applicationData?.type.key,
+      )
 
       const errors = validatePrisonerDetails(applicationType, prisonNumber, dateString, earlyDaysCentre)
 
