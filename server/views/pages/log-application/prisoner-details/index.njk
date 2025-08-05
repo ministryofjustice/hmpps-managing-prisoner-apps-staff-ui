@@ -60,8 +60,8 @@
             </button>
           </div>
 
-          {% if prisonerName or prisonerLookupButton == 'true' %}
-            {% set name = prisonerName or 'Not found' %}
+          {% if prisonerName or prisonerFound == 'true' %}
+            {% set name = prisonerName %}
             {% set insetHtml %}
               <strong>Prisoner name: {{ name }}</strong><br>
               {{ prisonerAlertCount | int }} alert{% if (prisonerAlertCount | int) != 1 %}s{% endif %}
@@ -69,11 +69,13 @@
                 (<a href="{{ dpsPrisonerUrl }}prisoner/{{ prisonNumber }}/alerts/active" target="_blank" rel="noopener noreferrer">View</a>)
               {% endif %}
             {% endset %}
-            {% set insetClasses = "govuk-!-margin-top-0" %}
+          {% elseif prisonerLookupButton == 'true' %}
+            {% set insetHtml = "Prisoner name: Not found" %}
           {% else %}
             {% set insetHtml = "" %}
-            {% set insetClasses = "govuk-!-margin-top-0 govuk-!-display-none" %}
           {% endif %}
+
+          {% set insetClasses = "govuk-!-margin-top-0" if insetHtml else "govuk-!-margin-top-0 govuk-!-display-none" %}
 
           {{ govukInsetText({
             html: insetHtml,
@@ -88,6 +90,7 @@
           <input type="hidden" id="prisoner-name" name="prisonerName" value="{{ prisonerName | default('') }}">
           <input type="hidden" id="prisoner-alert-count" name="prisonerAlertCount" value="{{ prisonerAlertCount | default('') }}">
           <input type="hidden" id="dps-prisoner-url" value="{{ dpsPrisonerUrl }}">
+          <input type="hidden" id="prisoner-exists" name="prisonerExists" value="{{ prisonerFound | default('false') }}">
 
           {{ mojDatePicker({
             id: "date",
