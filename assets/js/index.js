@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import * as govukFrontend from 'govuk-frontend'
 import * as mojFrontend from '@ministryofjustice/frontend'
 
