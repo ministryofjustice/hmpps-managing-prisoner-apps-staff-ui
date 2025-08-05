@@ -47,14 +47,14 @@ export default function prisonerDetailsRoutes({
       return res.render(PATHS.LOG_APPLICATION.PRISONER_DETAILS, {
         applicationType,
         dateString: formattedDate,
+        dpsPrisonerUrl: config.dpsPrisoner,
         earlyDaysCentre: req.session.applicationData.earlyDaysCentre || '',
-        prisonerName: req.session.applicationData.prisonerName || '',
+        errors: null,
         prisonerAlertCount: req.session.applicationData.prisonerAlertCount || '',
+        prisonerFound: req.session.applicationData.prisonerExists || 'false',
+        prisonerName: req.session.applicationData.prisonerName || '',
         prisonNumber: req.session.applicationData.prisonerId,
         title: 'Log prisoner details',
-        errors: null,
-        dpsPrisonerUrl: config.dpsPrisoner,
-        prisonerFound: req.session.applicationData.prisonerExists || 'false',
       })
     }),
   )
@@ -116,11 +116,11 @@ export default function prisonerDetailsRoutes({
           dpsPrisonerUrl: config.dpsPrisoner,
           earlyDaysCentre,
           errors,
+          prisonerAlertCount: req.body.prisonerAlertCount || '',
+          prisonerExists: req.body.prisonerExists || 'false',
           prisonerLookupButton,
           prisonerName: req.body.prisonerName || '',
-          prisonerAlertCount: req.body.prisonerAlertCount || '',
           prisonNumber,
-          prisonerFound: req.body.prisonerFound || 'false',
         })
       }
 
@@ -143,12 +143,12 @@ export default function prisonerDetailsRoutes({
       }
 
       updateSessionData(req, {
-        prisonerExists: req.body.prisonerExists,
-        prisonerName: req.body.prisonerName,
-        prisonerAlertCount: req.body.prisonerAlertCount,
         date,
-        prisonerId: prisonNumber,
         earlyDaysCentre,
+        prisonerAlertCount: req.body.prisonerAlertCount,
+        prisonerExists: req.body.prisonerExists,
+        prisonerId: prisonNumber,
+        prisonerName: req.body.prisonerName,
       })
 
       return res.redirect(URLS.LOG_APPLICATION_DETAILS)
