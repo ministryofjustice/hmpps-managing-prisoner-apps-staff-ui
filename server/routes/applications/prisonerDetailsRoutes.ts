@@ -51,7 +51,7 @@ export default function prisonerDetailsRoutes({
         earlyDaysCentre: req.session.applicationData.earlyDaysCentre || '',
         errors: null,
         prisonerAlertCount: req.session.applicationData.prisonerAlertCount || '',
-        prisonerFound: req.session.applicationData.prisonerExists || 'false',
+        prisonerExists: req.session.applicationData.prisonerExists || 'false',
         prisonerName: req.session.applicationData.prisonerName || '',
         prisonNumber: req.session.applicationData.prisonerId,
         title: 'Log prisoner details',
