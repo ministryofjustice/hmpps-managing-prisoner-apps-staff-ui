@@ -12,6 +12,7 @@ export declare module 'express-session' {
     date?: string
     earlyDaysCentre?: boolean
     prisonerAlertCount?: string
+    prisonerExists?: string
     prisonerId?: string
     prisonerName?: string
     type?: ApplicationType

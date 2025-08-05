@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import * as govukFrontend from 'govuk-frontend'
 import * as mojFrontend from '@ministryofjustice/frontend'
 
@@ -10,19 +11,37 @@ document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
   const prisonerNameDisplay = document.getElementById('prisoner-name-display')
   const prisonerNameInput = document.getElementById('prisoner-name')
   const prisonerAlertCountInput = document.getElementById('prisoner-alert-count')
-
+  const prisonerExistsInput = document.getElementById('prisoner-exists')
   const findPrisonerLookupButton = document.getElementById('prisoner-lookup-button')
+  const dpsPrisonerUrlInput = document.getElementById('dps-prisoner-url')
 
-  if (!findPrisonerButton) {
+  if (
+    !findPrisonerButton ||
+    !prisonerNumberInput ||
+    !prisonerNameDisplay ||
+    !prisonerNameInput ||
+    !prisonerAlertCountInput ||
+    !prisonerExistsInput ||
+    !findPrisonerLookupButton ||
+    !dpsPrisonerUrlInput
+  ) {
     return
+  }
+
+  function setPrisonerNotFound() {
+    prisonerExistsInput.value = 'false'
+    prisonerNameInput.value = ''
+    prisonerAlertCountInput.value = ''
+    prisonerNameDisplay.innerHTML = 'Prisoner name: Not found'
   }
 
   async function handlePrisonerLookup(event) {
     event.preventDefault()
 
     const prisonNumber = prisonerNumberInput.value.trim()
+
     if (!prisonNumber) {
-      prisonerNameDisplay.innerText = 'Prisoner name: Not found'
+      setPrisonerNotFound()
       findPrisonerLookupButton.value = 'true'
       return
     }
@@ -34,31 +53,23 @@ document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
       prisonerNameDisplay.classList.remove('govuk-!-display-none')
 
       if (response.ok) {
-        const { prisonerName, activeAlertCount } = data
-        prisonerNameInput.value = prisonerName
-        prisonerAlertCountInput.value = activeAlertCount
+        const dpsBaseUrl = dpsPrisonerUrlInput.value
+        const alertsLink = `${dpsBaseUrl}prisoner/${prisonNumber}/alerts/active`
 
-        const dpsPrisonerUrlInput = document.getElementById('dps-prisoner-url')
-        const dpsPrisonerUrl = dpsPrisonerUrlInput.value
-
-        const alertsLink = `${dpsPrisonerUrl}prisoner/${prisonNumber}/alerts/active`
+        prisonerExistsInput.value = 'true'
+        prisonerNameInput.value = data.prisonerName
+        prisonerAlertCountInput.value = data.activeAlertCount
 
         prisonerNameDisplay.innerHTML = `
-    <strong>Prisoner name: ${prisonerName}</strong><br>
-    ${activeAlertCount} alert${activeAlertCount === 1 ? '' : 's'} 
-    (<a href="${alertsLink}" target="_blank" rel="noopener noreferrer">View</a>)
-  `
+          <strong>Prisoner name: ${data.prisonerName}</strong><br>
+          ${data.activeAlertCount} alert${data.activeAlertCount === 1 ? '' : 's'} 
+          (<a href="${alertsLink}" target="_blank" rel="noopener noreferrer">View</a>)
+        `
       } else {
-        prisonerNameInput.value = ''
-        prisonerAlertCountInput.value = ''
-        prisonerNameDisplay.innerHTML = 'Prisoner name: Not found'
+        setPrisonerNotFound()
       }
-
-      // eslint-disable-next-line no-unused-vars
     } catch (e) {
-      prisonerNameInput.value = ''
-      prisonerAlertCountInput.value = ''
-      prisonerNameDisplay.innerHTML = 'Prisoner name: Not found'
+      setPrisonerNotFound()
     }
 
     findPrisonerLookupButton.value = 'true'
