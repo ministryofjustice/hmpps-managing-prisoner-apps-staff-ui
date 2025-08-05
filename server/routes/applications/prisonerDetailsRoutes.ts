@@ -54,6 +54,7 @@ export default function prisonerDetailsRoutes({
         title: 'Log prisoner details',
         errors: null,
         dpsPrisonerUrl: config.dpsPrisoner,
+        prisonerFound: req.session.applicationData.prisonerExists || 'false',
       })
     }),
   )
@@ -119,6 +120,7 @@ export default function prisonerDetailsRoutes({
           prisonerName: req.body.prisonerName || '',
           prisonerAlertCount: req.body.prisonerAlertCount || '',
           prisonNumber,
+          prisonerFound: req.body.prisonerFound || 'false',
         })
       }
 
@@ -141,6 +143,7 @@ export default function prisonerDetailsRoutes({
       }
 
       updateSessionData(req, {
+        prisonerExists: req.body.prisonerExists,
         prisonerName: req.body.prisonerName,
         prisonerAlertCount: req.body.prisonerAlertCount,
         date,
