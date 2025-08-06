@@ -110,6 +110,7 @@ export default class TestData {
         count: 0,
       },
     ],
+    firstNightCenter: 3,
     apps: [
       {
         id: '1808f5e2-2bf4-499a-b79f-fb0a5f4bac7b',
