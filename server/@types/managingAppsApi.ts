@@ -47,12 +47,13 @@ export interface Application {
 }
 
 export type ApplicationSearchPayload = {
+  assignedGroups: string[] | null
+  firstNightCenter?: boolean
   page: number
+  requestedBy: string | null
   size: number
   status: string[]
   types: string[] | null
-  requestedBy: string | null
-  assignedGroups: string[] | null
 }
 
 export type ApplicationType = {
@@ -95,6 +96,7 @@ export type ViewApplicationsResponse = {
   types: Record<ApplicationTypeKey, number>
   assignedGroups: ViewApplicationsResponseAssignedGroup[]
   apps: ViewApplicationsResponseApplication[]
+  firstNightCenter: number
 }
 
 export type Group = {

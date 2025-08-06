@@ -9,6 +9,7 @@ import { URLS } from '../../constants/urls'
 
 import { formatAppTypesForFilters } from '../../helpers/filters/formatAppTypesForFilters'
 import { formatGroupsForFilters } from '../../helpers/filters/formatGroupsForFilters'
+import { formatPriorityForFilters } from '../../helpers/filters/formatPriorityForFilters'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
@@ -50,9 +51,11 @@ export default function viewApplicationRoutes({
       const selectedFilters = (() => {
         const prisonerLabel = req.query.prisoner?.toString() || ''
         const prisonerId = prisonerLabel.match(/\(([^)]+)\)/)?.[1] || null
+
         return {
           groups: extractQueryParamArray(req.query.group),
           types: extractQueryParamArray(req.query.type),
+          priority: extractQueryParamArray(req.query.priority),
           prisonerLabel,
           prisonerId,
         }
@@ -65,9 +68,10 @@ export default function viewApplicationRoutes({
         types: selectedFilters.types,
         requestedBy: selectedFilters.prisonerId,
         assignedGroups: selectedFilters.groups,
+        firstNightCenter: selectedFilters.priority.includes('first-night-centre'),
       }
 
-      const [{ apps, types, assignedGroups, totalRecords }, prisonerDetails] = await Promise.all([
+      const [{ apps, types, assignedGroups, totalRecords, firstNightCenter }, prisonerDetails] = await Promise.all([
         managingPrisonerAppsService.getApps(payload, user),
         managingPrisonerAppsService.getApps(payload, user).then(response =>
           Promise.all(
@@ -101,8 +105,17 @@ export default function viewApplicationRoutes({
 
       const appTypes = await formatAppTypesForFilters(managingPrisonerAppsService, user, types, selectedFilters)
       const groups = formatGroupsForFilters(assignedGroups, selectedFilters)
+      const priority = formatPriorityForFilters(selectedFilters, firstNightCenter)
 
       const selectedFilterTags = {
+        priority: selectedFilters.priority.includes('first-night-centre')
+          ? [
+              {
+                href: removeFilterFromHref(req, 'priority', 'first-night-centre'),
+                text: 'First night or early days centre',
+              },
+            ]
+          : [],
         groups: assignedGroups
           .filter(group => selectedFilters.groups.includes(group.id))
           .map(group => ({
@@ -129,6 +142,7 @@ export default function viewApplicationRoutes({
         filters: {
           appTypes,
           groups,
+          priority,
           hasSelectedFilters,
           selectedFilters: selectedFilterTags,
           selectedPrisonerLabel: selectedFilters.prisonerLabel,

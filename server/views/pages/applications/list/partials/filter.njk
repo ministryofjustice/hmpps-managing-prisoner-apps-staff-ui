@@ -12,6 +12,20 @@
     }) }}
 
     {{ govukCheckboxes({
+      idPrefix: "priority",
+      name: "priority",
+      classes: "govuk-checkboxes--small",
+      fieldset: {
+        legend: {
+          text: "Priority",
+          classes: "govuk-fieldset__legend--s"
+        }
+      },
+      items: filters.priority
+    }) }}
+
+    
+    {{ govukCheckboxes({
       idPrefix: "group",
       name: "group",
       classes: "govuk-checkboxes--small",
@@ -40,6 +54,13 @@
 
   {% set categories = [] %}
 
+  {% if filters.selectedFilters.priority | length %}
+    {% set categories = categories.concat([{
+      heading: { text: "Priority" },
+      items: filters.selectedFilters.priority
+    }]) %}
+  {% endif %}
+  
   {% if filters.selectedFilters.groups | length %}
     {% set categories = categories.concat([{
       heading: { text: "Department" },
