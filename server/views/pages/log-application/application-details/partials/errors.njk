@@ -44,6 +44,10 @@
       {% set errorList = errorList.concat([{ text: errors.telephone1.text, href: "#telephone1" }]) %}
     {% endif %}
 
+    {% if errors.telephone2 %}
+      {% set errorList = errorList.concat([{ text: errors.telephone2.text, href: "#telephone2" }]) %}
+    {% endif %}
+
     {{ govukErrorSummary({
       titleText: "There is a problem",
       errorList: errorList
