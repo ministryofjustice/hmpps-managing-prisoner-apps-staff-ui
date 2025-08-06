@@ -33,13 +33,15 @@ export const extractQueryParamArray = (
 
 type SelectedFilters = {
   groups: string[]
-  types: string[]
-  prisonerLabel: string
+  priority: string[]
   prisonerId: string
+  prisonerLabel: string
+  types: string[]
 }
 
 type SelectedFilterTags = {
   groups: LinkText[]
+  priority: LinkText[]
   types: LinkText[]
 }
 
@@ -52,4 +54,9 @@ export const checkSelectedFilters = (
   selectedFilters: SelectedFilters,
   selectedFilterTags: SelectedFilterTags,
 ): boolean =>
-  Boolean(selectedFilters.prisonerId || selectedFilterTags.groups.length > 0 || selectedFilterTags.types.length > 0)
+  Boolean(
+    selectedFilters.prisonerId ||
+      selectedFilterTags.groups.length > 0 ||
+      selectedFilterTags.types.length > 0 ||
+      selectedFilterTags.priority.length > 0,
+  )
