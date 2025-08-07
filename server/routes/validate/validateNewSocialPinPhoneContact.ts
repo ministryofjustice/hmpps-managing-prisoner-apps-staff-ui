@@ -1,3 +1,5 @@
+import { isValidPhoneNumber } from './validateTelephoneNumber'
+
 export type AddNewSocialPinPhoneContactForm = {
   firstName: string
   lastName: string
@@ -8,10 +10,10 @@ export type AddNewSocialPinPhoneContactForm = {
   age?: string
   relationship: string
   telephone1: string
+  telephone2?: string
 }
 
 const isValidNumber = (value: string) => /^\d+$/.test(value)
-const isValidPhoneNumber = (value: string) => /^[\d+\-()\s]+$/.test(value)
 
 export const validateAddNewSocialContact = (form: AddNewSocialPinPhoneContactForm) => {
   const errors: Record<string, { text: string }> = {}
@@ -76,6 +78,10 @@ export const validateAddNewSocialContact = (form: AddNewSocialPinPhoneContactFor
 
   if (!form.telephone1 || form.telephone1.trim() === '' || !isValidPhoneNumber(form.telephone1.trim())) {
     errors.telephone1 = { text: 'Enter the contact’s phone number' }
+  }
+
+  if (form.telephone2 && form.telephone2.trim() !== '' && !isValidPhoneNumber(form.telephone2.trim())) {
+    errors.telephone2 = { text: 'Enter the contact’s phone number' }
   }
 
   return errors
