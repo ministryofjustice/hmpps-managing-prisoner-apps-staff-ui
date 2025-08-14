@@ -53,7 +53,7 @@ export default function actionAndReplyRoutes({
       let formattedResponse
 
       if (!isAppPending && request?.responseId) {
-        const { decision, createdDate, createdBy, reason } = await managingPrisonerAppsService.getResponse(
+        const { decision, createdDate, reason } = await managingPrisonerAppsService.getResponse(
           prisonerId,
           applicationId,
           request.responseId,
