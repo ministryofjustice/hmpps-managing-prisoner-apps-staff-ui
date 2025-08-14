@@ -18,6 +18,7 @@ export interface RequestedBy {
   firstName: string
   lastName: string
   category: string
+  cellLocation: string
   location: string
   iep: string
 }

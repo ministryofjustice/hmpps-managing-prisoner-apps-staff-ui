@@ -47,10 +47,10 @@ context('Action and Reply Page', () => {
             cy.get('.govuk-summary-list__key').contains('Reason')
             cy.get('.govuk-summary-list__value').should('exist')
 
-            cy.get('.govuk-summary-list__key').contains('Actioned by')
+            cy.get('.govuk-summary-list__key').contains('Date')
             cy.get('.govuk-summary-list__value').should('exist')
 
-            cy.get('.govuk-summary-list__key').contains('Date')
+            cy.get('.govuk-summary-list__key').contains('Location')
             cy.get('.govuk-summary-list__value').should('exist')
           } else {
             cy.get('.govuk-radios').should('exist')
