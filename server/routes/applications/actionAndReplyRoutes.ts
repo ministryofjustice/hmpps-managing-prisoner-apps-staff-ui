@@ -63,8 +63,8 @@ export default function actionAndReplyRoutes({
         formattedResponse = {
           decision: convertToTitleCase(decision),
           actionedDate: format(createdDate, 'd MMMM yyyy'),
-          actionedBy: createdBy.fullName,
           reason: reason?.trim() || 'None',
+          cellLocation: application.requestedBy.cellLocation,
         }
       }
 
