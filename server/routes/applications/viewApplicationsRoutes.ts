@@ -196,7 +196,7 @@ export default function viewApplicationRoutes({
         applicationType,
         application: {
           ...application,
-          requestedDate: format(new Date(application.requestedDate), 'd MMMM yyyy'),
+          createdDate: format(new Date(application.createdDate), 'd MMMM yyyy'),
           status: application.status === APPLICATION_STATUS.PENDING ? convertToTitleCase(application.status) : 'Closed',
         },
         isClosed: application.status !== APPLICATION_STATUS.PENDING,

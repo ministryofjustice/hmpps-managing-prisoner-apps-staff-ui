@@ -40,13 +40,8 @@ export default function prisonerDetailsRoutes({
 
       if (!applicationType) return res.redirect(URLS.LOG_APPLICATION_TYPE)
 
-      const formattedDate = req.session.applicationData.date
-        ? new Intl.DateTimeFormat('en-GB').format(new Date(req.session.applicationData.date))
-        : ''
-
       return res.render(PATHS.LOG_APPLICATION.PRISONER_DETAILS, {
         applicationType,
-        dateString: formattedDate,
         dpsPrisonerUrl: config.dpsPrisoner,
         earlyDaysCentre: req.session.applicationData.earlyDaysCentre || '',
         errors: null,
@@ -84,7 +79,7 @@ export default function prisonerDetailsRoutes({
   router.post(
     URLS.LOG_PRISONER_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { prisonNumber, date: dateString, earlyDaysCentre, prisonerLookupButton } = req.body
+      const { prisonNumber, earlyDaysCentre, prisonerLookupButton } = req.body
 
       const applicationType = await getAppType(
         managingPrisonerAppsService,
@@ -92,7 +87,7 @@ export default function prisonerDetailsRoutes({
         req.session.applicationData?.type.key,
       )
 
-      const errors = validatePrisonerDetails(applicationType, prisonNumber, dateString, earlyDaysCentre)
+      const errors = validatePrisonerDetails(applicationType, prisonNumber, earlyDaysCentre)
 
       if (prisonerLookupButton !== 'true' && !req.session.applicationData.prisonerName && !errors.prisonNumber) {
         errors.prisonerLookupButton = { text: 'Find prisoner to continue' }
@@ -112,7 +107,6 @@ export default function prisonerDetailsRoutes({
       if (Object.keys(errors).length > 0) {
         return res.render(PATHS.LOG_APPLICATION.PRISONER_DETAILS, {
           applicationType,
-          dateString,
           dpsPrisonerUrl: config.dpsPrisoner,
           earlyDaysCentre,
           errors,
@@ -124,26 +118,7 @@ export default function prisonerDetailsRoutes({
         })
       }
 
-      let date: string | null = null
-
-      if (typeof dateString === 'string' && dateString.trim() !== '') {
-        const dateParts = dateString.split('/')
-
-        if (dateParts.length === 3) {
-          const [day, month, year] = dateParts.map(part => Number(part))
-
-          if (!Number.isNaN(day) && !Number.isNaN(month) && !Number.isNaN(year)) {
-            const parsedDate = new Date(year, month - 1, day)
-
-            if (!Number.isNaN(parsedDate.getTime())) {
-              date = `${parsedDate.toISOString().split('.')[0]}Z`
-            }
-          }
-        }
-      }
-
       updateSessionData(req, {
-        date,
         earlyDaysCentre,
         prisonerAlertCount: req.body.prisonerAlertCount,
         prisonerExists: req.body.prisonerExists,

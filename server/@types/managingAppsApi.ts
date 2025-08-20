@@ -41,7 +41,6 @@ export interface Application {
   lastModifiedDate: string
   reference: string
   requestedBy: RequestedBy
-  requestedDate: string
   firstNightCenter: boolean
   requests: ApplicationRequest[]
   status: 'PENDING' | 'APPROVED' | 'DECLINED'

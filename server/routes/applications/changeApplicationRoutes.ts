@@ -103,7 +103,6 @@ export default function changeApplicationRoutes({
       return res.render(PATHS.LOG_APPLICATION.CONFIRM_DETAILS, {
         application,
         applicationData: {
-          date: format(new Date(application.requestedDate), 'd MMMM yyyy'),
           prisoner: `${application.requestedBy.firstName} ${application.requestedBy.lastName}`,
           earlyDaysCentre: application.firstNightCenter ? 'Yes' : 'No',
           request: applicationData.additionalData,

@@ -5,11 +5,6 @@
   value: { text: applicationData.prisoner }
 }) %}
 
-{% set _ = rows.push({
-  key: { text: "Date sent" },
-  value: { text: applicationData.date }
-}) %}
-
 {% if applicationData.type.value === 'add-social-pin-phone-contact' %}
   {% set _ = rows.push({
     key: { text: "First night or early days centre" },
