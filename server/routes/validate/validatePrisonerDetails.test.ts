@@ -10,7 +10,6 @@ describe(validatePrisonerDetails.name, () => {
 
   const ERRORS = {
     prisonNumber: { text: 'Enter a valid prison number' },
-    dateString: { text: 'Enter or select a valid date' },
     earlyDaysCentre: { text: 'Select yes if this person is in the first night or early days centre' },
   }
 
