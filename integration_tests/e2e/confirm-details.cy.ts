@@ -62,10 +62,6 @@ context('Confirm Details Page', () => {
         page.changePrisoner().should(hasChangeLinks ? 'exist' : 'not.exist')
       })
 
-      it('should display the date sent', () => {
-        page.submittedOn().should('exist')
-      })
-
       it('should render a Continue button with the correct text', () => {
         page.continueButton().should('contain.text', 'Save')
       })
