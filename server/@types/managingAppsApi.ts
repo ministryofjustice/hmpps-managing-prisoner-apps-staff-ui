@@ -76,13 +76,13 @@ export type ViewApplicationsResponseAssignedGroup = {
 
 export type ViewApplicationsResponseApplication = {
   id: string
-  establishmentId: string
-  status: 'PENDING' | 'CLOSED'
   appType: ApplicationTypeKey
+  createdDate: string
+  establishmentId: string
   requestedBy: string
   requestedByFirstName: string
   requestedByLastName: string
-  requestedDate: string
+  status: 'PENDING' | 'CLOSED'
   assignedGroup: {
     id: string
     name: string

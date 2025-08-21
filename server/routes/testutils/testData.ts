@@ -120,7 +120,7 @@ export default class TestData {
         requestedBy: 'A12345',
         requestedByFirstName: 'John',
         requestedByLastName: 'Smith',
-        requestedDate: '2025-03-24T14:03:13Z',
+        createdDate: '2025-03-24T14:03:13Z',
         assignedGroup: {
           id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
           name: 'Business Hub',
@@ -134,7 +134,7 @@ export default class TestData {
         requestedBy: 'A12345',
         requestedByFirstName: 'John',
         requestedByLastName: 'Smith',
-        requestedDate: '2025-03-23T14:03:13Z',
+        createdDate: '2025-03-23T14:03:13Z',
         assignedGroup: {
           id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
           name: 'Business Hub',
@@ -148,7 +148,7 @@ export default class TestData {
         requestedBy: 'A12345',
         requestedByFirstName: 'John',
         requestedByLastName: 'Smith',
-        requestedDate: '2025-03-21T14:03:13Z',
+        createdDate: '2025-03-21T14:03:13Z',
         assignedGroup: {
           id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
           name: 'Business Hub',

@@ -18,9 +18,9 @@ export const formatAppsToRows = async (
 ) => {
   return Promise.all(
     applications.map(async application => {
-      const { requestedDate, appType, requestedBy, assignedGroup, status, id, prisonerName } = application
+      const { createdDate, appType, requestedBy, assignedGroup, status, id, prisonerName } = application
 
-      const date = new Date(requestedDate)
+      const date = new Date(createdDate)
       const formattedDate = format(date, 'd MMMM yyyy')
       const sortValue = getTime(date).toString()
 
