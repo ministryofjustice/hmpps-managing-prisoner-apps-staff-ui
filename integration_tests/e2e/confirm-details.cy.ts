@@ -28,8 +28,6 @@ context('Confirm Details Page', () => {
           cy.contains('Prison number').should('exist')
           cy.get('#prison-number').type('A1234AA')
           cy.contains('button', 'Find prisoner').click()
-          cy.contains('Date').should('exist')
-          cy.get('#date').type('10/04/2023')
           cy.contains('button', 'Continue').click()
           cy.contains('button', 'Continue').click()
         } else if (route.includes('/change')) {
@@ -62,10 +60,6 @@ context('Confirm Details Page', () => {
 
       it(`should ${hasChangeLinks ? '' : 'not '}allow changing the prisoner details`, () => {
         page.changePrisoner().should(hasChangeLinks ? 'exist' : 'not.exist')
-      })
-
-      it('should display the date sent', () => {
-        page.submittedOn().should('exist')
       })
 
       it('should render a Continue button with the correct text', () => {

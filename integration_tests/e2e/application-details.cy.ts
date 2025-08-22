@@ -19,8 +19,6 @@ function startApplication(appType: string): ApplicationDetailsPage {
   cy.contains('Prison number').should('exist')
   cy.get('#prison-number').type('A1234AA')
   cy.contains('button', 'Find prisoner').click()
-  cy.contains('Date').should('exist')
-  cy.get('#date').type('10/04/2023')
   cy.contains('button', 'Continue').click()
 
   if (appType === applicationTypeLabels.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT) {
