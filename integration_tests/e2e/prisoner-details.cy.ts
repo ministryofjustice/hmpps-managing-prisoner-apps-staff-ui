@@ -63,11 +63,6 @@ applicationTypes.forEach(appType => {
       page.prisonerNameInsetText().should('exist')
     })
 
-    it('should render the date picker', () => {
-      page.dateInput().should('exist')
-      page.dateLabel().should('exist').and('include.text', 'Date')
-    })
-
     it('should render the continue button with the correct text', () => {
       page.continueButton().should('exist').and('include.text', 'Continue').and('have.class', 'govuk-button--primary')
     })
@@ -102,7 +97,6 @@ applicationTypes.forEach(appType => {
       it('should show an error if first night or early days centre radio button is not selected', () => {
         page.prisonNumberInput().type('A1234AA')
         page.findPrisonerButton().click()
-        page.dateInput().type('01/01/2025')
         page.continueButton().click()
         page.firstNightOrEarlyDaysCentreErrorMessage().should('exist')
       })

@@ -92,17 +92,6 @@
           <input type="hidden" id="dps-prisoner-url" value="{{ dpsPrisonerUrl }}">
           <input type="hidden" id="prisoner-exists" name="prisonerExists" value="{{ prisonerFound | default('false') }}">
 
-          {{ mojDatePicker({
-            id: "date",
-            name: "date",
-            label: {
-              text: "Date",
-              classes: "govuk-label--s"
-            },
-            errorMessage: { text: errors.dateString.text } if errors.dateString.text else undefined,
-            value: dateString | default('')
-          }) }}
-
           {% if applicationType.value === 'add-social-pin-phone-contact' %}
             {{ govukRadios({
               classes: "govuk-radios--inline",

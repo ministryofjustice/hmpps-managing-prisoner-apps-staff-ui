@@ -26,7 +26,7 @@
 
 {% set _ = rows.push({
   key: { text: "Date sent" },
-  value: { text: application.requestedDate }
+  value: { text: application.createdDate }
 }) %}
 
 {% if applicationType.value == "add-social-pin-phone-contact" %}
