@@ -3,6 +3,11 @@
 {% set rows = [] %}
 
 {% set _ = rows.push({
+  key: { text: "First night or early days centre" },
+  value: { text: applicationData.earlyDaysCentre }
+}) %}
+
+{% set _ = rows.push({
   key: { text: "First name" },
   value: { text: applicationData.request.firstName }
 }) %}
