@@ -17,7 +17,7 @@ export default class ViewApplicationPage extends Page {
 
   prisonerCellLocation = () => cy.get('.govuk-summary-list__row').contains('Location').next()
 
-  submittedOn = () => cy.get('.govuk-summary-list__row').contains('Date sent').next()
+  submittedOn = () => cy.get('.govuk-summary-list__row').contains('Date').next()
 
   forwardApplication = () => cy.get('.govuk-summary-list__row').contains('Department').parent().find('a')
 
