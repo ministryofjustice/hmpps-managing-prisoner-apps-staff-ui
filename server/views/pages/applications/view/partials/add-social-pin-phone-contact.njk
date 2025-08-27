@@ -2,6 +2,17 @@
 
 {% set rows = [] %}
 
+{% if application.firstNightCenter %}
+  {% set firstNightCenter = "Yes" %}
+{% else %}
+  {% set firstNightCenter = "No" %}
+{% endif %}
+
+{% set _ = rows.push({
+  key: { text: "First night or early days centre" },
+  value: { text: firstNightCenter }
+}) %}
+
 {% set _ = rows.push({
   key: { text: "First name" },
   value: { text: application.requests[0].firstName }

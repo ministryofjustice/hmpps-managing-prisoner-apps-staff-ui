@@ -5,13 +5,6 @@
   value: { text: applicationData.prisoner }
 }) %}
 
-{% if applicationData.type.value === 'add-social-pin-phone-contact' %}
-  {% set _ = rows.push({
-    key: { text: "First night or early days centre" },
-    value: { text: applicationData.earlyDaysCentre }
-  }) %}
-{% endif %}
-
 {{ govukSummaryList({
   classes: "govuk-!-margin-bottom-9",
   rows: rows

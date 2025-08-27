@@ -1,4 +1,3 @@
-import { applicationTypeLabels } from '../../server/constants/applicationTypes'
 import applicationTypesData from '../fixtures/applicationTypes.json'
 import ApplicationDetailsPage from '../pages/applicationDetailsPage'
 import Page from '../pages/page'
@@ -20,11 +19,6 @@ function startApplication(appType: string): ApplicationDetailsPage {
   cy.get('#prison-number').type('A1234AA')
   cy.contains('button', 'Find prisoner').click()
   cy.contains('button', 'Continue').click()
-
-  if (appType === applicationTypeLabels.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT) {
-    cy.get('input[name="earlyDaysCentre"][value="yes"]').check({ force: true })
-    cy.contains('button', 'Continue').click()
-  }
 
   return Page.verifyOnPage(ApplicationDetailsPage)
 }
@@ -89,6 +83,31 @@ context(`Application Details Page - Add new social PIN contact`, () => {
 
   it('should render the correct app type title', () => {
     page.appTypeTitle().should('have.text', 'Add new social PIN phone contact')
+  })
+
+  it('should render the first night or early days centre radio buttons', () => {
+    page
+      .firstNightOrEarlyDaysCentreLabel()
+      .should('exist')
+      .and('include.text', 'Is this person in the first night or early days centre?')
+    page.firstNightOrEarlyDaysCentre().should('exist')
+    page.firstNightOrEarlyDaysCentreYes().should('exist')
+    page.firstNightOrEarlyDaysCentreNo().should('exist')
+  })
+
+  it('should allow the user to select "No" for first night or early days centre', () => {
+    page.firstNightOrEarlyDaysCentreNo().check({ force: true })
+    page.firstNightOrEarlyDaysCentreNo().should('be.checked')
+  })
+
+  it('should allow the user to select "Yes" for first night or early days centre', () => {
+    page.firstNightOrEarlyDaysCentreYes().check({ force: true })
+    page.firstNightOrEarlyDaysCentreYes().should('be.checked')
+  })
+
+  it('should show an error if first night or early days centre radio button is not selected', () => {
+    page.continueButton().click()
+    page.firstNightOrEarlyDaysCentreErrorMessage().should('exist')
   })
 
   it('should render the form fields', () => {

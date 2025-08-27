@@ -28,15 +28,4 @@ export default class LogPrisonerDetailsPage extends Page {
   dateLabel = () => cy.get('label[for="date"]')
 
   continueButton = () => cy.get('[data-test="continue-button"]')
-
-  firstNightOrEarlyDaysCentre = () => cy.get('input[type="radio"]')
-
-  firstNightOrEarlyDaysCentreLabel = () => cy.contains('Is this person in the first night or early days centre?')
-
-  firstNightOrEarlyDaysCentreYes = () => cy.get('input[type="radio"][value="yes"]')
-
-  firstNightOrEarlyDaysCentreNo = () => cy.get('input[type="radio"][value="no"]')
-
-  firstNightOrEarlyDaysCentreErrorMessage = () =>
-    cy.get('.govuk-error-message').contains('Select yes if this person is in the first night or early days centre')
 }
