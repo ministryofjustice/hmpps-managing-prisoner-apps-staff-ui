@@ -58,6 +58,7 @@ export default function applicationDetailsRoutes({
         title: 'Log details',
         ...templateFields,
         applicationType,
+        earlyDaysCentre: applicationData?.earlyDaysCentre,
       })
     }),
   )

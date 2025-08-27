@@ -57,7 +57,7 @@ export async function getApplicationDetails(
         telephone1: fallback('telephone1', ''),
         telephone2: fallback('telephone2', ''),
       }
-      return handleAddNewContact(prefilledDetails, services?.personalRelationshipsService)
+      return handleAddNewSocialContact(prefilledDetails, services?.personalRelationshipsService)
     }
 
     case 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP':
@@ -77,7 +77,7 @@ export async function getApplicationDetails(
   }
 }
 
-async function handleAddNewContact(
+async function handleAddNewSocialContact(
   applicationDetails: AddNewSocialContactRequest,
   personalRelationshipsService?: PersonalRelationshipsService,
 ): Promise<Record<string, unknown>> {
