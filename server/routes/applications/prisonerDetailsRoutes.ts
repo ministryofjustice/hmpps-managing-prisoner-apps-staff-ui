@@ -43,7 +43,6 @@ export default function prisonerDetailsRoutes({
       return res.render(PATHS.LOG_APPLICATION.PRISONER_DETAILS, {
         applicationType,
         dpsPrisonerUrl: config.dpsPrisoner,
-        earlyDaysCentre: req.session.applicationData.earlyDaysCentre || '',
         errors: null,
         prisonerAlertCount: req.session.applicationData.prisonerAlertCount || '',
         prisonerExists: req.session.applicationData.prisonerExists || 'false',
@@ -79,7 +78,7 @@ export default function prisonerDetailsRoutes({
   router.post(
     URLS.LOG_PRISONER_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { prisonNumber, earlyDaysCentre, prisonerLookupButton } = req.body
+      const { prisonNumber, prisonerLookupButton } = req.body
 
       const applicationType = await getAppType(
         managingPrisonerAppsService,
@@ -87,7 +86,7 @@ export default function prisonerDetailsRoutes({
         req.session.applicationData?.type.key,
       )
 
-      const errors = validatePrisonerDetails(applicationType, prisonNumber, earlyDaysCentre)
+      const errors = validatePrisonerDetails(prisonNumber)
 
       if (prisonerLookupButton !== 'true' && !req.session.applicationData.prisonerName && !errors.prisonNumber) {
         errors.prisonerLookupButton = { text: 'Find prisoner to continue' }
@@ -108,7 +107,6 @@ export default function prisonerDetailsRoutes({
         return res.render(PATHS.LOG_APPLICATION.PRISONER_DETAILS, {
           applicationType,
           dpsPrisonerUrl: config.dpsPrisoner,
-          earlyDaysCentre,
           errors,
           prisonerAlertCount: req.body.prisonerAlertCount || '',
           prisonerExists: req.body.prisonerExists || 'false',
@@ -119,7 +117,6 @@ export default function prisonerDetailsRoutes({
       }
 
       updateSessionData(req, {
-        earlyDaysCentre,
         prisonerAlertCount: req.body.prisonerAlertCount,
         prisonerExists: req.body.prisonerExists,
         prisonerId: prisonNumber,

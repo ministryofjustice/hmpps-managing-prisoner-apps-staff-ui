@@ -27,6 +27,7 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
 
   const errors: Record<string, string> = {}
   const additionalData: Record<string, unknown> = {}
+  let earlyDaysCentre: string | undefined
 
   const templateData: Record<string, unknown> = {
     ...(await options.getTemplateData(req, res, applicationType)),
@@ -114,6 +115,9 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
       ] as const
 
       if (Object.keys(formErrors).length === 0) {
+        // Save earlyDaysCentre separately
+        earlyDaysCentre = formData.earlyDaysCentre
+
         for (const field of formFields) {
           if (field === 'country') {
             additionalData.country = getCountryNameByCode(formData.country)
@@ -161,7 +165,10 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
     })
   }
 
-  updateSessionData(req, { additionalData })
+  updateSessionData(req, {
+    earlyDaysCentre,
+    additionalData,
+  })
 
   return res.redirect(options.successRedirect(req, res))
 }

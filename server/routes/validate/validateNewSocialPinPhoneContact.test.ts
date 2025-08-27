@@ -1,8 +1,9 @@
 import { validateAddNewSocialContact } from './validateNewSocialPinPhoneContact'
 import type { AddNewSocialPinPhoneContactForm } from './validateNewSocialPinPhoneContact'
 
-describe('validateAddNewSocialContact', () => {
+describe(validateAddNewSocialContact.name, () => {
   const validForm: AddNewSocialPinPhoneContactForm = {
+    earlyDaysCentre: 'yes',
     firstName: 'John',
     lastName: 'Doe',
     dateOfBirthOrAge: 'dateofbirth',

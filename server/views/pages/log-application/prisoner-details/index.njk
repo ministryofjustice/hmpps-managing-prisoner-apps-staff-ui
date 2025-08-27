@@ -92,32 +92,6 @@
           <input type="hidden" id="dps-prisoner-url" value="{{ dpsPrisonerUrl }}">
           <input type="hidden" id="prisoner-exists" name="prisonerExists" value="{{ prisonerFound | default('false') }}">
 
-          {% if applicationType.value === 'add-social-pin-phone-contact' %}
-            {{ govukRadios({
-              classes: "govuk-radios--inline",
-              name: "earlyDaysCentre",
-              fieldset: {
-                legend: {
-                  text: "Is this person in the first night or early days centre?",
-                  isPageHeading: false,
-                  classes: "govuk-fieldset__legend--s"
-                }
-              },
-              items: [
-                {
-                  value: "yes",
-                  text: "Yes"
-                },
-                {
-                  value: "no",
-                  text: "No"
-                }
-              ],
-              value: earlyDaysCentre or '',
-              errorMessage: { text: errors.earlyDaysCentre.text } if errors.earlyDaysCentre else undefined
-            }) }}
-          {% endif %}
-
           {{ govukButton({
             text: "Continue",
             classes: "govuk-button--primary",
