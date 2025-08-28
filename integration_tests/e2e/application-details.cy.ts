@@ -86,17 +86,17 @@ context(`Application Details Page - Add new social PIN contact`, () => {
     page.firstNightOrEarlyDaysCentreNo().should('exist')
   })
 
-  it('should allow the user to select "No"', () => {
+  it('should allow the user to select "No" for "Is this person in the first night or early days centre?"', () => {
     page.firstNightOrEarlyDaysCentreNo().check({ force: true })
     page.firstNightOrEarlyDaysCentreNo().should('be.checked')
   })
 
-  it('should allow the user to select "Yes"', () => {
+  it('should allow the user to select "Yes" for "Is this person in the first night or early days centre?"', () => {
     page.firstNightOrEarlyDaysCentreYes().check({ force: true })
     page.firstNightOrEarlyDaysCentreYes().should('be.checked')
   })
 
-  it('should show an error if no radio button is selected', () => {
+  it('should show an error if no radio button is selected for "Is this person in the first night or early days centre?"', () => {
     page.continueButton().click()
     page.firstNightOrEarlyDaysCentreErrorMessage().should('exist')
   })
