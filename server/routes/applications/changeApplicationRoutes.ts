@@ -79,6 +79,7 @@ export default function changeApplicationRoutes({
             ...templateData,
           }
         },
+        isUpdate: true,
         renderPath: PATHS.APPLICATIONS.CHANGE_DETAILS,
         successRedirect: () => `${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/change/confirm`,
       })

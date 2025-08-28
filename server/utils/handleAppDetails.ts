@@ -11,6 +11,7 @@ import { getCountryNameByCode } from './formatCountryList'
 type ContextOptions = {
   getAppType: (req: Request, res: Response) => ApplicationType
   getTemplateData: (req: Request, res: Response, appType: ApplicationType) => Promise<Record<string, unknown>>
+  isUpdate: boolean
   renderPath: string
   successRedirect: (req: Request, res: Response) => string
 }
@@ -96,7 +97,7 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
           year: req.body['dob-year'] || '',
         },
       }
-      const formErrors = validateAddNewSocialContact(formData)
+      const formErrors = validateAddNewSocialContact(formData, options.isUpdate)
 
       const formFields = [
         'firstName',
