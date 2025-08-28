@@ -16,10 +16,10 @@ export type AddNewSocialPinPhoneContactForm = {
 
 const isValidNumber = (value: string) => /^\d+$/.test(value)
 
-export const validateAddNewSocialContact = (form: AddNewSocialPinPhoneContactForm) => {
+export const validateAddNewSocialContact = (form: AddNewSocialPinPhoneContactForm, isUpdate: boolean) => {
   const errors: Record<string, { text: string }> = {}
 
-  if (!form.earlyDaysCentre) {
+  if (!form.earlyDaysCentre && !isUpdate) {
     errors.earlyDaysCentre = { text: 'Select yes if this person is in the first night or early days centre' }
   }
 
