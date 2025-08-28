@@ -22,7 +22,7 @@ export type SupplyListOfContactsAppType = {
   details: string
 }
 
-export type AddNewContactAppType = {
+export type AddNewSocialContactAppType = {
   type: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT'
   firstName: string
   lastName: string
@@ -43,7 +43,7 @@ export type AppTypeData =
   | SwapVOsAppType
   | EmergencyCreditAppType
   | SupplyListOfContactsAppType
-  | AddNewContactAppType
+  | AddNewSocialContactAppType
   | null
 
 export function getAppTypeLogDetailsData(applicationType: ApplicationType, additionalData: unknown): AppTypeData {
