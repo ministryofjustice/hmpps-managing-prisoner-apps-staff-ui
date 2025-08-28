@@ -83,6 +83,7 @@ export default function applicationDetailsRoutes({
             countries: formattedCountryList,
           }
         },
+        isUpdate: false,
         renderPath: PATHS.LOG_APPLICATION.APPLICATION_DETAILS,
         successRedirect: () => URLS.LOG_CONFIRM_DETAILS,
       })

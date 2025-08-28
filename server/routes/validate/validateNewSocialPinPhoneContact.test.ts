@@ -15,7 +15,7 @@ describe(validateAddNewSocialContact.name, () => {
   }
 
   it('should return error if firstName is missing', () => {
-    const result = validateAddNewSocialContact({ ...validForm, firstName: '' })
+    const result = validateAddNewSocialContact({ ...validForm, firstName: '' }, false)
 
     expect(result).toMatchObject({
       firstName: { text: 'Enter the contact’s first name' },
@@ -23,7 +23,7 @@ describe(validateAddNewSocialContact.name, () => {
   })
 
   it('should return error if lastName is missing', () => {
-    const result = validateAddNewSocialContact({ ...validForm, lastName: '' })
+    const result = validateAddNewSocialContact({ ...validForm, lastName: '' }, false)
 
     expect(result).toMatchObject({
       lastName: { text: 'Enter the contact’s last name' },
@@ -31,7 +31,7 @@ describe(validateAddNewSocialContact.name, () => {
   })
 
   it('should return error if dateOfBirthOrAge is missing', () => {
-    const result = validateAddNewSocialContact({ ...validForm, dateOfBirthOrAge: undefined })
+    const result = validateAddNewSocialContact({ ...validForm, dateOfBirthOrAge: undefined }, false)
 
     expect(result).toMatchObject({
       dateOfBirthOrAge: { text: 'Select an answer about the contact’s date of birth' },
@@ -39,12 +39,15 @@ describe(validateAddNewSocialContact.name, () => {
   })
 
   it('should return error if date fields are empty', () => {
-    const result = validateAddNewSocialContact({
-      ...validForm,
-      'dob-day': '',
-      'dob-month': '',
-      'dob-year': '',
-    })
+    const result = validateAddNewSocialContact(
+      {
+        ...validForm,
+        'dob-day': '',
+        'dob-month': '',
+        'dob-year': '',
+      },
+      false,
+    )
 
     expect(result).toMatchObject({
       dob: { text: 'Enter the contact’s date of birth' },
@@ -55,11 +58,14 @@ describe(validateAddNewSocialContact.name, () => {
   })
 
   it('should return error if day or month is missing', () => {
-    const result = validateAddNewSocialContact({
-      ...validForm,
-      'dob-day': '',
-      'dob-month': '',
-    })
+    const result = validateAddNewSocialContact(
+      {
+        ...validForm,
+        'dob-day': '',
+        'dob-month': '',
+      },
+      false,
+    )
 
     expect(result).toMatchObject({
       dob: { text: 'Date must include a day, a month and a year' },
@@ -70,12 +76,15 @@ describe(validateAddNewSocialContact.name, () => {
 
   it('should return error if year is in the future', () => {
     const nextYear = new Date().getFullYear() + 1
-    const result = validateAddNewSocialContact({
-      ...validForm,
-      'dob-day': '01',
-      'dob-month': '01',
-      'dob-year': `${nextYear}`,
-    })
+    const result = validateAddNewSocialContact(
+      {
+        ...validForm,
+        'dob-day': '01',
+        'dob-month': '01',
+        'dob-year': `${nextYear}`,
+      },
+      false,
+    )
 
     expect(result).toMatchObject({
       dob: { text: 'Date must be in the past' },
@@ -86,7 +95,7 @@ describe(validateAddNewSocialContact.name, () => {
   })
 
   it('should return error if relationship is missing', () => {
-    const result = validateAddNewSocialContact({ ...validForm, relationship: '' })
+    const result = validateAddNewSocialContact({ ...validForm, relationship: '' }, false)
 
     expect(result).toMatchObject({
       relationship: { text: 'Select a relationship' },
@@ -94,7 +103,7 @@ describe(validateAddNewSocialContact.name, () => {
   })
 
   it('should return error if telephone1 is missing', () => {
-    const result = validateAddNewSocialContact({ ...validForm, telephone1: '' })
+    const result = validateAddNewSocialContact({ ...validForm, telephone1: '' }, false)
 
     expect(result).toMatchObject({
       telephone1: { text: 'Enter the contact’s phone number' },
@@ -102,7 +111,7 @@ describe(validateAddNewSocialContact.name, () => {
   })
 
   it('should return error if telephone1 is not a number', () => {
-    const result = validateAddNewSocialContact({ ...validForm, telephone1: 'ABC123' })
+    const result = validateAddNewSocialContact({ ...validForm, telephone1: 'ABC123' }, false)
 
     expect(result).toMatchObject({
       telephone1: { text: 'Enter the contact’s phone number' },
