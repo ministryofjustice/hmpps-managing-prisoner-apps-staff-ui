@@ -114,7 +114,7 @@ describe(validateAddNewSocialContact.name, () => {
     const result = validateAddNewSocialContact({ ...validForm, telephone1: 'ABC123' }, false)
 
     expect(result).toMatchObject({
-      telephone1: { text: 'Enter the contact’s phone number' },
+      telephone1: { text: 'Enter a phone number in the correct format' },
     })
   })
 })
