@@ -23,8 +23,7 @@ export default async function getValidApplicationOrRedirect(
   const applicationType = await getAppType(managingPrisonerAppsService, user, application.appType)
 
   if (!applicationType) {
-    res.redirect('/applications?error=unknown-type')
-    return null
+    throw new Error('Unknown application type')
   }
 
   if (auditPage) {
