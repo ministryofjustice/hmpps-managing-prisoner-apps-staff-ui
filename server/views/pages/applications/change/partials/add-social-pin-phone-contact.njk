@@ -195,6 +195,9 @@
   items: countries
 }) }}
 
+<h2 class="govuk-heading-m govuk-!-margin-bottom-1">Telephone numbers</h2>
+<p class="govuk-hint">Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192. Include area code or international code, if overseas.</p>
+
 {{ govukInput({
   label: {
     text: "Telephone number 1",
@@ -202,11 +205,10 @@
     isPageHeading: true
   },
   classes: "govuk-input--width-20",
-  hint: {
-    text: "Include area code or international code, if overseas"
-  },
   id: "telephone1",
   name: "telephone1",
+  type: "tel",
+  autocomplete: "tel",
   inputmode: "numeric",
   spellcheck: false,
   errorMessage: errors.telephone1,
@@ -220,11 +222,10 @@
     isPageHeading: true
   },
   classes: "govuk-input--width-20",
-  hint: {
-    text: "Include area code or international code, if overseas"
-  },
   id: "telephone2",
   name: "telephone2",
+  type: "tel",
+  autocomplete: "tel",
   inputmode: "numeric",
   errorMessage: errors.telephone2,
   value: telephone2,

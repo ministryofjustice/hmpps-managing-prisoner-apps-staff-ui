@@ -1,9 +1,8 @@
 import { sanitisePhoneNumber, isValidPhoneNumber } from './validateTelephoneNumber'
 
 describe('sanitisePhoneNumber', () => {
-  it('returns null if input is empty or contains + symbol', () => {
+  it('returns null if input is empty', () => {
     expect(sanitisePhoneNumber('')).toBeNull()
-    expect(sanitisePhoneNumber('+1234567890')).toBeNull()
   })
 
   it('strips invalid characters but keeps digits and brackets, parses extension', () => {
