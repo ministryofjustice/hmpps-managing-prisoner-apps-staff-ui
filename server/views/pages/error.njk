@@ -1,12 +1,25 @@
 {% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageTitle = applicationName + " - Error" %}
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block content %}
 
-  <h1>{{ message }}</h1>
-  <h2>{{ status }}</h2>
-  <pre>{{ stack }}</pre>
+  <div class="govuk-body govuk-width-container govuk-!-padding-top-5 govuk-!-padding-bottom-5">
+    <p class="govuk-heading-l">
+      {{ message }}
+    </p>
+
+    {{ govukButton({
+      text: "Go back to home page",
+      href: "/"
+    }) }}
+
+    {% if stack %}
+      <p>{{ status }}</p>
+      <pre class="stacktrace">{{ stack }}</pre>
+    {% endif %}
+  </div>
 
 {% endblock %}
