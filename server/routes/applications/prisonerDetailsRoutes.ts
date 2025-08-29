@@ -29,25 +29,18 @@ export default function prisonerDetailsRoutes({
   router.get(
     URLS.LOG_PRISONER_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { user } = res.locals
-
       await auditService.logPageView(Page.LOG_PRISONER_DETAILS_PAGE, {
         who: res.locals.user.username,
         correlationId: req.id,
       })
 
-      const applicationType = await getAppType(managingPrisonerAppsService, user, req.session.applicationData?.type.key)
-
-      if (!applicationType) return res.redirect(URLS.LOG_APPLICATION_TYPE)
-
       return res.render(PATHS.LOG_APPLICATION.PRISONER_DETAILS, {
-        applicationType,
         dpsPrisonerUrl: config.dpsPrisoner,
         errors: null,
-        prisonerAlertCount: req.session.applicationData.prisonerAlertCount || '',
-        prisonerExists: req.session.applicationData.prisonerExists || 'false',
-        prisonerName: req.session.applicationData.prisonerName || '',
-        prisonNumber: req.session.applicationData.prisonerId,
+        prisonerAlertCount: req.session.applicationData?.prisonerAlertCount || '',
+        prisonerExists: req.session.applicationData?.prisonerExists || 'false',
+        prisonerName: req.session.applicationData?.prisonerName || '',
+        prisonNumber: req.session.applicationData?.prisonerId,
         title: 'Log prisoner details',
       })
     }),
@@ -88,7 +81,7 @@ export default function prisonerDetailsRoutes({
 
       const errors = validatePrisonerDetails(prisonNumber)
 
-      if (prisonerLookupButton !== 'true' && !req.session.applicationData.prisonerName && !errors.prisonNumber) {
+      if (prisonerLookupButton !== 'true' && !req.session.applicationData?.prisonerName && !errors.prisonNumber) {
         errors.prisonerLookupButton = { text: 'Find prisoner to continue' }
       }
 
@@ -99,7 +92,6 @@ export default function prisonerDetailsRoutes({
           errors.prisonNumber = { text: 'Enter a valid prison number' }
         } else {
           req.body.prisonerName = `${prisoner.lastName}, ${prisoner.firstName}`
-          req.session.applicationData.prisonerName = req.body.prisonerName
         }
       }
 
@@ -123,7 +115,7 @@ export default function prisonerDetailsRoutes({
         prisonerName: req.body.prisonerName,
       })
 
-      return res.redirect(URLS.LOG_APPLICATION_DETAILS)
+      return res.redirect(URLS.LOG_APPLICATION_TYPE)
     }),
   )
 

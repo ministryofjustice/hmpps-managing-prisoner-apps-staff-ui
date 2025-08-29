@@ -1,8 +1,6 @@
 context('Applications Page', () => {
   beforeEach(() => {
-    cy.task('reset')
-    cy.task('stubSignIn')
-    cy.signIn()
+    cy.resetAndSignIn()
     cy.visit('/')
   })
 
@@ -25,7 +23,7 @@ context('Applications Page', () => {
       .should('exist')
       .within(() => {
         cy.get('h2').contains('Log a new application')
-        cy.get('a').should('have.attr', 'href', '/log/application-type')
+        cy.get('a').should('have.attr', 'href', '/log/prisoner-details')
         cy.get('p').contains('Log a new application to process.')
       })
   })
