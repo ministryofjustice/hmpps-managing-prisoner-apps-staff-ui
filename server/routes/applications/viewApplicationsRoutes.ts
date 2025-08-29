@@ -68,7 +68,7 @@ export default function viewApplicationRoutes({
         types: selectedFilters.types,
         requestedBy: selectedFilters.prisonerId,
         assignedGroups: selectedFilters.groups,
-        firstNightCenter: selectedFilters.priority.includes('first-night-centre'),
+        firstNightCenter: selectedFilters.priority.includes('first-night-centre') ? true : null,
       }
 
       const [{ apps, types, assignedGroups, totalRecords, firstNightCenter }, prisonerDetails] = await Promise.all([
