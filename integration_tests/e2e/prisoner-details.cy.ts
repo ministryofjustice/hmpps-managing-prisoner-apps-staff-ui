@@ -9,15 +9,8 @@ applicationTypes.forEach(appType => {
     let page: LogPrisonerDetailsPage
 
     beforeEach(() => {
-      cy.task('reset')
-      cy.task('stubSignIn')
-      cy.signIn()
-      cy.task('stubGetAppTypes')
-
-      cy.visit('/log/prisoner-details')
-
-      cy.contains(appType.name).click()
-      cy.contains('button', 'Continue').click()
+      cy.resetAndSignIn()
+      cy.visitIndexAndStartApplication()
 
       page = Page.verifyOnPage(LogPrisonerDetailsPage)
     })
@@ -26,16 +19,12 @@ applicationTypes.forEach(appType => {
       Page.verifyOnPage(LogPrisonerDetailsPage)
     })
 
-    it('should show the correct app type caption', () => {
-      page.caption().should('have.text', appType.name)
-    })
-
     it('should display the correct page title', () => {
       page.pageTitle().should('include', 'Log prisoner details')
     })
 
     it('should render the back link with correct text and href', () => {
-      page.backLink().should('have.text', 'Back').and('have.attr', 'href', '/log/application-type')
+      page.backLink().should('have.text', 'Back').and('have.attr', 'href', '/')
     })
 
     it('should display the prisoner details form', () => {

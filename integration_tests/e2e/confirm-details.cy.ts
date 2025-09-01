@@ -7,9 +7,7 @@ context('Confirm Details Page', () => {
   const { app } = new TestData()
 
   beforeEach(() => {
-    cy.task('reset')
-    cy.task('stubSignIn')
-    cy.signIn()
+    cy.resetAndSignIn()
     cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
     cy.task('stubGetAppTypes')
   })
@@ -22,13 +20,9 @@ context('Confirm Details Page', () => {
         })
 
         if (route === '/log/confirm') {
-          cy.visit(route)
-          cy.contains('Swap visiting orders (VOs) for PIN credit').click()
-          cy.contains('button', 'Continue').click()
-          cy.contains('Prison number').should('exist')
-          cy.get('#prison-number').type('A1234AA')
-          cy.contains('button', 'Find prisoner').click()
-          cy.contains('button', 'Continue').click()
+          cy.visitIndexAndStartApplication()
+          cy.enterPrisonerDetails()
+          cy.selectApplicationType('Swap visiting orders (VOs) for PIN credit')
           cy.contains('button', 'Continue').click()
         } else if (route.includes('/change')) {
           cy.visit(route)

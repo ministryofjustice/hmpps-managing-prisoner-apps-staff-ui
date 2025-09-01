@@ -4,31 +4,17 @@ import Page from '../pages/page'
 
 const { applicationTypes } = applicationTypesData
 
-function startApplication(appType: string): ApplicationDetailsPage {
-  cy.task('reset')
-  cy.task('stubSignIn')
-  cy.signIn()
-  cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
-  cy.task('stubGetAppTypes')
-
-  cy.visit('/log/application-details')
-
-  cy.contains(appType).click()
-  cy.contains('button', 'Continue').click()
-  cy.contains('Prison number').should('exist')
-  cy.get('#prison-number').type('A1234AA')
-  cy.contains('button', 'Find prisoner').click()
-  cy.contains('button', 'Continue').click()
-
-  return Page.verifyOnPage(ApplicationDetailsPage)
-}
-
 applicationTypes.forEach(({ name, type, hint }) => {
   context(`Application Details Page - ${name}`, () => {
     let page: ApplicationDetailsPage
 
     beforeEach(() => {
-      page = startApplication(name)
+      cy.resetAndSignIn()
+      cy.visitIndexAndStartApplication()
+      cy.enterPrisonerDetails()
+      cy.selectApplicationType(name)
+
+      page = Page.verifyOnPage(ApplicationDetailsPage)
     })
 
     it('should direct the user to the correct page', () => {
@@ -74,7 +60,12 @@ context(`Application Details Page - Add new social PIN contact`, () => {
   let page: ApplicationDetailsPage
 
   beforeEach(() => {
-    page = startApplication('Add new social PIN phone contact')
+    cy.resetAndSignIn()
+    cy.visitIndexAndStartApplication()
+    cy.enterPrisonerDetails()
+    cy.selectApplicationType('Add new social PIN phone contact')
+
+    page = Page.verifyOnPage(ApplicationDetailsPage)
   })
 
   it('should direct the user to the correct page', () => {
@@ -95,17 +86,17 @@ context(`Application Details Page - Add new social PIN contact`, () => {
     page.firstNightOrEarlyDaysCentreNo().should('exist')
   })
 
-  it('should allow the user to select "No" for first night or early days centre', () => {
+  it('should allow the user to select "No" for "Is this person in the first night or early days centre?"', () => {
     page.firstNightOrEarlyDaysCentreNo().check({ force: true })
     page.firstNightOrEarlyDaysCentreNo().should('be.checked')
   })
 
-  it('should allow the user to select "Yes" for first night or early days centre', () => {
+  it('should allow the user to select "Yes" for "Is this person in the first night or early days centre?"', () => {
     page.firstNightOrEarlyDaysCentreYes().check({ force: true })
     page.firstNightOrEarlyDaysCentreYes().should('be.checked')
   })
 
-  it('should show an error if first night or early days centre radio button is not selected', () => {
+  it('should show an error if no radio button is selected for "Is this person in the first night or early days centre?"', () => {
     page.continueButton().click()
     page.firstNightOrEarlyDaysCentreErrorMessage().should('exist')
   })
