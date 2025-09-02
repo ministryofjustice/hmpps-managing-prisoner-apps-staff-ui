@@ -4,17 +4,23 @@ import Page from '../pages/page'
 
 const { applicationTypes } = applicationTypesData
 
+function startApplication(appType: string): ApplicationDetailsPage {
+  cy.resetAndSignIn()
+  cy.task('stubGetAppTypes')
+
+  cy.visit('/log/application-details')
+
+  cy.selectApplicationType(appType)
+
+  return Page.verifyOnPage(ApplicationDetailsPage)
+}
+
 applicationTypes.forEach(({ name, type, hint }) => {
   context(`Application Details Page - ${name}`, () => {
     let page: ApplicationDetailsPage
 
     beforeEach(() => {
-      cy.resetAndSignIn()
-      cy.visitIndexAndStartApplication()
-      cy.enterPrisonerDetails()
-      cy.selectApplicationType(name)
-
-      page = Page.verifyOnPage(ApplicationDetailsPage)
+      page = startApplication(name)
     })
 
     it('should direct the user to the correct page', () => {
@@ -60,12 +66,7 @@ context(`Application Details Page - Add new social PIN contact`, () => {
   let page: ApplicationDetailsPage
 
   beforeEach(() => {
-    cy.resetAndSignIn()
-    cy.visitIndexAndStartApplication()
-    cy.enterPrisonerDetails()
-    cy.selectApplicationType('Add new social PIN phone contact')
-
-    page = Page.verifyOnPage(ApplicationDetailsPage)
+    page = startApplication('Add new social PIN phone contact')
   })
 
   it('should direct the user to the correct page', () => {
