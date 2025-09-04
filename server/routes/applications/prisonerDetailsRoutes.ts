@@ -3,12 +3,9 @@ import { Request, Response, Router } from 'express'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
-import { getAppType } from '../../helpers/application/getAppType'
-
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
 import AuditService, { Page } from '../../services/auditService'
-import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PrisonService from '../../services/prisonService'
 
 import config from '../../config'
@@ -17,11 +14,9 @@ import validatePrisonerDetails from '../validate/validatePrisonerDetails'
 
 export default function prisonerDetailsRoutes({
   auditService,
-  managingPrisonerAppsService,
   prisonService,
 }: {
   auditService: AuditService
-  managingPrisonerAppsService: ManagingPrisonerAppsService
   prisonService: PrisonService
 }): Router {
   const router = Router()
@@ -73,12 +68,6 @@ export default function prisonerDetailsRoutes({
     asyncMiddleware(async (req: Request, res: Response) => {
       const { prisonNumber, prisonerLookupButton } = req.body
 
-      const applicationType = await getAppType(
-        managingPrisonerAppsService,
-        res.locals.user,
-        req.session.applicationData?.type?.key,
-      )
-
       const errors = validatePrisonerDetails(prisonNumber)
 
       if (prisonerLookupButton !== 'true' && !req.session.applicationData?.prisonerName && !errors.prisonNumber) {
@@ -97,7 +86,6 @@ export default function prisonerDetailsRoutes({
 
       if (Object.keys(errors).length > 0) {
         return res.render(PATHS.LOG_APPLICATION.PRISONER_DETAILS, {
-          applicationType,
           dpsPrisonerUrl: config.dpsPrisoner,
           errors,
           prisonerAlertCount: req.body.prisonerAlertCount || '',
