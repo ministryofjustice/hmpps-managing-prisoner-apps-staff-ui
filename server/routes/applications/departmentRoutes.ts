@@ -34,18 +34,20 @@ export default function departmentRoutes({
       const { user } = res.locals
       const { applicationData } = req.session
 
-      if (!applicationData?.type?.key) {
+      if (!applicationData?.prisonerId) {
         return res.redirect(URLS.LOG_PRISONER_DETAILS)
+      }
+
+      if (!applicationData?.type?.key) {
+        return res.redirect(URLS.LOG_APPLICATION_TYPE)
       }
 
       const selectedDepartment = applicationData?.department || null
       const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.key)
 
       if (!departments) {
-        return res.redirect(URLS.LOG_PRISONER_DETAILS)
+        return res.redirect(URLS.LOG_APPLICATION_TYPE)
       }
-
-      const departmentOptions = buildDepartmentOptions(departments, selectedDepartment)
 
       await auditService.logPageView(Page.LOG_DEPARTMENT_PAGE, {
         who: user.username,
@@ -56,7 +58,7 @@ export default function departmentRoutes({
         title: 'Select department',
         errorMessage: null,
         applicationType: applicationData.type.name,
-        departmentOptions,
+        departmentOptions: buildDepartmentOptions(departments, selectedDepartment),
       })
     }),
   )
@@ -68,7 +70,7 @@ export default function departmentRoutes({
       const { applicationData } = req.session
 
       if (!applicationData?.type?.key) {
-        return res.redirect(URLS.LOG_PRISONER_DETAILS)
+        return res.redirect(URLS.LOG_APPLICATION_TYPE)
       }
 
       const selectedDepartment = req.body.department

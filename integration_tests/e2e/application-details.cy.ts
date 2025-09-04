@@ -1,27 +1,22 @@
 import applicationTypesData from '../fixtures/applicationTypes.json'
 import ApplicationDetailsPage from '../pages/applicationDetailsPage'
 import Page from '../pages/page'
-import TestData from '../../server/routes/testutils/testData'
 
 const { applicationTypes } = applicationTypesData
-const { app } = new TestData()
 
 function startApplication(appType: string): ApplicationDetailsPage {
   const appConfig = applicationTypes.find(type => type.name === appType)
-  cy.task('reset')
-  cy.task('stubSignIn')
-
-  cy.signIn()
-
-  cy.task('stubGetPrisonerApp', { app })
-
+  cy.resetAndSignIn()
+  cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
+  cy.task('stubGetAppTypes')
   cy.task('stubGetDepartments', { appType: appConfig?.key })
 
-  cy.visitIndexAndStartApplication()
+  cy.visit('/log/prisoner-details')
   cy.enterPrisonerDetails()
   cy.selectApplicationType(appType)
-  cy.selectDepartment('Business Hub')
-  cy.contains('button', 'Continue').click()
+  cy.visit('/log/department')
+
+  cy.visit('/log/application-details')
 
   return Page.verifyOnPage(ApplicationDetailsPage)
 }

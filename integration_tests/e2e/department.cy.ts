@@ -1,20 +1,15 @@
-import TestData from '../../server/routes/testutils/testData'
-
 context('Department Page', () => {
-  const { app } = new TestData()
-
   beforeEach(() => {
-    cy.task('reset')
-    cy.task('stubSignIn')
-
-    cy.signIn()
-
-    cy.task('stubGetPrisonerApp', { app })
-
+    cy.resetAndSignIn()
+    cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
+    cy.task('stubGetAppTypes')
     cy.task('stubGetDepartments', { appType: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS' })
 
-    cy.visitIndexAndStartApplication()
+    cy.visit('/log/prisoner-details')
     cy.enterPrisonerDetails()
+    cy.selectApplicationType('Swap visiting orders (VOs) for PIN credit')
+    cy.visit('/log/department')
+
     cy.selectApplicationType('Swap visiting orders (VOs) for PIN credit')
   })
 
