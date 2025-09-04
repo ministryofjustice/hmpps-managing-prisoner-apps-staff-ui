@@ -49,7 +49,7 @@ export default function applicationsRoutes({
   router.use(confirmDetailsRoutes({ auditService, managingPrisonerAppsService }))
   router.use(forwardApplicationRoutes({ auditService, managingPrisonerAppsService }))
   router.use(applicationHistoryRoutes({ auditService, managingPrisonerAppsService }))
-  router.use(prisonerDetailsRoutes({ auditService, managingPrisonerAppsService, prisonService }))
+  router.use(prisonerDetailsRoutes({ auditService, prisonService }))
   router.use(submitApplicationRoutes({ auditService, managingPrisonerAppsService }))
   router.use(viewApplicationRoutes({ auditService, managingPrisonerAppsService, prisonService }))
 
