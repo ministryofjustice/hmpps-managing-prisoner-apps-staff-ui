@@ -12,6 +12,7 @@ export const PATHS = {
   LOG_APPLICATION: {
     SELECT_TYPE: 'pages/log-application/select-application-type/index',
     PRISONER_DETAILS: 'pages/log-application/prisoner-details/index',
+    SELECT_DEPARTMENT: 'pages/log-application/select-department/index',
     APPLICATION_DETAILS: 'pages/log-application/application-details/index',
     CONFIRM_DETAILS: 'pages/log-application/confirm/index',
     SUBMIT: 'pages/log-application/submit/index',

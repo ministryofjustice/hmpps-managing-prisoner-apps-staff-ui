@@ -19,24 +19,6 @@
 
         <span class="govuk-caption-xl">{{ title }}</span>
         <h1 class="govuk-heading-xl govuk-!-margin-top-0">Check details</h1>
-
-        {{ govukSummaryList({
-          classes: "govuk-!-margin-bottom-9",
-          rows: [
-            {
-              key: { text: "Application type" },
-              value: { text: applicationData.type.name },
-              actions: { items: [] if isUpdate else [{ href: "/log/application-type", text: "Change", visuallyHiddenText: "application type" }] }
-            }
-          ]
-        }) }}
-
-        <div class="govuk-summary-list--header">
-          <h2 class="govuk-heading-m">Application details</h2>
-          {% if not isUpdate %}
-            <a href="/log/prisoner-details" class="govuk-body">Change <span class="govuk-visually-hidden">prisoner</span></a>
-          {% endif %}  
-        </div>
      
         {% include "./partials/application-details.njk" %}
         {% include "./partials/" + applicationData.type.value + ".njk" %}

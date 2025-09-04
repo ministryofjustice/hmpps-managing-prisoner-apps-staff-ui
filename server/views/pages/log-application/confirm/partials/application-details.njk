@@ -1,8 +1,57 @@
 {% set rows = [] %}
 
+{% if isUpdate %}
+  {% set prisonerActions = { items: [] } %}
+{% else %}
+  {% set prisonerActions = {
+    items: [{
+      href: "/log/prisoner-details",
+      text: "Change",
+      visuallyHiddenText: "prisoner"
+    }]
+  } %}
+{% endif %}
+
 {% set _ = rows.push({
   key: { text: "Prisoner" },
-  value: { text: applicationData.prisoner }
+  value: { text: applicationData.prisoner },
+  actions: prisonerActions
+}) %}
+
+{% if isUpdate %}
+  {% set appTypeActions = { items: [] } %}
+{% else %}
+  {% set appTypeActions = {
+    items: [{
+      href: "/log/application-type",
+      text: "Change",
+      visuallyHiddenText: "application type"
+    }]
+  } %}
+{% endif %}
+
+{% set _ = rows.push({
+  key: { text: "Application type" },
+  value: { text: applicationData.type.name },
+  actions: appTypeActions
+}) %}
+
+{% if isUpdate %}
+  {% set deptActions = { items: [] } %}
+{% else %}
+  {% set deptActions = {
+    items: [{
+      href: "/log/department",
+      text: "Change",
+      visuallyHiddenText: "department"
+    }]
+  } %}
+{% endif %}
+
+{% set _ = rows.push({
+  key: { text: "Department" },
+  value: { text: applicationData.department },
+  actions: deptActions
 }) %}
 
 {{ govukSummaryList({
