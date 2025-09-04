@@ -76,7 +76,7 @@ export default function prisonerDetailsRoutes({
       const applicationType = await getAppType(
         managingPrisonerAppsService,
         res.locals.user,
-        req.session.applicationData?.type.key,
+        req.session.applicationData?.type?.key,
       )
 
       const errors = validatePrisonerDetails(prisonNumber)
