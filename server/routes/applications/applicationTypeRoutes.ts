@@ -34,6 +34,7 @@ export default function applicationTypeRoutes({
     URLS.LOG_APPLICATION_TYPE,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
+
       await auditService.logPageView(Page.LOG_APPLICATION_TYPE_PAGE, {
         who: user.username,
         correlationId: req.id,
