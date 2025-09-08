@@ -30,6 +30,7 @@ export declare module 'express-session' {
     | AddEmergencyPinPhoneCreditDetails
     | SupplyListOfPinPhoneContactsDetails
     | AddNewSocialPinPhoneContactDetails
+    | AddNewLegalPinPhoneContactDetails
 
   interface SwapVOsForPinCreditDetails {
     details?: string
@@ -61,6 +62,16 @@ export declare module 'express-session' {
     townOrCity?: string
     postcode?: string
     country?: string
+    telephone1: string
+    telephone2?: string
+  }
+
+  interface AddNewLegalPinPhoneContactDetails {
+    earlyDaysCentre: string
+    firstName: string
+    lastName: string
+    company: string
+    relationship: string
     telephone1: string
     telephone2?: string
   }

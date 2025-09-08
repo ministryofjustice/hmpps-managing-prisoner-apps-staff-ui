@@ -6,9 +6,8 @@ import { relationshipDropdownOptions, RelationshipDropdownList } from './persona
 export async function getFormattedRelationshipDropdown(
   personalRelationshipsService: PersonalRelationshipsService,
   selectedValue?: string,
+  groupCode: string = PERSONAL_RELATIONSHIPS_GROUP_CODES.SOCIAL_RELATIONSHIP,
 ): Promise<RelationshipDropdownList[]> {
-  const relationshipList = await personalRelationshipsService.relationshipList(
-    PERSONAL_RELATIONSHIPS_GROUP_CODES.SOCIAL_RELATIONSHIP,
-  )
+  const relationshipList = await personalRelationshipsService.relationshipList(groupCode)
   return relationshipDropdownOptions(relationshipList, 'Select a relationship', selectedValue)
 }

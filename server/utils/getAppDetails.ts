@@ -5,6 +5,7 @@ import { countries } from '../constants/countries'
 import PersonalRelationshipsService from '../services/personalRelationshipsService'
 import logger from '../../logger'
 import { Application } from '../@types/managingAppsApi'
+import { PERSONAL_RELATIONSHIPS_GROUP_CODES } from '../constants/personalRelationshipsGroupCodes'
 
 type Services = {
   personalRelationshipsService?: PersonalRelationshipsService
@@ -17,6 +18,7 @@ type RequestSummary = Partial<{
 }>
 
 type AddNewSocialContactRequest = Partial<Extract<AppTypeData, { type: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT' }>>
+type AddNewLegalContactRequest = Partial<Extract<AppTypeData, { type: 'PIN_PHONE_ADD_NEW_LEGAL_CONTACT' }>>
 
 // eslint-disable-next-line import/prefer-default-export
 export async function getApplicationDetails(
@@ -58,6 +60,30 @@ export async function getApplicationDetails(
         telephone2: fallback('telephone2', ''),
       }
       return handleAddNewSocialContact(prefilledDetails, services?.personalRelationshipsService)
+    }
+
+    case 'PIN_PHONE_ADD_NEW_LEGAL_CONTACT': {
+      const request = (application?.requests?.[0] as AddNewLegalContactRequest) ?? {}
+      const isValid = (v: unknown) => v !== undefined && v !== null && !(typeof v === 'string' && v.trim() === '')
+
+      const fallback = <T>(field: keyof AddNewLegalContactRequest, defaultValue: T): T => {
+        const formDetails = applicationDetails?.[field]
+        const formRequest = request?.[field]
+
+        if (isValid(formDetails)) return formDetails as T
+        if (isValid(formRequest)) return formRequest as T
+        return defaultValue
+      }
+
+      const prefilledDetails: AddNewLegalContactRequest = {
+        firstName: fallback('firstName', ''),
+        lastName: fallback('lastName', ''),
+        company: fallback('company', ''),
+        relationship: fallback('relationship', ''),
+        telephone1: fallback('telephone1', ''),
+        telephone2: fallback('telephone2', ''),
+      }
+      return handleAddNewLegalContact(prefilledDetails, services?.personalRelationshipsService)
     }
 
     case 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP':
@@ -117,6 +143,34 @@ async function handleAddNewSocialContact(
     postcode,
     countries: getFormattedCountries(countries, country),
     country: getCountryNameByCode(country),
+    telephone1,
+    telephone2,
+    formattedRelationshipList,
+  }
+}
+
+async function handleAddNewLegalContact(
+  applicationDetails: AddNewLegalContactRequest,
+  personalRelationshipsService?: PersonalRelationshipsService,
+): Promise<Record<string, unknown>> {
+  if (!personalRelationshipsService) {
+    logger.error('PersonalRelationshipsService is required for PIN_PHONE_ADD_NEW_LEGAL_CONTACT')
+    return {}
+  }
+
+  const { firstName, lastName, company, relationship, telephone1, telephone2 } = applicationDetails
+
+  const formattedRelationshipList = await getFormattedRelationshipDropdown(
+    personalRelationshipsService,
+    relationship,
+    PERSONAL_RELATIONSHIPS_GROUP_CODES.OFFICIAL_RELATIONSHIP,
+  )
+
+  return {
+    firstName,
+    lastName,
+    company,
+    relationship,
     telephone1,
     telephone2,
     formattedRelationshipList,

@@ -12,6 +12,7 @@ import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PersonalRelationshipsService from '../../services/personalRelationshipsService'
 
+import { PERSONAL_RELATIONSHIPS_GROUP_CODES } from '../../constants/personalRelationshipsGroupCodes'
 import { getFormattedCountries } from '../../utils/formatCountryList'
 import { getFormattedRelationshipDropdown } from '../../utils/formatRelationshipList'
 import { getApplicationDetails } from '../../utils/getAppDetails'
@@ -74,7 +75,17 @@ export default function applicationDetailsRoutes({
       return handleApplicationDetails(req, res, {
         getAppType: () => applicationType,
         getTemplateData: async () => {
-          const formattedRelationshipList = await getFormattedRelationshipDropdown(personalRelationshipsService)
+          const groupCode =
+            applicationType.key === 'PIN_PHONE_ADD_NEW_LEGAL_CONTACT'
+              ? PERSONAL_RELATIONSHIPS_GROUP_CODES.OFFICIAL_RELATIONSHIP
+              : PERSONAL_RELATIONSHIPS_GROUP_CODES.SOCIAL_RELATIONSHIP
+
+          const formattedRelationshipList = await getFormattedRelationshipDropdown(
+            personalRelationshipsService,
+            undefined,
+            groupCode,
+          )
+
           const formattedCountryList = getFormattedCountries(countries, req.body.country)
 
           return {
