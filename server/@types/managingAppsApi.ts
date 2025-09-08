@@ -99,14 +99,6 @@ export type ViewApplicationsResponse = {
   firstNightCenter: number
 }
 
-export type Group = {
-  id: string
-  name: string
-  establishment: Establishment
-  initialApp: string
-  type: string
-}
-
 export type PrisonerSearchResult = {
   prisonerId: string
   firstName: string

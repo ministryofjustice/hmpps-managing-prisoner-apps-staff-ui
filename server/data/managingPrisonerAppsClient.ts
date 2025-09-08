@@ -8,7 +8,6 @@ import {
   CommentsResponse,
   Department,
   History,
-  Group,
   Response,
   PrisonerSearchResult,
   ViewApplicationsResponse,
