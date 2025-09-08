@@ -14,7 +14,7 @@ export default class PersonalRelationshipsApiClient {
     )
   }
 
-  async getRelationships(groupCode: string): Promise<ReferenceCode[] | []> {
+  async getRelationships(groupCode: string): Promise<ReferenceCode[] | null> {
     try {
       return await this.restClient.get({
         path: `/reference-codes/group/${groupCode}`,
