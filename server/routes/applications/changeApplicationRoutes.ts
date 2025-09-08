@@ -43,7 +43,7 @@ export default function changeApplicationRoutes({
 
       const additionalData = applicationData?.additionalData || {}
       const formData = getAppTypeLogDetailsData(applicationType, additionalData)
-      const templateData = await getApplicationDetails(formData, { personalRelationshipsService }, application)
+      const templateData = await getApplicationDetails(formData, personalRelationshipsService, application)
 
       return res.render(PATHS.APPLICATIONS.CHANGE_DETAILS, {
         application,
@@ -71,7 +71,7 @@ export default function changeApplicationRoutes({
         getTemplateData: async () => {
           const additionalData = applicationData?.additionalData || {}
           const formData = getAppTypeLogDetailsData(applicationType, additionalData)
-          const templateData = await getApplicationDetails(formData, { personalRelationshipsService }, application)
+          const templateData = await getApplicationDetails(formData, personalRelationshipsService, application)
           return {
             application,
             applicationType,

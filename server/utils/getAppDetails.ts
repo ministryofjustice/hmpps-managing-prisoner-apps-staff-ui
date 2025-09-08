@@ -1,15 +1,10 @@
-import { AppTypeData } from './getAppTypeLogDetails'
-import { getFormattedRelationshipDropdown } from './formatRelationshipList'
-import { getFormattedCountries, getCountryNameByCode } from './formatCountryList'
-import { countries } from '../constants/countries'
-import PersonalRelationshipsService from '../services/personalRelationshipsService'
-import logger from '../../logger'
 import { Application } from '../@types/managingAppsApi'
+import { countries } from '../constants/countries'
 import { PERSONAL_RELATIONSHIPS_GROUP_CODES } from '../constants/personalRelationshipsGroupCodes'
-
-type Services = {
-  personalRelationshipsService?: PersonalRelationshipsService
-}
+import PersonalRelationshipsService from '../services/personalRelationshipsService'
+import { getCountryNameByCode, getFormattedCountries } from './formatCountryList'
+import { AppTypeData } from './getAppTypeLogDetails'
+import getFormattedRelationshipDropdown from './getFormattedRelationshipDropdown'
 
 type RequestSummary = Partial<{
   amount: number
@@ -23,8 +18,9 @@ type AddNewLegalContactRequest = Partial<Extract<AppTypeData, { type: 'PIN_PHONE
 // eslint-disable-next-line import/prefer-default-export
 export async function getApplicationDetails(
   applicationDetails: AppTypeData,
-  services?: Services,
+  personalRelationshipsService: PersonalRelationshipsService,
   application?: Application,
+  earlyDaysCentre?: string,
 ): Promise<Record<string, unknown>> {
   if (!applicationDetails) return {}
 
@@ -41,6 +37,7 @@ export async function getApplicationDetails(
 
         if (isValid(formDetails)) return formDetails as T
         if (isValid(formRequest)) return formRequest as T
+
         return defaultValue
       }
 
@@ -59,7 +56,8 @@ export async function getApplicationDetails(
         telephone1: fallback('telephone1', ''),
         telephone2: fallback('telephone2', ''),
       }
-      return handleAddNewSocialContact(prefilledDetails, services?.personalRelationshipsService)
+
+      return handleAddNewSocialContact(prefilledDetails, earlyDaysCentre, personalRelationshipsService)
     }
 
     case 'PIN_PHONE_ADD_NEW_LEGAL_CONTACT': {
@@ -83,7 +81,8 @@ export async function getApplicationDetails(
         telephone1: fallback('telephone1', ''),
         telephone2: fallback('telephone2', ''),
       }
-      return handleAddNewLegalContact(prefilledDetails, services?.personalRelationshipsService)
+
+      return handleAddNewLegalContact(prefilledDetails, personalRelationshipsService)
     }
 
     case 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP':
@@ -105,13 +104,9 @@ export async function getApplicationDetails(
 
 async function handleAddNewSocialContact(
   applicationDetails: AddNewSocialContactRequest,
-  personalRelationshipsService?: PersonalRelationshipsService,
+  earlyDaysCentre: string,
+  personalRelationshipsService: PersonalRelationshipsService,
 ): Promise<Record<string, unknown>> {
-  if (!personalRelationshipsService) {
-    logger.error('PersonalRelationshipsService is required for PIN_PHONE_ADD_NEW_SOCIAL_CONTACT')
-    return {}
-  }
-
   const {
     firstName,
     lastName,
@@ -128,8 +123,6 @@ async function handleAddNewSocialContact(
     telephone2,
   } = applicationDetails
 
-  const formattedRelationshipList = await getFormattedRelationshipDropdown(personalRelationshipsService, relationship)
-
   return {
     firstName,
     lastName,
@@ -145,26 +138,16 @@ async function handleAddNewSocialContact(
     country: getCountryNameByCode(country),
     telephone1,
     telephone2,
-    formattedRelationshipList,
+    formattedRelationshipList: await getFormattedRelationshipDropdown(personalRelationshipsService, relationship),
+    earlyDaysCentre,
   }
 }
 
 async function handleAddNewLegalContact(
   applicationDetails: AddNewLegalContactRequest,
-  personalRelationshipsService?: PersonalRelationshipsService,
+  personalRelationshipsService: PersonalRelationshipsService,
 ): Promise<Record<string, unknown>> {
-  if (!personalRelationshipsService) {
-    logger.error('PersonalRelationshipsService is required for PIN_PHONE_ADD_NEW_LEGAL_CONTACT')
-    return {}
-  }
-
   const { firstName, lastName, company, relationship, telephone1, telephone2 } = applicationDetails
-
-  const formattedRelationshipList = await getFormattedRelationshipDropdown(
-    personalRelationshipsService,
-    relationship,
-    PERSONAL_RELATIONSHIPS_GROUP_CODES.OFFICIAL_RELATIONSHIP,
-  )
 
   return {
     firstName,
@@ -173,6 +156,10 @@ async function handleAddNewLegalContact(
     relationship,
     telephone1,
     telephone2,
-    formattedRelationshipList,
+    formattedRelationshipList: await getFormattedRelationshipDropdown(
+      personalRelationshipsService,
+      relationship,
+      PERSONAL_RELATIONSHIPS_GROUP_CODES.OFFICIAL_RELATIONSHIP,
+    ),
   }
 }

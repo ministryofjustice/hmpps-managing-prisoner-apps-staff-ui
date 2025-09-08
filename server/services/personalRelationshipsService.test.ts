@@ -17,7 +17,7 @@ describe('PersonalRelationshipsService', () => {
 
     service = new PersonalRelationshipsService(mockHmppsAuthClient)
     ;(PersonalRelationshipsApiClient as jest.Mock).mockImplementation(() => ({
-      relationshipList: mockRelationshipList,
+      getRelationships: mockRelationshipList,
     }))
   })
 
@@ -36,13 +36,18 @@ describe('PersonalRelationshipsService', () => {
 
     mockRelationshipList.mockResolvedValue(apiResponse)
 
-    const result = await service.relationshipList('someGroupCode')
+    const result = await service.getRelationships('someGroupCode')
 
     expect(mockGetSystemClientToken).toHaveBeenCalled()
     expect(mockRelationshipList).toHaveBeenCalledWith('someGroupCode')
     expect(result).toEqual([
-      { code: 'AUNT', description: 'Aunt' },
-      { code: 'BOF', description: 'Boyfriend' },
+      { code: 'AUNT', description: 'Aunt', isActive: true },
+      {
+        code: 'PARENT',
+        description: 'Parent',
+        isActive: false,
+      },
+      { code: 'BOF', description: 'Boyfriend', isActive: true },
     ])
   })
 
@@ -50,7 +55,7 @@ describe('PersonalRelationshipsService', () => {
     mockGetSystemClientToken.mockResolvedValue('fake-token')
     mockRelationshipList.mockResolvedValue(null)
 
-    const result = await service.relationshipList('someGroupCode')
+    const result = await service.getRelationships('someGroupCode')
 
     expect(result).toEqual([])
   })

@@ -31,7 +31,7 @@ describe('PersonalRelationshipsApiClient', () => {
       .matchHeader('authorization', `Bearer ${token}`)
       .reply(200, mockResponse)
 
-    const result = await client.relationshipList(groupCode)
+    const result = await client.getRelationships(groupCode)
 
     expect(result).toEqual(mockResponse)
   })

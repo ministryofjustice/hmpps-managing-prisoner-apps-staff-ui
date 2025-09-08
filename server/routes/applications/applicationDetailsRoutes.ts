@@ -14,9 +14,9 @@ import PersonalRelationshipsService from '../../services/personalRelationshipsSe
 
 import { PERSONAL_RELATIONSHIPS_GROUP_CODES } from '../../constants/personalRelationshipsGroupCodes'
 import { getFormattedCountries } from '../../utils/formatCountryList'
-import { getFormattedRelationshipDropdown } from '../../utils/formatRelationshipList'
 import { getApplicationDetails } from '../../utils/getAppDetails'
 import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
+import getFormattedRelationshipDropdown from '../../utils/getFormattedRelationshipDropdown'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
 
 export default function applicationDetailsRoutes({
@@ -33,33 +33,35 @@ export default function applicationDetailsRoutes({
   router.get(
     URLS.LOG_APPLICATION_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { user } = res.locals
       const { applicationData } = req.session
+      const { user } = res.locals
 
-      const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.key)
-
-      if (!applicationType) {
+      if (!applicationData?.type) {
         return res.redirect(URLS.LOG_APPLICATION_TYPE)
       }
 
-      const logDetails = getAppTypeLogDetailsData(applicationType, applicationData?.additionalData || {})
+      const logDetails = getAppTypeLogDetailsData(applicationData?.type, applicationData?.additionalData || {})
 
       if (!logDetails) {
         return res.redirect(URLS.LOG_APPLICATION_TYPE)
       }
 
-      const templateFields = await getApplicationDetails(logDetails, { personalRelationshipsService })
+      const templateFields = await getApplicationDetails(
+        logDetails,
+        personalRelationshipsService,
+        undefined,
+        applicationData.earlyDaysCentre,
+      )
 
       await auditService.logPageView(Page.LOG_DETAILS_PAGE, {
-        who: res.locals.user.username,
+        who: user.username,
         correlationId: req.id,
       })
 
       return res.render(PATHS.LOG_APPLICATION.APPLICATION_DETAILS, {
-        title: 'Log details',
         ...templateFields,
-        applicationType,
-        earlyDaysCentre: applicationData?.earlyDaysCentre,
+        applicationType: applicationData?.type,
+        title: 'Log details',
       })
     }),
   )
