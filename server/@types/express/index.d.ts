@@ -67,7 +67,6 @@ export declare module 'express-session' {
   }
 
   interface AddNewLegalPinPhoneContactDetails {
-    earlyDaysCentre: string
     firstName: string
     lastName: string
     company: string
