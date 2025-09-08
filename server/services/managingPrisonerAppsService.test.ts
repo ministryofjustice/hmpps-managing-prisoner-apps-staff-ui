@@ -10,7 +10,6 @@ const mockClientMethods = {
   getActiveAgencies: jest.fn(),
   getApps: jest.fn(),
   getComments: jest.fn(),
-  getGroups: jest.fn(),
   getPrisonerApp: jest.fn(),
   getResponse: jest.fn(),
   getHistory: jest.fn(),
@@ -72,15 +71,6 @@ describe('ManagingPrisonerAppsService', () => {
 
       expect(result).toBeUndefined()
       expect(mockClientMethods.getApps).toHaveBeenCalledWith(appSearchPayload)
-    })
-  })
-
-  describe('getGroups', () => {
-    it('should fetch a list of groups for the given establishment', async () => {
-      const result = await service.getGroups(user)
-
-      expect(result).toBeUndefined()
-      expect(mockClientMethods.getGroups).toHaveBeenCalledWith()
     })
   })
 

@@ -66,7 +66,7 @@ export default class ManagingPrisonerAppsApiClient {
 
   async submitPrisonerApp(applicationData: ApplicationData): Promise<Application | null> {
     try {
-      const { prisonerId, type, earlyDaysCentre, additionalData } = applicationData
+      const { prisonerId, type, departmentId, earlyDaysCentre, additionalData } = applicationData
       const firstNightCenter =
         typeof earlyDaysCentre === 'string' ? earlyDaysCentre === 'yes' : Boolean(earlyDaysCentre)
 
@@ -75,6 +75,7 @@ export default class ManagingPrisonerAppsApiClient {
         type: type.key,
         requests: [additionalData],
         firstNightCenter,
+        department: departmentId,
       }
 
       return await this.restClient.post({
@@ -95,17 +96,6 @@ export default class ManagingPrisonerAppsApiClient {
       })
     } catch (error) {
       logger.error(`Error fetching applications. Payload: ${JSON.stringify(payload)}`, error)
-      return null
-    }
-  }
-
-  async getGroups(): Promise<Group[] | null> {
-    try {
-      return await this.restClient.get({
-        path: `/v1/groups`,
-      })
-    } catch (error) {
-      logger.error(`Error fetching groups.`, error)
       return null
     }
   }

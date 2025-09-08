@@ -75,17 +75,19 @@ export default function departmentRoutes({
 
       const selectedDepartment = req.body.department
       const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.key)
+      const selectedDepartmentId = departments.find(dept => dept.name === selectedDepartment)?.id
 
       if (!selectedDepartment) {
         return res.render(PATHS.LOG_APPLICATION.SELECT_DEPARTMENT, {
           title: 'Select department',
           departmentOptions: buildDepartmentOptions(departments, null),
           errorMessage: ERROR_MESSAGE,
+          applicationType: applicationData.type.name,
           errorSummary: [{ text: ERROR_MESSAGE, href: '#department' }],
         })
       }
 
-      updateSessionData(req, { department: selectedDepartment })
+      updateSessionData(req, { department: selectedDepartment, departmentId: selectedDepartmentId })
       return res.redirect(URLS.LOG_APPLICATION_DETAILS)
     }),
   )
