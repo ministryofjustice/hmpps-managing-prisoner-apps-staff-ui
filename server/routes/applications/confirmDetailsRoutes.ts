@@ -26,10 +26,9 @@ export default function confirmDetailsRoutes({
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
       const { applicationData } = req.session
-
       const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.key)
 
-      if (!applicationType) return res.redirect(URLS.LOG_APPLICATION_TYPE)
+      if (!applicationType) return res.redirect(URLS.LOG_PRISONER_DETAILS)
 
       await auditService.logPageView(Page.CONFIRM_DETAILS_PAGE, {
         who: res.locals.user.username,
@@ -42,6 +41,7 @@ export default function confirmDetailsRoutes({
           prisoner: `${applicationData.prisonerName} (${applicationData.prisonerId})`,
           request: applicationData.additionalData,
           type: applicationType,
+          department: applicationData.department,
         },
         backLink: URLS.LOG_APPLICATION_DETAILS,
         title: applicationType.name,

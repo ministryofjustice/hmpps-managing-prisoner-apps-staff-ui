@@ -16,6 +16,7 @@ export declare module 'express-session' {
     prisonerId?: string
     prisonerName?: string
     type?: ApplicationType
+    department?: string
   }
 
   interface ApplicationType {

@@ -6,6 +6,7 @@ import {
   AppResponsePayload,
   Comment,
   CommentsResponse,
+  Department,
   History,
   Group,
   Response,
@@ -203,6 +204,17 @@ export default class ManagingPrisonerAppsApiClient {
       })
     } catch (error) {
       logger.error(`Error fetching application types.`, error)
+      return null
+    }
+  }
+
+  async getDepartments(appType: string): Promise<Department[]> {
+    try {
+      return await this.restClient.get({
+        path: `/v1/groups/app/types/${appType}`,
+      })
+    } catch (error) {
+      logger.error(`Error fetching department list.`, error)
       return null
     }
   }

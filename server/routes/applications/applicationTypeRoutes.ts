@@ -69,7 +69,7 @@ export default function applicationTypeRoutes({
       }
 
       updateSessionData(req, { type: selectedAppType })
-      return res.redirect(URLS.LOG_APPLICATION_DETAILS)
+      return res.redirect(URLS.LOG_DEPARTMENT)
     }),
   )
 

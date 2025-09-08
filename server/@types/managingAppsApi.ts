@@ -62,7 +62,7 @@ export type ApplicationType = {
   value: string
 }
 
-type ApplicationTypeKey =
+export type ApplicationTypeKey =
   | 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP'
   | 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT'
   | 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS'
@@ -170,4 +170,16 @@ export type Response = {
     establishment: Establishment
   }
   appliesTo: string[]
+}
+
+export interface Department {
+  id: string
+  name: string
+  establishment: {
+    id: string
+    name: string
+    appTypes: ApplicationTypeKey[]
+  }
+  initialApp: ApplicationTypeKey
+  type: string
 }

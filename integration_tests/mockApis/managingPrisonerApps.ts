@@ -1,5 +1,5 @@
 import { SuperAgentRequest } from 'superagent'
-import { Application } from '../../server/@types/managingAppsApi'
+import { Application, ApplicationTypeKey } from '../../server/@types/managingAppsApi'
 import TestData from '../../server/routes/testutils/testData'
 import { stubFor } from './wiremock'
 
@@ -104,6 +104,19 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: new TestData().appTypes,
+      },
+    })
+  },
+  stubGetDepartments: ({ appType }: { appType: ApplicationTypeKey }): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        url: `/managingPrisonerApps/v1/groups/app/types/${appType}`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: new TestData().departments,
       },
     })
   },

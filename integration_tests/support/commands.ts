@@ -22,6 +22,11 @@ Cypress.Commands.add('enterPrisonerDetails', () => {
   cy.contains('button', 'Continue').click()
 })
 
+Cypress.Commands.add('selectDepartment', (departmentName: string) => {
+  cy.contains(departmentName).click()
+  cy.contains('button', 'Continue').click()
+})
+
 Cypress.Commands.add('selectApplicationType', (appType: string) => {
   cy.contains(appType).click()
   cy.contains('button', 'Continue').click()

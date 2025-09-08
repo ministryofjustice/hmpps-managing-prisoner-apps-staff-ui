@@ -29,5 +29,11 @@ declare namespace Cypress {
      * @example cy.selectApplicationType('Add new social PIN phone contact')
      */
     selectApplicationType(appType: string): Chainable<void>
+
+    /**
+     * Selects a department by name and continues.
+     * @example cy.selectDepartment('Business Hub')
+     */
+    selectDepartment(departmentName: string): Chainable<void>
   }
 }

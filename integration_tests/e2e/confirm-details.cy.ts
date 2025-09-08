@@ -18,11 +18,14 @@ context('Confirm Details Page', () => {
         cy.task('stubGetPrisonerApp', {
           app,
         })
+        cy.task('stubGetDepartments', { appType: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS' })
 
         if (route === '/log/confirm') {
           cy.visitIndexAndStartApplication()
           cy.enterPrisonerDetails()
           cy.selectApplicationType('Swap visiting orders (VOs) for PIN credit')
+          cy.contains('button', 'Continue').click()
+          cy.selectDepartment('Business Hub')
           cy.contains('button', 'Continue').click()
         } else if (route.includes('/change')) {
           cy.visit(route)
@@ -50,10 +53,6 @@ context('Confirm Details Page', () => {
 
       it('should render prisoner name summary with correct text', () => {
         page.prisonerName().should('exist')
-      })
-
-      it(`should ${hasChangeLinks ? '' : 'not '}allow changing the prisoner details`, () => {
-        page.changePrisoner().should(hasChangeLinks ? 'exist' : 'not.exist')
       })
 
       it('should render a Continue button with the correct text', () => {

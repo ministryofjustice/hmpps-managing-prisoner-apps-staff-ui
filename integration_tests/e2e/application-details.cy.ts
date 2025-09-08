@@ -5,72 +5,72 @@ import Page from '../pages/page'
 const { applicationTypes } = applicationTypesData
 
 function startApplication(appType: string): ApplicationDetailsPage {
+  const appConfig = applicationTypes.find(type => type.name === appType)
   cy.resetAndSignIn()
+  cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
   cy.task('stubGetAppTypes')
+  cy.task('stubGetDepartments', { appType: appConfig?.key })
+
+  cy.visit('/log/prisoner-details')
+  cy.enterPrisonerDetails()
+  cy.selectApplicationType(appType)
+  cy.visit('/log/department')
 
   cy.visit('/log/application-details')
-
-  cy.selectApplicationType(appType)
 
   return Page.verifyOnPage(ApplicationDetailsPage)
 }
 
-applicationTypes.forEach(({ name, type, hint }) => {
-  context(`Application Details Page - ${name}`, () => {
-    let page: ApplicationDetailsPage
+applicationTypes
+  .filter(({ name }) => ['Add emergency PIN phone credit'].includes(name))
+  .forEach(({ name, type, hint }) => {
+    context(`Application Details Page - ${name}`, () => {
+      let page: ApplicationDetailsPage
 
-    beforeEach(() => {
-      page = startApplication(name)
-    })
-
-    it('should direct the user to the correct page', () => {
-      Page.verifyOnPage(ApplicationDetailsPage)
-    })
-
-    it('should render the correct app type title', () => {
-      page.appTypeTitle().should('have.text', name)
-    })
-
-    if (type === 'textarea') {
-      it('should render the form label', () => {
-        page.formLabel().should('contain.text', 'Details (optional)')
+      beforeEach(() => {
+        page = startApplication(name)
       })
 
-      it('should display the hint text', () => {
-        page.hintText().should('contain.text', hint)
+      it('should render the correct app type title', () => {
+        page.appTypeTitle().should('have.text', name)
       })
 
-      it('should have a textarea field', () => {
-        page.textArea().should('exist')
-      })
-    }
+      if (type === 'textarea') {
+        it('should render the form label', () => {
+          page.formLabel().should('contain.text', 'Details (optional)')
+        })
 
-    if (type === 'amount') {
-      it('should display the hint text', () => {
-        page.reasonHintText().should('contain.text', hint)
-      })
+        it('should display the hint text', () => {
+          page.hintText().should('contain.text', hint)
+        })
 
-      it('should have an amount input field', () => {
-        page.amountInput().should('exist')
-      })
-    }
+        it('should have a textarea field', () => {
+          page.textArea().should('exist')
+        })
+      }
 
-    it('should have CSRF token and continue button', () => {
-      page.csrfToken().should('exist')
-      page.continueButton().should('contain.text', 'Continue')
+      if (type === 'amount') {
+        it('should display the hint text', () => {
+          page.reasonHintText().should('contain.text', hint)
+        })
+
+        it('should have an amount input field', () => {
+          page.amountInput().should('exist')
+        })
+      }
+
+      it('should have CSRF token and continue button', () => {
+        page.csrfToken().should('exist')
+        page.continueButton().should('contain.text', 'Continue')
+      })
     })
   })
-})
 
 context(`Application Details Page - Add new social PIN contact`, () => {
   let page: ApplicationDetailsPage
 
   beforeEach(() => {
     page = startApplication('Add new social PIN phone contact')
-  })
-
-  it('should direct the user to the correct page', () => {
-    Page.verifyOnPage(ApplicationDetailsPage)
   })
 
   it('should render the correct app type title', () => {

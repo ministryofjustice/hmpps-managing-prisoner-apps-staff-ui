@@ -1,0 +1,36 @@
+{
+  "departments": [
+    {
+      "id": "343a7876-07b9-4ef8-947c-7cf554fae864",
+      "name": "Business Hub",
+      "establishment": {
+        "id": "PNI",
+        "name": "Preston (HMP)",
+        "appTypes": [
+          "PIN_PHONE_SUPPLY_LIST_OF_CONTACTS",
+          "PIN_PHONE_ADD_NEW_SOCIAL_CONTACT",
+          "PIN_PHONE_EMERGENCY_CREDIT_TOP_UP",
+          "PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS"
+        ]
+      },
+      "initialApp": "PIN_PHONE_SUPPLY_LIST_OF_CONTACTS",
+      "type": "WING"
+    },
+    {
+      "id": "2262b27d-ad93-43e2-98f9-542297135eb3",
+      "name": "Chaplaincy",
+      "establishment": {
+        "id": "PNI",
+        "name": "Preston (HMP)",
+        "appTypes": [
+          "PIN_PHONE_SUPPLY_LIST_OF_CONTACTS",
+          "PIN_PHONE_ADD_NEW_SOCIAL_CONTACT",
+          "PIN_PHONE_EMERGENCY_CREDIT_TOP_UP",
+          "PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS"
+        ]
+      },
+      "initialApp": "PIN_PHONE_ADD_NEW_SOCIAL_CONTACT",
+      "type": "WING"
+    }
+  ]
+}
