@@ -4,7 +4,6 @@ import {
   ApplicationType,
   Comment,
   CommentsResponse,
-  Group,
   History,
   Response,
   ViewApplicationsResponse,
@@ -155,17 +154,6 @@ export default class TestData {
         },
       },
     ],
-  }
-
-  group: Group = {
-    id: '916267ad-3ba6-4826-8d59-01cfbaa8420b',
-    name: 'Business Hub',
-    establishment: {
-      id: 'TEST_ESTABLISHMENT_FIRST',
-      name: 'TEST_ESTABLISHMENT_FIRST',
-    },
-    initialApp: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
-    type: 'WING',
   }
 
   comment: Comment = {

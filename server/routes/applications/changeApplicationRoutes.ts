@@ -107,6 +107,7 @@ export default function changeApplicationRoutes({
           earlyDaysCentre: application.firstNightCenter ? 'Yes' : 'No',
           request: applicationData.additionalData,
           type: applicationType,
+          department: application.assignedGroup.name,
         },
         backLink: `${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/change`,
         isUpdate: true,

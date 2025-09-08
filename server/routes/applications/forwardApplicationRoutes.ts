@@ -37,19 +37,18 @@ export default function forwardApplicationRoutes({
         Page.FORWARD_APPLICATION_PAGE,
       )
 
-      const groups = await managingPrisonerAppsService.getGroups(user)
-
-      const departments = groups
-        .filter(group => group.id !== application.assignedGroup.id)
-        .map(group => ({
-          value: group.id,
-          text: group.name,
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.key)
+      const filteredDepartments = (departments ?? [])
+        .filter(dept => dept.id !== application.assignedGroup.id)
+        .map(dept => ({
+          value: dept.id,
+          text: dept.name,
         }))
 
       return res.render(PATHS.APPLICATIONS.FORWARD, {
         application,
         applicationType,
-        departments,
+        departments: filteredDepartments,
         textareaValue: '',
         title: PAGE_TITLE,
         errors: null,
@@ -65,25 +64,25 @@ export default function forwardApplicationRoutes({
       const { user } = res.locals
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
-      const groups = await managingPrisonerAppsService.getGroups(user)
-
       if (!application) return res.redirect(URLS.APPLICATIONS)
 
       const applicationType = await getAppType(managingPrisonerAppsService, user, application.appType)
       const errors = validateForwardingApplication(forwardTo, forwardingReason)
 
-      const departments = groups
-        .filter(group => group.id !== application.assignedGroup.id)
-        .map(group => ({
-          value: group.id,
-          text: group.name,
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.key)
+
+      const filteredDepartments = (departments ?? [])
+        .filter(dept => dept.id !== application.assignedGroup.id)
+        .map(dept => ({
+          value: dept.id,
+          text: dept.name,
         }))
 
       if (Object.keys(errors).length > 0) {
         return res.render(PATHS.APPLICATIONS.FORWARD, {
           application,
           applicationType,
-          departments,
+          departments: filteredDepartments,
           forwardTo,
           textareaValue: forwardingReason,
           title: PAGE_TITLE,
