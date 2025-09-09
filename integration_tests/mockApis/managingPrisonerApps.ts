@@ -17,19 +17,6 @@ export default {
       },
     })
   },
-  stubGetGroups: (): SuperAgentRequest => {
-    return stubFor({
-      request: {
-        method: 'GET',
-        url: `/managingPrisonerApps/v1/groups`,
-      },
-      response: {
-        status: 200,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: [new TestData().group],
-      },
-    })
-  },
   stubGetAppResponse: ({ app }: { app: Application }): SuperAgentRequest => {
     return stubFor({
       request: {

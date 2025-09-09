@@ -5,12 +5,29 @@ import ForwardApplicationPage from '../pages/forwardApplicationPage'
 import Page from '../pages/page'
 
 const { applicationTypes } = applicationTypesData
+const testData = new TestData()
+const { departments } = testData
 
-applicationTypes.forEach(({ name, key }) => {
+const validAppTypes = applicationTypes.filter(appType =>
+  departments.some(dept => dept.establishment.appTypes.includes(appType.key)),
+)
+
+validAppTypes.forEach(({ name, key }) => {
   context(`Forward Application Page - ${name}`, () => {
     let page: ForwardApplicationPage
-    const { app: baseApp, group } = new TestData()
-    const app = { ...baseApp, appType: key }
+
+    const matchingDepartments = departments.filter(dept => dept.establishment.appTypes.includes(key))
+
+    if (matchingDepartments.length < 2) return
+
+    const assignedGroup = matchingDepartments[0]
+    const forwardableGroup = matchingDepartments[1]
+
+    const app = {
+      ...testData.app,
+      appType: key,
+      assignedGroup,
+    }
 
     const visitPage = () => {
       cy.task('reset')
@@ -18,7 +35,7 @@ applicationTypes.forEach(({ name, key }) => {
       cy.task('stubGetPrisonerApp', {
         app,
       })
-      cy.task('stubGetGroups')
+      cy.task('stubGetDepartments', { appType: key })
       cy.task('stubGetAppTypes')
       cy.signIn()
       cy.visit(`/applications/${app.requestedBy.username}/${app.id}/forward`)
@@ -45,7 +62,7 @@ applicationTypes.forEach(({ name, key }) => {
 
     describe('Form interactions', () => {
       it('should allow submitting the form when a department is selected', () => {
-        page.selectForwardToDepartment(group.id)
+        page.selectForwardToDepartment(forwardableGroup.id)
         page.continueButton().click()
         cy.url().should('not.include', '/forward')
       })
