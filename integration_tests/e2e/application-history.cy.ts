@@ -11,19 +11,14 @@ context('Application History Page', () => {
   const { app } = new TestData()
 
   beforeEach(() => {
-    cy.task('reset')
-    cy.task('stubSignIn')
+    cy.resetAndSignIn()
     cy.task('stubGetPrisonerApp', { app })
     cy.task('stubGetHistory', { app })
     cy.task('stubGetAppTypes')
-    cy.signIn()
 
     cy.visit(`/applications/${app.requestedBy.username}/${app.id}/history`, { failOnStatusCode: false })
-    cy.get('h1').should('exist')
 
-    cy.then(() => {
-      page = Page.verifyOnPage(ApplicationHistoryPage)
-    })
+    page = Page.verifyOnPage(ApplicationHistoryPage)
   })
 
   it('should display the page title', () => {

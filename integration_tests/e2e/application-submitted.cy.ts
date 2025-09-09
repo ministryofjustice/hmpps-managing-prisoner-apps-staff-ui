@@ -7,13 +7,11 @@ context('Application Submitted Page', () => {
   const { app } = new TestData()
 
   beforeEach(() => {
-    cy.task('reset')
-    cy.task('stubSignIn')
+    cy.resetAndSignIn()
     cy.task('stubGetPrisonerApp', {
       app,
     })
     cy.task('stubGetAppTypes')
-    cy.signIn()
 
     cy.visit(`/log/submit/${app.requestedBy.username}/${app.id}`)
 

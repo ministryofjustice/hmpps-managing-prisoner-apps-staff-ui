@@ -13,12 +13,6 @@ declare namespace Cypress {
     resetAndSignIn(): Chainable<void>
 
     /**
-     * Visits the index page and starts a new application.
-     * @example cy.visitIndexAndStartApplication()
-     */
-    visitIndexAndStartApplication(): Chainable<void>
-
-    /**
      * Enters prisoner details and continues.
      * @example cy.enterPrisonerDetails()
      */
