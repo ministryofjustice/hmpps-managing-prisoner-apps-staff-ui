@@ -9,8 +9,7 @@ import getFormattedRelationshipDropdown from './getFormattedRelationshipDropdown
 type AddNewSocialContactRequest = Partial<Extract<AppTypeData, { type: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT' }>>
 type AddNewLegalContactRequest = Partial<Extract<AppTypeData, { type: 'PIN_PHONE_ADD_NEW_LEGAL_CONTACT' }>>
 
-// eslint-disable-next-line import/prefer-default-export
-export async function getApplicationDetails(
+export default async function getApplicationDetails(
   applicationDetails: AppTypeData,
   personalRelationshipsService: PersonalRelationshipsService,
   application?: Application,

@@ -11,7 +11,7 @@ import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PersonalRelationshipsService from '../../services/personalRelationshipsService'
 
-import { getApplicationDetails } from '../../utils/getAppDetails'
+import getApplicationDetails from '../../utils/getAppDetails'
 import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'

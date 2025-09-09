@@ -14,7 +14,7 @@ import PersonalRelationshipsService from '../../services/personalRelationshipsSe
 
 import { PERSONAL_RELATIONSHIPS_GROUP_CODES } from '../../constants/personalRelationshipsGroupCodes'
 import { getFormattedCountries } from '../../utils/formatCountryList'
-import { getApplicationDetails } from '../../utils/getAppDetails'
+import getApplicationDetails from '../../utils/getAppDetails'
 import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
 import getFormattedRelationshipDropdown from '../../utils/getFormattedRelationshipDropdown'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
