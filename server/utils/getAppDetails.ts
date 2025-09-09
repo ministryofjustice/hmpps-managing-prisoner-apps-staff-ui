@@ -130,7 +130,11 @@ async function handleAddNewSocialContact(
     country: getCountryNameByCode(country),
     telephone1,
     telephone2,
-    formattedRelationshipList: await getFormattedRelationshipDropdown(personalRelationshipsService, relationship),
+    formattedRelationshipList: await getFormattedRelationshipDropdown(
+      personalRelationshipsService,
+      relationship,
+      PERSONAL_RELATIONSHIPS_GROUP_CODES.SOCIAL_RELATIONSHIP,
+    ),
     earlyDaysCentre,
   }
 }
