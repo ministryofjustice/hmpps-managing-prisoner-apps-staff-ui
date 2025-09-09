@@ -18,35 +18,41 @@ export async function getApplicationDetails(
 ): Promise<Record<string, unknown>> {
   if (!applicationDetails) return {}
 
-  const isValid = (v: unknown) => v !== undefined && v !== null && !(typeof v === 'string' && v.trim() === '')
+  const isValid = (value: unknown): boolean =>
+    value !== undefined && value !== null && !(typeof value === 'string' && value.trim() === '')
+
+  const getFallbackValue = <FormType, RequestType, K extends keyof FormType & keyof RequestType>(
+    field: K,
+    form: FormType,
+    request: RequestType,
+    defaultValue: FormType[K],
+  ): FormType[K] | RequestType[K] => {
+    const formValue = form[field]
+    const requestValue = request[field]
+
+    if (isValid(formValue)) return formValue
+    if (isValid(requestValue)) return requestValue
+    return defaultValue
+  }
 
   switch (applicationDetails.type) {
     case 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT': {
       const request = (application?.requests?.[0] as AddNewSocialContactRequest) ?? {}
 
-      const fallback = <T>(field: keyof AddNewSocialContactRequest, defaultValue: T): T => {
-        const formDetails = applicationDetails?.[field]
-        const formRequest = request?.[field]
-
-        if (isValid(formDetails)) return formDetails as T
-        if (isValid(formRequest)) return formRequest as T
-        return defaultValue
-      }
-
       const prefilledDetails: AddNewSocialContactRequest = {
-        firstName: fallback('firstName', ''),
-        lastName: fallback('lastName', ''),
-        dateOfBirthOrAge: fallback('dateOfBirthOrAge', undefined),
-        dob: fallback('dob', undefined),
-        age: fallback('age', ''),
-        relationship: fallback('relationship', ''),
-        addressLine1: fallback('addressLine1', ''),
-        addressLine2: fallback('addressLine2', ''),
-        townOrCity: fallback('townOrCity', ''),
-        postcode: fallback('postcode', ''),
-        country: fallback('country', ''),
-        telephone1: fallback('telephone1', ''),
-        telephone2: fallback('telephone2', ''),
+        firstName: getFallbackValue('firstName', applicationDetails, request, ''),
+        lastName: getFallbackValue('lastName', applicationDetails, request, ''),
+        dateOfBirthOrAge: getFallbackValue('dateOfBirthOrAge', applicationDetails, request, undefined),
+        dob: getFallbackValue('dob', applicationDetails, request, undefined),
+        age: getFallbackValue('age', applicationDetails, request, ''),
+        relationship: getFallbackValue('relationship', applicationDetails, request, ''),
+        addressLine1: getFallbackValue('addressLine1', applicationDetails, request, ''),
+        addressLine2: getFallbackValue('addressLine2', applicationDetails, request, ''),
+        townOrCity: getFallbackValue('townOrCity', applicationDetails, request, ''),
+        postcode: getFallbackValue('postcode', applicationDetails, request, ''),
+        country: getFallbackValue('country', applicationDetails, request, ''),
+        telephone1: getFallbackValue('telephone1', applicationDetails, request, ''),
+        telephone2: getFallbackValue('telephone2', applicationDetails, request, ''),
       }
 
       return handleAddNewSocialContact(prefilledDetails, earlyDaysCentre, personalRelationshipsService)
@@ -55,22 +61,13 @@ export async function getApplicationDetails(
     case 'PIN_PHONE_ADD_NEW_LEGAL_CONTACT': {
       const request = (application?.requests?.[0] as AddNewLegalContactRequest) ?? {}
 
-      const fallback = <T>(field: keyof AddNewLegalContactRequest, defaultValue: T): T => {
-        const formDetails = applicationDetails?.[field]
-        const formRequest = request?.[field]
-
-        if (isValid(formDetails)) return formDetails as T
-        if (isValid(formRequest)) return formRequest as T
-        return defaultValue
-      }
-
       const prefilledDetails: AddNewLegalContactRequest = {
-        firstName: fallback('firstName', ''),
-        lastName: fallback('lastName', ''),
-        company: fallback('company', ''),
-        relationship: fallback('relationship', ''),
-        telephone1: fallback('telephone1', ''),
-        telephone2: fallback('telephone2', ''),
+        firstName: getFallbackValue('firstName', applicationDetails, request, ''),
+        lastName: getFallbackValue('lastName', applicationDetails, request, ''),
+        company: getFallbackValue('company', applicationDetails, request, ''),
+        relationship: getFallbackValue('relationship', applicationDetails, request, ''),
+        telephone1: getFallbackValue('telephone1', applicationDetails, request, ''),
+        telephone2: getFallbackValue('telephone2', applicationDetails, request, ''),
       }
 
       return handleAddNewLegalContact(prefilledDetails, personalRelationshipsService)
