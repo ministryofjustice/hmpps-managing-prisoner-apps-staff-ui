@@ -20,13 +20,14 @@ context('Action and Reply Page', () => {
           const testData = new TestData()
           const app = { ...testData.app, status, appType: key }
 
-          cy.task('reset')
-          cy.task('stubSignIn')
+          cy.resetAndSignIn()
+
           cy.task('stubGetPrisonerApp', { app })
           cy.task('stubGetAppResponse', { app })
           cy.task('stubGetAppTypes')
-          cy.signIn()
+
           cy.visit(`/applications/${app.requestedBy.username}/${app.id}/reply`)
+
           page = Page.verifyOnPage(ActionAndReplyPage)
         })
 

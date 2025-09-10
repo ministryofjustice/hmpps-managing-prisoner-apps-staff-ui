@@ -8,26 +8,28 @@ context('Confirm Details Page', () => {
 
   beforeEach(() => {
     cy.resetAndSignIn()
+
     cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
     cy.task('stubGetAppTypes')
+    cy.task('stubGetDepartments', { appType: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS' })
   })
 
   const testConfirmDetailsPage = (title, route, backLink, hasChangeLinks) => {
     context(title, () => {
       beforeEach(() => {
-        cy.task('stubGetPrisonerApp', {
-          app,
-        })
-        cy.task('stubGetDepartments', { appType: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS' })
-
         if (route === '/log/confirm') {
-          cy.visitIndexAndStartApplication()
+          cy.visit('/log/confirm')
+
           cy.enterPrisonerDetails()
           cy.selectApplicationType('Swap visiting orders (VOs) for PIN credit')
-          cy.contains('button', 'Continue').click()
           cy.selectDepartment('Business Hub')
+
           cy.contains('button', 'Continue').click()
         } else if (route.includes('/change')) {
+          cy.task('stubGetPrisonerApp', {
+            app,
+          })
+
           cy.visit(route)
           cy.contains('button', 'Continue').click()
         }

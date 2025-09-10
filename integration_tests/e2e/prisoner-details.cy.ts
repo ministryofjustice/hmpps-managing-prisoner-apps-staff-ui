@@ -10,7 +10,8 @@ applicationTypes.forEach(appType => {
 
     beforeEach(() => {
       cy.resetAndSignIn()
-      cy.visitIndexAndStartApplication()
+
+      cy.visit('/log/prisoner-details')
 
       page = Page.verifyOnPage(LogPrisonerDetailsPage)
     })
