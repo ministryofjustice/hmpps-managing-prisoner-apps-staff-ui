@@ -13,6 +13,11 @@
       "key": "PIN_PHONE_ADD_NEW_SOCIAL_CONTACT"
     },
     {
+      "name": "Add new legal PIN phone contact",
+      "value": "add-legal-pin-phone-contact",
+      "key": "PIN_PHONE_ADD_NEW_LEGAL_CONTACT"
+    },
+    {
       "name": "Swap visiting orders (VOs) for PIN credit",
       "value": "swap-visiting-orders-for-pin-credit",
       "key": "PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS",

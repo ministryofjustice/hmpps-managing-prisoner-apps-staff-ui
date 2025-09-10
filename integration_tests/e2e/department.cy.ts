@@ -1,24 +1,29 @@
+import DepartmentPage from '../pages/department'
+import Page from '../pages/page'
+
 context('Department Page', () => {
+  let page: DepartmentPage
+
   beforeEach(() => {
     cy.resetAndSignIn()
     cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
     cy.task('stubGetAppTypes')
-    cy.task('stubGetDepartments', { appType: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS' })
+    cy.task('stubGetDepartments', { appType: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT' })
 
-    cy.visit('/log/prisoner-details')
-    cy.enterPrisonerDetails()
-    cy.selectApplicationType('Swap visiting orders (VOs) for PIN credit')
     cy.visit('/log/department')
 
-    cy.selectApplicationType('Swap visiting orders (VOs) for PIN credit')
+    cy.enterPrisonerDetails()
+    cy.selectApplicationType('Add new social PIN phone contact')
+
+    page = Page.verifyOnPage(DepartmentPage)
   })
 
   it('should display the page title', () => {
-    cy.title().should('include', 'Select department')
+    page.pageTitle().should('include', 'Select department')
   })
 
   it('should display the back link', () => {
-    cy.get('.govuk-back-link').should('exist').and('have.text', 'Back')
+    page.backLink().should('exist').and('have.text', 'Back')
   })
 
   it('should display radio buttons with department names', () => {

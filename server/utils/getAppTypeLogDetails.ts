@@ -39,15 +39,47 @@ export type AddNewSocialContactAppType = {
   telephone2?: string
 }
 
+export type AddNewLegalContactAppType = {
+  type: 'PIN_PHONE_ADD_NEW_LEGAL_CONTACT'
+  firstName: string
+  lastName: string
+  company: string
+  relationship: string
+  telephone1: string
+  telephone2?: string
+}
+
 export type AppTypeData =
   | SwapVOsAppType
   | EmergencyCreditAppType
   | SupplyListOfContactsAppType
   | AddNewSocialContactAppType
+  | AddNewLegalContactAppType
   | null
 
 export function getAppTypeLogDetailsData(applicationType: ApplicationType, additionalData: unknown): AppTypeData {
   switch (applicationType.key) {
+    case 'PIN_PHONE_ADD_NEW_LEGAL_CONTACT': {
+      const {
+        firstName = '',
+        lastName = '',
+        company = '',
+        relationship = '',
+        telephone1 = '',
+        telephone2 = '',
+      } = additionalData as AddNewLegalContactAppType
+
+      return {
+        type: 'PIN_PHONE_ADD_NEW_LEGAL_CONTACT',
+        firstName,
+        lastName,
+        company,
+        relationship,
+        telephone1,
+        telephone2,
+      }
+    }
+
     case 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT': {
       const {
         firstName = '',

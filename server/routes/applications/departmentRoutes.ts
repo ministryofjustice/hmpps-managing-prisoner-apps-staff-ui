@@ -34,11 +34,7 @@ export default function departmentRoutes({
       const { user } = res.locals
       const { applicationData } = req.session
 
-      if (!applicationData?.prisonerId) {
-        return res.redirect(URLS.LOG_PRISONER_DETAILS)
-      }
-
-      if (!applicationData?.type?.key) {
+      if (!applicationData?.type) {
         return res.redirect(URLS.LOG_APPLICATION_TYPE)
       }
 

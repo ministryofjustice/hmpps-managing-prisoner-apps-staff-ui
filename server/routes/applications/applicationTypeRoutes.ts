@@ -34,16 +34,21 @@ export default function applicationTypeRoutes({
     URLS.LOG_APPLICATION_TYPE,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
+      const { applicationData } = req.session
+
+      if (!applicationData?.prisonerId) {
+        return res.redirect(URLS.LOG_PRISONER_DETAILS)
+      }
+
+      const appTypes = await managingPrisonerAppsService.getAppTypes(user)
+      const selectedValue = req.session?.applicationData?.type?.value || null
 
       await auditService.logPageView(Page.LOG_APPLICATION_TYPE_PAGE, {
         who: user.username,
         correlationId: req.id,
       })
 
-      const appTypes = await managingPrisonerAppsService.getAppTypes(user)
-      const selectedValue = req.session?.applicationData?.type?.value || null
-
-      res.render(PATHS.LOG_APPLICATION.SELECT_TYPE, {
+      return res.render(PATHS.LOG_APPLICATION.SELECT_TYPE, {
         title: 'Select application type',
         applicationTypes: buildApplicationTypes(appTypes, selectedValue),
         errorMessage: null,

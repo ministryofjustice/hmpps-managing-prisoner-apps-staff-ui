@@ -6,17 +6,18 @@ const { applicationTypes } = applicationTypesData
 
 function startApplication(appType: string): ApplicationDetailsPage {
   const appConfig = applicationTypes.find(type => type.name === appType)
+
   cy.resetAndSignIn()
   cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
   cy.task('stubGetAppTypes')
   cy.task('stubGetDepartments', { appType: appConfig?.key })
-
-  cy.visit('/log/prisoner-details')
-  cy.enterPrisonerDetails()
-  cy.selectApplicationType(appType)
-  cy.visit('/log/department')
+  cy.task('stubGetRelationships', 'SOCIAL_RELATIONSHIP')
 
   cy.visit('/log/application-details')
+
+  cy.enterPrisonerDetails()
+  cy.selectApplicationType(appType)
+  cy.selectDepartment('Business Hub')
 
   return Page.verifyOnPage(ApplicationDetailsPage)
 }

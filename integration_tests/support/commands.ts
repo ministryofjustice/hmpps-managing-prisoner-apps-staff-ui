@@ -9,25 +9,18 @@ Cypress.Commands.add('resetAndSignIn', () => {
   cy.signIn()
 })
 
-Cypress.Commands.add('visitIndexAndStartApplication', () => {
-  cy.visit('/')
-  cy.contains('a', 'Log a new application').click()
-  cy.task('stubGetAppTypes')
-})
-
 Cypress.Commands.add('enterPrisonerDetails', () => {
-  cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
   cy.get('#prison-number').type('A1234AA')
   cy.contains('button', 'Find prisoner').click()
   cy.contains('button', 'Continue').click()
 })
 
-Cypress.Commands.add('selectDepartment', (departmentName: string) => {
-  cy.contains(departmentName).click()
+Cypress.Commands.add('selectApplicationType', (appType: string) => {
+  cy.contains(appType).click()
   cy.contains('button', 'Continue').click()
 })
 
-Cypress.Commands.add('selectApplicationType', (appType: string) => {
-  cy.contains(appType).click()
+Cypress.Commands.add('selectDepartment', (departmentName: string) => {
+  cy.contains(departmentName).click()
   cy.contains('button', 'Continue').click()
 })

@@ -30,15 +30,15 @@ validAppTypes.forEach(({ name, key }) => {
     }
 
     const visitPage = () => {
-      cy.task('reset')
-      cy.task('stubSignIn')
+      cy.resetAndSignIn()
       cy.task('stubGetPrisonerApp', {
         app,
       })
       cy.task('stubGetDepartments', { appType: key })
       cy.task('stubGetAppTypes')
-      cy.signIn()
+
       cy.visit(`/applications/${app.requestedBy.username}/${app.id}/forward`)
+
       page = Page.verifyOnPage(ForwardApplicationPage)
     }
 

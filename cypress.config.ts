@@ -4,6 +4,7 @@ import managingPrisonerAppsApi from './integration_tests/mockApis/managingPrison
 import tokenVerification from './integration_tests/mockApis/tokenVerification'
 import { resetStubs } from './integration_tests/mockApis/wiremock'
 import prison from './integration_tests/mockApis/prison'
+import personalRelationships from './integration_tests/mockApis/personalRelationships'
 
 export default defineConfig({
   chromeWebSecurity: false,
@@ -20,9 +21,10 @@ export default defineConfig({
       on('task', {
         reset: resetStubs,
         ...auth,
-        ...tokenVerification,
         ...managingPrisonerAppsApi,
+        ...personalRelationships,
         ...prison,
+        ...tokenVerification,
       })
     },
     baseUrl: 'http://localhost:3007',

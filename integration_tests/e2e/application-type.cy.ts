@@ -1,18 +1,27 @@
+import ApplicationTypePage from '../pages/applicationType'
+import Page from '../pages/page'
+
 context('Application Type Page', () => {
+  let page: ApplicationTypePage
+
   beforeEach(() => {
-    cy.task('reset')
-    cy.task('stubSignIn')
-    cy.signIn()
+    cy.resetAndSignIn()
+    cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
     cy.task('stubGetAppTypes')
+
     cy.visit('/log/application-type')
+
+    cy.enterPrisonerDetails()
+
+    page = Page.verifyOnPage(ApplicationTypePage)
   })
 
-  it('should display the page title', () => {
-    cy.title().should('include', 'Select application type')
+  it('should display the correct page title', () => {
+    page.pageTitle().should('include', 'Select application type')
   })
 
   it('should display the back link', () => {
-    cy.get('.govuk-back-link').should('exist').and('have.text', 'Back')
+    page.backLink().should('exist').and('have.text', 'Back')
   })
 
   it('should display radio buttons with names', () => {
