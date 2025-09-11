@@ -1,10 +1,4 @@
-import { validatePhoneNumber } from './validateTelephoneNumber'
-
-const errorMessages = {
-  phoneRequired: 'Enter the contact’s phone number',
-  invalidFormat: 'Enter a phone number in the correct format',
-  invalidNumber: 'You have entered an invalid number',
-}
+import { validateAndAssignError } from './validateTelephoneNumber'
 
 export type AddNewSocialPinPhoneContactForm = {
   earlyDaysCentre: string
@@ -88,25 +82,8 @@ export const validateAddNewSocialContact = (form: AddNewSocialPinPhoneContactFor
     errors.relationship = { text: 'Select a relationship' }
   }
 
-  function validateAndAssignError(fieldName: 'telephone1' | 'telephone2', isRequired: boolean) {
-    const value = form[fieldName]?.trim() || ''
-    if (isRequired && !value) {
-      errors[fieldName] = { text: errorMessages.phoneRequired }
-      return
-    }
-
-    if (value) {
-      const result = validatePhoneNumber(value)
-      if (result === 'invalid_format') {
-        errors[fieldName] = { text: errorMessages.invalidFormat }
-      } else if (result === 'invalid_number') {
-        errors[fieldName] = { text: errorMessages.invalidNumber }
-      }
-    }
-  }
-
-  validateAndAssignError('telephone1', true)
-  validateAndAssignError('telephone2', false)
+  validateAndAssignError({ form, errors, fieldName: 'telephone1', isRequired: true })
+  validateAndAssignError({ form, errors, fieldName: 'telephone2', isRequired: false })
 
   return errors
 }

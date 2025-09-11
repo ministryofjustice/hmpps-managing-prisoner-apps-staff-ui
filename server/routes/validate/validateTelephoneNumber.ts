@@ -48,3 +48,40 @@ export const validatePhoneNumber = (input: string): 'valid' | 'invalid_format' |
 
   return parsed.isValid() ? 'valid' : 'invalid_number'
 }
+
+export const errorMessages = {
+  phoneRequired: 'Enter the contact’s phone number',
+  invalidFormat: 'Enter a phone number in the correct format',
+  invalidNumber: 'You have entered an invalid number',
+}
+
+type PhoneFieldName = 'telephone1' | 'telephone2'
+
+/* eslint-disable no-param-reassign */
+export function validateAndAssignError<T extends Partial<Record<PhoneFieldName, string>>>({
+  form,
+  errors,
+  fieldName,
+  isRequired,
+}: {
+  form: T
+  errors: Record<string, { text: string }>
+  fieldName: PhoneFieldName
+  isRequired: boolean
+}) {
+  const value = form[fieldName]?.trim() || ''
+  if (isRequired && !value) {
+    errors[fieldName] = { text: errorMessages.phoneRequired }
+    return
+  }
+
+  if (value) {
+    const result = validatePhoneNumber(value)
+    if (result === 'invalid_format') {
+      errors[fieldName] = { text: errorMessages.invalidFormat }
+    } else if (result === 'invalid_number') {
+      errors[fieldName] = { text: errorMessages.invalidNumber }
+    }
+  }
+}
+/* eslint-enable no-param-reassign */
