@@ -9,17 +9,22 @@ export const sanitisePhoneNumber = (input: string): { mainNumber: string; extens
 
   if (!match) return null
 
-  const mainNumber = match[1].replace(/[^0-9()+]/g, '')
+  const numberPart = match[1]
   const extension = match[2] ?? match[3] ?? null
+
+  if (/[a-zA-Z]/.test(numberPart)) return null
+
+  const mainNumber = numberPart.replace(/[^0-9()+]/g, '')
   const digitCount = mainNumber.replace(/[^0-9]/g, '').length
-  if (digitCount < 6 || digitCount > 40) return null
+
+  if (digitCount < 10 || digitCount > 15) return null
 
   return { mainNumber, extension }
 }
 
-export const isValidPhoneNumber = (input: string): boolean => {
+export const validatePhoneNumber = (input: string): 'valid' | 'invalid_format' | 'invalid_number' => {
   const sanitisedResult = sanitisePhoneNumber(input)
-  if (!sanitisedResult) return false
+  if (!sanitisedResult) return 'invalid_format'
 
   const { mainNumber, extension } = sanitisedResult
 
@@ -36,8 +41,10 @@ export const isValidPhoneNumber = (input: string): boolean => {
   }
 
   if (extension && !/^\d{1,7}$/.test(extension)) {
-    return false
+    return 'invalid_format'
   }
 
-  return parsed?.isValid() ?? false
+  if (!parsed) return 'invalid_format'
+
+  return parsed.isValid() ? 'valid' : 'invalid_number'
 }
