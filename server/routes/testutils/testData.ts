@@ -274,6 +274,11 @@ export default class TestData {
       value: APPLICATION_TYPE_VALUES.PIN_PHONE_SUPPLY_LIST_OF_CONTACTS,
       name: applicationTypeLabels.PIN_PHONE_SUPPLY_LIST_OF_CONTACTS,
     },
+    {
+      key: 'PIN_PHONE_REMOVE_CONTACT',
+      value: APPLICATION_TYPE_VALUES.PIN_PHONE_REMOVE_CONTACT,
+      name: applicationTypeLabels.PIN_PHONE_REMOVE_CONTACT,
+    },
   ]
 
   assignedGroups: ViewApplicationsResponseAssignedGroup[] = [

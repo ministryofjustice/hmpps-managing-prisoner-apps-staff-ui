@@ -1,5 +1,10 @@
 import { Request, Response } from 'express'
-import { ApplicationType, AddNewSocialPinPhoneContactDetails, AddNewLegalPinPhoneContactDetails } from 'express-session'
+import {
+  ApplicationType,
+  AddNewSocialPinPhoneContactDetails,
+  AddNewLegalPinPhoneContactDetails,
+  RemovePinPhoneContactDetails,
+} from 'express-session'
 
 import { APPLICATION_TYPE_VALUES } from '../constants/applicationTypes'
 import { validateAmountField } from '../routes/validate/validateAmountField'
@@ -8,6 +13,7 @@ import { validateAddNewSocialContact } from '../routes/validate/validateNewSocia
 import { updateSessionData } from './session'
 import { getCountryNameByCode } from './formatCountryList'
 import { validateAddNewLegalContact } from '../routes/validate/validateNewLegalContact'
+import { validateRemovePinPhoneContact } from '../routes/validate/validateRemovePinPhoneContact'
 
 type ContextOptions = {
   getAppType: (req: Request, res: Response) => ApplicationType
@@ -181,6 +187,31 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
         Object.assign(templateData, {
           ...formData,
           formattedRelationshipList: updatedRelationships,
+        })
+      }
+      break
+    }
+
+    case APPLICATION_TYPE_VALUES.PIN_PHONE_REMOVE_CONTACT: {
+      const formData: RemovePinPhoneContactDetails = req.body
+
+      const formErrors = validateRemovePinPhoneContact(formData)
+
+      const formFields = ['firstName', 'lastName', 'telephone1', 'telephone2', 'typeOfContact'] as const
+
+      if (Object.keys(formErrors).length === 0) {
+        for (const field of formFields) {
+          additionalData[field] = formData[field]
+        }
+
+        Object.assign(templateData, {
+          ...formData,
+        })
+      } else {
+        Object.assign(errors, formErrors)
+
+        Object.assign(templateData, {
+          ...formData,
         })
       }
       break

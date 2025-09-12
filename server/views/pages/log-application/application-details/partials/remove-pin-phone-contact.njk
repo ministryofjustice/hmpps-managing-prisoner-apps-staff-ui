@@ -1,0 +1,78 @@
+<h2 class="govuk-heading-m">PIN phone contact to remove</h2>
+
+{{ govukInput({
+  id: "firstName",
+  name: "firstName",
+  label: {
+    text: "First name",
+    classes: "govuk-label--s"
+  }, 
+  value: firstName,
+  errorMessage: errors.firstName
+}) }}
+
+{{ govukInput({
+  id: "lastName",
+  name: "lastName",
+  label: {
+    text: "Last name",
+    classes: "govuk-label--s"
+  },
+  value: lastName,
+  errorMessage: errors.lastName,
+  classes: "govuk-!-width-width-full"
+}) }}
+
+<h2 class="govuk-heading-m govuk-!-margin-bottom-1">Telephone numbers</h2>
+<p class="govuk-hint">Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192. Include area code or international code, if overseas.</p>
+
+{{ govukInput({
+  label: {
+    text: "Telephone number 1",
+    classes: "govuk-label--s",
+    isPageHeading: true
+  },
+  classes: "govuk-input--width-20",
+  id: "telephone1",
+  name: "telephone1",
+  type: "tel",
+  autocomplete: "tel",
+  inputmode: "numeric",
+  spellcheck: false,
+  errorMessage: errors.telephone1,
+  value: telephone1
+}) }}
+
+{{ govukInput({
+  label: {
+    text: "Telephone number 2 (optional)",
+    classes: "govuk-label--s",
+    isPageHeading: true
+  },
+  classes: "govuk-input--width-20",
+  id: "telephone2",
+  name: "telephone2",
+  type: "tel",
+  autocomplete: "tel",
+  inputmode: "numeric",
+  errorMessage: errors.telephone2,
+  value: telephone2,
+  spellcheck: false
+}) }}
+
+
+{{ govukInput({
+  id: "typeOfContact",
+  name: "typeOfContact",
+  label: {
+    text: "Type of contact (optional)",
+    classes: "govuk-label--s"
+  }, 
+  value: typeOfContact,
+  attributes: {
+    maxlength: 100
+  }
+}) }}
+
+
+
