@@ -117,4 +117,18 @@ describe(validateAddNewSocialContact.name, () => {
       telephone1: { text: 'Enter a phone number in the correct format' },
     })
   })
+
+  it('should return error if telephone1 is invalid number', () => {
+    const result = validateAddNewSocialContact({ ...validForm, telephone1: '+1234567890' }, false)
+
+    expect(result).toMatchObject({
+      telephone1: { text: 'You have entered an invalid number' },
+    })
+  })
+
+  it('should not return error for valid telephone1', () => {
+    const result = validateAddNewSocialContact({ ...validForm, telephone1: '020 7946 0018' }, false)
+
+    expect(result.telephone1).toBeUndefined()
+  })
 })

@@ -1,5 +1,5 @@
 import { AddNewLegalPinPhoneContactDetails } from 'express-session'
-import { isValidPhoneNumber } from './validateTelephoneNumber'
+import { validateAndAssignError } from './validateTelephoneNumber'
 
 // eslint-disable-next-line import/prefer-default-export
 export const validateAddNewLegalContact = (form: AddNewLegalPinPhoneContactDetails) => {
@@ -21,15 +21,8 @@ export const validateAddNewLegalContact = (form: AddNewLegalPinPhoneContactDetai
     errors.relationship = { text: 'Select a relationship' }
   }
 
-  if (!form.telephone1 || form.telephone1.trim() === '') {
-    errors.telephone1 = { text: 'Enter the contact’s phone number' }
-  } else if (!isValidPhoneNumber(form.telephone1.trim())) {
-    errors.telephone1 = { text: 'Enter a phone number in the correct format' }
-  }
-
-  if (form.telephone2 && form.telephone2.trim() !== '' && !isValidPhoneNumber(form.telephone2.trim())) {
-    errors.telephone2 = { text: 'Enter a phone number in the correct format' }
-  }
+  validateAndAssignError({ form, errors, fieldName: 'telephone1', isRequired: true })
+  validateAndAssignError({ form, errors, fieldName: 'telephone2', isRequired: false })
 
   return errors
 }
