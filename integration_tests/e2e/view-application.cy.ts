@@ -6,7 +6,7 @@ import ViewApplicationPage from '../pages/viewApplicationPage'
 const { applicationTypes } = applicationTypesData
 
 applicationTypes
-  .filter(type => type.key !== 'PIN_PHONE_ADD_NEW_LEGAL_CONTACT')
+  .filter(({ key }) => !['PIN_PHONE_ADD_NEW_LEGAL_CONTACT', 'PIN_PHONE_REMOVE_CONTACT'].includes(key))
   .forEach(({ name, key }) => {
     context(`View Application Page - ${name}`, () => {
       let page: ViewApplicationPage

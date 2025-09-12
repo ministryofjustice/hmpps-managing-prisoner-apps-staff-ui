@@ -3,6 +3,7 @@ import {
   SwapVOsForPinCreditDetails,
   SupplyListOfPinPhoneContactsDetails,
   AddNewSocialPinPhoneContactDetails,
+  RemovePinPhoneContactDetails,
   ApplicationType,
 } from 'express-session'
 
@@ -64,7 +65,7 @@ export type AppTypeData =
   | SupplyListOfContactsAppType
   | AddNewSocialContactAppType
   | AddNewLegalContactAppType
-  | null
+  | RemoveContactAppType
 
 export function getAppTypeLogDetailsData(applicationType: ApplicationType, additionalData: unknown): AppTypeData {
   switch (applicationType.key) {
@@ -121,6 +122,25 @@ export function getAppTypeLogDetailsData(applicationType: ApplicationType, addit
         country,
         telephone1,
         telephone2,
+      }
+    }
+
+    case 'PIN_PHONE_REMOVE_CONTACT': {
+      const {
+        firstName = '',
+        lastName = '',
+        telephone1 = '',
+        telephone2 = '',
+        typeOfContact = '',
+      } = additionalData as RemovePinPhoneContactDetails
+
+      return {
+        type: 'PIN_PHONE_REMOVE_CONTACT',
+        firstName,
+        lastName,
+        telephone1,
+        telephone2,
+        typeOfContact,
       }
     }
 

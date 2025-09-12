@@ -65,10 +65,13 @@
   id: "typeOfContact",
   name: "typeOfContact",
   label: {
-    text: "Type of contact",
+    text: "Type of contact (optional)",
     classes: "govuk-label--s"
   }, 
-  value: typeOfContact
+  value: typeOfContact,
+  attributes: {
+    maxlength: 100
+  }
 }) }}
 
 

@@ -30,6 +30,11 @@
       "key": "PIN_PHONE_SUPPLY_LIST_OF_CONTACTS",
       "type": "textarea",
       "hint": "Add a brief summary"
+    },
+    {
+      "name": "Remove PIN phone contact",
+      "value": "remove-pin-phone-contact",
+      "key": "PIN_PHONE_REMOVE_CONTACT"
     }
   ]
 }

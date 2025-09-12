@@ -23,7 +23,7 @@ function startApplication(appType: string): ApplicationDetailsPage {
 }
 
 applicationTypes
-  .filter(({ name }) => ['Add emergency PIN phone credit'].includes(name))
+  .filter(({ name }) => ['Add emergency PIN phone credit', 'Remove PIN phone contact'].includes(name))
   .forEach(({ name, type, hint }) => {
     context(`Application Details Page - ${name}`, () => {
       let page: ApplicationDetailsPage
@@ -35,6 +35,26 @@ applicationTypes
       it('should render the correct app type title', () => {
         page.appTypeTitle().should('have.text', name)
       })
+      if (name === 'Remove PIN phone contact') {
+        it('should display "PIN phone contact to remove" text', () => {
+          cy.contains('h2', 'PIN phone contact to remove').should('exist')
+        })
+
+        it('should have first and last name inputs', () => {
+          cy.get('label[for="firstName"]').should('contain.text', 'First name')
+          cy.get('label[for="lastName"]').should('contain.text', 'Last name')
+        })
+
+        it('should display the telephone number inputs', () => {
+          cy.get('label[for="telephone1"]').should('contain.text', 'Telephone number 1')
+          cy.get('label[for="telephone2"]').should('contain.text', 'Telephone number 2')
+        })
+
+        it('should display the type of contact field', () => {
+          cy.get('label[for="typeOfContact"]').should('contain.text', 'Type of contact')
+          cy.get('#typeOfContact').should('exist')
+        })
+      }
 
       if (type === 'textarea') {
         it('should render the form label', () => {
