@@ -32,6 +32,7 @@ export declare module 'express-session' {
     | SupplyListOfPinPhoneContactsDetails
     | AddNewSocialPinPhoneContactDetails
     | AddNewLegalPinPhoneContactDetails
+    | RemovePinPhoneContactDetails
 
   interface SwapVOsForPinCreditDetails {
     details?: string
@@ -74,6 +75,14 @@ export declare module 'express-session' {
     relationship: string
     telephone1: string
     telephone2?: string
+  }
+
+  interface RemovePinPhoneContactDetails {
+    firstName: string
+    lastName: string
+    telephone1: string
+    telephone2?: string
+    typeOfContact?: string
   }
 }
 
