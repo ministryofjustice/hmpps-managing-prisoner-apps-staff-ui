@@ -49,6 +49,15 @@ export type AddNewLegalContactAppType = {
   telephone2?: string
 }
 
+export type RemoveContactAppType = {
+  type: 'PIN_PHONE_REMOVE_CONTACT'
+  firstName: string
+  lastName: string
+  telephone1: string
+  telephone2?: string
+  typeOfContact?: string
+}
+
 export type AppTypeData =
   | SwapVOsAppType
   | EmergencyCreditAppType
