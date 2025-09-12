@@ -9,17 +9,22 @@ export const sanitisePhoneNumber = (input: string): { mainNumber: string; extens
 
   if (!match) return null
 
-  const mainNumber = match[1].replace(/[^0-9()+]/g, '')
+  const numberPart = match[1]
   const extension = match[2] ?? match[3] ?? null
+
+  if (/[a-zA-Z]/.test(numberPart)) return null
+
+  const mainNumber = numberPart.replace(/[^0-9()+]/g, '')
   const digitCount = mainNumber.replace(/[^0-9]/g, '').length
-  if (digitCount < 6 || digitCount > 40) return null
+
+  if (digitCount < 10 || digitCount > 15) return null
 
   return { mainNumber, extension }
 }
 
-export const isValidPhoneNumber = (input: string): boolean => {
+export const validatePhoneNumber = (input: string): 'valid' | 'invalid_format' | 'invalid_number' => {
   const sanitisedResult = sanitisePhoneNumber(input)
-  if (!sanitisedResult) return false
+  if (!sanitisedResult) return 'invalid_format'
 
   const { mainNumber, extension } = sanitisedResult
 
@@ -36,8 +41,47 @@ export const isValidPhoneNumber = (input: string): boolean => {
   }
 
   if (extension && !/^\d{1,7}$/.test(extension)) {
-    return false
+    return 'invalid_format'
   }
 
-  return parsed?.isValid() ?? false
+  if (!parsed) return 'invalid_format'
+
+  return parsed.isValid() ? 'valid' : 'invalid_number'
 }
+
+export const errorMessages = {
+  phoneRequired: 'Enter the contact’s phone number',
+  invalidFormat: 'Enter a phone number in the correct format',
+  invalidNumber: 'You have entered an invalid number',
+}
+
+type PhoneFieldName = 'telephone1' | 'telephone2'
+
+/* eslint-disable no-param-reassign */
+export function validateAndAssignError<T extends Partial<Record<PhoneFieldName, string>>>({
+  form,
+  errors,
+  fieldName,
+  isRequired,
+}: {
+  form: T
+  errors: Record<string, { text: string }>
+  fieldName: PhoneFieldName
+  isRequired: boolean
+}) {
+  const value = form[fieldName]?.trim() || ''
+  if (isRequired && !value) {
+    errors[fieldName] = { text: errorMessages.phoneRequired }
+    return
+  }
+
+  if (value) {
+    const result = validatePhoneNumber(value)
+    if (result === 'invalid_format') {
+      errors[fieldName] = { text: errorMessages.invalidFormat }
+    } else if (result === 'invalid_number') {
+      errors[fieldName] = { text: errorMessages.invalidNumber }
+    }
+  }
+}
+/* eslint-enable no-param-reassign */

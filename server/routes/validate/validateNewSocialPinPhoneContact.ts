@@ -1,4 +1,4 @@
-import { isValidPhoneNumber } from './validateTelephoneNumber'
+import { validateAndAssignError } from './validateTelephoneNumber'
 
 export type AddNewSocialPinPhoneContactForm = {
   earlyDaysCentre: string
@@ -14,7 +14,8 @@ export type AddNewSocialPinPhoneContactForm = {
   telephone2?: string
 }
 
-const isValidNumber = (value: string) => /^\d+$/.test(value)
+const isValidNumber = (value: string): boolean => /^\d+$/.test(value)
+const isEmpty = (value?: string): boolean => !value || value.trim() === ''
 
 export const validateAddNewSocialContact = (form: AddNewSocialPinPhoneContactForm, isUpdate: boolean) => {
   const errors: Record<string, { text: string }> = {}
@@ -23,11 +24,11 @@ export const validateAddNewSocialContact = (form: AddNewSocialPinPhoneContactFor
     errors.earlyDaysCentre = { text: 'Select yes if this person is in the first night or early days centre' }
   }
 
-  if (!form.firstName || form.firstName.trim() === '') {
+  if (isEmpty(form.firstName)) {
     errors.firstName = { text: 'Enter the contact’s first name' }
   }
 
-  if (!form.lastName || form.lastName.trim() === '') {
+  if (isEmpty(form.lastName)) {
     errors.lastName = { text: 'Enter the contact’s last name' }
   }
 
@@ -72,24 +73,17 @@ export const validateAddNewSocialContact = (form: AddNewSocialPinPhoneContactFor
       }
     }
   } else if (form.dateOfBirthOrAge === 'age') {
-    if (!form.age || form.age.trim() === '' || !isValidNumber(form.age.trim())) {
+    if (isEmpty(form.age) || !isValidNumber(form.age.trim())) {
       errors.age = { text: 'Enter the contact’s age' }
     }
   }
 
-  if (!form.relationship || form.relationship === '') {
+  if (isEmpty(form.relationship)) {
     errors.relationship = { text: 'Select a relationship' }
   }
 
-  if (!form.telephone1 || form.telephone1.trim() === '') {
-    errors.telephone1 = { text: 'Enter the contact’s phone number' }
-  } else if (!isValidPhoneNumber(form.telephone1.trim())) {
-    errors.telephone1 = { text: 'Enter a phone number in the correct format' }
-  }
-
-  if (form.telephone2 && form.telephone2.trim() !== '' && !isValidPhoneNumber(form.telephone2.trim())) {
-    errors.telephone2 = { text: 'Enter a phone number in the correct format' }
-  }
+  validateAndAssignError({ form, errors, fieldName: 'telephone1', isRequired: true })
+  validateAndAssignError({ form, errors, fieldName: 'telephone2', isRequired: false })
 
   return errors
 }
