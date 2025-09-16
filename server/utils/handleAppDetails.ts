@@ -197,7 +197,7 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
 
       const formErrors = validateRemovePinPhoneContact(formData)
 
-      const formFields = ['firstName', 'lastName', 'telephone1', 'telephone2', 'typeOfContact'] as const
+      const formFields = ['firstName', 'lastName', 'telephone1', 'telephone2', 'relationship'] as const
 
       if (Object.keys(formErrors).length === 0) {
         for (const field of formFields) {

@@ -82,7 +82,7 @@ export declare module 'express-session' {
     lastName: string
     telephone1: string
     telephone2?: string
-    typeOfContact?: string
+    relationship?: string
   }
 }
 

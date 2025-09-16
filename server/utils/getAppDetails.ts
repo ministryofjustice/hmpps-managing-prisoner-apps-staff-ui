@@ -8,6 +8,7 @@ import getFormattedRelationshipDropdown from './getFormattedRelationshipDropdown
 
 type AddNewSocialContactRequest = Partial<Extract<AppTypeData, { type: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT' }>>
 type AddNewLegalContactRequest = Partial<Extract<AppTypeData, { type: 'PIN_PHONE_ADD_NEW_LEGAL_CONTACT' }>>
+type RemoveContactRequest = Partial<Extract<AppTypeData, { type: 'PIN_PHONE_REMOVE_CONTACT' }>>
 
 export default async function getApplicationDetails(
   applicationDetails: AppTypeData,
@@ -70,6 +71,20 @@ export default async function getApplicationDetails(
       }
 
       return handleAddNewLegalContact(prefilledDetails, personalRelationshipsService)
+    }
+
+    case 'PIN_PHONE_REMOVE_CONTACT': {
+      const request = (application?.requests?.[0] as RemoveContactRequest) ?? {}
+
+      const prefilledDetails = {
+        firstName: getFallbackValue('firstName', applicationDetails, request, ''),
+        lastName: getFallbackValue('lastName', applicationDetails, request, ''),
+        telephone1: getFallbackValue('telephone1', applicationDetails, request, ''),
+        telephone2: getFallbackValue('telephone2', applicationDetails, request, ''),
+        relationship: getFallbackValue('relationship', applicationDetails, request, ''),
+      }
+
+      return prefilledDetails
     }
 
     case 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP': {

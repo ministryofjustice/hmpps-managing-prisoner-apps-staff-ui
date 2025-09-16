@@ -56,7 +56,7 @@ export type RemoveContactAppType = {
   lastName: string
   telephone1: string
   telephone2?: string
-  typeOfContact?: string
+  relationship?: string
 }
 
 export type AppTypeData =
@@ -131,7 +131,7 @@ export function getAppTypeLogDetailsData(applicationType: ApplicationType, addit
         lastName = '',
         telephone1 = '',
         telephone2 = '',
-        typeOfContact = '',
+        relationship = '',
       } = additionalData as RemovePinPhoneContactDetails
 
       return {
@@ -140,7 +140,7 @@ export function getAppTypeLogDetailsData(applicationType: ApplicationType, addit
         lastName,
         telephone1,
         telephone2,
-        typeOfContact,
+        relationship,
       }
     }
 
