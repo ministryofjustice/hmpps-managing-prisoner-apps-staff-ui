@@ -16,6 +16,7 @@ Cypress.Commands.add('enterPrisonerDetails', () => {
 })
 
 Cypress.Commands.add('selectApplicationType', (appType: string) => {
+  cy.get('label')
   cy.contains(appType).click()
   cy.contains('button', 'Continue').click()
 })

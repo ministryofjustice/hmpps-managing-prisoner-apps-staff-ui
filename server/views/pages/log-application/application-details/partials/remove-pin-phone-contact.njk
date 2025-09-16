@@ -60,19 +60,15 @@
   spellcheck: false
 }) }}
 
-
 {{ govukInput({
-  id: "typeOfContact",
-  name: "typeOfContact",
+  id: "relationship",
+  name: "relationship",
   label: {
-    text: "Type of contact (optional)",
+    text: "Relationship to prisoner (optional)",
     classes: "govuk-label--s"
   }, 
-  value: typeOfContact,
+  value: relationship,
   attributes: {
     maxlength: 100
   }
 }) }}
-
-
-

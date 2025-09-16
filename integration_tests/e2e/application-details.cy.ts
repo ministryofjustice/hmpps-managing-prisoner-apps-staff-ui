@@ -50,9 +50,9 @@ applicationTypes
           cy.get('label[for="telephone2"]').should('contain.text', 'Telephone number 2')
         })
 
-        it('should display the type of contact field', () => {
-          cy.get('label[for="typeOfContact"]').should('contain.text', 'Type of contact')
-          cy.get('#typeOfContact').should('exist')
+        it('should display the relationship to prisoner field', () => {
+          cy.get('label[for="relationship"]').should('contain.text', 'Relationship to prisoner')
+          cy.get('#relationship').should('exist')
         })
       }
 
