@@ -1,0 +1,33 @@
+{{ appTypeSummaryListHeader("PIN phone contact to remove", application.requestedBy.username, application.id, isClosed) }}
+
+{% set rows = [] %}
+
+{% set _ = rows.push({
+  key: { text: "First name" },
+  value: { text: application.requests[0].firstName }
+}) %}
+
+{% set _ = rows.push({
+  key: { text: "Last name" },
+  value: { text: application.requests[0].lastName }
+}) %}
+
+{% set _ = rows.push({
+  key: { text: "Telephone number 1" },
+  value: { text: application.requests[0].telephone1 }
+}) %}
+
+{% set _ = rows.push({
+  key: { text: "Telephone number 2" },
+  value: { text: application.requests[0].telephone2 }
+}) %}
+
+{% set _ = rows.push({
+  key: { text: "Relationship" },
+  value: { text: application.requests[0].relationship }
+}) %}
+
+{{ govukSummaryList({
+  classes: "govuk-!-margin-bottom-9",
+  rows: rows
+}) }}
