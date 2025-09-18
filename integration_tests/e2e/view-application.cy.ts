@@ -67,6 +67,10 @@ applicationTypes
           .and('have.attr', 'rel', 'noopener noreferrer')
       })
 
+      it('should display the incentive level', () => {
+        page.summaryListRowKey('Incentive level').should('exist')
+      })
+
       it('should allow navigating to the Comments section', () => {
         page
           .commentsTab()
