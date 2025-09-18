@@ -30,4 +30,8 @@ export default class ViewApplicationPage extends Page {
   viewProfileLink = () => cy.contains('a', 'View profile')
 
   viewAlertsLink = () => cy.contains('a', 'View alerts')
+
+  summaryListRowKey(keyText: string) {
+    return cy.get('.govuk-summary-list__key').contains(keyText)
+  }
 }
