@@ -56,7 +56,7 @@ function appSetup(services: Services, production: boolean, userSupplier: () => H
 export function appWithAllRoutes({
   production = false,
   services = {
-    auditService: new AuditService(null) as jest.Mocked<AuditService>,
+    auditService: new AuditService() as jest.Mocked<AuditService>,
   },
   userSupplier = () => user,
 }: {
