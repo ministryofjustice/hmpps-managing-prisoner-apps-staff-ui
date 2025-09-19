@@ -126,7 +126,7 @@ export default function viewApplicationRoutes({
           .filter(type => type.checked)
           .map(type => ({
             href: removeFilterFromHref(req, 'type', type.value),
-            text: type.text,
+            text: type.text.replace(/\s\(\d+\)$/, ''),
           })),
       }
 
