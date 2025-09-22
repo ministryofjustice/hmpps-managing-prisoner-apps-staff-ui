@@ -5,7 +5,7 @@ import AuditService, { Page } from '../services/auditService'
 
 jest.mock('../services/auditService')
 
-const auditService = new AuditService(null) as jest.Mocked<AuditService>
+const auditService = new AuditService() as jest.Mocked<AuditService>
 
 let app: Express
 

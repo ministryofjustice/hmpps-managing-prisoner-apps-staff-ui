@@ -5,9 +5,9 @@ import PrisonService from './prisonService'
 import PersonalRelationshipsService from './personalRelationshipsService'
 
 export const services = () => {
-  const { applicationInfo, hmppsAuditClient, hmppsAuthClient } = dataAccess()
+  const { applicationInfo, hmppsAuthClient } = dataAccess()
 
-  const auditService = new AuditService(hmppsAuditClient)
+  const auditService = new AuditService()
   const managingPrisonerAppsService = new ManagingPrisonerAppsService(hmppsAuthClient)
   const prisonService = new PrisonService(hmppsAuthClient)
   const personalRelationshipsService = new PersonalRelationshipsService(hmppsAuthClient)

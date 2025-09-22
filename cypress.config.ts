@@ -1,5 +1,5 @@
 import { defineConfig } from 'cypress'
-import auth from './integration_tests/mockApis/auth'
+import authAndAudit from './integration_tests/mockApis/authAndAudit'
 import managingPrisonerAppsApi from './integration_tests/mockApis/managingPrisonerApps'
 import tokenVerification from './integration_tests/mockApis/tokenVerification'
 import { resetStubs } from './integration_tests/mockApis/wiremock'
@@ -20,7 +20,7 @@ export default defineConfig({
     setupNodeEvents(on) {
       on('task', {
         reset: resetStubs,
-        ...auth,
+        ...authAndAudit,
         ...managingPrisonerAppsApi,
         ...personalRelationships,
         ...prison,

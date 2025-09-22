@@ -126,8 +126,20 @@ const token = (userToken: UserToken) =>
     },
   })
 
+const auditPing = () =>
+  stubFor({
+    request: {
+      method: 'GET',
+      urlPattern: '/audit/health/ping',
+    },
+    response: {
+      status: 200,
+    },
+  })
+
 export default {
   getSignInUrl,
+  stubAuditPing: auditPing,
   stubAuthPing: ping,
   stubAuthToken: token,
   stubAuthManageDetails: manageDetails,
