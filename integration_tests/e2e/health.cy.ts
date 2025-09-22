@@ -1,3 +1,5 @@
+import { stubFor } from '../mockApis/wiremock'
+
 context('Healthcheck', () => {
   context('All healthy', () => {
     beforeEach(() => {
@@ -6,6 +8,16 @@ context('Healthcheck', () => {
       cy.task('stubTokenVerificationPing')
 
       cy.task('stubAuthToken', {})
+
+      stubFor({
+        request: {
+          method: 'GET',
+          urlPattern: '/audit/health/ping',
+        },
+        response: {
+          status: 200,
+        },
+      })
     })
 
     it('Health check page is visible and UP', () => {
@@ -28,6 +40,16 @@ context('Healthcheck', () => {
       cy.task('reset')
       cy.task('stubAuthPing')
       cy.task('stubTokenVerificationPing', 500)
+
+      stubFor({
+        request: {
+          method: 'GET',
+          urlPattern: '/audit/health/ping',
+        },
+        response: {
+          status: 200,
+        },
+      })
     })
 
     it('Reports correctly when token verification down', () => {
