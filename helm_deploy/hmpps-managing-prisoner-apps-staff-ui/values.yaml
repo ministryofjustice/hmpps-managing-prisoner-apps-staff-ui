@@ -1,10 +1,8 @@
 generic-service:
+  # the IRSA service account name for accessing AWS resources
   serviceAccountName: hmpps-managing-prisoner-apps
   nameOverride: hmpps-managing-prisoner-apps-staff-ui
   productId: 'DPS097' # productId for the product that this belongs too, i.e. DPS001, see README.md for details
-
-  # the IRSA service account name for accessing AWS resources
-  # serviceAccountName: "hmpps-managing-prisoner-apps-staff-ui"
 
   replicaCount: 4
 
