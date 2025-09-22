@@ -12,6 +12,8 @@ function get<T>(name: string, fallback: T, options = { requireInProduction: fals
 
 const requiredInProduction = { requireInProduction: true }
 
+const serviceName = 'hmpps-managing-prisoner-apps'
+
 export class AgentConfig {
   // Sets the working socket to timeout after timeout milliseconds of inactivity on the working socket.
   timeout: number
@@ -73,7 +75,17 @@ export default {
     'https://prisoner-dev.digital.prison.service.justice.gov.uk/',
     requiredInProduction,
   ),
+  audit: {
+    serviceName: get('AUDIT_SERVICE_NAME', serviceName, requiredInProduction),
+  },
   apis: {
+    audit: {
+      region: get('AUDIT_SQS_REGION', 'eu-west-2', requiredInProduction),
+      queueUrl: get('AUDIT_SQS_QUEUE_URL', 'http://localhost:4566/000000000000/mainQueue', requiredInProduction),
+      serviceName: get('AUDIT_SERVICE_NAME', serviceName, requiredInProduction),
+      url: get('HMPPS_AUDIT_URL', 'http://localhost:8080', requiredInProduction),
+      healthPath: '/health/ping',
+    },
     hmppsAuth: {
       url: get('HMPPS_AUTH_URL', 'http://localhost:9090/auth', requiredInProduction),
       healthPath: '/health/ping',
