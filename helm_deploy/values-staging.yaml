@@ -21,7 +21,6 @@ generic-service:
     HMPPS_AUDIT_URL: 'https://audit-api-dev.hmpps.service.justice.gov.uk'
     ENVIRONMENT_NAME: STAGING
     AUDIT_ENABLED: 'false'
-    AUDIT_SQS_QUEUE_URL: '' # required, but unused as auditing is disabled
 
   allowlist:
     groups:
