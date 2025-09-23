@@ -16,7 +16,6 @@ generic-service:
     MANAGING_PRISONER_APPS_API_URL: 'https://managing-prisoner-apps-api.hmpps.service.justice.gov.uk'
     PRISON_API_URL: 'https://prison-api.prison.service.justice.gov.uk'
     PERSONAL_RELATIONSHIPS_API_URL: 'https://personal-relationships-api.hmpps.service.justice.gov.uk'
-    HMPPS_AUDIT_URL: 'https://audit-api.hmpps.service.justice.gov.uk'
     ENVIRONMENT_NAME: PRODUCTION
     AUDIT_ENABLED: 'false'
 
