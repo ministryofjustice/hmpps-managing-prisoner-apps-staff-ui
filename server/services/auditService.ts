@@ -46,7 +46,7 @@ export default class AuditService {
       subjectId: event.subjectId,
       subjectType: event.subjectType,
       correlationId: event.correlationId,
-      service: config.apis.audit.serviceName,
+      service: config.sqs.audit.serviceName,
       details: JSON.stringify({
         ...event.details,
       }),
