@@ -9,6 +9,7 @@ import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
+import { convertToTitleCase } from '../../utils/utils'
 
 export default function submitApplicationRoutes({
   auditService,
@@ -33,6 +34,7 @@ export default function submitApplicationRoutes({
       res.render(PATHS.LOG_APPLICATION.SUBMIT, {
         title: applicationType.name,
         application,
+        prisonerName: convertToTitleCase(`${application.requestedBy.firstName} ${application.requestedBy.lastName}`),
       })
     }),
   )

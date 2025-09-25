@@ -1,0 +1,15 @@
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+
+{% macro loggingForSamePrisonerBanner(isLoggingForSamePrisoner, prisonerName) %}
+  {% if isLoggingForSamePrisoner %}
+    {% set bannerHtml %}
+      <p class="govuk-notification-banner__heading">
+        You are logging another application for {{ prisonerName }}.
+      </p>
+    {% endset %}
+
+    {{ govukNotificationBanner({
+      html: bannerHtml
+    }) }}
+  {% endif %}
+{% endmacro %}
