@@ -24,6 +24,9 @@ export default function prisonerDetailsRoutes({
   router.get(
     URLS.LOG_PRISONER_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
+      delete req.session.prisonerContext
+      delete req.session.isLoggingForSamePrisoner
+
       await auditService.logPageView(Page.LOG_PRISONER_DETAILS_PAGE, {
         who: res.locals.user.username,
         correlationId: req.id,

@@ -33,8 +33,8 @@ export default function applicationDetailsRoutes({
   router.get(
     URLS.LOG_APPLICATION_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { applicationData } = req.session
       const { user } = res.locals
+      const { applicationData, isLoggingForSamePrisoner } = req.session
 
       if (!applicationData?.type) {
         return res.redirect(URLS.LOG_APPLICATION_TYPE)
@@ -62,6 +62,8 @@ export default function applicationDetailsRoutes({
         ...templateFields,
         applicationType: applicationData?.type,
         title: 'Log details',
+        isLoggingForSamePrisoner,
+        prisonerName: isLoggingForSamePrisoner ? req.session.applicationData.prisonerName : null,
       })
     }),
   )

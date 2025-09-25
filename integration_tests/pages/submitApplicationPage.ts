@@ -5,17 +5,23 @@ export default class SubmitApplicationPage extends Page {
     super('Application submitted')
   }
 
-  panelTitle = () => cy.get('.govuk-panel__title')
+  panelTitle = () => cy.get('.govuk-panel__title').contains('Application submitted')
 
-  panelBody = () => cy.get('.govuk-panel__body')
+  panelBody = (applicationType: string) => cy.get('.govuk-panel__body').contains(applicationType)
 
-  submissionText = () => cy.get('.govuk-body-l')
+  submissionText = (groupName: string) => cy.get('.govuk-body-l').contains(`${groupName} now has this application.`)
 
   bulletPoints = () => cy.get('.govuk-list--bullet')
 
-  viewApplicationLink = () => cy.get('a[href^="/applications/"]')
+  logAnotherApplicationForSamePrisonerLink = (prisonerName: string) =>
+    cy
+      .get(`a[href="/log/application-type?isLoggingForSamePrisoner=true"]`)
+      .contains(`another application for ${prisonerName}`)
 
-  addAnotherApplicationLink = () => cy.contains('a', 'Add another application')
+  logNewApplicationLink = () => cy.get(`a[href="/log/prisoner-details"]`).contains('a new application')
 
-  dashboardLink = () => cy.contains('a', 'Return to applications dashboard')
+  viewApplicationLink = (app: { requestedBy: { username: string }; id: string }) =>
+    cy.get(`a[href="/applications/${app.requestedBy.username}/${app.id}"]`).contains('this application')
+
+  viewAllApplicationsLink = () => cy.get(`a[href="/applications"]`).contains('all applications')
 }

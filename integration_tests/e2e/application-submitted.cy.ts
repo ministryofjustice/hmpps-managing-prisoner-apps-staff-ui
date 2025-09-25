@@ -5,6 +5,8 @@ import SubmitApplicationPage from '../pages/submitApplicationPage'
 context('Application Submitted Page', () => {
   let page: SubmitApplicationPage
   const { app } = new TestData()
+  const prisonerName = `${app.requestedBy.firstName} ${app.requestedBy.lastName}`
+  const groupName = app.assignedGroup.name
 
   beforeEach(() => {
     cy.resetAndSignIn()
@@ -19,24 +21,29 @@ context('Application Submitted Page', () => {
   })
 
   it('should display the panel title and body', () => {
-    page.panelTitle().should('contain.text', 'Application submitted')
-    page.panelBody().should('contain.text', 'Swap visiting orders (VOs) for PIN credit')
+    page.panelTitle().should('exist')
+    page.panelBody('Swap visiting orders (VOs) for PIN credit').should('exist')
   })
 
   it('should display submission text with department info', () => {
-    page.submissionText().should('contain.text', 'now has this application.')
+    page.submissionText(groupName).should('exist')
   })
 
   it('should contain correct bullet point links', () => {
     page.bulletPoints().should('exist')
 
     page
-      .viewApplicationLink()
+      .logAnotherApplicationForSamePrisonerLink(prisonerName)
       .should('exist')
-      .and('have.text', 'View this application')
-      .and('have.attr', 'href')
-      .and('include', `/applications/`)
-    page.addAnotherApplicationLink().should('exist').and('have.text', 'Add another application')
-    page.dashboardLink().should('exist').and('have.text', 'Return to applications dashboard')
+      .and('have.attr', 'href', '/log/application-type?isLoggingForSamePrisoner=true')
+
+    page.logNewApplicationLink().should('exist').and('have.attr', 'href', '/log/prisoner-details')
+
+    page
+      .viewApplicationLink(app)
+      .should('exist')
+      .and('have.attr', 'href', `/applications/${app.requestedBy.username}/${app.id}`)
+
+    page.viewAllApplicationsLink()
   })
 })
