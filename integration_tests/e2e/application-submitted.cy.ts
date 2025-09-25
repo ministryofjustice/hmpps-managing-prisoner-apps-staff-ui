@@ -29,14 +29,9 @@ context('Application Submitted Page', () => {
 
   it('should contain correct bullet point links', () => {
     page.bulletPoints().should('exist')
-
-    page
-      .viewApplicationLink()
-      .should('exist')
-      .and('have.text', 'View this application')
-      .and('have.attr', 'href')
-      .and('include', `/applications/`)
-    page.addAnotherApplicationLink().should('exist').and('have.text', 'Add another application')
-    page.dashboardLink().should('exist').and('have.text', 'Return to applications dashboard')
+    page.logAnotherApplicationForSamePrisonerLink().should('contain.text', 'another application for')
+    page.logNewApplicationLink().should('contain.text', 'a new application')
+    page.viewApplicationLink(app).should('exist').and('contain.text', 'this application')
+    page.viewAllApplicationsLink().should('contain.text', 'all applications')
   })
 })

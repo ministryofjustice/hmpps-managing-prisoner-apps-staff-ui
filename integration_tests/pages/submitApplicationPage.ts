@@ -13,9 +13,13 @@ export default class SubmitApplicationPage extends Page {
 
   bulletPoints = () => cy.get('.govuk-list--bullet')
 
-  viewApplicationLink = () => cy.get('a[href^="/applications/"]')
+  logAnotherApplicationForSamePrisonerLink = () =>
+    cy.get('a[href*="/log/application-type?isLoggingForSamePrisoner=true"]')
 
-  addAnotherApplicationLink = () => cy.contains('a', 'Add another application')
+  logNewApplicationLink = () => cy.get('a[href="/log/prisoner-details"]')
 
-  dashboardLink = () => cy.contains('a', 'Return to applications dashboard')
+  viewApplicationLink = (app: { requestedBy: { username: string }; id: string }) =>
+    cy.get(`a[href="/applications/${app.requestedBy.username}/${app.id}"]`)
+
+  viewAllApplicationsLink = () => cy.get(`a[href^="/applications"]`)
 }
