@@ -23,17 +23,24 @@
     </div>
    
     <p class="govuk-body-l">{{ application.assignedGroup.name }} now has this application.</p>
-    <p class="govuk-body">You can now:</p>
     
+    <p class="govuk-body">You can now log:</p>
     <ul class="govuk-list govuk-list--bullet">
       <li>
-        <a href="/applications/{{ application.requestedBy.username }}/{{ application.id }}">View this application</a>
+        <a href="/log/application-type?isLoggingForSamePrisoner=true"> another application for {{ prisonerName }}</a>
       </li>
       <li>
-        <a href="/log/prisoner-details">Add another application</a>
+        <a href="/log/prisoner-details">a new application</a>
+      </li>
+    </ul>
+
+    <p class="govuk-body">Or you can view:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>
+        <a href="/applications/{{ application.requestedBy.username }}/{{ application.id }}">this application</a>
       </li>
       <li>
-        <a href="/">Return to applications dashboard</a>
+        <a href="/applications">all applications</a>
       </li>
     </ul>
   </div>

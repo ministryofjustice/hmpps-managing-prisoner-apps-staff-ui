@@ -33,6 +33,16 @@ export default function applicationTypeRoutes({
   router.get(
     URLS.LOG_APPLICATION_TYPE,
     asyncMiddleware(async (req: Request, res: Response) => {
+      const isLoggingForSamePrisoner = req.query.isLoggingForSamePrisoner === 'true' && req.session.prisonerContext
+
+      if (isLoggingForSamePrisoner) {
+        const { prisonerId, prisonerName } = req.session.prisonerContext
+
+        updateSessionData(req, { prisonerId, prisonerName })
+
+        req.session.isLoggingForSamePrisoner = true
+      }
+
       const { user } = res.locals
       const { applicationData } = req.session
 
@@ -52,6 +62,8 @@ export default function applicationTypeRoutes({
         title: 'Select application type',
         applicationTypes: buildApplicationTypes(appTypes, selectedValue),
         errorMessage: null,
+        isLoggingForSamePrisoner,
+        prisonerName: isLoggingForSamePrisoner ? req.session.applicationData.prisonerName : null,
       })
     }),
   )

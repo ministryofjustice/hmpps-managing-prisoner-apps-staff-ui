@@ -15,6 +15,7 @@ import getApplicationDetails from '../../utils/getAppDetails'
 import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
+import { convertToTitleCase } from '../../utils/utils'
 
 export default function changeApplicationRoutes({
   auditService,
@@ -141,6 +142,17 @@ export default function changeApplicationRoutes({
         user,
       )
 
+      const prisonerContext = prisonerId && {
+        prisonerId,
+        prisonerName: convertToTitleCase(`${application.requestedBy.firstName} ${application.requestedBy.lastName}`),
+      }
+
+      delete req.session.applicationData
+
+      if (prisonerContext) {
+        req.session.prisonerContext = prisonerContext
+      }
+
       return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/change/submit`)
     }),
   )
@@ -160,6 +172,7 @@ export default function changeApplicationRoutes({
         title: applicationType.name,
         application,
         isUpdated: true,
+        prisonerName: convertToTitleCase(`${application.requestedBy.firstName} ${application.requestedBy.lastName}`),
       })
     }),
   )

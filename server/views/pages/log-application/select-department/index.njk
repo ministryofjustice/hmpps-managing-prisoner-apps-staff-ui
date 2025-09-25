@@ -2,6 +2,7 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "../../../components/loggingForSamePrisonerBanner/macro.njk" import loggingForSamePrisonerBanner %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -24,6 +25,8 @@
             errorList: errorSummary
           }) }}
         {% endif %}
+
+        {{ loggingForSamePrisonerBanner(isLoggingForSamePrisoner, prisonerName) }}
         
         <span class="govuk-caption-xl">{{ applicationType }}</span>
         <form method="POST" id="log-department">

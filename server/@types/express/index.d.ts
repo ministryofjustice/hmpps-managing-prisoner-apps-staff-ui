@@ -5,6 +5,11 @@ export declare module 'express-session' {
     returnTo: string
     nowInMinutes: number
     applicationData?: ApplicationData
+    prisonerContext?: {
+      prisonerId: string
+      prisonerName: string
+    }
+    isLoggingForSamePrisoner: boolean
   }
 
   interface ApplicationData {

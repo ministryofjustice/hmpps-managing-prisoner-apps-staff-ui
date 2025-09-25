@@ -32,7 +32,7 @@ export default function departmentRoutes({
     URLS.LOG_DEPARTMENT,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
-      const { applicationData } = req.session
+      const { applicationData, isLoggingForSamePrisoner } = req.session
 
       if (!applicationData?.type) {
         return res.redirect(URLS.LOG_APPLICATION_TYPE)
@@ -55,6 +55,8 @@ export default function departmentRoutes({
         errorMessage: null,
         applicationType: applicationData.type.name,
         departmentOptions: buildDepartmentOptions(departments, selectedDepartment),
+        isLoggingForSamePrisoner,
+        prisonerName: isLoggingForSamePrisoner ? req.session.applicationData.prisonerName : null,
       })
     }),
   )
