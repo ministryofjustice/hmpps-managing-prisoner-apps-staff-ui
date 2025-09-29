@@ -1,8 +1,8 @@
-import { AddNewLegalPinPhoneContactDetails } from 'express-session'
+import { AddNewOfficialPinPhoneContactDetails } from 'express-session'
 import { validateAndAssignError } from './validateTelephoneNumber'
 
 // eslint-disable-next-line import/prefer-default-export
-export const validateAddNewLegalContact = (form: AddNewLegalPinPhoneContactDetails) => {
+export const validateAddNewOfficialContact = (form: AddNewOfficialPinPhoneContactDetails) => {
   const errors: Record<string, { text: string }> = {}
 
   if (!form.firstName || form.firstName.trim() === '') {
