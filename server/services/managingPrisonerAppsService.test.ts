@@ -132,7 +132,7 @@ describe('ManagingPrisonerAppsService', () => {
 
   describe('changeApp', () => {
     it('should change the form data for an application', async () => {
-      const payload = [{ id: 'abc-123', key: 'value' }]
+      const payload = { firstNightCenter: true, formData: [{ id: 'abc-123', key: 'value' }] }
       const result = await service.changeApp('prisoner-id', 'application-id', payload, user)
 
       expect(result).toBeUndefined()

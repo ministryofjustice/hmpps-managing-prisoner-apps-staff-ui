@@ -16,6 +16,7 @@ import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
 import { convertToTitleCase } from '../../utils/utils'
+import formatEarlyDaysCentre from '../../utils/formatEarlyDaysCentre'
 
 export default function changeApplicationRoutes({
   auditService,
@@ -44,7 +45,13 @@ export default function changeApplicationRoutes({
 
       const additionalData = applicationData?.additionalData || {}
       const formData = getAppTypeLogDetailsData(applicationType, additionalData)
-      const templateData = await getApplicationDetails(formData, personalRelationshipsService, application)
+      const earlyDaysCentreValue = formatEarlyDaysCentre(applicationData?.earlyDaysCentre, application.firstNightCenter)
+      const templateData = await getApplicationDetails(
+        formData,
+        personalRelationshipsService,
+        application,
+        earlyDaysCentreValue,
+      )
 
       return res.render(PATHS.APPLICATIONS.CHANGE_DETAILS, {
         application,
@@ -72,7 +79,12 @@ export default function changeApplicationRoutes({
         getTemplateData: async () => {
           const additionalData = applicationData?.additionalData || {}
           const formData = getAppTypeLogDetailsData(applicationType, additionalData)
-          const templateData = await getApplicationDetails(formData, personalRelationshipsService, application)
+          const templateData = await getApplicationDetails(
+            formData,
+            personalRelationshipsService,
+            application,
+            applicationData?.earlyDaysCentre,
+          )
           return {
             application,
             applicationType,
@@ -105,7 +117,7 @@ export default function changeApplicationRoutes({
         application,
         applicationData: {
           prisoner: `${application.requestedBy.firstName} ${application.requestedBy.lastName}`,
-          earlyDaysCentre: application.firstNightCenter ? 'Yes' : 'No',
+          earlyDaysCentre: formatEarlyDaysCentre(applicationData?.earlyDaysCentre, application.firstNightCenter, true),
           request: applicationData.additionalData,
           type: applicationType,
           department: application.assignedGroup.name,
@@ -130,17 +142,12 @@ export default function changeApplicationRoutes({
         return res.redirect(URLS.APPLICATIONS)
       }
 
-      await managingPrisonerAppsService.changeApp(
-        prisonerId,
-        applicationId,
-        [
-          {
-            ...(applicationData.additionalData as Record<string, unknown>),
-            id: application.requests[0].id,
-          },
-        ],
-        user,
-      )
+      const payload = {
+        firstNightCenter: applicationData?.earlyDaysCentre === 'yes',
+        formData: [{ ...(applicationData?.additionalData as Record<string, unknown>), id: application.requests[0].id }],
+      }
+
+      await managingPrisonerAppsService.changeApp(prisonerId, applicationId, payload, user)
 
       const prisonerContext = prisonerId && {
         prisonerId,

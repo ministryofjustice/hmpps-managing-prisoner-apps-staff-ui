@@ -173,7 +173,10 @@ export default class ManagingPrisonerAppsApiClient {
   async changeApp(
     prisonerId: string,
     appId: string,
-    payload: Array<Record<string, unknown> & { id: string }>,
+    payload: {
+      firstNightCenter: boolean
+      formData: Array<Record<string, unknown> & { id: string }>
+    },
   ): Promise<Response> {
     try {
       return await this.restClient.put({
