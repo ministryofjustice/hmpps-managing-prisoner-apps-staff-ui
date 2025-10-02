@@ -95,7 +95,8 @@ describe('ManagingPrisonerAppsApiClient', () => {
   })
 
   it('should update the form data for an application', async () => {
-    const payload = [{ id: 'abc-123', key: 'value' }]
+    const formData = [{ id: 'abc-123', key: 'value' }]
+    const payload = { firstNightCenter: true, formData }
 
     fakeManagingPrisonerAppApi
       .put('/v1/prisoners/prisoner-id/apps/app-id')
