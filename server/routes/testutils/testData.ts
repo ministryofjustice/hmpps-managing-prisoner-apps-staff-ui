@@ -260,9 +260,9 @@ export default class TestData {
       name: applicationTypeLabels.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT,
     },
     {
-      key: 'PIN_PHONE_ADD_NEW_LEGAL_CONTACT',
-      value: APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_LEGAL_CONTACT,
-      name: applicationTypeLabels.PIN_PHONE_ADD_NEW_LEGAL_CONTACT,
+      key: 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT',
+      value: APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT,
+      name: applicationTypeLabels.PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT,
     },
     {
       key: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',

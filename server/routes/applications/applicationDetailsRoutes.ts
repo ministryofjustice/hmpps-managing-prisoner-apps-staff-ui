@@ -80,7 +80,7 @@ export default function applicationDetailsRoutes({
         getAppType: () => applicationType,
         getTemplateData: async () => {
           const groupCode =
-            applicationType.key === 'PIN_PHONE_ADD_NEW_LEGAL_CONTACT'
+            applicationType.key === 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT'
               ? PERSONAL_RELATIONSHIPS_GROUP_CODES.OFFICIAL_RELATIONSHIP
               : PERSONAL_RELATIONSHIPS_GROUP_CODES.SOCIAL_RELATIONSHIP
 

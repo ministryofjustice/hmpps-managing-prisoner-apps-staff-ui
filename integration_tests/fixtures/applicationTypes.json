@@ -13,9 +13,9 @@
       "key": "PIN_PHONE_ADD_NEW_SOCIAL_CONTACT"
     },
     {
-      "name": "Add new legal PIN phone contact",
-      "value": "add-legal-pin-phone-contact",
-      "key": "PIN_PHONE_ADD_NEW_LEGAL_CONTACT"
+      "name": "Add new official PIN phone contact",
+      "value": "add-official-pin-phone-contact",
+      "key": "PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT"
     },
     {
       "name": "Swap visiting orders (VOs) for PIN credit",

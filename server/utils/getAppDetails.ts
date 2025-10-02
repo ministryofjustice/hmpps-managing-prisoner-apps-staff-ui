@@ -7,7 +7,7 @@ import { AppTypeData } from './getAppTypeLogDetails'
 import getFormattedRelationshipDropdown from './getFormattedRelationshipDropdown'
 
 type AddNewSocialContactRequest = Partial<Extract<AppTypeData, { type: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT' }>>
-type AddNewLegalContactRequest = Partial<Extract<AppTypeData, { type: 'PIN_PHONE_ADD_NEW_LEGAL_CONTACT' }>>
+type AddNewOfficialContactRequest = Partial<Extract<AppTypeData, { type: 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT' }>>
 type RemoveContactRequest = Partial<Extract<AppTypeData, { type: 'PIN_PHONE_REMOVE_CONTACT' }>>
 
 export default async function getApplicationDetails(
@@ -58,10 +58,10 @@ export default async function getApplicationDetails(
       return handleAddNewSocialContact(prefilledDetails, earlyDaysCentre, personalRelationshipsService)
     }
 
-    case 'PIN_PHONE_ADD_NEW_LEGAL_CONTACT': {
-      const request = (application?.requests?.[0] as AddNewLegalContactRequest) ?? {}
+    case 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT': {
+      const request = (application?.requests?.[0] as AddNewOfficialContactRequest) ?? {}
 
-      const prefilledDetails: AddNewLegalContactRequest = {
+      const prefilledDetails: AddNewOfficialContactRequest = {
         firstName: getFallbackValue('firstName', applicationDetails, request, ''),
         lastName: getFallbackValue('lastName', applicationDetails, request, ''),
         company: getFallbackValue('company', applicationDetails, request, ''),
@@ -70,7 +70,7 @@ export default async function getApplicationDetails(
         telephone2: getFallbackValue('telephone2', applicationDetails, request, ''),
       }
 
-      return handleAddNewLegalContact(prefilledDetails, personalRelationshipsService)
+      return handleAddNewOfficialContact(prefilledDetails, personalRelationshipsService)
     }
 
     case 'PIN_PHONE_REMOVE_CONTACT': {
@@ -153,8 +153,8 @@ async function handleAddNewSocialContact(
   }
 }
 
-async function handleAddNewLegalContact(
-  details: AddNewLegalContactRequest,
+async function handleAddNewOfficialContact(
+  details: AddNewOfficialContactRequest,
   personalRelationshipsService: PersonalRelationshipsService,
 ): Promise<Record<string, unknown>> {
   const { firstName, lastName, company, relationship, telephone1, telephone2 } = details

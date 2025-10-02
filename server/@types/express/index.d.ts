@@ -36,7 +36,7 @@ export declare module 'express-session' {
     | AddEmergencyPinPhoneCreditDetails
     | SupplyListOfPinPhoneContactsDetails
     | AddNewSocialPinPhoneContactDetails
-    | AddNewLegalPinPhoneContactDetails
+    | AddNewOfficialPinPhoneContactDetails
     | RemovePinPhoneContactDetails
 
   interface SwapVOsForPinCreditDetails {
@@ -73,7 +73,7 @@ export declare module 'express-session' {
     telephone2?: string
   }
 
-  interface AddNewLegalPinPhoneContactDetails {
+  interface AddNewOfficialPinPhoneContactDetails {
     firstName: string
     lastName: string
     company: string
