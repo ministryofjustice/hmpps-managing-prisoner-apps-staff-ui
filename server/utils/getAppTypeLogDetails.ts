@@ -1,10 +1,11 @@
 import {
   AddEmergencyPinPhoneCreditDetails,
-  SwapVOsForPinCreditDetails,
-  SupplyListOfPinPhoneContactsDetails,
+  AddNewOfficialPinPhoneContactDetails,
   AddNewSocialPinPhoneContactDetails,
-  RemovePinPhoneContactDetails,
   ApplicationType,
+  RemovePinPhoneContactDetails,
+  SupplyListOfPinPhoneContactsDetails,
+  SwapVOsForPinCreditDetails,
 } from 'express-session'
 
 export type SwapVOsAppType = {
@@ -40,8 +41,8 @@ export type AddNewSocialContactAppType = {
   telephone2?: string
 }
 
-export type AddNewLegalContactAppType = {
-  type: 'PIN_PHONE_ADD_NEW_LEGAL_CONTACT'
+export type AddNewOfficialContactAppType = {
+  type: 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT'
   firstName: string
   lastName: string
   company: string
@@ -64,12 +65,12 @@ export type AppTypeData =
   | EmergencyCreditAppType
   | SupplyListOfContactsAppType
   | AddNewSocialContactAppType
-  | AddNewLegalContactAppType
+  | AddNewOfficialContactAppType
   | RemoveContactAppType
 
 export function getAppTypeLogDetailsData(applicationType: ApplicationType, additionalData: unknown): AppTypeData {
   switch (applicationType.key) {
-    case 'PIN_PHONE_ADD_NEW_LEGAL_CONTACT': {
+    case 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT': {
       const {
         firstName = '',
         lastName = '',
@@ -77,10 +78,10 @@ export function getAppTypeLogDetailsData(applicationType: ApplicationType, addit
         relationship = '',
         telephone1 = '',
         telephone2 = '',
-      } = additionalData as AddNewLegalContactAppType
+      } = additionalData as AddNewOfficialPinPhoneContactDetails
 
       return {
-        type: 'PIN_PHONE_ADD_NEW_LEGAL_CONTACT',
+        type: 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT',
         firstName,
         lastName,
         company,

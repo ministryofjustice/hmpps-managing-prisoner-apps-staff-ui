@@ -1,19 +1,19 @@
 import { Request, Response } from 'express'
 import {
-  ApplicationType,
+  AddNewOfficialPinPhoneContactDetails,
   AddNewSocialPinPhoneContactDetails,
-  AddNewLegalPinPhoneContactDetails,
+  ApplicationType,
   RemovePinPhoneContactDetails,
 } from 'express-session'
 
 import { APPLICATION_TYPE_VALUES } from '../constants/applicationTypes'
 import { validateAmountField } from '../routes/validate/validateAmountField'
-import { validateTextField } from '../routes/validate/validateTextField'
+import { validateAddNewOfficialContact } from '../routes/validate/validateNewOfficialContact'
 import { validateAddNewSocialContact } from '../routes/validate/validateNewSocialPinPhoneContact'
-import { updateSessionData } from './session'
-import { getCountryNameByCode } from './formatCountryList'
-import { validateAddNewLegalContact } from '../routes/validate/validateNewLegalContact'
 import { validateRemovePinPhoneContact } from '../routes/validate/validateRemovePinPhoneContact'
+import { validateTextField } from '../routes/validate/validateTextField'
+import { getCountryNameByCode } from './formatCountryList'
+import { updateSessionData } from './session'
 
 type ContextOptions = {
   getAppType: (req: Request, res: Response) => ApplicationType
@@ -163,10 +163,10 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
       break
     }
 
-    case APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_LEGAL_CONTACT: {
-      const formData: AddNewLegalPinPhoneContactDetails = req.body
+    case APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT: {
+      const formData: AddNewOfficialPinPhoneContactDetails = req.body
 
-      const formErrors = validateAddNewLegalContact(formData)
+      const formErrors = validateAddNewOfficialContact(formData)
 
       const formFields = ['firstName', 'lastName', 'company', 'relationship', 'telephone1', 'telephone2'] as const
 
