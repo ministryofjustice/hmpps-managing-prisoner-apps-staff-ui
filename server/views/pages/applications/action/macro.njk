@@ -60,11 +60,11 @@
   </div>
 {% endmacro %}
 
-{% macro renderPrintView(application, response, applicationType, todayDate, appLoggedDate) %}
+{% macro renderPrintView(application, response, applicationType, todayDate, appLoggedDate, prisonerName) %}
   <div class="govuk-!-display-none govuk-!-display-block-print">
     <img src="/assets/images/hmpps_logo_with_text.svg" alt="HM Prison & Probation Service" width="200px" class="govuk-!-margin-bottom-7">
 
-    <p class="govuk-body govuk-!-margin-bottom-0">{{ application.requestedBy.lastName }}, {{ application.requestedBy.firstName }}</p>
+    <p class="govuk-body govuk-!-margin-bottom-0">{{ prisonerName }}</p>
     <p class="govuk-body govuk-!-margin-bottom-0">{{ response.cellLocation }}</p>
     <p class="govuk-body">{{ application.assignedGroup.establishment.name }}</p>
     <p class="govuk-body">{{ todayDate }}</p>

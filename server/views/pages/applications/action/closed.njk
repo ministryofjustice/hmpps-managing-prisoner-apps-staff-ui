@@ -2,7 +2,7 @@
 {% import "./macro.njk" as closedAction %}
 
 {{ closedAction.renderWebView(response) }}
-{{ closedAction.renderPrintView(application, response, applicationType, todayDate, appLoggedDate) }}
+{{ closedAction.renderPrintView(application, response, applicationType, todayDate, appLoggedDate, prisonerName) }}
 
 <div class="govuk-!-display-none-print">
   {{ govukButton({
