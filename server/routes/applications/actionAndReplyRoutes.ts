@@ -73,6 +73,8 @@ export default function actionAndReplyRoutes({
         applicationType,
         isAppPending,
         response: formattedResponse,
+        appLoggedDate: format(new Date(application.createdDate), 'd MMMM yyyy'),
+        todayDate: format(new Date(), 'd MMMM yyyy'),
       })
     }),
   )

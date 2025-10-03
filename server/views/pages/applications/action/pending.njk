@@ -1,5 +1,5 @@
 <h2 class="govuk-heading-m">Action this application</h2>
-<p class="govuk-body">This action and its reason will be seen by the prisoner.</p>
+<p class="govuk-body">This action and its reason might be seen by the prisoner.</p>
     
 <form method="POST" id="action-and-reply-form">
   <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
@@ -61,7 +61,7 @@
   {{ govukCharacterCount(characterCountConfig) }}
 
   {{ govukButton({
-    text: "Reply",
+    text: "Save",
     classes: "govuk-button--primary"
   }) }}
 </form>

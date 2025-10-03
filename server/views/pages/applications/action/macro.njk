@@ -1,0 +1,79 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% macro renderSummaryList(application, response, applicationType, appLoggedDate) %}
+  <dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Application type</dt>
+      <dd class="govuk-summary-list__value">{{ applicationType.name }}</dd>
+    </div>
+
+    {% if applicationType.key in [
+      "PIN_PHONE_ADD_NEW_SOCIAL_CONTACT",
+      "PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT",
+      "PIN_PHONE_REMOVE_CONTACT"
+    ] %}
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Contact</dt>
+      <dd class="govuk-summary-list__value">{{ application.requests[0].firstName }} {{ application.requests[0].lastName }}</dd>
+    </div>
+    {% endif %}
+
+    {% if applicationType.key === "PIN_PHONE_EMERGENCY_CREDIT_TOP_UP" %}
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Amount</dt>
+      <dd class="govuk-summary-list__value">£{{ application.requests[0].amount }}</dd>
+    </div>
+    {% endif %}
+
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Date</dt>
+      <dd class="govuk-summary-list__value">{{ appLoggedDate }}</dd>
+    </div>
+
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Action</dt>
+      <dd class="govuk-summary-list__value">{{ response.decision }}</dd>
+    </div>
+
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Reason</dt>
+      <dd class="govuk-summary-list__value">{{ response.reason }}</dd>
+    </div>
+  </dl>
+{% endmacro %}
+
+{% macro renderWebView(response) %}
+  <div class="govuk-body govuk-width-container govuk-!-display-none-print">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-heading-m">This application is now closed</h2>
+        {{ govukSummaryList({
+          rows: [
+            { key: { text: "Action" }, value: { text: response.decision } },
+            { key: { text: "Reason" }, value: { text: response.reason } },
+            { key: { text: "Date" }, value: { text: response.actionedDate } },
+            { key: { text: "Location" }, value: { text: response.cellLocation } }
+          ]
+        }) }}
+      </div>
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro renderPrintView(application, response, applicationType, todayDate, appLoggedDate) %}
+  <div class="govuk-!-display-none govuk-!-display-block-print">
+    <img src="/assets/images/hmpps_logo_with_text.svg" alt="HM Prison & Probation Service" width="200px" class="govuk-!-margin-bottom-7">
+
+    <p class="govuk-body govuk-!-margin-bottom-0">{{ application.requestedBy.lastName }}, {{ application.requestedBy.firstName }}</p>
+    <p class="govuk-body govuk-!-margin-bottom-0">{{ response.cellLocation }}</p>
+    <p class="govuk-body">{{ application.assignedGroup.establishment.name }}</p>
+    <p class="govuk-body">{{ todayDate }}</p>
+
+    <h1 class="govuk-heading-m">Your application has been {{ response.decision | lower }}.</h1>
+
+    {{ renderSummaryList(application, response, applicationType, appLoggedDate) }}
+
+    <p class="govuk-body govuk-!-margin-bottom-0">{{ application.assignedGroup.name }}</p>
+    <p class="govuk-body govuk-!-margin-bottom-0">{{ application.assignedGroup.establishment.name }}</p>
+  </div>
+{% endmacro %}

@@ -1,17 +1,15 @@
-{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% import "./macro.njk" as closedAction %}
 
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    <h2 class="govuk-heading-m">Action this application</h2>
+{{ closedAction.renderWebView(response) }}
+{{ closedAction.renderPrintView(application, response, applicationType, todayDate, appLoggedDate) }}
 
-    {{ govukSummaryList({
-      rows: [
-        { key: { text: "Action" }, value: { text: response.decision } },
-        { key: { text: "Reason" }, value: { text: response.reason } },
-        { key: { text: "Date" }, value: { text: response.actionedDate } },
-        { key: { text: "Location" }, value: { text: response.cellLocation } }
-      ]
-    }) }}
-  </div>
+<div class="govuk-!-display-none-print">
+  {{ govukButton({
+    text: "Print reply",
+    type: "button",
+    attributes: {
+      id: "print-button"
+    }
+  }) }}
 </div>
