@@ -56,7 +56,7 @@ context('Action and Reply Page', () => {
           } else {
             cy.get('.govuk-radios').should('exist')
             cy.get('#action-and-reply-reason').should('exist')
-            cy.get('button.govuk-button--primary').should('exist').and('contain.text', 'Reply')
+            cy.get('button.govuk-button--primary').should('exist').and('contain.text', 'Save')
           }
         })
       })
