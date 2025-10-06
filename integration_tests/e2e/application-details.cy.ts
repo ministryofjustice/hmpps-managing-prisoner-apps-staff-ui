@@ -160,3 +160,29 @@ context(`Application Details Page - Add new social PIN contact`, () => {
     cy.get('#relationship').should('be.visible')
   })
 })
+
+context(`Application Details Page - Add new official PIN phone contact`, () => {
+  let page: ApplicationDetailsPage
+
+  beforeEach(() => {
+    page = startApplication('Add new official PIN phone contact')
+  })
+
+  it('should render the correct app type title', () => {
+    page.appTypeTitle().should('have.text', 'Add new official PIN phone contact')
+  })
+
+  it('should display Organisation input as optional', () => {
+    cy.get('label[for="organisation"]').should('contain.text', 'Organisation (optional)')
+    cy.get('#organisation').should('exist')
+  })
+
+  it('should not show an error when Organisation field is left empty', () => {
+    cy.get('#firstName').type('John')
+    cy.get('#lastName').type('Doe')
+    cy.get('#telephone1').type('07700900000')
+    cy.get('#organisation').should('have.value', '')
+    page.continueButton().click()
+    cy.get('.govuk-error-message').should('not.contain', 'organisation')
+  })
+})
