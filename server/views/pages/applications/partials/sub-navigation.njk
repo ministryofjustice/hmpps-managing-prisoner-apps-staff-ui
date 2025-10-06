@@ -1,5 +1,6 @@
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 
+<div class="govuk-!-display-none-print">
 {{ mojSubNavigation({
   label: 'Sub navigation',
   items: [{
@@ -20,3 +21,4 @@
     active: activeTab == 'history'
   }]
 }) }}
+</div>

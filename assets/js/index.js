@@ -77,3 +77,13 @@ document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
 
   findPrisonerButton.addEventListener('click', handlePrisonerLookup)
 })
+
+document.addEventListener('DOMContentLoaded', () => {
+  const printButton = document.querySelector('#print-button')
+  if (printButton) {
+    printButton.addEventListener('click', event => {
+      event.preventDefault()
+      window.print()
+    })
+  }
+})

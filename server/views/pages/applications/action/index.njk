@@ -10,7 +10,7 @@
 {% set mainClasses = "app-container govuk-body applications-landing-page" %}
 
 {% block beforeContent %}
-  <div class="govuk-body govuk-width-container">
+  <div class="govuk-body govuk-width-container govuk-!-display-none-print">
     {{ govukBreadcrumbs({
       items: [
         {
@@ -51,9 +51,9 @@
           }) }}
         {% endif %}
 
-        <span class="govuk-caption-xl">{{ applicationType.name }}</span>
+        <span class="govuk-caption-xl govuk-!-display-none-print">{{ applicationType.name }}</span>
 
-        <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
+        <h1 class="govuk-heading-xl govuk-!-margin-top-0 govuk-!-display-none-print">{{ title }}</h1>
 
         {% set activeTab = 'reply' %}
         {% include "../partials/sub-navigation.njk" %}
