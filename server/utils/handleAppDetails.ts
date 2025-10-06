@@ -168,7 +168,7 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
 
       const formErrors = validateAddNewOfficialContact(formData)
 
-      const formFields = ['firstName', 'lastName', 'company', 'relationship', 'telephone1', 'telephone2'] as const
+      const formFields = ['firstName', 'lastName', 'organisation', 'relationship', 'telephone1', 'telephone2'] as const
 
       if (Object.keys(formErrors).length === 0) {
         for (const field of formFields) {

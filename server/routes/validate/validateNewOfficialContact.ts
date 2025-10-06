@@ -13,10 +13,6 @@ export const validateAddNewOfficialContact = (form: AddNewOfficialPinPhoneContac
     errors.lastName = { text: 'Enter the contact’s last name' }
   }
 
-  if (!form.company || form.company.trim() === '') {
-    errors.company = { text: 'Enter the contact’s company' }
-  }
-
   if (!form.relationship || form.relationship === '') {
     errors.relationship = { text: 'Select a relationship' }
   }
