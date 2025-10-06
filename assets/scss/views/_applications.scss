@@ -76,3 +76,26 @@
 .stacktrace {
   overflow: auto;
 }
+
+@media print {
+  html, body {
+    width: 100%; 
+    margin: 0; 
+    padding: 0;
+  }
+  .govuk-width-container {
+    max-width: none !important;
+    width: auto !important;
+    padding: 0 !important;
+  }
+  .govuk-grid-row, .govuk-grid-column-one-half, .govuk-grid-column-two-thirds {
+    display: block !important;
+    width: 100% !important;
+  }
+  .govuk-\!-display-none {
+    display: none !important;
+  }
+  .govuk-\!-display-block-print {
+    display: block !important;
+  }
+}

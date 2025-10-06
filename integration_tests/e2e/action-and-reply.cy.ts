@@ -56,8 +56,20 @@ context('Action and Reply Page', () => {
           } else {
             cy.get('.govuk-radios').should('exist')
             cy.get('#action-and-reply-reason').should('exist')
-            cy.get('button.govuk-button--primary').should('exist').and('contain.text', 'Reply')
+            cy.get('button.govuk-button--primary').should('exist').and('contain.text', 'Save')
           }
+        })
+
+        it('should trigger window print when Print reply button is clicked', function printTest() {
+          if (!isClosed) {
+            this.skip()
+          }
+          cy.contains('button', 'Print reply').should('exist')
+          cy.window().then(win => {
+            cy.stub(win, 'print').as('printStub')
+          })
+          cy.get('#print-button').click()
+          cy.get('@printStub').should('have.been.calledOnce')
         })
       })
     })
