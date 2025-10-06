@@ -28,10 +28,6 @@
       {% set errorList = errorList.concat([{ text: errors.lastName.text, href: "#lastName" }]) %}
     {% endif %}
 
-    {% if errors.company %}
-      {% set errorList = errorList.concat([{ text: errors.company.text, href: "#company" }]) %}
-    {% endif %}
-
     {% if errors.dateOfBirthOrAge %}
       {% set errorList = errorList.concat([{ text: errors.dateOfBirthOrAge.text, href: "#dateOfBirthOrAge" }]) %}
     {% endif %}

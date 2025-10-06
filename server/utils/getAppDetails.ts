@@ -64,7 +64,7 @@ export default async function getApplicationDetails(
       const prefilledDetails: AddNewOfficialContactRequest = {
         firstName: getFallbackValue('firstName', applicationDetails, request, ''),
         lastName: getFallbackValue('lastName', applicationDetails, request, ''),
-        company: getFallbackValue('company', applicationDetails, request, ''),
+        organisation: getFallbackValue('organisation', applicationDetails, request, ''),
         relationship: getFallbackValue('relationship', applicationDetails, request, ''),
         telephone1: getFallbackValue('telephone1', applicationDetails, request, ''),
         telephone2: getFallbackValue('telephone2', applicationDetails, request, ''),
@@ -157,12 +157,12 @@ async function handleAddNewOfficialContact(
   details: AddNewOfficialContactRequest,
   personalRelationshipsService: PersonalRelationshipsService,
 ): Promise<Record<string, unknown>> {
-  const { firstName, lastName, company, relationship, telephone1, telephone2 } = details
+  const { firstName, lastName, organisation, relationship, telephone1, telephone2 } = details
 
   return {
     firstName,
     lastName,
-    company,
+    organisation,
     relationship,
     telephone1,
     telephone2,
