@@ -76,7 +76,7 @@ export declare module 'express-session' {
   interface AddNewOfficialPinPhoneContactDetails {
     firstName: string
     lastName: string
-    organisation: string
+    organisation?: string
     relationship: string
     telephone1: string
     telephone2?: string

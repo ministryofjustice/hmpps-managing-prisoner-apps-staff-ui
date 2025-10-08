@@ -45,7 +45,7 @@ export type AddNewOfficialContactAppType = {
   type: 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT'
   firstName: string
   lastName: string
-  organisation: string
+  organisation?: string
   relationship: string
   telephone1: string
   telephone2?: string
@@ -74,17 +74,18 @@ export function getAppTypeLogDetailsData(applicationType: ApplicationType, addit
       const {
         firstName = '',
         lastName = '',
-        organisation = '',
+        organisation,
+        company,
         relationship = '',
         telephone1 = '',
         telephone2 = '',
-      } = additionalData as AddNewOfficialPinPhoneContactDetails
+      } = additionalData as AddNewOfficialPinPhoneContactDetails & { company?: string }
 
       return {
         type: 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT',
         firstName,
         lastName,
-        organisation,
+        organisation: organisation || company || '',
         relationship,
         telephone1,
         telephone2,

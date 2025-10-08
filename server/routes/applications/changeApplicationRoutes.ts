@@ -1,4 +1,5 @@
 import { Request, Response, Router } from 'express'
+import { AddNewOfficialPinPhoneContactDetails } from 'express-session'
 
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
@@ -144,7 +145,14 @@ export default function changeApplicationRoutes({
 
       const payload = {
         firstNightCenter: applicationData?.earlyDaysCentre === 'yes',
-        formData: [{ ...(applicationData?.additionalData as Record<string, unknown>), id: application.requests[0].id }],
+        formData: [
+          {
+            ...(applicationData?.additionalData as Record<string, unknown>),
+            company:
+              (applicationData?.additionalData as Partial<AddNewOfficialPinPhoneContactDetails>).organisation || '',
+            id: application.requests[0].id,
+          },
+        ],
       }
 
       await managingPrisonerAppsService.changeApp(prisonerId, applicationId, payload, user)

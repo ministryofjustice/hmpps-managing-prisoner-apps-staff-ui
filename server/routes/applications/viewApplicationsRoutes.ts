@@ -201,6 +201,10 @@ export default function viewApplicationRoutes({
         },
         isClosed: application.status !== APPLICATION_STATUS.PENDING,
         dpsPrisonerUrl: config.dpsPrisoner,
+        organisation:
+          (application?.requests?.[0] as Partial<{ organisation?: string; company?: string }>)?.organisation?.trim() ||
+          (application?.requests?.[0] as Partial<{ organisation?: string; company?: string }>)?.company?.trim() ||
+          '',
       })
     }),
   )

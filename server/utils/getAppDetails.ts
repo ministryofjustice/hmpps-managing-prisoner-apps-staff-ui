@@ -60,11 +60,15 @@ export default async function getApplicationDetails(
 
     case 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT': {
       const request = (application?.requests?.[0] as AddNewOfficialContactRequest) ?? {}
+      const requestWithCompany = request as AddNewOfficialContactRequest & { company?: string }
+      const applicationDetailsWithCompany = applicationDetails as AddNewOfficialContactRequest & { company?: string }
 
       const prefilledDetails: AddNewOfficialContactRequest = {
         firstName: getFallbackValue('firstName', applicationDetails, request, ''),
         lastName: getFallbackValue('lastName', applicationDetails, request, ''),
-        organisation: getFallbackValue('organisation', applicationDetails, request, ''),
+        organisation:
+          getFallbackValue('organisation', applicationDetailsWithCompany, requestWithCompany, '') ||
+          getFallbackValue('company', applicationDetailsWithCompany, requestWithCompany, ''),
         relationship: getFallbackValue('relationship', applicationDetails, request, ''),
         telephone1: getFallbackValue('telephone1', applicationDetails, request, ''),
         telephone2: getFallbackValue('telephone2', applicationDetails, request, ''),
