@@ -186,3 +186,15 @@ context(`Application Details Page - Add new official PIN phone contact`, () => {
     cy.get('.govuk-error-message').should('not.contain', 'organisation')
   })
 })
+
+context('Change Application Page - Legacy company field', () => {
+  beforeEach(() => {
+    startApplication('Add new official PIN phone contact')
+    cy.task('stubOfficialAppTypeWithCompanyField')
+    cy.visit('/applications/A1234AA/official-app-id/change')
+  })
+
+  it('should pre-fill Organisation field using legacy company value', () => {
+    cy.get('#organisation').should('have.value', 'Legacy Company Ltd')
+  })
+})
