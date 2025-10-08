@@ -107,4 +107,33 @@ export default {
       },
     })
   },
+  stubOfficialAppTypeWithCompanyField: (): SuperAgentRequest => {
+    const officialApp = {
+      id: 'official-app-id',
+      requestedBy: { username: 'A1234AA' },
+      appType: 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT',
+      requests: [
+        {
+          id: 'req-official-001',
+          firstName: 'John',
+          lastName: 'Doe',
+          company: 'Legacy Company Ltd',
+          telephone1: '07700900000',
+          telephone2: '',
+          relationship: 'Solicitor',
+        },
+      ],
+    }
+    return stubFor({
+      request: {
+        method: 'GET',
+        url: `/managingPrisonerApps/v1/prisoners/${officialApp.requestedBy.username}/apps/${officialApp.id}?requestedBy=true&assignedGroup=true`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: officialApp,
+      },
+    })
+  },
 }
