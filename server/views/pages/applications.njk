@@ -3,8 +3,22 @@
 
 {% extends "../partials/layout.njk" %}
 
+
 {% set pageTitle = applicationName + " - Applications" %}
 {% set mainClasses = "app-container govuk-body applications-landing-page" %}
+
+{% block head %}
+  {{ super() }}
+<!-- Google tag (gtag.js)  -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ ga4SiteId }}"></script>
+<script {% if cspNonce %} nonce="{{ cspNonce }}"{% endif %}>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', '{{ ga4SiteId }}');
+</script>
+{% endblock %}
 
 {% block beforeContent %}
   <div class="govuk-body applications-landing-page__banner govuk-!-margin-bottom-0 govuk-!-padding-top-5 govuk-!-padding-bottom-5">

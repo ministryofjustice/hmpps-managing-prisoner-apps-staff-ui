@@ -146,4 +146,7 @@ export default {
   },
   ingressUrl: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   environmentName: get('ENVIRONMENT_NAME', ''),
+  analytics: {
+    ga4SiteId: get('GA4_SITE_ID', 'G-HE5P4PEE48', requiredInProduction),
+  },
 }
