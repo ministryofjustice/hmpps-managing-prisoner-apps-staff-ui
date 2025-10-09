@@ -83,6 +83,10 @@
     margin: 0; 
     padding: 0;
   }
+  .govuk-summary-list__key,
+  .govuk-summary-list__value {
+    font-size: 16px !important; 
+  }
   .govuk-width-container {
     max-width: none !important;
     width: auto !important;
