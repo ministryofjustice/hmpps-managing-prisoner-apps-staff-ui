@@ -38,6 +38,7 @@ export default function nunjucksSetup(app: express.Express): void {
     },
   )
 
+  njkEnv.addGlobal('ga4SiteId', config.analytics.ga4SiteId)
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addFilter('assetMap', (url: string) => assetManifest[url] || url)
 

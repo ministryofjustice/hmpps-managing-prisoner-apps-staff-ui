@@ -20,6 +20,7 @@ generic-service:
     PERSONAL_RELATIONSHIPS_API_URL: 'https://personal-relationships-api-dev.hmpps.service.justice.gov.uk'
     ENVIRONMENT_NAME: DEV
     AUDIT_ENABLED: 'true'
+    GA4_SITE_ID: 'G-HE5P4PEE48'
 
 generic-prometheus-alerts:
   alertSeverity: hmpps-managing-prisoner-apps-nonprod
