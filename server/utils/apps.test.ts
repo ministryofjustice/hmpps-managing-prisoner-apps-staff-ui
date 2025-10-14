@@ -39,7 +39,7 @@ describe('formatAppsToRows', () => {
 
     expect(result).toEqual([
       [
-        { text: '24 March 2025', attributes: { 'data-sort-value': '1742824993000' } },
+        { text: '24 March 2025', attributes: { 'data-sort-value': '1742824993000' }, classes: 'govuk-!-text-nowrap' },
         { text: 'Add new official PIN phone contact' },
         { html: 'Doe, John<br/><span class="govuk-table__subtext govuk-body-s">A12345</span>' },
         { text: 'Business Hub' },
