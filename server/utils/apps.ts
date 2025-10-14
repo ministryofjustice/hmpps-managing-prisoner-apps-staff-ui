@@ -29,7 +29,7 @@ export const formatAppsToRows = async (
         status === APPLICATION_STATUS.PENDING ? null : status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
 
       const row = [
-        { text: formattedDate, attributes: { 'data-sort-value': sortValue } },
+        { text: formattedDate, attributes: { 'data-sort-value': sortValue }, classes: 'govuk-!-text-nowrap' },
         { text: type?.name },
         {
           html: `${prisonerName}<br/><span class="govuk-table__subtext govuk-body-s">${requestedBy}</span>`,
