@@ -32,32 +32,32 @@
 
 {% block content %}
   <div class="govuk-body govuk-width-container">
+    {% if errors %}
+      {% set errorList = [] %}
+
+      {% if errors.selectAction %}
+        {% set errorList = errorList.concat([{ text: errors.selectAction.text, href: "#selectAction" }]) %}
+      {% endif %}
+
+      {% if errors.actionReplyReason %}
+        {% set errorList = errorList.concat([{ text: errors.actionReplyReason.text, href: "#actionReplyReason" }]) %}
+      {% endif %}
+
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: errorList
+      }) }}
+    {% endif %}
+
+    <span class="govuk-caption-xl govuk-!-display-none-print">{{ applicationType.name }}</span>
+
+    <h1 class="govuk-heading-xl govuk-!-margin-top-0 govuk-!-display-none-print">{{ title }}</h1>
+
+    {% set activeTab = 'reply' %}
+    {% include "../partials/sub-navigation.njk" %}
+
     <div class="govuk-grid-row">
-      <div class="govuk-grid-column-one-half">
-        {% if errors %}
-          {% set errorList = [] %}
-
-          {% if errors.selectAction %}
-            {% set errorList = errorList.concat([{ text: errors.selectAction.text, href: "#selectAction" }]) %}
-          {% endif %}
-
-          {% if errors.actionReplyReason %}
-            {% set errorList = errorList.concat([{ text: errors.actionReplyReason.text, href: "#actionReplyReason" }]) %}
-          {% endif %}
-
-          {{ govukErrorSummary({
-            titleText: "There is a problem",
-            errorList: errorList
-          }) }}
-        {% endif %}
-
-        <span class="govuk-caption-xl govuk-!-display-none-print">{{ applicationType.name }}</span>
-
-        <h1 class="govuk-heading-xl govuk-!-margin-top-0 govuk-!-display-none-print">{{ title }}</h1>
-
-        {% set activeTab = 'reply' %}
-        {% include "../partials/sub-navigation.njk" %}
-
+      <div class="govuk-grid-column-two-thirds">
         {% if isAppPending %}
           {% include "./pending.njk" %}
         {% else %}
