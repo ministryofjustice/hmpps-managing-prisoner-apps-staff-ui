@@ -71,6 +71,10 @@
     display: block;
     margin-top: govuk-spacing(-4);
   }
+
+  &-\!-text-nowrap {
+    white-space: nowrap;
+  }
 }
 
 .stacktrace {
@@ -78,21 +82,24 @@
 }
 
 @media print {
-  html, body {
-    width: 100%; 
-    margin: 0; 
+  html,
+  body {
+    width: 100%;
+    margin: 0;
     padding: 0;
   }
   .govuk-summary-list__key,
   .govuk-summary-list__value {
-    font-size: 16px !important; 
+    font-size: 16px !important;
   }
   .govuk-width-container {
     max-width: none !important;
     width: auto !important;
     padding: 0 !important;
   }
-  .govuk-grid-row, .govuk-grid-column-one-half, .govuk-grid-column-two-thirds {
+  .govuk-grid-row,
+  .govuk-grid-column-one-half,
+  .govuk-grid-column-two-thirds {
     display: block !important;
     width: 100% !important;
   }
