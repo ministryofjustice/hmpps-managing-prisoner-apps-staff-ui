@@ -2,6 +2,7 @@
 
 {% block head %}
 
+{% if includeGA %}
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id={{ ga4SiteId }}"></script>
   <script {% if cspNonce %} nonce="{{ cspNonce }}"{% endif %}>
@@ -10,6 +11,7 @@
     gtag('js', new Date());
     gtag('config', '{{ ga4SiteId }}');
   </script>
+{% endif %}  
 
   <link href="{{ '/assets/css/app.css' | assetMap }}" rel="stylesheet" />
 
