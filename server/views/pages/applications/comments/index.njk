@@ -32,75 +32,77 @@
 
 {% block content %}
   <div class="govuk-body govuk-width-container">
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-two-thirds">
-        {% if errors %}
-          {% set errorMessage = [] %}
+    {% if errors %}
+      {% set errorMessage = [] %}
 
-          {% if errors.Comments %}
-            {% set errorMessage = { text: errors.Comments.text }  %}
-          {% endif %}  
+      {% if errors.Comments %}
+        {% set errorMessage = { text: errors.Comments.text }  %}
+      {% endif %}  
 
-          {% set errorList = [] %}
+      {% set errorList = [] %}
 
-          {% if errors.Comments %}
-            {% set errorList = errorList.concat([{ text: errors.Comments.text, href: "#comment" }]) %}
-          {% endif %}
+      {% if errors.Comments %}
+        {% set errorList = errorList.concat([{ text: errors.Comments.text, href: "#comment" }]) %}
+      {% endif %}
 
-          {{ govukErrorSummary({
-            titleText: "There is a problem",
-            errorList: errorList
-          }) }}
-        {% endif %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: errorList
+      }) }}
+    {% endif %}
 
-        <span class="govuk-caption-xl">{{ applicationType.name }}</span>
-        <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
+    <span class="govuk-caption-xl">{{ applicationType.name }}</span>
+    <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
 
-        {% set activeTab = 'comments' %}
-        {% include "../partials/sub-navigation.njk" %}
-        <h2 class="govuk-heading-m">Comments about this application</h2>
-        <p class="govuk-body">Only staff will see these comments</p>
+    {% set activeTab = 'comments' %}
+    {% include "../partials/sub-navigation.njk" %}
 
-        <div class="app-messages govuk-!-margin-bottom-4">
-          {% if comments and comments.length > 0 %}
-            {% for comment in comments %}
-              {% if comment.message %}
-                <div class="app-message">
-                  <div class="app-message--metadata">Comment by {{ comment.staffName }} | {{ comment.date }} at {{ comment.time }}</div>
-                  <div class="app-message--content">{{ comment.message }}</div>
-                </div>
-              {% endif %}
-            {% endfor %}
-          {% else %}
-            <div class="app-message">
-              <div class="app-message--content">No comments yet</div>
-            </div>
-          {% endif %}
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+          <h2 class="govuk-heading-m">Comments about this application</h2>
+          <p class="govuk-body">Only staff will see these comments</p>
+
+          <div class="app-messages govuk-!-margin-bottom-4">
+            {% if comments and comments.length > 0 %}
+              {% for comment in comments %}
+                {% if comment.message %}
+                  <div class="app-message">
+                    <div class="app-message--metadata">Comment by {{ comment.staffName }} | {{ comment.date }} at {{ comment.time }}</div>
+                    <div class="app-message--content">{{ comment.message }}</div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            {% else %}
+              <div class="app-message">
+                <div class="app-message--content">No comments yet</div>
+              </div>
+            {% endif %}
+          </div>
+
+          <form method="POST" id="application-comments-form">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+            {{ govukCharacterCount({
+              name: "comment",
+              id: "comment",
+              maxlength: 1000,
+              threshold: 75,
+              value: comment,
+              label: {
+                text: "Add a comment",
+                classes: "govuk-label--s govuk-!-margin-bottom-4",
+                isPageHeading: true
+              },
+              errorMessage: errorMessage
+            }) }}
+
+            {{ govukButton({
+              text: "Continue",
+              classes: "govuk-button--primary"
+            }) }}
+          </form>
         </div>
-
-        <form method="POST" id="application-comments-form">
-          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-
-          {{ govukCharacterCount({
-            name: "comment",
-            id: "comment",
-            maxlength: 1000,
-            threshold: 75,
-            value: comment,
-            label: {
-              text: "Add a comment",
-              classes: "govuk-label--s govuk-!-margin-bottom-4",
-              isPageHeading: true
-            },
-            errorMessage: errorMessage
-          }) }}
-
-          {{ govukButton({
-            text: "Continue",
-            classes: "govuk-button--primary"
-          }) }}
-        </form>
       </div>
-    </div>
   </div>
 {% endblock %}

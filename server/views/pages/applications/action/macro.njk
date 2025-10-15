@@ -44,19 +44,15 @@
 
 {% macro renderWebView(response) %}
   <div class="govuk-body govuk-width-container govuk-!-display-none-print">
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-two-thirds">
-        <h2 class="govuk-heading-m">This application is now closed</h2>
-        {{ govukSummaryList({
-          rows: [
-            { key: { text: "Action" }, value: { text: response.decision } },
-            { key: { text: "Reason" }, value: { text: response.reason } },
-            { key: { text: "Date" }, value: { text: response.actionedDate } },
-            { key: { text: "Location" }, value: { text: response.cellLocation } }
-          ]
-        }) }}
-      </div>
-    </div>
+    <h2 class="govuk-heading-m">This application is now closed</h2>
+    {{ govukSummaryList({
+      rows: [
+        { key: { text: "Action" }, value: { text: response.decision } },
+        { key: { text: "Reason" }, value: { text: response.reason } },
+        { key: { text: "Date" }, value: { text: response.actionedDate } },
+        { key: { text: "Location" }, value: { text: response.cellLocation } }
+      ]
+    }) }}    
   </div>
 {% endmacro %}
 
