@@ -16,6 +16,7 @@ import setUpStaticResources from './middleware/setUpStaticResources'
 import setUpWebRequestParsing from './middleware/setupRequestParsing'
 import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
+import gaMiddleware from './middleware/gaMiddleware'
 
 import routes from './routes'
 import type { Services } from './services'
@@ -42,6 +43,7 @@ export default function createApp(services: Services): express.Application {
   app.use(authorisationMiddleware(['ROLE_PRISON']))
   app.use(setUpCsrf())
   app.use(setUpCurrentUser())
+  app.use(gaMiddleware)
 
   app.get(
     '*',
