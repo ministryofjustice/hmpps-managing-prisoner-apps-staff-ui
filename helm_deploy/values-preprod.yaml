@@ -20,7 +20,7 @@ generic-service:
     PERSONAL_RELATIONSHIPS_API_URL: 'https://personal-relationships-api-preprod.hmpps.service.justice.gov.uk'
     ENVIRONMENT_NAME: PRE-PRODUCTION
     AUDIT_ENABLED: 'true'
-    GA4_SITE_ID: ''
+    GA4_SITE_ID: 'G-HE5P4PEE48'
 
   allowlist:
     groups:
