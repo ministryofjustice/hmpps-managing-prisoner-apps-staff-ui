@@ -2,7 +2,7 @@
 
 {% block head %}
 
-{% if includeGA %}
+{% if includeGA and ga4SiteId %}
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id={{ ga4SiteId }}"></script>
   <script {% if cspNonce %} nonce="{{ cspNonce }}"{% endif %}>
