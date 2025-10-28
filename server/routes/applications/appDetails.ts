@@ -19,7 +19,7 @@ import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
 import getFormattedRelationshipDropdown from '../../utils/getFormattedRelationshipDropdown'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
 
-export default function applicationDetailsRoutes({
+export default function appDetailsRouter({
   auditService,
   managingPrisonerAppsService,
   personalRelationshipsService,
@@ -36,11 +36,26 @@ export default function applicationDetailsRoutes({
       const { user } = res.locals
       const { applicationData, isLoggingForSamePrisoner } = req.session
 
-      if (!applicationData?.type) {
+      if (!applicationData?.department) {
+        return res.redirect(URLS.LOG_DEPARTMENT)
+      }
+
+      const groups = await managingPrisonerAppsService.getGroupsAndTypes(user)
+
+      const selectedGroup = groups.find(group => group.id.toString() === applicationData.group?.value)
+      if (!selectedGroup) {
+        return res.redirect(URLS.LOG_GROUP)
+      }
+
+      const selectedAppType = selectedGroup.applicationTypes.find(
+        type => type.id.toString() === applicationData.type?.value,
+      )
+
+      if (!selectedAppType) {
         return res.redirect(URLS.LOG_APPLICATION_TYPE)
       }
 
-      const logDetails = getAppTypeLogDetailsData(applicationData?.type, applicationData?.additionalData || {})
+      const logDetails = getAppTypeLogDetailsData(selectedAppType.id, applicationData.additionalData || {})
 
       if (!logDetails) {
         return res.redirect(URLS.LOG_APPLICATION_TYPE)
@@ -60,10 +75,10 @@ export default function applicationDetailsRoutes({
 
       return res.render(PATHS.LOG_APPLICATION.APPLICATION_DETAILS, {
         ...templateFields,
-        applicationType: applicationData?.type,
+        applicationType: applicationData.type,
         title: 'Log details',
         isLoggingForSamePrisoner,
-        prisonerName: isLoggingForSamePrisoner ? req.session.applicationData.prisonerName : null,
+        prisonerName: isLoggingForSamePrisoner ? applicationData.prisonerName : null,
       })
     }),
   )
@@ -74,13 +89,13 @@ export default function applicationDetailsRoutes({
       const { user } = res.locals
       const { applicationData } = req.session
 
-      const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.key)
+      const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.value)
 
       return handleApplicationDetails(req, res, {
         getAppType: () => applicationType,
         getTemplateData: async () => {
           const groupCode =
-            applicationType.key === 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT'
+            applicationType.id === 1
               ? PERSONAL_RELATIONSHIPS_GROUP_CODES.OFFICIAL_RELATIONSHIP
               : PERSONAL_RELATIONSHIPS_GROUP_CODES.SOCIAL_RELATIONSHIP
 

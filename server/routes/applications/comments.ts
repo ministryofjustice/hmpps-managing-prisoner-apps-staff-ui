@@ -15,7 +15,7 @@ import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedi
 
 import { validateTextField } from '../validate/validateTextField'
 
-export default function commentsRoutes({
+export default function commentsRouter({
   auditService,
   managingPrisonerAppsService,
 }: {

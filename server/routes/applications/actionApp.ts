@@ -18,7 +18,7 @@ import { convertToTitleCase } from '../../utils/utils'
 
 import { validateActionAndReply } from '../validate/validateActionAndReply'
 
-export default function actionAndReplyRoutes({
+export default function actionAppRouter({
   auditService,
   managingPrisonerAppsService,
 }: {

@@ -19,7 +19,7 @@ import { handleApplicationDetails } from '../../utils/handleAppDetails'
 import { convertToTitleCase } from '../../utils/utils'
 import formatEarlyDaysCentre from '../../utils/formatEarlyDaysCentre'
 
-export default function changeApplicationRoutes({
+export default function changeAppRouter({
   auditService,
   managingPrisonerAppsService,
   personalRelationshipsService,
@@ -45,7 +45,7 @@ export default function changeApplicationRoutes({
       )
 
       const additionalData = applicationData?.additionalData || {}
-      const formData = getAppTypeLogDetailsData(applicationType, additionalData)
+      const formData = getAppTypeLogDetailsData(applicationType.id, additionalData)
       const earlyDaysCentreValue = formatEarlyDaysCentre(applicationData?.earlyDaysCentre, application.firstNightCenter)
       const templateData = await getApplicationDetails(
         formData,
@@ -79,7 +79,7 @@ export default function changeApplicationRoutes({
         getAppType: () => applicationType,
         getTemplateData: async () => {
           const additionalData = applicationData?.additionalData || {}
-          const formData = getAppTypeLogDetailsData(applicationType, additionalData)
+          const formData = getAppTypeLogDetailsData(applicationType.id, additionalData)
           const templateData = await getApplicationDetails(
             formData,
             personalRelationshipsService,

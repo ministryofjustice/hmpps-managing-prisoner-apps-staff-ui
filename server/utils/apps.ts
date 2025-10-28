@@ -1,12 +1,12 @@
 import { format, getTime } from 'date-fns'
 
-import { ViewApplicationsResponseApplication } from '../@types/managingAppsApi'
+import { ViewAppListApp } from '../@types/managingAppsApi'
+import { APPLICATION_STATUS } from '../constants/applicationStatus'
+import { getAppType } from '../helpers/application/getAppType'
 import { HmppsUser } from '../interfaces/hmppsUser'
 import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
-import { getAppType } from '../helpers/application/getAppType'
-import { APPLICATION_STATUS } from '../constants/applicationStatus'
 
-type ViewAppsResponseAppWithName = ViewApplicationsResponseApplication & {
+type ViewAppListAppWithName = ViewAppListApp & {
   prisonerName: string
 }
 
@@ -14,7 +14,7 @@ type ViewAppsResponseAppWithName = ViewApplicationsResponseApplication & {
 export const formatAppsToRows = async (
   managingPrisonerAppsService: ManagingPrisonerAppsService,
   user: HmppsUser,
-  applications: ViewAppsResponseAppWithName[],
+  applications: ViewAppListAppWithName[],
 ) => {
   return Promise.all(
     applications.map(async application => {

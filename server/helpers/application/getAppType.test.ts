@@ -1,4 +1,3 @@
-import { APPLICATION_TYPE_VALUES, applicationTypeLabels } from '../../constants/applicationTypes'
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import TestData from '../../routes/testutils/testData'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
@@ -12,18 +11,34 @@ const mockUser: HmppsUser = {
 
 describe(getAppType.name, () => {
   const managingPrisonerAppsService = {
-    getAppTypes: jest.fn(),
+    getGroupsAndTypes: jest.fn(),
   } as unknown as jest.Mocked<ManagingPrisonerAppsService>
 
-  it('should return the requested application type', async () => {
-    managingPrisonerAppsService.getAppTypes.mockResolvedValue(new TestData().appTypes)
+  const mockGroups = [
+    {
+      id: 1,
+      name: 'Pin Phone Contact Apps',
+      applicationTypes: [
+        {
+          id: 2,
+          name: 'Add new social PIN phone contact',
+          genericType: false,
+          logDetailRequired: false,
+        },
+      ],
+    },
+  ]
 
-    const appType = await getAppType(managingPrisonerAppsService, mockUser, 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT')
+  it('should return the requested application type by ID', async () => {
+    managingPrisonerAppsService.getGroupsAndTypes.mockResolvedValue(mockGroups)
+
+    const appType = await getAppType(managingPrisonerAppsService, mockUser, '2')
 
     expect(appType).toEqual({
-      key: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
-      name: applicationTypeLabels.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT,
-      value: APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT,
+      id: 2,
+      name: 'Add new social PIN phone contact',
+      genericType: false,
+      logDetailRequired: false,
     })
   })
 })

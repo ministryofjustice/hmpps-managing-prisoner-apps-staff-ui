@@ -1,18 +1,52 @@
-export interface Establishment {
-  id: string
-  name: string
+import { components } from './managing-prisoner-apps-api'
+
+export type ApplicationDto = components['schemas']['AppResponseDtoObjectObject']
+export type ApplicationSearchPayload = components['schemas']['AppsSearchQueryDto']
+export type AppResponsePayload = components['schemas']['AppDecisionRequestDto']
+export type AppTypeResponse = components['schemas']['AppTypeResponse']
+export type AssignedGroup = components['schemas']['AssignedGroupDto']
+export type CommentDto = components['schemas']['CommentResponseDtoObject']
+export type Department = components['schemas']['AssignedGroupDto']
+export type History = components['schemas']['HistoryResponse']
+export type PrisonerSearchResult = components['schemas']['RequestedByNameSearchResult']
+export type Response = components['schemas']['AppDecisionResponseDtoObject']
+export type ViewAppListDto = components['schemas']['AppListViewDto']
+export type ViewApplicationsResponseAssignedGroup = components['schemas']['GroupAppListViewDto']
+
+export interface ViewAppListApp extends ViewAppListDto {
+  assignedGroup: AssignedGroup
 }
 
-export interface AssignedGroup {
-  id: string
-  name: string
-  establishment: Establishment
-  initialApp: string
-  type: string
-  email: string
+export interface ViewAppsListResponse {
+  page: number
+  totalRecords: number
+  exhausted: boolean
+  types: Record<string, number>
+  assignedGroups: {
+    id: string
+    name: string
+    count?: number
+  }[]
+  firstNightCenter: number
+  apps: ViewAppListApp[]
 }
 
-export interface RequestedBy {
+export interface App extends ApplicationDto {
+  assignedGroup: AssignedGroup
+  requestedBy: AppRequestedBy
+  requests: AppRequest[]
+}
+
+export interface AppRequest {
+  id: string
+  responseId: string
+  amount?: number
+  reason?: string
+  details?: string
+  [key: string]: unknown
+}
+
+export interface AppRequestedBy {
   username: string
   userId: string
   firstName: string
@@ -23,43 +57,39 @@ export interface RequestedBy {
   iep: string
 }
 
-export interface ApplicationRequest {
-  id: string
-  responseId: string
-  details?: string
-  amount?: number
-  reason?: string
+export interface Comment extends CommentDto {
+  createdBy: CommentCreatedBy
 }
 
-export interface Application {
-  id: string
-  appType: string
-  assignedGroup: AssignedGroup
-  createdBy: string
-  createdDate: string
-  lastModifiedBy: string
-  lastModifiedDate: string
-  reference: string
-  requestedBy: RequestedBy
-  firstNightCenter: boolean
-  requests: ApplicationRequest[]
-  status: 'PENDING' | 'APPROVED' | 'DECLINED'
+export interface CommentCreatedBy {
+  username: string
+  userId: string
+  fullName: string
+  category: string
+  establishment: {
+    id: string
+    name: string
+  }
 }
 
-export type ApplicationSearchPayload = {
-  assignedGroups: string[] | null
-  firstNightCenter?: boolean
+export interface CommentsResponse {
   page: number
-  requestedBy: string | null
-  size: number
-  status: string[]
-  types: string[] | null
+  totalElements: number
+  exhausted: boolean
+  contents: Comment[]
 }
 
-export type ApplicationType = {
-  key: string
+export interface ApplicationType {
+  id: number
   name: string
-  value: string
+  genericType: boolean
+  logDetailRequired: boolean
+}
+
+export interface Group {
+  id: number
+  name: string
+  applicationTypes: ApplicationType[]
 }
 
 export type ApplicationTypeKey =
@@ -67,111 +97,3 @@ export type ApplicationTypeKey =
   | 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT'
   | 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS'
   | 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS'
-
-export type ViewApplicationsResponseAssignedGroup = {
-  id: string
-  name: string
-  count: number
-}
-
-export type ViewApplicationsResponseApplication = {
-  id: string
-  appType: ApplicationTypeKey
-  createdDate: string
-  establishmentId: string
-  requestedBy: string
-  requestedByFirstName: string
-  requestedByLastName: string
-  status: 'PENDING' | 'CLOSED'
-  assignedGroup: {
-    id: string
-    name: string
-  }
-}
-
-export type ViewApplicationsResponse = {
-  page: number
-  totalRecords: number
-  exhausted: boolean
-  types: Record<ApplicationTypeKey, number>
-  assignedGroups: ViewApplicationsResponseAssignedGroup[]
-  apps: ViewApplicationsResponseApplication[]
-  firstNightCenter: number
-}
-
-export type PrisonerSearchResult = {
-  prisonerId: string
-  firstName: string
-  lastName: string
-}
-
-export type CommentsResponse = {
-  page: number
-  exhausted: boolean
-  totalElements: number
-  contents: Comment[]
-}
-
-export type Comment = {
-  id: string
-  appId: string
-  prisonerNumber: string
-  message: string
-  createdDate: string
-  createdBy: StaffUser
-}
-
-export type History = {
-  id: string
-  appId: string
-  entityId: string
-  entityType: string
-  activityMessage: {
-    header: string
-    body?: string
-  }
-  createdDate: string
-}
-
-export type TargetUser = {
-  id: string
-}
-
-type StaffUser = {
-  username: string
-  userId: string
-  fullName: string
-  category: 'STAFF'
-  establishment: Establishment
-}
-
-export type AppResponsePayload = { reason: string; decision: string; appliesTo: string[] }
-
-export type Response = {
-  id: string
-  prisonerId: string
-  appId: string
-  reason: string
-  decision: 'APPROVED' | 'DECLINED'
-  createdDate: string
-  createdBy: {
-    username: string
-    userId: string
-    fullName: string
-    category: string
-    establishment: Establishment
-  }
-  appliesTo: string[]
-}
-
-export interface Department {
-  id: string
-  name: string
-  establishment: {
-    id: string
-    name: string
-    appTypes: ApplicationTypeKey[]
-  }
-  initialApp: ApplicationTypeKey
-  type: string
-}

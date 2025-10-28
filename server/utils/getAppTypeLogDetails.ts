@@ -2,30 +2,29 @@ import {
   AddEmergencyPinPhoneCreditDetails,
   AddNewOfficialPinPhoneContactDetails,
   AddNewSocialPinPhoneContactDetails,
-  ApplicationType,
   RemovePinPhoneContactDetails,
   SupplyListOfPinPhoneContactsDetails,
   SwapVOsForPinCreditDetails,
 } from 'express-session'
 
 export type SwapVOsAppType = {
-  type: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS'
+  type: 6
   details: string
 }
 
 export type EmergencyCreditAppType = {
-  type: 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP'
+  type: 5
   amount: string
   reason: string
 }
 
 export type SupplyListOfContactsAppType = {
-  type: 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS'
+  type: 8
   details: string
 }
 
 export type AddNewSocialContactAppType = {
-  type: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT'
+  type: 2
   firstName: string
   lastName: string
   dateOfBirthOrAge: 'dateofbirth' | 'age' | 'donotknow'
@@ -42,7 +41,7 @@ export type AddNewSocialContactAppType = {
 }
 
 export type AddNewOfficialContactAppType = {
-  type: 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT'
+  type: 1
   firstName: string
   lastName: string
   organisation?: string
@@ -52,7 +51,7 @@ export type AddNewOfficialContactAppType = {
 }
 
 export type RemoveContactAppType = {
-  type: 'PIN_PHONE_REMOVE_CONTACT'
+  type: 3
   firstName: string
   lastName: string
   telephone1: string
@@ -68,9 +67,9 @@ export type AppTypeData =
   | AddNewOfficialContactAppType
   | RemoveContactAppType
 
-export function getAppTypeLogDetailsData(applicationType: ApplicationType, additionalData: unknown): AppTypeData {
-  switch (applicationType.key) {
-    case 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT': {
+export function getAppTypeLogDetailsData(id: number, additionalData: unknown): AppTypeData | null {
+  const handlers: Record<number, (data: unknown) => AppTypeData> = {
+    1: data => {
       const {
         firstName = '',
         lastName = '',
@@ -79,10 +78,10 @@ export function getAppTypeLogDetailsData(applicationType: ApplicationType, addit
         relationship = '',
         telephone1 = '',
         telephone2 = '',
-      } = additionalData as AddNewOfficialPinPhoneContactDetails & { company?: string }
+      } = data as AddNewOfficialPinPhoneContactDetails & { company?: string }
 
       return {
-        type: 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT',
+        type: 1,
         firstName,
         lastName,
         organisation: organisation || company || '',
@@ -90,9 +89,8 @@ export function getAppTypeLogDetailsData(applicationType: ApplicationType, addit
         telephone1,
         telephone2,
       }
-    }
-
-    case 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT': {
+    },
+    2: data => {
       const {
         firstName = '',
         lastName = '',
@@ -107,10 +105,10 @@ export function getAppTypeLogDetailsData(applicationType: ApplicationType, addit
         country,
         telephone1 = '',
         telephone2 = '',
-      } = additionalData as AddNewSocialPinPhoneContactDetails
+      } = data as AddNewSocialPinPhoneContactDetails
 
       return {
-        type: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
+        type: 2,
         firstName,
         lastName,
         dateOfBirthOrAge,
@@ -125,53 +123,49 @@ export function getAppTypeLogDetailsData(applicationType: ApplicationType, addit
         telephone1,
         telephone2,
       }
-    }
-
-    case 'PIN_PHONE_REMOVE_CONTACT': {
+    },
+    3: data => {
       const {
         firstName = '',
         lastName = '',
         telephone1 = '',
         telephone2 = '',
         relationship = '',
-      } = additionalData as RemovePinPhoneContactDetails
+      } = data as RemovePinPhoneContactDetails
 
       return {
-        type: 'PIN_PHONE_REMOVE_CONTACT',
+        type: 3,
         firstName,
         lastName,
         telephone1,
         telephone2,
         relationship,
       }
-    }
-
-    case 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS': {
-      const { details = '' } = additionalData as SwapVOsForPinCreditDetails
+    },
+    6: data => {
+      const { details = '' } = data as SwapVOsForPinCreditDetails
       return {
-        type: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
+        type: 6,
         details,
       }
-    }
-
-    case 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP': {
-      const { amount = '', reason = '' } = additionalData as AddEmergencyPinPhoneCreditDetails
+    },
+    5: data => {
+      const { amount = '', reason = '' } = data as AddEmergencyPinPhoneCreditDetails
       return {
-        type: 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP',
+        type: 5,
         amount,
         reason,
       }
-    }
-
-    case 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS': {
-      const { details = '' } = additionalData as SupplyListOfPinPhoneContactsDetails
+    },
+    8: data => {
+      const { details = '' } = data as SupplyListOfPinPhoneContactsDetails
       return {
-        type: 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS',
+        type: 8,
         details,
       }
-    }
-
-    default:
-      return null
+    },
   }
+
+  const handler = handlers[id]
+  return handler ? handler(additionalData) : null
 }

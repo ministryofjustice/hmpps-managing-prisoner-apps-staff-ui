@@ -1,10 +1,11 @@
 import { SuperAgentRequest } from 'superagent'
-import { Application, ApplicationTypeKey } from '../../server/@types/managingAppsApi'
+import { App, ApplicationTypeKey } from '../../server/@types/managingAppsApi'
 import TestData from '../../server/routes/testutils/testData'
+import { legacyAppTypes } from '../../server/testData/appTypes'
 import { stubFor } from './wiremock'
 
 export default {
-  stubGetPrisonerApp: ({ app }: { app: Application }): SuperAgentRequest => {
+  stubGetPrisonerApp: ({ app }: { app: App }): SuperAgentRequest => {
     return stubFor({
       request: {
         method: 'GET',
@@ -17,7 +18,7 @@ export default {
       },
     })
   },
-  stubGetAppResponse: ({ app }: { app: Application }): SuperAgentRequest => {
+  stubGetAppResponse: ({ app }: { app: App }): SuperAgentRequest => {
     return stubFor({
       request: {
         method: 'GET',
@@ -30,7 +31,7 @@ export default {
       },
     })
   },
-  stubGetComments: ({ app }: { app: Application }): SuperAgentRequest => {
+  stubGetComments: ({ app }: { app: App }): SuperAgentRequest => {
     return stubFor({
       request: {
         method: 'GET',
@@ -43,7 +44,7 @@ export default {
       },
     })
   },
-  stubGetHistory: ({ app }: { app: Application }): SuperAgentRequest => {
+  stubGetHistory: ({ app }: { app: App }): SuperAgentRequest => {
     return stubFor({
       request: {
         method: 'GET',
@@ -90,7 +91,7 @@ export default {
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: new TestData().appTypes,
+        jsonBody: legacyAppTypes,
       },
     })
   },

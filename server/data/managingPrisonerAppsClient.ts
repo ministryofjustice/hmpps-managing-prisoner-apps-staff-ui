@@ -1,16 +1,18 @@
-import { ApplicationData, ApplicationType } from 'express-session'
+import { ApplicationData } from 'express-session'
 import logger from '../../logger'
 import {
-  Application,
+  App,
   ApplicationSearchPayload,
   AppResponsePayload,
+  AppTypeResponse,
   Comment,
   CommentsResponse,
   Department,
+  Group,
   History,
-  Response,
   PrisonerSearchResult,
-  ViewApplicationsResponse,
+  Response,
+  ViewAppsListResponse,
 } from '../@types/managingAppsApi'
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
@@ -37,7 +39,7 @@ export default class ManagingPrisonerAppsApiClient {
     }
   }
 
-  async getPrisonerApp(prisonerId: string, applicationId: string): Promise<Application | null> {
+  async getPrisonerApp(prisonerId: string, applicationId: string): Promise<App | null> {
     try {
       return await this.restClient.get({
         path: `/v1/prisoners/${prisonerId}/apps/${applicationId}?requestedBy=true&assignedGroup=true`,
@@ -63,7 +65,7 @@ export default class ManagingPrisonerAppsApiClient {
     }
   }
 
-  async submitPrisonerApp(applicationData: ApplicationData): Promise<Application | null> {
+  async submitPrisonerApp(applicationData: ApplicationData): Promise<App | null> {
     try {
       const { prisonerId, type, departmentId, earlyDaysCentre, additionalData } = applicationData
       const firstNightCenter =
@@ -71,7 +73,7 @@ export default class ManagingPrisonerAppsApiClient {
 
       const payload = {
         reference: '',
-        type: type.key,
+        type: type.value,
         requests: [additionalData],
         firstNightCenter,
         department: departmentId,
@@ -87,7 +89,7 @@ export default class ManagingPrisonerAppsApiClient {
     }
   }
 
-  async getApps(payload: ApplicationSearchPayload): Promise<ViewApplicationsResponse | null> {
+  async getApps(payload: ApplicationSearchPayload): Promise<ViewAppsListResponse | null> {
     try {
       return await this.restClient.post({
         path: `/v1/prisoners/apps/search`,
@@ -189,7 +191,7 @@ export default class ManagingPrisonerAppsApiClient {
     }
   }
 
-  async getAppTypes(): Promise<ApplicationType[] | null> {
+  async getAppTypes(): Promise<AppTypeResponse[] | null> {
     try {
       return await this.restClient.get({
         path: `/v1/establishments/apps/types`,
@@ -200,13 +202,106 @@ export default class ManagingPrisonerAppsApiClient {
     }
   }
 
-  async getDepartments(appType: string): Promise<Department[]> {
+  async getDepartments(_appTypeId: string): Promise<Department[]> {
     try {
-      return await this.restClient.get({
-        path: `/v1/groups/app/types/${appType}`,
-      })
+      // return await this.restClient.get({
+      //   path: `/v1/groups/app/types/${appType}`,
+      // })
+      return [
+        {
+          id: '916267ad-3ba6-4826-8d59-01cfbaa8420b',
+          name: 'Business Hub',
+          establishment: {
+            id: 'TEST_ESTABLISHMENT_FIRST',
+            name: 'TEST_ESTABLISHMENT_FIRST',
+            appTypes: ['PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT'],
+            defaultDepartments: false,
+          },
+          initialApp: 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT',
+          type: 'WING',
+        },
+        {
+          id: '5cee45c0-1751-41b3-8257-9cfe312cbdec',
+          name: 'OMU',
+          establishment: {
+            id: 'TEST_ESTABLISHMENT_FIRST',
+            name: 'TEST_ESTABLISHMENT_FIRST',
+            appTypes: ['PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT'],
+            defaultDepartments: false,
+          },
+          initialApp: 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT',
+          type: 'WING',
+        },
+      ]
     } catch (error) {
       logger.error(`Error fetching department list.`, error)
+      return null
+    }
+  }
+
+  async getGroupsAndTypes(): Promise<Group[] | null> {
+    try {
+      // return await this.restClient.get({
+      //   path: `/v2/establishments/apps/types`,
+      // })
+      return [
+        {
+          id: 1,
+          name: 'Pin Phone Contact Apps',
+          applicationTypes: [
+            {
+              id: 1,
+              name: 'Add new social PIN phone contact',
+              genericType: false,
+              logDetailRequired: false,
+            },
+            {
+              id: 2,
+              name: 'Add new official PIN phone contact',
+              genericType: false,
+              logDetailRequired: false,
+            },
+            {
+              id: 3,
+              name: 'Remove PIN phone contact',
+              genericType: false,
+              logDetailRequired: false,
+            },
+            {
+              id: 4,
+              name: 'Add generic contact request',
+              genericType: true,
+              logDetailRequired: true,
+            },
+          ],
+        },
+        {
+          id: 2,
+          name: 'Emergency Credit and Vist',
+          applicationTypes: [
+            {
+              id: 5,
+              name: 'Add emergency PIN phone credit',
+              genericType: false,
+              logDetailRequired: false,
+            },
+            {
+              id: 6,
+              name: 'Swap visiting orders (VOs) for PIN credit',
+              genericType: false,
+              logDetailRequired: false,
+            },
+            {
+              id: 7,
+              name: 'Generic credit and Visit',
+              genericType: true,
+              logDetailRequired: false,
+            },
+          ],
+        },
+      ]
+    } catch (error) {
+      logger.error(`Error fetching application groups and types.`, error)
       return null
     }
   }

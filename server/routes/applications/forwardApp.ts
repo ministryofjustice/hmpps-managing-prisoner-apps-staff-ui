@@ -15,7 +15,7 @@ import { validateForwardingApplication } from '../validate/validateForwardingApp
 
 const PAGE_TITLE = 'Forward this application'
 
-export default function forwardApplicationRoutes({
+export default function forwardAppRouter({
   auditService,
   managingPrisonerAppsService,
 }: {
@@ -37,7 +37,7 @@ export default function forwardApplicationRoutes({
         Page.FORWARD_APPLICATION_PAGE,
       )
 
-      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.key)
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.toString())
       const filteredDepartments = (departments ?? [])
         .filter(dept => dept.id !== application.assignedGroup.id)
         .map(dept => ({
@@ -69,7 +69,7 @@ export default function forwardApplicationRoutes({
       const applicationType = await getAppType(managingPrisonerAppsService, user, application.appType)
       const errors = validateForwardingApplication(forwardTo, forwardingReason)
 
-      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.key)
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
 
       const filteredDepartments = (departments ?? [])
         .filter(dept => dept.id !== application.assignedGroup.id)

@@ -2,10 +2,11 @@ import { HmppsAuthClient } from '../data'
 import { HmppsUser } from '../interfaces/hmppsUser'
 import TestData from '../routes/testutils/testData'
 import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
+import { legacyAppTypes } from '../testData/appTypes'
 import { formatAppsToRows } from './apps'
 
 jest.mock('../helpers/application/getAppType', () => ({
-  getAppType: jest.fn(() => new TestData().appTypes[2]),
+  getAppType: jest.fn(() => legacyAppTypes[2]),
 }))
 
 describe('formatAppsToRows', () => {

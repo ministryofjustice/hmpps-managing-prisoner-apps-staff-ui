@@ -5,8 +5,9 @@ import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsServ
 export const getAppType = async (
   managingPrisonerAppsService: ManagingPrisonerAppsService,
   user: HmppsUser,
-  appType: string,
+  appTypeId: string,
 ) => {
-  const appTypes = await managingPrisonerAppsService.getAppTypes(user)
-  return appTypes.find(type => type.key === appType)
+  const groups = await managingPrisonerAppsService.getGroupsAndTypes(user)
+  const allAppTypes = groups.flatMap(group => group.applicationTypes)
+  return allAppTypes.find(type => type.id.toString() === appTypeId)
 }

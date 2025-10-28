@@ -20,15 +20,17 @@ export declare module 'express-session' {
     prisonerExists?: string
     prisonerId?: string
     prisonerName?: string
-    type?: ApplicationType
+    group?: {
+      name: string
+      value: string
+    }
+    type?: {
+      key: string
+      name: string
+      value: string
+    }
     department?: string
     departmentId?: string
-  }
-
-  interface ApplicationType {
-    key: string
-    name: string
-    value: string
   }
 
   type AdditionalApplicationData =
