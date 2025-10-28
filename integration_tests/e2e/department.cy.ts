@@ -7,12 +7,13 @@ context('Department Page', () => {
   beforeEach(() => {
     cy.resetAndSignIn()
     cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
-    cy.task('stubGetAppTypes')
+    cy.task('stubGetGroupsAndTypes')
     cy.task('stubGetDepartments', { appType: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT' })
 
     cy.visit('/log/department')
 
     cy.enterPrisonerDetails()
+    cy.selectGroup('Pin phone apps')
     cy.selectApplicationType('Add new social PIN phone contact')
 
     page = Page.verifyOnPage(DepartmentPage)

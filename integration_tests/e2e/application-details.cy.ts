@@ -9,13 +9,14 @@ function startApplication(appType: string): ApplicationDetailsPage {
 
   cy.resetAndSignIn()
   cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
-  cy.task('stubGetAppTypes')
+  cy.task('stubGetGroupsAndTypes')
   cy.task('stubGetDepartments', { appType: appConfig?.key })
   cy.task('stubGetRelationships', 'SOCIAL_RELATIONSHIP')
 
   cy.visit('/log/application-details')
 
   cy.enterPrisonerDetails()
+  cy.selectGroup('Pin phone apps')
   cy.selectApplicationType(appType)
   cy.selectDepartment('Business Hub')
 

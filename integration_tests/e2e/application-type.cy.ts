@@ -7,11 +7,12 @@ context('Application Type Page', () => {
   beforeEach(() => {
     cy.resetAndSignIn()
     cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
-    cy.task('stubGetAppTypes')
+    cy.task('stubGetGroupsAndTypes')
 
     cy.visit('/log/application-type')
 
     cy.enterPrisonerDetails()
+    cy.selectGroup('Pin phone apps')
 
     page = Page.verifyOnPage(ApplicationTypePage)
   })

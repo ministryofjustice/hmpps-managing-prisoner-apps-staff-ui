@@ -19,6 +19,12 @@ declare namespace Cypress {
     enterPrisonerDetails(): Chainable<void>
 
     /**
+     * Selects a group and continues.
+     * @example cy.selectGroup('Pin phone apps')
+     */
+    selectGroup(group: string): Chainable<void>
+
+    /**
      * Selects an application type and continues.
      * @example cy.selectApplicationType('Add new social PIN phone contact')
      */

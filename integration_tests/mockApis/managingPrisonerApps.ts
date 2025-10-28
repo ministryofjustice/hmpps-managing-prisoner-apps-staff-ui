@@ -1,7 +1,11 @@
 import { SuperAgentRequest } from 'superagent'
+
 import { App, ApplicationTypeKey } from '../../server/@types/managingAppsApi'
+
 import TestData from '../../server/routes/testutils/testData'
 import { legacyAppTypes } from '../../server/testData/appTypes'
+import { groups } from '../../server/testData/groups'
+
 import { stubFor } from './wiremock'
 
 export default {
@@ -134,6 +138,19 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: officialApp,
+      },
+    })
+  },
+  stubGetGroupsAndTypes: (): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        url: `/managingPrisonerApps/v2/establishments/apps/types`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: groups,
       },
     })
   },
