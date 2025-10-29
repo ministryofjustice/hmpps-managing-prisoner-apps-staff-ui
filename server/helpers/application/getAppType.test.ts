@@ -20,11 +20,6 @@ describe(getAppType.name, () => {
 
     const appType = await getAppType(managingPrisonerAppsService, mockUser, '2')
 
-    expect(appType).toEqual({
-      id: 2,
-      name: 'Add new official PIN phone contact',
-      genericType: false,
-      logDetailRequired: false,
-    })
+    expect(appType).toEqual(groups[0].appTypes[1])
   })
 })
