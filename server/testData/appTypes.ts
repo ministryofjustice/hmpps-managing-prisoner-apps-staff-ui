@@ -1,4 +1,3 @@
-import { add } from 'date-fns'
 import { APPLICATION_TYPE_VALUES, applicationTypeLabels } from '../constants/applicationTypes'
 
 export const appTypes = {
