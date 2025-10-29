@@ -1,14 +1,7 @@
 import { HmppsUser } from '../../interfaces/hmppsUser'
-import TestData from '../../routes/testutils/testData'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { groups } from '../../testData/groups'
 import { getAppType } from './getAppType'
-
-const mockUser: HmppsUser = {
-  ...new TestData().user,
-  authSource: 'nomis',
-  staffId: 12345,
-}
 
 describe(getAppType.name, () => {
   const managingPrisonerAppsService = {
@@ -18,7 +11,7 @@ describe(getAppType.name, () => {
   it('should return the requested application type by ID', async () => {
     managingPrisonerAppsService.getGroupsAndTypes.mockResolvedValue(groups)
 
-    const appType = await getAppType(managingPrisonerAppsService, mockUser, '2')
+    const appType = await getAppType(managingPrisonerAppsService, {} as HmppsUser, '2')
 
     expect(appType).toEqual(groups[0].appTypes[1])
   })
