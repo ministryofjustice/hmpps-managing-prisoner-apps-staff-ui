@@ -3,7 +3,6 @@ import {
   AddNewOfficialPinPhoneContactDetails,
   AddNewSocialPinPhoneContactDetails,
   RemovePinPhoneContactDetails,
-  SupplyListOfPinPhoneContactsDetails,
   SwapVOsForPinCreditDetails,
 } from 'express-session'
 
