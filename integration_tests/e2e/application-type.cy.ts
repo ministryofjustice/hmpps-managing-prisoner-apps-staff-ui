@@ -12,7 +12,7 @@ context('Application Type Page', () => {
     cy.visit('/log/application-type')
 
     cy.enterPrisonerDetails()
-    cy.selectGroup('Pin phone apps')
+    cy.selectGroup('Pin Phone Contact Apps')
 
     page = Page.verifyOnPage(ApplicationTypePage)
   })
@@ -30,7 +30,7 @@ context('Application Type Page', () => {
       cy.get('.govuk-radios__item').should('have.length', applicationTypes.length)
 
       cy.get('.govuk-radios__item').each(($element, index) => {
-        const { name, value } = applicationTypes[index]
+        const { name, id } = applicationTypes[index]
 
         cy.wrap($element)
           .find('label.govuk-label.govuk-radios__label')
@@ -40,7 +40,7 @@ context('Application Type Page', () => {
             expect(text.trim()).to.equal(name)
           })
 
-        cy.wrap($element).find('input.govuk-radios__input').should('exist').and('have.attr', 'value', value)
+        cy.wrap($element).find('input.govuk-radios__input').should('exist').and('have.attr', 'value', id)
       })
     })
   })

@@ -13,7 +13,7 @@ context('Department Page', () => {
     cy.visit('/log/department')
 
     cy.enterPrisonerDetails()
-    cy.selectGroup('Pin phone apps')
+    cy.selectGroup('Pin Phone Contact Apps')
     cy.selectApplicationType('Add new social PIN phone contact')
 
     page = Page.verifyOnPage(DepartmentPage)

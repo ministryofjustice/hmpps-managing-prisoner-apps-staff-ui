@@ -106,7 +106,7 @@ export default function appDetailsRouter({
           const formattedCountryList = getFormattedCountries(countries, req.body.country)
 
           return {
-            applicationType,
+            applicationType: applicationData.type,
             formattedRelationshipList,
             countries: formattedCountryList,
           }

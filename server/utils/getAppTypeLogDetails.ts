@@ -70,6 +70,15 @@ export type AppTypeData =
 export function getAppTypeLogDetailsData(id: number, additionalData: unknown): AppTypeData | null {
   const handlers: Record<number, (data: unknown) => AppTypeData> = {
     1: data => {
+      const { amount = '', reason = '' } = data as AddEmergencyPinPhoneCreditDetails
+      return {
+        type: 5,
+        amount,
+        reason,
+      }
+    },
+
+    2: data => {
       const {
         firstName = '',
         lastName = '',
@@ -90,7 +99,8 @@ export function getAppTypeLogDetailsData(id: number, additionalData: unknown): A
         telephone2,
       }
     },
-    2: data => {
+
+    3: data => {
       const {
         firstName = '',
         lastName = '',
@@ -124,7 +134,8 @@ export function getAppTypeLogDetailsData(id: number, additionalData: unknown): A
         telephone2,
       }
     },
-    3: data => {
+
+    4: data => {
       const {
         firstName = '',
         lastName = '',
@@ -142,25 +153,11 @@ export function getAppTypeLogDetailsData(id: number, additionalData: unknown): A
         relationship,
       }
     },
-    6: data => {
+
+    5: data => {
       const { details = '' } = data as SwapVOsForPinCreditDetails
       return {
         type: 6,
-        details,
-      }
-    },
-    5: data => {
-      const { amount = '', reason = '' } = data as AddEmergencyPinPhoneCreditDetails
-      return {
-        type: 5,
-        amount,
-        reason,
-      }
-    },
-    8: data => {
-      const { details = '' } = data as SupplyListOfPinPhoneContactsDetails
-      return {
-        type: 8,
         details,
       }
     },

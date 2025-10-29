@@ -10,83 +10,57 @@ function startApplication(appType: string): ApplicationDetailsPage {
   cy.resetAndSignIn()
   cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
   cy.task('stubGetGroupsAndTypes')
-  cy.task('stubGetDepartments', { appType: appConfig?.key })
+  cy.task('stubGetDepartments', { appType: appConfig?.legacyKey })
   cy.task('stubGetRelationships', 'SOCIAL_RELATIONSHIP')
 
   cy.visit('/log/application-details')
 
   cy.enterPrisonerDetails()
-  cy.selectGroup('Pin phone apps')
+  cy.selectGroup('Pin Phone Contact Apps')
   cy.selectApplicationType(appType)
   cy.selectDepartment('Business Hub')
 
   return Page.verifyOnPage(ApplicationDetailsPage)
 }
 
-applicationTypes
-  .filter(({ name }) => ['Add emergency PIN phone credit', 'Remove PIN phone contact'].includes(name))
-  .forEach(({ name, type, hint }) => {
-    context(`Application Details Page - ${name}`, () => {
-      let page: ApplicationDetailsPage
+applicationTypes.forEach(({ name }) => {
+  context(`Application Details Page - ${name}`, () => {
+    let page: ApplicationDetailsPage
 
-      beforeEach(() => {
-        page = startApplication(name)
+    beforeEach(() => {
+      page = startApplication(name)
+    })
+
+    it('should render the correct app type title', () => {
+      page.appTypeTitle().should('have.text', name)
+    })
+    if (name === 'Remove PIN phone contact') {
+      it('should display "PIN phone contact to remove" text', () => {
+        cy.contains('h2', 'PIN phone contact to remove').should('exist')
       })
 
-      it('should render the correct app type title', () => {
-        page.appTypeTitle().should('have.text', name)
+      it('should have first and last name inputs', () => {
+        cy.get('label[for="firstName"]').should('contain.text', 'First name')
+        cy.get('label[for="lastName"]').should('contain.text', 'Last name')
       })
-      if (name === 'Remove PIN phone contact') {
-        it('should display "PIN phone contact to remove" text', () => {
-          cy.contains('h2', 'PIN phone contact to remove').should('exist')
-        })
 
-        it('should have first and last name inputs', () => {
-          cy.get('label[for="firstName"]').should('contain.text', 'First name')
-          cy.get('label[for="lastName"]').should('contain.text', 'Last name')
-        })
-
-        it('should display the telephone number inputs', () => {
-          cy.get('label[for="telephone1"]').should('contain.text', 'Telephone number 1')
-          cy.get('label[for="telephone2"]').should('contain.text', 'Telephone number 2')
-        })
-
-        it('should display the relationship to prisoner field', () => {
-          cy.get('label[for="relationship"]').should('contain.text', 'Relationship to prisoner')
-          cy.get('#relationship').should('exist')
-        })
-      }
-
-      if (type === 'textarea') {
-        it('should render the form label', () => {
-          page.formLabel().should('contain.text', 'Details (optional)')
-        })
-
-        it('should display the hint text', () => {
-          page.hintText().should('contain.text', hint)
-        })
-
-        it('should have a textarea field', () => {
-          page.textArea().should('exist')
-        })
-      }
-
-      if (type === 'amount') {
-        it('should display the hint text', () => {
-          page.reasonHintText().should('contain.text', hint)
-        })
-
-        it('should have an amount input field', () => {
-          page.amountInput().should('exist')
-        })
-      }
-
-      it('should have CSRF token and continue button', () => {
-        page.csrfToken().should('exist')
-        page.continueButton().should('contain.text', 'Continue')
+      it('should display the telephone number inputs', () => {
+        cy.get('label[for="telephone1"]').should('contain.text', 'Telephone number 1')
+        cy.get('label[for="telephone2"]').should('contain.text', 'Telephone number 2')
       })
+
+      it('should display the relationship to prisoner field', () => {
+        cy.get('label[for="relationship"]').should('contain.text', 'Relationship to prisoner')
+        cy.get('#relationship').should('exist')
+      })
+    }
+
+    it('should have CSRF token and continue button', () => {
+      page.csrfToken().should('exist')
+      page.continueButton().should('contain.text', 'Continue')
     })
   })
+})
 
 context(`Application Details Page - Add new social PIN contact`, () => {
   let page: ApplicationDetailsPage

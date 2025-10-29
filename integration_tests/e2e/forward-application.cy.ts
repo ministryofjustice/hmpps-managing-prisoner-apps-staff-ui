@@ -9,10 +9,10 @@ const testData = new TestData()
 const { departments } = testData
 
 const validAppTypes = applicationTypes.filter(appType =>
-  departments.some(dept => dept.establishment.appTypes.includes(appType.key)),
+  departments.some(dept => dept.establishment.appTypes.includes(appType.legacyKey)),
 )
 
-validAppTypes.forEach(({ name, key }) => {
+validAppTypes.forEach(({ name, legacyKey: key }) => {
   context(`Forward Application Page - ${name}`, () => {
     let page: ForwardApplicationPage
 
