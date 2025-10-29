@@ -2,24 +2,45 @@
   "applicationTypes": [
     {
       "id": 1,
-      "name": "Add new social PIN phone contact",
+      "name": "Add emergency phone credit",
+      "genericType": false,
+      "logDetailRequired": false,
+      "legacyKey": "PIN_PHONE_EMERGENCY_CREDIT_TOP_UP"
+    },
+    {
+      "id": 2,
+      "name": "Add an official PIN phone contact",
       "genericType": false,
       "logDetailRequired": false,
       "legacyKey": "PIN_PHONE_ADD_NEW_SOCIAL_CONTACT"
     },
     {
-      "id": 2,
-      "name": "Add new official PIN phone contact",
+      "id": 3,
+      "name": "Add a social PIN phone contact",
       "genericType": false,
       "logDetailRequired": false,
       "legacyKey": "PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT"
     },
     {
-      "id": 3,
-      "name": "Remove PIN phone contact",
+      "id": 4,
+      "name": "Add or remove a PIN phone contact",
       "genericType": false,
       "logDetailRequired": false,
       "legacyKey": "PIN_PHONE_REMOVE_CONTACT"
+    },
+    {
+      "id": 5,
+      "name": "Swap Visiting Orders (VOs) for PIN Credit",
+      "genericType": false,
+      "logDetailRequired": false,
+      "legacyKey": "PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS"
+    },
+    {
+      "id": 6,
+      "name": "Make a general PIN phone enquiry",
+      "genericType": true,
+      "logDetailRequired": true,
+      "legacyKey": ""
     }
   ]
 }

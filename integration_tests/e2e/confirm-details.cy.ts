@@ -21,7 +21,7 @@ context('Confirm Details Page', () => {
           cy.visit('/log/confirm')
 
           cy.enterPrisonerDetails()
-          cy.selectApplicationType('Swap visiting orders (VOs) for PIN credit')
+          cy.selectApplicationType('Swap Visiting Orders (VOs) for PIN Credit')
           cy.selectDepartment('Business Hub')
 
           cy.contains('button', 'Continue').click()
@@ -38,7 +38,7 @@ context('Confirm Details Page', () => {
       })
 
       it('should display the correct page title', () => {
-        page.pageTitle().should('include', 'Swap visiting orders (VOs) for PIN credit')
+        page.pageTitle().should('include', 'Swap Visiting Orders (VOs) for PIN Credit')
       })
 
       it('should render the back link with correct text and href', () => {

@@ -6,15 +6,12 @@ export const groups = [
     id: 1,
     name: 'Pin Phone Contact Apps',
     appTypes: [
-      appTypes.addNewSocialContact,
+      appTypes.emergencyCredit,
       appTypes.addNewOfficialContact,
-      appTypes.removeContact,
-      appTypes.addGenericContact,
+      appTypes.addNewSocialContact,
+      appTypes.addOrRemoveContact,
+      appTypes.swapVOs,
+      appTypes.makeGeneralEnquiry,
     ],
-  },
-  {
-    id: 2,
-    name: 'Emergency Credit and Vist',
-    appTypes: [appTypes.emergencyCredit, appTypes.swapVOs, appTypes.genericCreditVisit],
   },
 ]

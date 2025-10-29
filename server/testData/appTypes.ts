@@ -1,47 +1,42 @@
+import { add } from 'date-fns'
 import { APPLICATION_TYPE_VALUES, applicationTypeLabels } from '../constants/applicationTypes'
 
 export const appTypes = {
-  addNewSocialContact: {
+  emergencyCredit: {
     id: 1,
-    name: 'Add new social PIN phone contact',
+    name: 'Add emergency phone credit',
     genericType: false,
     logDetailRequired: false,
   },
   addNewOfficialContact: {
     id: 2,
-    name: 'Add new official PIN phone contact',
+    name: 'Add an official PIN phone contact',
     genericType: false,
     logDetailRequired: false,
   },
-  removeContact: {
+  addNewSocialContact: {
     id: 3,
-    name: 'Remove PIN phone contact',
+    name: 'Add a social PIN phone contact',
     genericType: false,
     logDetailRequired: false,
   },
-  addGenericContact: {
+  addOrRemoveContact: {
     id: 4,
-    name: 'Add generic contact request',
-    genericType: true,
-    logDetailRequired: true,
-  },
-  emergencyCredit: {
-    id: 5,
-    name: 'Add emergency PIN phone credit',
+    name: 'Add or remove a PIN phone contact',
     genericType: false,
     logDetailRequired: false,
   },
   swapVOs: {
-    id: 6,
-    name: 'Swap visiting orders (VOs) for PIN credit',
+    id: 5,
+    name: 'Swap Visiting Orders (VOs) for PIN Credit',
     genericType: false,
     logDetailRequired: false,
   },
-  genericCreditVisit: {
-    id: 7,
-    name: 'Generic credit and Visit',
+  makeGeneralEnquiry: {
+    id: 6,
+    name: 'Make a general PIN phone enquiry',
     genericType: true,
-    logDetailRequired: false,
+    logDetailRequired: true,
   },
 }
 
