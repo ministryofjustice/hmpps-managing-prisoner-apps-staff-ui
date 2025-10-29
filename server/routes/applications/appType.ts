@@ -41,9 +41,7 @@ export default function appTypeRouter({
       }
 
       const groups = await managingPrisonerAppsService.getGroupsAndTypes(user)
-      console.log('Groups:', groups)
       const selectedGroup = groups.find(group => group.id.toString() === applicationData.group.value)
-      console.log('Selected Group:', selectedGroup)
 
       if (!selectedGroup) {
         return res.redirect(URLS.LOG_GROUP)
