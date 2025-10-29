@@ -145,7 +145,7 @@ export default {
     return stubFor({
       request: {
         method: 'GET',
-        url: `/managingPrisonerApps/v2/establishments/apps/types`,
+        url: `/managingPrisonerApps/v2/establishments/apps/groups`,
       },
       response: {
         status: 200,
