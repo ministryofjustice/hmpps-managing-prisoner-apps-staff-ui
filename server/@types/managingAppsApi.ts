@@ -89,7 +89,7 @@ export interface ApplicationType {
 export interface Group {
   id: number
   name: string
-  applicationTypes: ApplicationType[]
+  appTypes: ApplicationType[]
 }
 
 export type ApplicationTypeKey =

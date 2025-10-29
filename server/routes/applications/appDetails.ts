@@ -47,9 +47,7 @@ export default function appDetailsRouter({
         return res.redirect(URLS.LOG_GROUP)
       }
 
-      const selectedAppType = selectedGroup.applicationTypes.find(
-        type => type.id.toString() === applicationData.type?.value,
-      )
+      const selectedAppType = selectedGroup.appTypes.find(type => type.id.toString() === applicationData.type?.value)
 
       if (!selectedAppType) {
         return res.redirect(URLS.LOG_APPLICATION_TYPE)

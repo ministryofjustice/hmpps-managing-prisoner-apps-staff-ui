@@ -241,65 +241,9 @@ export default class ManagingPrisonerAppsApiClient {
 
   async getGroupsAndTypes(): Promise<Group[] | null> {
     try {
-      // return await this.restClient.get({
-      //   path: `/v2/establishments/apps/types`,
-      // })
-      return [
-        {
-          id: 1,
-          name: 'Pin Phone Contact Apps',
-          applicationTypes: [
-            {
-              id: 1,
-              name: 'Add new social PIN phone contact',
-              genericType: false,
-              logDetailRequired: false,
-            },
-            {
-              id: 2,
-              name: 'Add new official PIN phone contact',
-              genericType: false,
-              logDetailRequired: false,
-            },
-            {
-              id: 3,
-              name: 'Remove PIN phone contact',
-              genericType: false,
-              logDetailRequired: false,
-            },
-            {
-              id: 4,
-              name: 'Add generic contact request',
-              genericType: true,
-              logDetailRequired: true,
-            },
-          ],
-        },
-        {
-          id: 2,
-          name: 'Emergency Credit and Vist',
-          applicationTypes: [
-            {
-              id: 5,
-              name: 'Add emergency PIN phone credit',
-              genericType: false,
-              logDetailRequired: false,
-            },
-            {
-              id: 6,
-              name: 'Swap visiting orders (VOs) for PIN credit',
-              genericType: false,
-              logDetailRequired: false,
-            },
-            {
-              id: 7,
-              name: 'Generic credit and Visit',
-              genericType: true,
-              logDetailRequired: false,
-            },
-          ],
-        },
-      ]
+      return await this.restClient.get({
+        path: `/v2/establishments/apps/groups`,
+      })
     } catch (error) {
       logger.error(`Error fetching application groups and types.`, error)
       return null

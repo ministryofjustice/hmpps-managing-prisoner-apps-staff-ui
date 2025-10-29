@@ -18,7 +18,7 @@ describe(getAppType.name, () => {
     {
       id: 1,
       name: 'Pin Phone Contact Apps',
-      applicationTypes: [
+      appTypes: [
         {
           id: 2,
           name: 'Add new social PIN phone contact',

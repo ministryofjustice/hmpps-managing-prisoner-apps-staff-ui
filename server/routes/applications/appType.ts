@@ -24,7 +24,7 @@ export default function appTypeRouter({
   const router = Router()
 
   const buildAppTypes = (group: Group, selectedValue: string | null) =>
-    group.applicationTypes.map(appType => ({
+    group.appTypes.map(appType => ({
       value: appType.id.toString(),
       text: appType.name,
       checked: selectedValue === appType.id.toString(),
@@ -41,7 +41,9 @@ export default function appTypeRouter({
       }
 
       const groups = await managingPrisonerAppsService.getGroupsAndTypes(user)
+      console.log('Groups:', groups)
       const selectedGroup = groups.find(group => group.id.toString() === applicationData.group.value)
+      console.log('Selected Group:', selectedGroup)
 
       if (!selectedGroup) {
         return res.redirect(URLS.LOG_GROUP)
@@ -73,7 +75,7 @@ export default function appTypeRouter({
       const groups = await managingPrisonerAppsService.getGroupsAndTypes(user)
       const selectedGroup = groups.find(group => group.id.toString() === applicationData.group.value)
 
-      const allAppTypes = groups.flatMap(group => group.applicationTypes)
+      const allAppTypes = groups.flatMap(group => group.appTypes)
       const selectedAppType = allAppTypes.find(type => type.id.toString() === selectedValue)
 
       if (!selectedAppType) {

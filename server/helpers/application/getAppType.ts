@@ -8,6 +8,6 @@ export const getAppType = async (
   appTypeId: string,
 ) => {
   const groups = await managingPrisonerAppsService.getGroupsAndTypes(user)
-  const allAppTypes = groups.flatMap(group => group.applicationTypes)
+  const allAppTypes = groups.flatMap(group => group.appTypes)
   return allAppTypes.find(type => type.id.toString() === appTypeId)
 }
