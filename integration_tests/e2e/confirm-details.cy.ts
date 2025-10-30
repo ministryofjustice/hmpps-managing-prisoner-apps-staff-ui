@@ -21,6 +21,7 @@ context('Confirm Details Page', () => {
           cy.visit('/log/confirm')
 
           cy.enterPrisonerDetails()
+          cy.selectGroup('Pin Phone Contact Apps')
           cy.selectApplicationType('Swap Visiting Orders (VOs) for PIN Credit')
           cy.selectDepartment('Business Hub')
 

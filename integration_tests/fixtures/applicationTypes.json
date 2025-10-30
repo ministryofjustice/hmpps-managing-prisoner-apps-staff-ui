@@ -12,14 +12,14 @@
       "name": "Add an official PIN phone contact",
       "genericType": false,
       "logDetailRequired": false,
-      "legacyKey": "PIN_PHONE_ADD_NEW_SOCIAL_CONTACT"
+      "legacyKey": "PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT"
     },
     {
       "id": 3,
       "name": "Add a social PIN phone contact",
       "genericType": false,
       "logDetailRequired": false,
-      "legacyKey": "PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT"
+      "legacyKey": "PIN_PHONE_ADD_NEW_SOCIAL_CONTACT"
     },
     {
       "id": 4,
