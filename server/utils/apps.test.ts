@@ -5,8 +5,8 @@ import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService
 import { legacyAppTypes } from '../testData/appTypes'
 import { formatAppsToRows } from './apps'
 
-jest.mock('../helpers/application/getAppType', () => ({
-  getAppType: jest.fn(() => legacyAppTypes[2]),
+jest.mock('../helpers/application/getLegacyAppType', () => ({
+  getLegacyAppType: jest.fn(() => legacyAppTypes[2]),
 }))
 
 describe('formatAppsToRows', () => {

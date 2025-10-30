@@ -4,20 +4,20 @@ import { AddNewOfficialPinPhoneContactDetails } from 'express-session'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
-import { getAppType } from '../../helpers/application/getAppType'
-
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PersonalRelationshipsService from '../../services/personalRelationshipsService'
 
+import { getLegacyAppType } from '../../helpers/application/getLegacyAppType'
+import formatEarlyDaysCentre from '../../utils/formatEarlyDaysCentre'
 import getApplicationDetails from '../../utils/getAppDetails'
 import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
 import { convertToTitleCase } from '../../utils/utils'
-import formatEarlyDaysCentre from '../../utils/formatEarlyDaysCentre'
+import { getAppType } from '../../helpers/application/getAppType'
 
 export default function changeAppRouter({
   auditService,
@@ -45,7 +45,7 @@ export default function changeAppRouter({
       )
 
       const additionalData = applicationData?.additionalData || {}
-      const formData = getAppTypeLogDetailsData(applicationType.id, additionalData)
+      const formData = getAppTypeLogDetailsData(Number(applicationData.type.value), additionalData)
       const earlyDaysCentreValue = formatEarlyDaysCentre(applicationData?.earlyDaysCentre, application.firstNightCenter)
       const templateData = await getApplicationDetails(
         formData,

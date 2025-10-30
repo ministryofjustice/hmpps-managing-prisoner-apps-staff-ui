@@ -3,13 +3,12 @@ import { Request, Response, Router } from 'express'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
-import { getAppType } from '../../helpers/application/getAppType'
-
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
+import { getLegacyAppType } from '../../helpers/application/getLegacyAppType'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { validateForwardingApplication } from '../validate/validateForwardingApplication'
 
@@ -66,10 +65,10 @@ export default function forwardAppRouter({
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
       if (!application) return res.redirect(URLS.APPLICATIONS)
 
-      const applicationType = await getAppType(managingPrisonerAppsService, user, application.appType)
+      const applicationType = await getLegacyAppType(managingPrisonerAppsService, user, application.appType)
       const errors = validateForwardingApplication(forwardTo, forwardingReason)
 
-      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.key)
 
       const filteredDepartments = (departments ?? [])
         .filter(dept => dept.id !== application.assignedGroup.id)
