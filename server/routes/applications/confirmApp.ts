@@ -29,6 +29,8 @@ export default function confirmAppRouter({
 
       const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.value)
 
+      if (!applicationType) return res.redirect(URLS.LOG_PRISONER_DETAILS)
+
       await auditService.logPageView(Page.CONFIRM_DETAILS_PAGE, {
         who: res.locals.user.username,
         correlationId: req.id,
@@ -36,11 +38,11 @@ export default function confirmAppRouter({
 
       return res.render(PATHS.LOG_APPLICATION.CONFIRM_DETAILS, {
         applicationData: {
-          earlyDaysCentre: convertToTitleCase(applicationData.earlyDaysCentre?.toString()),
-          prisoner: `${applicationData.prisonerName} (${applicationData.prisonerId})`,
-          request: applicationData.additionalData,
-          type: applicationData.type,
-          department: applicationData.department,
+          earlyDaysCentre: convertToTitleCase(applicationData?.earlyDaysCentre?.toString()),
+          prisoner: `${applicationData?.prisonerName} (${applicationData?.prisonerId})`,
+          request: applicationData?.additionalData,
+          type: applicationData?.type,
+          department: applicationData?.department,
         },
         backLink: URLS.LOG_APPLICATION_DETAILS,
         title: applicationType.name,

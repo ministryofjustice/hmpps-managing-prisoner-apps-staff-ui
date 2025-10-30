@@ -44,7 +44,7 @@ export default function changeAppRouter({
       )
 
       const additionalData = applicationData?.additionalData || {}
-      const formData = getAppTypeLogDetailsData(Number(applicationData.type.value), additionalData)
+      const formData = getAppTypeLogDetailsData(Number(applicationData?.type.value), additionalData)
       const earlyDaysCentreValue = formatEarlyDaysCentre(applicationData?.earlyDaysCentre, application.firstNightCenter)
       const templateData = await getApplicationDetails(
         formData,
