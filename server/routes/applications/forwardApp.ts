@@ -36,7 +36,7 @@ export default function forwardAppRouter({
         Page.FORWARD_APPLICATION_PAGE,
       )
 
-      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.toString())
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.key)
       const filteredDepartments = (departments ?? [])
         .filter(dept => dept.id !== application.assignedGroup.id)
         .map(dept => ({

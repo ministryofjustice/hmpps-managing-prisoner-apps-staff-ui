@@ -1,10 +1,10 @@
-import applicationTypesData from '../fixtures/applicationTypes.json'
+import applicationTypesData from '../fixtures/legacyAppTypes.json'
 
 import TestData from '../../server/routes/testutils/testData'
 import Page from '../pages/page'
 import ApplicationHistoryPage from '../pages/applicationHistoryPage'
 
-const { applicationTypes } = applicationTypesData
+const { legacyAppTypes } = applicationTypesData
 
 context('Application History Page', () => {
   let page: ApplicationHistoryPage
@@ -34,7 +34,7 @@ context('Application History Page', () => {
   })
 
   it('should display the application type name in the caption', () => {
-    const appType = applicationTypes.find(type => type.legacyKey === app.appType)
+    const appType = legacyAppTypes.find(type => type.key === app.appType)
     page.pageCaption().should('include.text', appType.name)
   })
 })

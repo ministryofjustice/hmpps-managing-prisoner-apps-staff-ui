@@ -1,18 +1,18 @@
-import applicationTypesData from '../fixtures/applicationTypes.json'
+import applicationTypesData from '../fixtures/legacyAppTypes.json'
 
 import TestData from '../../server/routes/testutils/testData'
 import ForwardApplicationPage from '../pages/forwardApplicationPage'
 import Page from '../pages/page'
 
-const { applicationTypes } = applicationTypesData
+const { legacyAppTypes } = applicationTypesData
 const testData = new TestData()
 const { departments } = testData
 
-const validAppTypes = applicationTypes.filter(appType =>
-  departments.some(dept => dept.establishment.appTypes.includes(appType.legacyKey)),
+const validAppTypes = legacyAppTypes.filter(appType =>
+  departments.some(dept => dept.establishment.appTypes.includes(appType.key)),
 )
 
-validAppTypes.forEach(({ name, legacyKey: key }) => {
+validAppTypes.forEach(({ name, key }) => {
   context(`Forward Application Page - ${name}`, () => {
     let page: ForwardApplicationPage
 

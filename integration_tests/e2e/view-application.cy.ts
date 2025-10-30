@@ -1,11 +1,11 @@
-import applicationTypesData from '../fixtures/applicationTypes.json'
+import applicationTypesData from '../fixtures/legacyAppTypes.json'
 
 import TestData from '../../server/routes/testutils/testData'
 import ViewApplicationPage from '../pages/viewApplicationPage'
 
-const { applicationTypes } = applicationTypesData
+const { legacyAppTypes } = applicationTypesData
 
-applicationTypes.forEach(({ name, legacyKey: key }) => {
+legacyAppTypes.forEach(({ name, key }) => {
   context(`View Application Page - ${name}`, () => {
     let page: ViewApplicationPage
     const { app: baseApp } = new TestData()
