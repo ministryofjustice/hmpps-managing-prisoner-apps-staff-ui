@@ -72,7 +72,7 @@ export default function departmentsRouter({
       }
 
       const selectedDepartment = req.body.department
-      const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.value)
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.legacyKey)
       const selectedDepartmentId = departments.find(dept => dept.name === selectedDepartment)?.id
 
       if (!selectedDepartment) {
