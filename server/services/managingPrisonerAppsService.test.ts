@@ -1,3 +1,4 @@
+import { APPLICATION_STATUS } from '../constants/applicationStatus'
 import HmppsAuthClient from '../data/hmppsAuthClient'
 import TestData from '../routes/testutils/testData'
 import ManagingPrisonerAppsService from './managingPrisonerAppsService'
@@ -101,7 +102,7 @@ describe('ManagingPrisonerAppsService', () => {
     it('should add a response to an application request', async () => {
       const payload = {
         reason: '',
-        decision: 'APPROVED',
+        decision: APPLICATION_STATUS.APPROVED,
         appliesTo: ['id'],
       }
 

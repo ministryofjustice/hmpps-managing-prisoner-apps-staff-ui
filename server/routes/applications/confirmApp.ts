@@ -12,7 +12,7 @@ import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsServ
 
 import { convertToTitleCase } from '../../utils/utils'
 
-export default function confirmDetailsRoutes({
+export default function confirmAppRouter({
   auditService,
   managingPrisonerAppsService,
 }: {
@@ -26,7 +26,8 @@ export default function confirmDetailsRoutes({
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
       const { applicationData } = req.session
-      const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.key)
+
+      const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.value)
 
       if (!applicationType) return res.redirect(URLS.LOG_PRISONER_DETAILS)
 
@@ -37,11 +38,11 @@ export default function confirmDetailsRoutes({
 
       return res.render(PATHS.LOG_APPLICATION.CONFIRM_DETAILS, {
         applicationData: {
-          earlyDaysCentre: convertToTitleCase(applicationData.earlyDaysCentre?.toString()),
-          prisoner: `${applicationData.prisonerName} (${applicationData.prisonerId})`,
-          request: applicationData.additionalData,
-          type: applicationType,
-          department: applicationData.department,
+          earlyDaysCentre: convertToTitleCase(applicationData?.earlyDaysCentre?.toString()),
+          prisoner: `${applicationData?.prisonerName} (${applicationData?.prisonerId})`,
+          request: applicationData?.additionalData,
+          type: applicationData?.type,
+          department: applicationData?.department,
         },
         backLink: URLS.LOG_APPLICATION_DETAILS,
         title: applicationType.name,

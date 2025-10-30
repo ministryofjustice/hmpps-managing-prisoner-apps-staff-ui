@@ -4,8 +4,6 @@ import { Request, Response, Router } from 'express'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
-import { getAppType } from '../../helpers/application/getAppType'
-
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
 import AuditService, { Page } from '../../services/auditService'
@@ -13,9 +11,10 @@ import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsServ
 
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 
+import { getLegacyAppType } from '../../helpers/application/getLegacyAppType'
 import { validateTextField } from '../validate/validateTextField'
 
-export default function commentsRoutes({
+export default function commentsRouter({
   auditService,
   managingPrisonerAppsService,
 }: {
@@ -76,7 +75,7 @@ export default function commentsRoutes({
           return res.redirect(URLS.APPLICATIONS)
         }
 
-        const applicationType = await getAppType(managingPrisonerAppsService, user, application.appType)
+        const applicationType = await getLegacyAppType(managingPrisonerAppsService, user, application.appType)
 
         const formattedComments =
           comments?.contents?.map(({ message, createdBy, createdDate }) => {

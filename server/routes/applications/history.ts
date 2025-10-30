@@ -10,7 +10,7 @@ import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsServ
 import formatApplicationHistory from '../../utils/formatApplicationHistory'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 
-export default function applicationHistoryRoutes({
+export default function historyRouter({
   auditService,
   managingPrisonerAppsService,
 }: {

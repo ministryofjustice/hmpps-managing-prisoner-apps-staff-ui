@@ -7,7 +7,6 @@ import { APPLICATION_STATUS } from '../../constants/applicationStatus'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
-import { getAppType } from '../../helpers/application/getAppType'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
 import AuditService, { Page } from '../../services/auditService'
@@ -16,9 +15,10 @@ import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsServ
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { convertToTitleCase } from '../../utils/utils'
 
+import { getLegacyAppType } from '../../helpers/application/getLegacyAppType'
 import { validateActionAndReply } from '../validate/validateActionAndReply'
 
-export default function actionAndReplyRoutes({
+export default function actionAppRouter({
   auditService,
   managingPrisonerAppsService,
 }: {
@@ -91,7 +91,7 @@ export default function actionAndReplyRoutes({
 
       if (!application) return res.redirect(URLS.APPLICATIONS)
 
-      const applicationType = await getAppType(managingPrisonerAppsService, user, application.appType)
+      const applicationType = await getLegacyAppType(managingPrisonerAppsService, user, application.appType)
       const errors = validateActionAndReply(decision, reason)
       const isAppPending = application.status === APPLICATION_STATUS.PENDING
       const [request] = application.requests ?? []

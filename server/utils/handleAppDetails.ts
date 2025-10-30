@@ -2,11 +2,10 @@ import { Request, Response } from 'express'
 import {
   AddNewOfficialPinPhoneContactDetails,
   AddNewSocialPinPhoneContactDetails,
-  ApplicationType,
   RemovePinPhoneContactDetails,
 } from 'express-session'
 
-import { APPLICATION_TYPE_VALUES } from '../constants/applicationTypes'
+import { ApplicationType } from '../@types/managingAppsApi'
 import { validateAmountField } from '../routes/validate/validateAmountField'
 import { validateAddNewOfficialContact } from '../routes/validate/validateNewOfficialContact'
 import { validateAddNewSocialContact } from '../routes/validate/validateNewSocialPinPhoneContact'
@@ -41,24 +40,10 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
   const templateData: Record<string, unknown> = {
     ...(await options.getTemplateData(req, res, applicationType)),
     title: applicationType.name,
-    applicationType,
   }
 
-  switch (applicationType.value) {
-    case APPLICATION_TYPE_VALUES.PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS: {
-      const { details } = req.body
-      const detailErrors = validateTextField({ fieldValue: details, fieldName: 'Details', isRequired: false })
-
-      if (Object.keys(detailErrors).length === 0) {
-        additionalData.details = details
-      } else {
-        Object.assign(errors, detailErrors)
-        templateData.details = details
-      }
-      break
-    }
-
-    case APPLICATION_TYPE_VALUES.PIN_PHONE_EMERGENCY_CREDIT_TOP_UP: {
+  switch (applicationType.id) {
+    case 1: {
       const { amount, reason } = req.body
       const { errors: amountErrors, value: sanitizedAmount } = validateAmountField(amount, 'Amount', true)
       const reasonErrors = validateTextField({ fieldValue: reason, fieldName: 'Reason', isRequired: true })
@@ -83,20 +68,36 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
       break
     }
 
-    case APPLICATION_TYPE_VALUES.PIN_PHONE_SUPPLY_LIST_OF_CONTACTS: {
-      const { details } = req.body
-      const detailErrors = validateTextField({ fieldValue: details, fieldName: 'Details', isRequired: false })
+    case 2: {
+      const formData: AddNewOfficialPinPhoneContactDetails = req.body
 
-      if (Object.keys(detailErrors).length === 0) {
-        additionalData.details = details
+      const formErrors = validateAddNewOfficialContact(formData)
+
+      const formFields = ['firstName', 'lastName', 'organisation', 'relationship', 'telephone1', 'telephone2'] as const
+
+      if (Object.keys(formErrors).length === 0) {
+        for (const field of formFields) {
+          additionalData[field] = formData[field]
+        }
+
+        Object.assign(templateData)
       } else {
-        Object.assign(errors, detailErrors)
-        templateData.details = details
+        Object.assign(errors, formErrors)
+
+        const updatedRelationships = ((templateData.formattedRelationshipList as SelectOption[]) ?? []).map(item => ({
+          ...item,
+          selected: item.value === formData.relationship,
+        }))
+
+        Object.assign(templateData, {
+          ...formData,
+          formattedRelationshipList: updatedRelationships,
+        })
       }
       break
     }
 
-    case APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT: {
+    case 3: {
       const formData: AddNewSocialPinPhoneContactDetails = {
         ...req.body,
         dob: {
@@ -124,7 +125,6 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
       ] as const
 
       if (Object.keys(formErrors).length === 0) {
-        // Save earlyDaysCentre separately
         earlyDaysCentre = formData.earlyDaysCentre
 
         for (const field of formFields) {
@@ -163,36 +163,7 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
       break
     }
 
-    case APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT: {
-      const formData: AddNewOfficialPinPhoneContactDetails = req.body
-
-      const formErrors = validateAddNewOfficialContact(formData)
-
-      const formFields = ['firstName', 'lastName', 'organisation', 'relationship', 'telephone1', 'telephone2'] as const
-
-      if (Object.keys(formErrors).length === 0) {
-        for (const field of formFields) {
-          additionalData[field] = formData[field]
-        }
-
-        Object.assign(templateData)
-      } else {
-        Object.assign(errors, formErrors)
-
-        const updatedRelationships = ((templateData.formattedRelationshipList as SelectOption[]) ?? []).map(item => ({
-          ...item,
-          selected: item.value === formData.relationship,
-        }))
-
-        Object.assign(templateData, {
-          ...formData,
-          formattedRelationshipList: updatedRelationships,
-        })
-      }
-      break
-    }
-
-    case APPLICATION_TYPE_VALUES.PIN_PHONE_REMOVE_CONTACT: {
+    case 4: {
       const formData: RemovePinPhoneContactDetails = req.body
 
       const formErrors = validateRemovePinPhoneContact(formData)
@@ -213,6 +184,19 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
         Object.assign(templateData, {
           ...formData,
         })
+      }
+      break
+    }
+
+    case 5: {
+      const { details } = req.body
+      const detailErrors = validateTextField({ fieldValue: details, fieldName: 'Details', isRequired: false })
+
+      if (Object.keys(detailErrors).length === 0) {
+        additionalData.details = details
+      } else {
+        Object.assign(errors, detailErrors)
+        templateData.details = details
       }
       break
     }

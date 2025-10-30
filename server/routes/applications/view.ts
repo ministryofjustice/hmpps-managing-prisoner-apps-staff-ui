@@ -27,7 +27,7 @@ import { convertToTitleCase } from '../../utils/utils'
 import logger from '../../../logger'
 import config from '../../config'
 
-export default function viewApplicationRoutes({
+export default function viewAppsRouter({
   auditService,
   managingPrisonerAppsService,
   prisonService,
@@ -65,10 +65,11 @@ export default function viewApplicationRoutes({
         page,
         size: 10,
         status,
-        types: selectedFilters.types,
-        requestedBy: selectedFilters.prisonerId,
-        assignedGroups: selectedFilters.groups,
-        firstNightCenter: selectedFilters.priority.includes('first-night-centre') ? true : null,
+        types:
+          selectedFilters.types.length > 0 ? (selectedFilters.types as ApplicationSearchPayload['types']) : undefined,
+        requestedBy: selectedFilters.prisonerId || undefined,
+        assignedGroups: selectedFilters.groups.length > 0 ? selectedFilters.groups : undefined,
+        firstNightCenter: selectedFilters.priority.includes('first-night-centre') ? true : undefined,
       }
 
       const [{ apps, types, assignedGroups, totalRecords, firstNightCenter }, prisonerDetails] = await Promise.all([

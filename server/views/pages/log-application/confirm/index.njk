@@ -21,7 +21,7 @@
         <h1 class="govuk-heading-xl govuk-!-margin-top-0">Check details</h1>
      
         {% include "./partials/application-details.njk" %}
-        {% include "./partials/" + applicationData.type.value + ".njk" %}
+        {% include "./partials/" + applicationData.type.key + ".njk" %}
 
         <form method="POST">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

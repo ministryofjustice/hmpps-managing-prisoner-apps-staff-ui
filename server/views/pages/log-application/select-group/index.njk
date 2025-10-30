@@ -16,7 +16,7 @@
 
         {{ govukBackLink({
           text: "Back",
-          href: "/log/group"
+          href: "/log/prisoner-details"
         }) }}
         
         {% if errorSummary %}
@@ -30,19 +30,19 @@
 
         <span class="govuk-caption-xl">Log an application</span>
 
-        <form method="POST" id="log-application-type">
+        <form method="POST" id="select-app-group">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
           {{ govukRadios({
-            name: "applicationType",
+            name: "group",
             fieldset: {
               legend: {
-                text: "Select application type",
+                text: "Select application group",
                 isPageHeading: true,
                 classes: "govuk-fieldset__legend--xl"
               }
            },
-           items: applicationTypes,
+           items: groups,
            errorMessage: { text: errorMessage } if errorMessage else undefined
           }) }}
           

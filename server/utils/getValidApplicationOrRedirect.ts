@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
+import { getLegacyAppType } from '../helpers/application/getLegacyAppType'
 import AuditService, { Page } from '../services/auditService'
 import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
-import { getAppType } from '../helpers/application/getAppType'
 
 export default async function getValidApplicationOrRedirect(
   req: Request,
@@ -20,7 +20,7 @@ export default async function getValidApplicationOrRedirect(
     return null
   }
 
-  const applicationType = await getAppType(managingPrisonerAppsService, user, application.appType)
+  const applicationType = await getLegacyAppType(managingPrisonerAppsService, user, application.appType)
 
   if (!applicationType) {
     throw new Error('Unknown application type')

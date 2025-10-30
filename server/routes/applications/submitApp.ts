@@ -11,7 +11,7 @@ import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsServ
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { convertToTitleCase } from '../../utils/utils'
 
-export default function submitApplicationRoutes({
+export default function submitAppRouter({
   auditService,
   managingPrisonerAppsService,
 }: {

@@ -1,16 +1,18 @@
-import { ApplicationData, ApplicationType } from 'express-session'
+import { ApplicationData } from 'express-session'
 import logger from '../../logger'
 import {
-  Application,
+  App,
   ApplicationSearchPayload,
   AppResponsePayload,
+  AppTypeResponse,
   Comment,
   CommentsResponse,
   Department,
+  Group,
   History,
-  Response,
   PrisonerSearchResult,
-  ViewApplicationsResponse,
+  Response,
+  ViewAppsListResponse,
 } from '../@types/managingAppsApi'
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
@@ -37,7 +39,7 @@ export default class ManagingPrisonerAppsApiClient {
     }
   }
 
-  async getPrisonerApp(prisonerId: string, applicationId: string): Promise<Application | null> {
+  async getPrisonerApp(prisonerId: string, applicationId: string): Promise<App | null> {
     try {
       return await this.restClient.get({
         path: `/v1/prisoners/${prisonerId}/apps/${applicationId}?requestedBy=true&assignedGroup=true`,
@@ -63,7 +65,7 @@ export default class ManagingPrisonerAppsApiClient {
     }
   }
 
-  async submitPrisonerApp(applicationData: ApplicationData): Promise<Application | null> {
+  async submitPrisonerApp(applicationData: ApplicationData): Promise<App | null> {
     try {
       const { prisonerId, type, departmentId, earlyDaysCentre, additionalData } = applicationData
       const firstNightCenter =
@@ -71,7 +73,7 @@ export default class ManagingPrisonerAppsApiClient {
 
       const payload = {
         reference: '',
-        type: type.key,
+        type: type.legacyKey,
         requests: [additionalData],
         firstNightCenter,
         department: departmentId,
@@ -87,7 +89,7 @@ export default class ManagingPrisonerAppsApiClient {
     }
   }
 
-  async getApps(payload: ApplicationSearchPayload): Promise<ViewApplicationsResponse | null> {
+  async getApps(payload: ApplicationSearchPayload): Promise<ViewAppsListResponse | null> {
     try {
       return await this.restClient.post({
         path: `/v1/prisoners/apps/search`,
@@ -189,7 +191,7 @@ export default class ManagingPrisonerAppsApiClient {
     }
   }
 
-  async getAppTypes(): Promise<ApplicationType[] | null> {
+  async getAppTypes(): Promise<AppTypeResponse[] | null> {
     try {
       return await this.restClient.get({
         path: `/v1/establishments/apps/types`,
@@ -207,6 +209,17 @@ export default class ManagingPrisonerAppsApiClient {
       })
     } catch (error) {
       logger.error(`Error fetching department list.`, error)
+      return null
+    }
+  }
+
+  async getGroupsAndTypes(): Promise<Group[] | null> {
+    try {
+      return await this.restClient.get({
+        path: `/v2/establishments/apps/groups`,
+      })
+    } catch (error) {
+      logger.error(`Error fetching application groups and types.`, error)
       return null
     }
   }

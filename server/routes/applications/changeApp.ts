@@ -4,22 +4,21 @@ import { AddNewOfficialPinPhoneContactDetails } from 'express-session'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
-import { getAppType } from '../../helpers/application/getAppType'
-
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PersonalRelationshipsService from '../../services/personalRelationshipsService'
 
+import { getAppType } from '../../helpers/application/getAppType'
+import formatEarlyDaysCentre from '../../utils/formatEarlyDaysCentre'
 import getApplicationDetails from '../../utils/getAppDetails'
 import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
 import { convertToTitleCase } from '../../utils/utils'
-import formatEarlyDaysCentre from '../../utils/formatEarlyDaysCentre'
 
-export default function changeApplicationRoutes({
+export default function changeAppRouter({
   auditService,
   managingPrisonerAppsService,
   personalRelationshipsService,
@@ -45,7 +44,7 @@ export default function changeApplicationRoutes({
       )
 
       const additionalData = applicationData?.additionalData || {}
-      const formData = getAppTypeLogDetailsData(applicationType, additionalData)
+      const formData = getAppTypeLogDetailsData(Number(applicationData?.type.value), additionalData)
       const earlyDaysCentreValue = formatEarlyDaysCentre(applicationData?.earlyDaysCentre, application.firstNightCenter)
       const templateData = await getApplicationDetails(
         formData,
@@ -79,7 +78,7 @@ export default function changeApplicationRoutes({
         getAppType: () => applicationType,
         getTemplateData: async () => {
           const additionalData = applicationData?.additionalData || {}
-          const formData = getAppTypeLogDetailsData(applicationType, additionalData)
+          const formData = getAppTypeLogDetailsData(applicationType.id, additionalData)
           const templateData = await getApplicationDetails(
             formData,
             personalRelationshipsService,

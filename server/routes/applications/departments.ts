@@ -12,7 +12,7 @@ import { updateSessionData } from '../../utils/session'
 
 const ERROR_MESSAGE = 'Choose a department'
 
-export default function departmentRoutes({
+export default function departmentsRouter({
   auditService,
   managingPrisonerAppsService,
 }: {
@@ -39,7 +39,7 @@ export default function departmentRoutes({
       }
 
       const selectedDepartment = applicationData?.department || null
-      const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.key)
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.legacyKey)
 
       if (!departments) {
         return res.redirect(URLS.LOG_APPLICATION_TYPE)
@@ -67,12 +67,12 @@ export default function departmentRoutes({
       const { user } = res.locals
       const { applicationData } = req.session
 
-      if (!applicationData?.type?.key) {
+      if (!applicationData?.type) {
         return res.redirect(URLS.LOG_APPLICATION_TYPE)
       }
 
       const selectedDepartment = req.body.department
-      const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.key)
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.legacyKey)
       const selectedDepartmentId = departments.find(dept => dept.name === selectedDepartment)?.id
 
       if (!selectedDepartment) {

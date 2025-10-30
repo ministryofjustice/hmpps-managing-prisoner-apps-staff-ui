@@ -1,9 +1,8 @@
 import { APPLICATION_STATUS } from '../../server/constants/applicationStatus'
 import TestData from '../../server/routes/testutils/testData'
+import { legacyAppTypes } from '../../server/testData/appTypes'
 import ActionAndReplyPage from '../pages/actionAndReply'
 import Page from '../pages/page'
-
-const { appTypes } = new TestData()
 
 context('Action and Reply Page', () => {
   const testCases = [
@@ -11,7 +10,7 @@ context('Action and Reply Page', () => {
     { status: APPLICATION_STATUS.APPROVED, label: 'closed', isClosed: true },
   ]
 
-  appTypes.forEach(({ key, name }) => {
+  legacyAppTypes.forEach(({ key, name }) => {
     testCases.forEach(({ status, label, isClosed }) => {
       describe(`AppType: ${key} | Status: ${label}`, () => {
         let page: ActionAndReplyPage

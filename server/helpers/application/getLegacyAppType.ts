@@ -2,12 +2,11 @@ import { HmppsUser } from '../../interfaces/hmppsUser'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
 // eslint-disable-next-line import/prefer-default-export
-export const getAppType = async (
+export const getLegacyAppType = async (
   managingPrisonerAppsService: ManagingPrisonerAppsService,
   user: HmppsUser,
-  appTypeId: string,
+  appType: string,
 ) => {
-  const groups = await managingPrisonerAppsService.getGroupsAndTypes(user)
-  const allAppTypes = groups.flatMap(group => group.appTypes)
-  return allAppTypes.find(type => type.id.toString() === appTypeId)
+  const appTypes = await managingPrisonerAppsService.getAppTypes(user)
+  return appTypes.find(type => type.key === appType)
 }
