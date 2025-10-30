@@ -71,3 +71,11 @@ export const legacyAppTypes = [
     name: applicationTypeLabels.PIN_PHONE_REMOVE_CONTACT,
   },
 ]
+
+export const appTypeIdToLegacyKeyMap: Record<number, string> = {
+  1: 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP',
+  2: 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT',
+  3: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
+  4: 'PIN_PHONE_REMOVE_CONTACT',
+  5: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
+}

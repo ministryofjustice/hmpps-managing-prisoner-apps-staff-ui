@@ -10,6 +10,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
+import { appTypeIdToLegacyKeyMap } from '../../testData/appTypes'
 import { updateSessionData } from '../../utils/session'
 
 const ERROR_MESSAGE = 'Choose one application type'
@@ -94,6 +95,7 @@ export default function appTypeRouter({
             .replace(/\s+/g, '-'),
           name: selectedAppType.name,
           value: selectedAppType.id.toString(),
+          legacyKey: appTypeIdToLegacyKeyMap[selectedAppType.id],
         },
       })
 

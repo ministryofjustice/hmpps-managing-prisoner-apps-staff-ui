@@ -73,7 +73,7 @@ export default class ManagingPrisonerAppsApiClient {
 
       const payload = {
         reference: '',
-        type: type.value,
+        type: type.legacyKey,
         requests: [additionalData],
         firstNightCenter,
         department: departmentId,
@@ -202,37 +202,11 @@ export default class ManagingPrisonerAppsApiClient {
     }
   }
 
-  async getDepartments(_appTypeId: string): Promise<Department[]> {
+  async getDepartments(appType: string): Promise<Department[]> {
     try {
-      // return await this.restClient.get({
-      //   path: `/v1/groups/app/types/${appType}`,
-      // })
-      return [
-        {
-          id: '916267ad-3ba6-4826-8d59-01cfbaa8420b',
-          name: 'Business Hub',
-          establishment: {
-            id: 'TEST_ESTABLISHMENT_FIRST',
-            name: 'TEST_ESTABLISHMENT_FIRST',
-            appTypes: ['PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT'],
-            defaultDepartments: false,
-          },
-          initialApp: 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT',
-          type: 'WING',
-        },
-        {
-          id: '5cee45c0-1751-41b3-8257-9cfe312cbdec',
-          name: 'OMU',
-          establishment: {
-            id: 'TEST_ESTABLISHMENT_FIRST',
-            name: 'TEST_ESTABLISHMENT_FIRST',
-            appTypes: ['PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT'],
-            defaultDepartments: false,
-          },
-          initialApp: 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT',
-          type: 'WING',
-        },
-      ]
+      return await this.restClient.get({
+        path: `/v1/groups/app/types/${appType}`,
+      })
     } catch (error) {
       logger.error(`Error fetching department list.`, error)
       return null

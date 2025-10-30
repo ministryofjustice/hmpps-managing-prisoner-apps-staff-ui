@@ -28,6 +28,7 @@ export declare module 'express-session' {
       key: string
       name: string
       value: string
+      legacyKey?: string
     }
     department?: string
     departmentId?: string
