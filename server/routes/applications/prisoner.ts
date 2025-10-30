@@ -12,7 +12,7 @@ import config from '../../config'
 import { updateSessionData } from '../../utils/session'
 import validatePrisonerDetails from '../validate/validatePrisonerDetails'
 
-export default function prisonerDetailsRoutes({
+export default function prisonerRouter({
   auditService,
   prisonService,
 }: {
@@ -106,7 +106,7 @@ export default function prisonerDetailsRoutes({
         prisonerName: req.body.prisonerName,
       })
 
-      return res.redirect(URLS.LOG_APPLICATION_TYPE)
+      return res.redirect(URLS.LOG_GROUP)
     }),
   )
 

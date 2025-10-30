@@ -33,7 +33,7 @@
         <form method="POST" id="log-details">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-          {% include "./partials/" + applicationType.value + ".njk" %}
+          {% include "./partials/" + applicationType.key + ".njk" %}
 
           {{ govukButton({
             text: "Continue",

@@ -15,6 +15,12 @@ Cypress.Commands.add('enterPrisonerDetails', () => {
   cy.contains('button', 'Continue').click()
 })
 
+Cypress.Commands.add('selectGroup', (group: string) => {
+  cy.get('label')
+  cy.contains(group).click()
+  cy.contains('button', 'Continue').click()
+})
+
 Cypress.Commands.add('selectApplicationType', (appType: string) => {
   cy.get('label')
   cy.contains(appType).click()

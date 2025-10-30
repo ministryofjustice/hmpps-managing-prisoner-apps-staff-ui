@@ -1,4 +1,4 @@
-import { Application } from '../@types/managingAppsApi'
+import { App } from '../@types/managingAppsApi'
 import { countries } from '../constants/countries'
 import { PERSONAL_RELATIONSHIPS_GROUP_CODES } from '../constants/personalRelationshipsGroupCodes'
 import PersonalRelationshipsService from '../services/personalRelationshipsService'
@@ -6,14 +6,14 @@ import { getCountryNameByCode, getFormattedCountries } from './formatCountryList
 import { AppTypeData } from './getAppTypeLogDetails'
 import getFormattedRelationshipDropdown from './getFormattedRelationshipDropdown'
 
-type AddNewSocialContactRequest = Partial<Extract<AppTypeData, { type: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT' }>>
-type AddNewOfficialContactRequest = Partial<Extract<AppTypeData, { type: 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT' }>>
-type RemoveContactRequest = Partial<Extract<AppTypeData, { type: 'PIN_PHONE_REMOVE_CONTACT' }>>
+type AddNewSocialContactRequest = Partial<Extract<AppTypeData, { type: 2 }>>
+type AddNewOfficialContactRequest = Partial<Extract<AppTypeData, { type: 1 }>>
+type RemoveContactRequest = Partial<Extract<AppTypeData, { type: 3 }>>
 
 export default async function getApplicationDetails(
   applicationDetails: AppTypeData,
   personalRelationshipsService: PersonalRelationshipsService,
-  application?: Application,
+  application?: App,
   earlyDaysCentre?: string,
 ): Promise<Record<string, unknown>> {
   if (!applicationDetails) return {}
@@ -36,7 +36,7 @@ export default async function getApplicationDetails(
   }
 
   switch (applicationDetails.type) {
-    case 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT': {
+    case 2: {
       const request = (application?.requests?.[0] as AddNewSocialContactRequest) ?? {}
 
       const prefilledDetails: AddNewSocialContactRequest = {
@@ -58,7 +58,7 @@ export default async function getApplicationDetails(
       return handleAddNewSocialContact(prefilledDetails, earlyDaysCentre, personalRelationshipsService)
     }
 
-    case 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT': {
+    case 1: {
       const request = (application?.requests?.[0] as AddNewOfficialContactRequest) ?? {}
       const requestWithCompany = request as AddNewOfficialContactRequest & { company?: string }
       const applicationDetailsWithCompany = applicationDetails as AddNewOfficialContactRequest & { company?: string }
@@ -77,7 +77,7 @@ export default async function getApplicationDetails(
       return handleAddNewOfficialContact(prefilledDetails, personalRelationshipsService)
     }
 
-    case 'PIN_PHONE_REMOVE_CONTACT': {
+    case 3: {
       const request = (application?.requests?.[0] as RemoveContactRequest) ?? {}
 
       const prefilledDetails = {
@@ -91,7 +91,7 @@ export default async function getApplicationDetails(
       return prefilledDetails
     }
 
-    case 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP': {
+    case 5: {
       const { amount, reason } = application?.requests?.[0] ?? {}
       return {
         amount: applicationDetails.amount || String(amount ?? ''),
@@ -99,8 +99,8 @@ export default async function getApplicationDetails(
       }
     }
 
-    case 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS':
-    case 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS': {
+    case 8:
+    case 6: {
       const { details } = application?.requests?.[0] ?? {}
       return {
         details: applicationDetails.details || details || '',

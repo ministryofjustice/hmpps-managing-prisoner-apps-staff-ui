@@ -1,12 +1,12 @@
 import { format, getTime } from 'date-fns'
 
-import { ViewApplicationsResponseApplication } from '../@types/managingAppsApi'
+import { ViewAppListApp } from '../@types/managingAppsApi'
+import { APPLICATION_STATUS } from '../constants/applicationStatus'
+import { getLegacyAppType } from '../helpers/application/getLegacyAppType'
 import { HmppsUser } from '../interfaces/hmppsUser'
 import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
-import { getAppType } from '../helpers/application/getAppType'
-import { APPLICATION_STATUS } from '../constants/applicationStatus'
 
-type ViewAppsResponseAppWithName = ViewApplicationsResponseApplication & {
+type ViewAppListAppWithName = ViewAppListApp & {
   prisonerName: string
 }
 
@@ -14,7 +14,7 @@ type ViewAppsResponseAppWithName = ViewApplicationsResponseApplication & {
 export const formatAppsToRows = async (
   managingPrisonerAppsService: ManagingPrisonerAppsService,
   user: HmppsUser,
-  applications: ViewAppsResponseAppWithName[],
+  applications: ViewAppListAppWithName[],
 ) => {
   return Promise.all(
     applications.map(async application => {
@@ -24,7 +24,7 @@ export const formatAppsToRows = async (
       const formattedDate = format(date, 'd MMMM yyyy')
       const sortValue = getTime(date).toString()
 
-      const type = await getAppType(managingPrisonerAppsService, user, appType)
+      const type = await getLegacyAppType(managingPrisonerAppsService, user, appType)
       const statusText =
         status === APPLICATION_STATUS.PENDING ? null : status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
 

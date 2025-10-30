@@ -1,33 +1,32 @@
 import {
-  Application,
+  App,
   ApplicationSearchPayload,
-  ApplicationType,
   Comment,
   CommentsResponse,
   History,
   Response,
-  ViewApplicationsResponse,
+  ViewAppsListResponse,
   ViewApplicationsResponseAssignedGroup,
 } from '../../@types/managingAppsApi'
 import { InmateDetail } from '../../@types/prisonApi'
 import { APPLICATION_STATUS } from '../../constants/applicationStatus'
-import { APPLICATION_TYPE_VALUES, applicationTypeLabels } from '../../constants/applicationTypes'
 import { BaseUser } from '../../interfaces/hmppsUser'
 
 export default class TestData {
-  app: Application = {
+  app: App = {
     id: '13d2c453-be11-44a8-9861-21fd8ae6e911',
     reference: '1232143',
     assignedGroup: {
       id: '591185f2-863a-4a32-9812-c12f40b94ccb',
       name: 'Business Hub',
       establishment: {
-        id: 'ABC',
-        name: 'HMP ABC',
+        id: 'PNI',
+        name: 'Preston (HMP)',
+        appTypes: [],
+        defaultDepartments: false,
       },
       initialApp: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
       type: 'DEPARTMENT',
-      email: 'business+hub+ABC@justice.gov.uk',
     },
     appType: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
     requestedBy: {
@@ -54,6 +53,10 @@ export default class TestData {
     ],
     status: APPLICATION_STATUS.PENDING,
     firstNightCenter: true,
+    requestedDate: '',
+    requestedByFirstName: '',
+    requestedByLastName: '',
+    establishmentId: '',
   }
 
   user: BaseUser = {
@@ -87,7 +90,7 @@ export default class TestData {
     assignedGroups: null,
   }
 
-  appSearchResponse: ViewApplicationsResponse = {
+  appSearchResponse: ViewAppsListResponse = {
     page: 1,
     totalRecords: 3,
     exhausted: true,
@@ -123,6 +126,14 @@ export default class TestData {
         assignedGroup: {
           id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
           name: 'Business Hub',
+          establishment: {
+            id: 'TEST_ESTABLISHMENT_FIRST',
+            name: 'ESTABLISHMENT_NAME_1',
+            appTypes: [],
+            defaultDepartments: false,
+          },
+          initialApp: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
+          type: 'DEPARTMENT',
         },
       },
       {
@@ -137,6 +148,14 @@ export default class TestData {
         assignedGroup: {
           id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
           name: 'Business Hub',
+          establishment: {
+            id: 'TEST_ESTABLISHMENT_FIRST',
+            name: 'ESTABLISHMENT_NAME_1',
+            appTypes: [],
+            defaultDepartments: false,
+          },
+          initialApp: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
+          type: 'DEPARTMENT',
         },
       },
       {
@@ -151,6 +170,14 @@ export default class TestData {
         assignedGroup: {
           id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
           name: 'Business Hub',
+          establishment: {
+            id: 'TEST_ESTABLISHMENT_FIRST',
+            name: 'ESTABLISHMENT_NAME_1',
+            appTypes: [],
+            defaultDepartments: false,
+          },
+          initialApp: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
+          type: 'DEPARTMENT',
         },
       },
     ],
@@ -247,39 +274,6 @@ export default class TestData {
   ]
 
   supportedPrisonIds = ({ prisonIds = ['HEI', 'BLI'] } = {}): string[] => prisonIds
-
-  appTypes: ApplicationType[] = [
-    {
-      key: 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP',
-      value: APPLICATION_TYPE_VALUES.PIN_PHONE_EMERGENCY_CREDIT_TOP_UP,
-      name: applicationTypeLabels.PIN_PHONE_EMERGENCY_CREDIT_TOP_UP,
-    },
-    {
-      key: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
-      value: APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT,
-      name: applicationTypeLabels.PIN_PHONE_ADD_NEW_SOCIAL_CONTACT,
-    },
-    {
-      key: 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT',
-      value: APPLICATION_TYPE_VALUES.PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT,
-      name: applicationTypeLabels.PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT,
-    },
-    {
-      key: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
-      value: APPLICATION_TYPE_VALUES.PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS,
-      name: applicationTypeLabels.PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS,
-    },
-    {
-      key: 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS',
-      value: APPLICATION_TYPE_VALUES.PIN_PHONE_SUPPLY_LIST_OF_CONTACTS,
-      name: applicationTypeLabels.PIN_PHONE_SUPPLY_LIST_OF_CONTACTS,
-    },
-    {
-      key: 'PIN_PHONE_REMOVE_CONTACT',
-      value: APPLICATION_TYPE_VALUES.PIN_PHONE_REMOVE_CONTACT,
-      name: applicationTypeLabels.PIN_PHONE_REMOVE_CONTACT,
-    },
-  ]
 
   assignedGroups: ViewApplicationsResponseAssignedGroup[] = [
     {

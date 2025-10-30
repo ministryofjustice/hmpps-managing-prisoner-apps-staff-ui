@@ -20,7 +20,7 @@ export default class SubmitApplicationPage extends Page {
 
   logNewApplicationLink = () => cy.get(`a[href="/log/prisoner-details"]`).contains('a new application')
 
-  viewApplicationLink = (app: { requestedBy: { username: string }; id: string }) =>
+  viewApplicationLink = (app: { requestedBy: { username: string }; id?: string }) =>
     cy.get(`a[href="/applications/${app.requestedBy.username}/${app.id}"]`).contains('this application')
 
   viewAllApplicationsLink = () => cy.get(`a[href="/applications"]`).contains('all applications')

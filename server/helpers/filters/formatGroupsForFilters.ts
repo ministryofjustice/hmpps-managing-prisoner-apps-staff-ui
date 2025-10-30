@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/prefer-default-export
 export const formatGroupsForFilters = (
-  assignedGroups: { id: string; name: string; count: number }[],
+  assignedGroups: { id: string; name: string; count?: number }[],
   selectedFilters: { groups: string[] },
 ) =>
   assignedGroups.map(group => ({

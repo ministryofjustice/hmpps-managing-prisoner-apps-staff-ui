@@ -1,14 +1,14 @@
-import applicationTypesData from '../fixtures/applicationTypes.json'
+import applicationTypesData from '../fixtures/legacyAppTypes.json'
 
 import TestData from '../../server/routes/testutils/testData'
 import ForwardApplicationPage from '../pages/forwardApplicationPage'
 import Page from '../pages/page'
 
-const { applicationTypes } = applicationTypesData
+const { legacyAppTypes } = applicationTypesData
 const testData = new TestData()
 const { departments } = testData
 
-const validAppTypes = applicationTypes.filter(appType =>
+const validAppTypes = legacyAppTypes.filter(appType =>
   departments.some(dept => dept.establishment.appTypes.includes(appType.key)),
 )
 

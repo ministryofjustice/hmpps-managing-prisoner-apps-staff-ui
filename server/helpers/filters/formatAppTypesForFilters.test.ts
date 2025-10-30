@@ -1,11 +1,10 @@
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import TestData from '../../routes/testutils/testData'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
+import { legacyAppTypes } from '../../testData/appTypes'
 import { formatAppTypesForFilters } from './formatAppTypesForFilters'
 
 describe(formatAppTypesForFilters.name, () => {
-  const { appTypes } = new TestData()
-
   const mockUser: HmppsUser = {
     ...new TestData().user,
     authSource: 'nomis',
@@ -23,7 +22,7 @@ describe(formatAppTypesForFilters.name, () => {
     PIN_PHONE_SUPPLY_LIST_OF_CONTACTS: 2,
   }
 
-  beforeEach(() => managingPrisonerAppsService.getAppTypes.mockResolvedValue(appTypes))
+  beforeEach(() => managingPrisonerAppsService.getAppTypes.mockResolvedValue(legacyAppTypes))
   afterEach(() => jest.clearAllMocks())
 
   it('formats app types correctly when no filters are selected', async () => {
@@ -33,7 +32,7 @@ describe(formatAppTypesForFilters.name, () => {
 
     const expected = Object.entries(mockTypes)
       .map(([key, count]) => {
-        const matchingType = appTypes.find(type => type.key === key)
+        const matchingType = legacyAppTypes.find(type => type.key === key)
         if (!matchingType) return null
 
         return {
