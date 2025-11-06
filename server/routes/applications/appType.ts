@@ -24,12 +24,21 @@ export default function appTypeRouter({
 }): Router {
   const router = Router()
 
-  const buildAppTypes = (group: Group, selectedValue: string | null) =>
-    group.appTypes.map(appType => ({
+  type AppTypeItem = { value: string; text: string; checked: boolean } | { divider: 'or' }
+  const buildAppTypes = (group: Group, selectedValue: string | null): AppTypeItem[] => {
+    const items: AppTypeItem[] = group.appTypes.map(appType => ({
       value: appType.id.toString(),
       text: appType.name,
       checked: selectedValue === appType.id.toString(),
     }))
+
+    if (items.length > 1) {
+      const lastItem = items.pop()
+      items.push({ divider: 'or' })
+      items.push(lastItem)
+    }
+    return items
+  }
 
   router.get(
     URLS.LOG_APPLICATION_TYPE,

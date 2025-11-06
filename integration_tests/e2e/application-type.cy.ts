@@ -45,6 +45,10 @@ context('Application Type Page', () => {
     })
   })
 
+  it('should display a divider with text "or" between the last two options', () => {
+    cy.get('.govuk-radios__divider').should('exist').and('have.text', 'or')
+  })
+
   it('should display the continue button', () => {
     cy.get('.govuk-button')
       .should('exist')
