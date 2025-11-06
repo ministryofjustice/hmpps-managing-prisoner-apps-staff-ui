@@ -11,6 +11,7 @@ export const formatAppTypesForFilters = async (
   const appTypes = await managingPrisonerAppsService.getAppTypes(user)
 
   return Object.entries(types)
+    .filter(([_, count]) => count > 0)
     .map(([key, count]) => {
       const matchingType = appTypes.find(type => type.key === key)
       if (!matchingType) return null
