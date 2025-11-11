@@ -201,6 +201,32 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
       break
     }
 
+    case 6: {
+      const { details } = req.body
+      const detailErrors = validateTextField({ fieldValue: details, fieldName: 'Details', isRequired: false })
+
+      if (Object.keys(detailErrors).length === 0) {
+        additionalData.details = details
+      } else {
+        Object.assign(errors, detailErrors)
+        templateData.details = details
+      }
+      break
+    }
+
+    case 7: {
+      const { details } = req.body
+      const detailErrors = validateTextField({ fieldValue: details, fieldName: 'Details', isRequired: true })
+
+      if (Object.keys(detailErrors).length === 0) {
+        additionalData.details = details
+      } else {
+        Object.assign(errors, detailErrors)
+        templateData.details = details
+      }
+      break
+    }
+
     default:
       return res.redirect(options.successRedirect(req, res))
   }

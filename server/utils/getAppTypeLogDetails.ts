@@ -5,10 +5,11 @@ import {
   RemovePinPhoneContactDetails,
   SupplyListOfPinPhoneContactsDetails,
   SwapVOsForPinCreditDetails,
+  GeneralPinPhoneEnquiryDetails,
 } from 'express-session'
 
 export type SwapVOsAppType = {
-  type: 6
+  type: 4
   details: string
 }
 
@@ -19,7 +20,12 @@ export type EmergencyCreditAppType = {
 }
 
 export type SupplyListOfContactsAppType = {
-  type: 8
+  type: 6
+  details: string
+}
+
+export type GeneralEnquiryAppType = {
+  type: 7
   details: string
 }
 
@@ -66,6 +72,7 @@ export type AppTypeData =
   | AddNewSocialContactAppType
   | AddNewOfficialContactAppType
   | RemoveContactAppType
+  | GeneralEnquiryAppType
 
 export function getAppTypeLogDetailsData(id: number, additionalData: unknown): AppTypeData | null {
   const handlers: Record<number, (data: unknown) => AppTypeData> = {
@@ -157,7 +164,7 @@ export function getAppTypeLogDetailsData(id: number, additionalData: unknown): A
     5: data => {
       const { details = '' } = data as SwapVOsForPinCreditDetails
       return {
-        type: 6,
+        type: 4,
         details,
       }
     },
@@ -166,6 +173,14 @@ export function getAppTypeLogDetailsData(id: number, additionalData: unknown): A
       const { details = '' } = data as SupplyListOfPinPhoneContactsDetails
       return {
         type: 6,
+        details,
+      }
+    },
+
+    7: data => {
+      const { details = '' } = data as GeneralPinPhoneEnquiryDetails
+      return {
+        type: 7,
         details,
       }
     },

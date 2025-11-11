@@ -41,6 +41,7 @@ export default function confirmAppRouter({
           earlyDaysCentre: convertToTitleCase(applicationData?.earlyDaysCentre?.toString()),
           prisoner: `${applicationData?.prisonerName} (${applicationData?.prisonerId})`,
           request: applicationData?.additionalData,
+          group: applicationData?.group,
           type: applicationData?.type,
           department: applicationData?.department,
         },
