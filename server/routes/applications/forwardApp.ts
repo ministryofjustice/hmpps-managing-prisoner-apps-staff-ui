@@ -36,7 +36,10 @@ export default function forwardAppRouter({
         Page.FORWARD_APPLICATION_PAGE,
       )
 
-      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.key)
+      const departments = await managingPrisonerAppsService.getDepartments(
+        user,
+        application.applicationType?.id?.toString(),
+      )
       const filteredDepartments = (departments ?? [])
         .filter(dept => dept.id !== application.assignedGroup.id)
         .map(dept => ({
@@ -68,7 +71,10 @@ export default function forwardAppRouter({
       const applicationType = await getLegacyAppType(managingPrisonerAppsService, user, application.appType)
       const errors = validateForwardingApplication(forwardTo, forwardingReason)
 
-      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.key)
+      const departments = await managingPrisonerAppsService.getDepartments(
+        user,
+        application.applicationType?.id?.toString(),
+      )
 
       const filteredDepartments = (departments ?? [])
         .filter(dept => dept.id !== application.assignedGroup.id)

@@ -3,6 +3,7 @@ import {
   AddNewOfficialPinPhoneContactDetails,
   AddNewSocialPinPhoneContactDetails,
   RemovePinPhoneContactDetails,
+  SupplyListOfPinPhoneContactsDetails,
   SwapVOsForPinCreditDetails,
 } from 'express-session'
 
@@ -155,6 +156,14 @@ export function getAppTypeLogDetailsData(id: number, additionalData: unknown): A
 
     5: data => {
       const { details = '' } = data as SwapVOsForPinCreditDetails
+      return {
+        type: 6,
+        details,
+      }
+    },
+
+    6: data => {
+      const { details = '' } = data as SupplyListOfPinPhoneContactsDetails
       return {
         type: 6,
         details,

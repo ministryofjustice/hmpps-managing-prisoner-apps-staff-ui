@@ -67,13 +67,15 @@ export default class ManagingPrisonerAppsApiClient {
 
   async submitPrisonerApp(applicationData: ApplicationData): Promise<App | null> {
     try {
-      const { prisonerId, type, departmentId, earlyDaysCentre, additionalData } = applicationData
+      const { prisonerId, type, group, departmentId, earlyDaysCentre, additionalData } = applicationData
       const firstNightCenter =
         typeof earlyDaysCentre === 'string' ? earlyDaysCentre === 'yes' : Boolean(earlyDaysCentre)
 
       const payload = {
         reference: '',
         type: type.legacyKey,
+        applicationType: type.value,
+        applicationGroup: group.value,
         requests: [additionalData],
         firstNightCenter,
         department: departmentId,

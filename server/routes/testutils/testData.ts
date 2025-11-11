@@ -29,6 +29,12 @@ export default class TestData {
       type: 'DEPARTMENT',
     },
     appType: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
+    applicationType: {
+      id: 1,
+      name: 'Swap Visiting Orders (VOs) for PIN Credit',
+      genericType: false,
+      logDetailRequired: false,
+    },
     requestedBy: {
       username: 'G123456',
       userId: 'cb42921f-3b33-4efa-a873-4a1d86eb6caa',
@@ -77,6 +83,11 @@ export default class TestData {
     },
     prisonerId: 'G4567',
     prisonerName: 'Emily Brown',
+    group: {
+      name: 'PIN phones',
+      value: '1',
+    },
+    department: '343a7876-07b9-4ef8-947c-7cf554fae864',
     date: new Date('2024-09-15').toISOString(),
     additionalData: { details: 'Swap visiting orders (VOs) for PIN credit' },
   }
