@@ -14,7 +14,7 @@ context('Application History Page', () => {
     cy.resetAndSignIn()
     cy.task('stubGetPrisonerApp', { app })
     cy.task('stubGetHistory', { app })
-    cy.task('stubGetAppTypes')
+    cy.task('stubGetGroupsAndTypes')
 
     cy.visit(`/applications/${app.requestedBy.username}/${app.id}/history`, { failOnStatusCode: false })
 
@@ -34,7 +34,6 @@ context('Application History Page', () => {
   })
 
   it('should display the application type name in the caption', () => {
-    const appType = legacyAppTypes.find(type => type.key === app.appType)
-    page.pageCaption().should('include.text', appType.name)
+    page.pageCaption().should('include.text', 'Add a social PIN phone contact')
   })
 })

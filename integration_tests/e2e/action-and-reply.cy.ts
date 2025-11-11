@@ -23,7 +23,7 @@ context('Action and Reply Page', () => {
 
           cy.task('stubGetPrisonerApp', { app })
           cy.task('stubGetAppResponse', { app })
-          cy.task('stubGetAppTypes')
+          cy.task('stubGetGroupsAndTypes')
 
           cy.visit(`/applications/${app.requestedBy.username}/${app.id}/reply`)
 

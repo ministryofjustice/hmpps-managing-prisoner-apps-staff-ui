@@ -314,12 +314,7 @@ export default class TestData {
       establishment: {
         id: 'PNI',
         name: 'Preston (HMP)',
-        appTypes: [
-          'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS',
-          'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
-          'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP',
-          'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
-        ],
+        appTypes: [1, 2, 3, 4],
       },
       initialApp: 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS',
       type: 'WING',
@@ -330,12 +325,7 @@ export default class TestData {
       establishment: {
         id: 'PNI',
         name: 'Preston (HMP)',
-        appTypes: [
-          'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS',
-          'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
-          'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP',
-          'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
-        ],
+        appTypes: [1, 2, 3, 4],
       },
       initialApp: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
       type: 'WING',

@@ -86,24 +86,11 @@ export default {
       },
     })
   },
-  stubGetAppTypes: (): SuperAgentRequest => {
+  stubGetDepartments: ({ appType }: { appType: number }): SuperAgentRequest => {
     return stubFor({
       request: {
         method: 'GET',
-        url: `/managingPrisonerApps/v1/establishments/apps/types`,
-      },
-      response: {
-        status: 200,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: legacyAppTypes,
-      },
-    })
-  },
-  stubGetDepartments: ({ appType }: { appType: ApplicationTypeKey }): SuperAgentRequest => {
-    return stubFor({
-      request: {
-        method: 'GET',
-        url: `/managingPrisonerApps/v1/groups/app/types/${appType}`,
+        url: `/managingPrisonerApps/v1/groups/app/types/${appType.toString()}`,
       },
       response: {
         status: 200,
