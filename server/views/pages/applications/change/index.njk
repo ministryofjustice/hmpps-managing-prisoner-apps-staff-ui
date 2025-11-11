@@ -29,7 +29,7 @@
         <form method="POST" id="log-swap-vos-pin-credit-details">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-          {% include "./partials/" + applicationType.value + ".njk" %}
+          {% include "./partials/" + applicationType + ".njk" %}
 
           {{ govukButton({
             text: "Continue",

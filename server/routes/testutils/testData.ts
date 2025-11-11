@@ -29,6 +29,10 @@ export default class TestData {
       type: 'DEPARTMENT',
     },
     appType: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
+    applicationType: {
+      id: 3,
+      name: 'Swap visiting orders (VOs) for PIN credit',
+    },
     requestedBy: {
       username: 'G123456',
       userId: 'cb42921f-3b33-4efa-a873-4a1d86eb6caa',
