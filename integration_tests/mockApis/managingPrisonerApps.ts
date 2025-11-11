@@ -1,9 +1,8 @@
 import { SuperAgentRequest } from 'superagent'
 
-import { App, ApplicationTypeKey } from '../../server/@types/managingAppsApi'
+import { App } from '../../server/@types/managingAppsApi'
 
 import TestData from '../../server/routes/testutils/testData'
-import { legacyAppTypes } from '../../server/testData/appTypes'
 import { groups } from '../../server/testData/groups'
 
 import { stubFor } from './wiremock'

@@ -1,10 +1,6 @@
-import applicationTypesData from '../fixtures/legacyAppTypes.json'
-
 import TestData from '../../server/routes/testutils/testData'
-import Page from '../pages/page'
 import ApplicationHistoryPage from '../pages/applicationHistoryPage'
-
-const { legacyAppTypes } = applicationTypesData
+import Page from '../pages/page'
 
 context('Application History Page', () => {
   let page: ApplicationHistoryPage
