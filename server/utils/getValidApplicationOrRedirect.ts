@@ -20,11 +20,7 @@ export default async function getValidApplicationOrRedirect(
     return null
   }
 
-  const applicationType = await getAppType(
-    managingPrisonerAppsService,
-    user,
-    application.applicationType?.id?.toString(),
-  )
+  const applicationType = await getAppType(managingPrisonerAppsService, user, application.applicationType.id.toString())
 
   if (!applicationType) {
     throw new Error('Unknown application type')

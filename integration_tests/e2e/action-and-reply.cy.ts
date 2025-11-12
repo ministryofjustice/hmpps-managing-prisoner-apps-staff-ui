@@ -1,6 +1,6 @@
 import { APPLICATION_STATUS } from '../../server/constants/applicationStatus'
 import TestData from '../../server/routes/testutils/testData'
-import { legacyAppTypes } from '../../server/testData/appTypes'
+import { appTypes } from '../../server/testData/appTypes'
 import ActionAndReplyPage from '../pages/actionAndReply'
 import Page from '../pages/page'
 
@@ -10,20 +10,20 @@ context('Action and Reply Page', () => {
     { status: APPLICATION_STATUS.APPROVED, label: 'closed', isClosed: true },
   ]
 
-  legacyAppTypes.forEach(({ key, name }) => {
+  Object.values(appTypes).forEach(({ id, name }) => {
     testCases.forEach(({ status, label, isClosed }) => {
-      describe(`AppType: ${key} | Status: ${label}`, () => {
+      describe(`AppType: ${id} | Status: ${label}`, () => {
         let page: ActionAndReplyPage
 
         beforeEach(() => {
           const testData = new TestData()
-          const app = { ...testData.app, status, appType: key }
+          const app = { ...testData.app, status, applicationType: { id, name } }
 
           cy.resetAndSignIn()
 
           cy.task('stubGetPrisonerApp', { app })
           cy.task('stubGetAppResponse', { app })
-          cy.task('stubGetAppTypes')
+          cy.task('stubGetGroupsAndTypes')
 
           cy.visit(`/applications/${app.requestedBy.username}/${app.id}/reply`)
 

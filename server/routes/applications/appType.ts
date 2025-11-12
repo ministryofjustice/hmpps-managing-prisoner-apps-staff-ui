@@ -13,6 +13,8 @@ import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsServ
 import { appTypeIdToLegacyKeyMap } from '../../testData/appTypes'
 import { updateSessionData } from '../../utils/session'
 
+type AppTypeItem = { value: string; text: string; checked: boolean } | { divider: 'or' }
+
 const ERROR_MESSAGE = 'Choose one application type'
 
 export default function appTypeRouter({
@@ -24,7 +26,6 @@ export default function appTypeRouter({
 }): Router {
   const router = Router()
 
-  type AppTypeItem = { value: string; text: string; checked: boolean } | { divider: 'or' }
   const buildAppTypes = (group: Group, selectedValue: string | null): AppTypeItem[] => {
     const items: AppTypeItem[] = []
     group.appTypes.forEach((appType, index) => {

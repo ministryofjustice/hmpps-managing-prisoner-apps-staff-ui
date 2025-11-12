@@ -8,7 +8,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
-import { getLegacyAppType } from '../../helpers/application/getLegacyAppType'
+import { getAppType } from '../../helpers/application/getAppType'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { validateForwardingApplication } from '../validate/validateForwardingApplication'
 
@@ -36,10 +36,8 @@ export default function forwardAppRouter({
         Page.FORWARD_APPLICATION_PAGE,
       )
 
-      const departments = await managingPrisonerAppsService.getDepartments(
-        user,
-        application.applicationType?.id?.toString(),
-      )
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
+
       const filteredDepartments = (departments ?? [])
         .filter(dept => dept.id !== application.assignedGroup.id)
         .map(dept => ({
@@ -68,13 +66,14 @@ export default function forwardAppRouter({
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
       if (!application) return res.redirect(URLS.APPLICATIONS)
 
-      const applicationType = await getLegacyAppType(managingPrisonerAppsService, user, application.appType)
+      const applicationType = await getAppType(
+        managingPrisonerAppsService,
+        user,
+        application.applicationType.id.toString(),
+      )
       const errors = validateForwardingApplication(forwardTo, forwardingReason)
 
-      const departments = await managingPrisonerAppsService.getDepartments(
-        user,
-        application.applicationType?.id?.toString(),
-      )
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
 
       const filteredDepartments = (departments ?? [])
         .filter(dept => dept.id !== application.assignedGroup.id)
