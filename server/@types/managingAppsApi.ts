@@ -32,6 +32,10 @@ export interface ViewAppsListResponse {
 }
 
 export interface App extends ApplicationDto {
+  applicationType: {
+    id: number
+    name: string
+  }
   assignedGroup: AssignedGroup
   requestedBy: AppRequestedBy
   requests: AppRequest[]

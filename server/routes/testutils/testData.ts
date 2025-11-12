@@ -29,6 +29,10 @@ export default class TestData {
       type: 'DEPARTMENT',
     },
     appType: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
+    applicationType: {
+      id: 3,
+      name: 'Swap visiting orders (VOs) for PIN credit',
+    },
     requestedBy: {
       username: 'G123456',
       userId: 'cb42921f-3b33-4efa-a873-4a1d86eb6caa',
@@ -310,12 +314,7 @@ export default class TestData {
       establishment: {
         id: 'PNI',
         name: 'Preston (HMP)',
-        appTypes: [
-          'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS',
-          'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
-          'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP',
-          'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
-        ],
+        appTypes: [1, 2, 3, 4],
       },
       initialApp: 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS',
       type: 'WING',
@@ -326,12 +325,7 @@ export default class TestData {
       establishment: {
         id: 'PNI',
         name: 'Preston (HMP)',
-        appTypes: [
-          'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS',
-          'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
-          'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP',
-          'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
-        ],
+        appTypes: [1, 2, 3, 4],
       },
       initialApp: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
       type: 'WING',
