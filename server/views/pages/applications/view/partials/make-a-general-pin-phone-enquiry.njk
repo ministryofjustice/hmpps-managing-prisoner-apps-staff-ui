@@ -1,0 +1,10 @@
+{{ appTypeSummaryListHeader("Application details", application.requestedBy.username, application.id, isClosed) }}
+
+{{ govukSummaryList({
+  rows: [
+    { 
+      key: { text: "Details" }, 
+      value: { text: application.requests[0].details }  
+    }
+  ]
+}) }}

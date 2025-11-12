@@ -54,7 +54,7 @@ export default function viewAppsRouter({
 
         return {
           groups: extractQueryParamArray(req.query.group),
-          types: extractQueryParamArray(req.query.type),
+          types: extractQueryParamArray(req.query.type).map(type => type.toString()),
           priority: extractQueryParamArray(req.query.priority),
           prisonerLabel,
           prisonerId,
@@ -65,24 +65,27 @@ export default function viewAppsRouter({
         page,
         size: 10,
         status,
-        types:
-          selectedFilters.types.length > 0 ? (selectedFilters.types as ApplicationSearchPayload['types']) : undefined,
+        applicationTypes:
+          selectedFilters.types.length > 0
+            ? (selectedFilters.types.map(Number) as ApplicationSearchPayload['applicationTypes'])
+            : undefined,
         requestedBy: selectedFilters.prisonerId || undefined,
         assignedGroups: selectedFilters.groups.length > 0 ? selectedFilters.groups : undefined,
         firstNightCenter: selectedFilters.priority.includes('first-night-centre') ? true : undefined,
       }
 
-      const [{ apps, types, assignedGroups, totalRecords, firstNightCenter }, prisonerDetails] = await Promise.all([
-        managingPrisonerAppsService.getApps(payload, user),
-        managingPrisonerAppsService.getApps(payload, user).then(response =>
-          Promise.all(
-            response.apps.map(async app => {
-              if (!app.requestedBy) return null
-              return prisonService.getPrisonerByPrisonNumber(app.requestedBy, user)
-            }),
+      const [{ apps, applicationTypes, assignedGroups, totalRecords, firstNightCenter }, prisonerDetails] =
+        await Promise.all([
+          managingPrisonerAppsService.getApps(payload, user),
+          managingPrisonerAppsService.getApps(payload, user).then(response =>
+            Promise.all(
+              response.apps.map(async app => {
+                if (!app.requestedBy) return null
+                return prisonService.getPrisonerByPrisonNumber(app.requestedBy, user)
+              }),
+            ),
           ),
-        ),
-      ])
+        ])
 
       let error = null
 
@@ -104,7 +107,12 @@ export default function viewAppsRouter({
         return { ...app, prisonerName }
       })
 
-      const appTypes = await formatAppTypesForFilters(managingPrisonerAppsService, user, types, selectedFilters)
+      const appTypes = await formatAppTypesForFilters(
+        managingPrisonerAppsService,
+        user,
+        applicationTypes,
+        selectedFilters,
+      )
       const groups = formatGroupsForFilters(assignedGroups, selectedFilters)
       const priority = formatPriorityForFilters(selectedFilters, firstNightCenter)
 

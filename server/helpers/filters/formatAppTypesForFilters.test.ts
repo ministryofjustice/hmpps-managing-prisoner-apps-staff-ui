@@ -1,7 +1,7 @@
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import TestData from '../../routes/testutils/testData'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
-import { legacyAppTypes } from '../../testData/appTypes'
+import { legacyAppTypes, appTypeIdToLegacyKeyMap } from '../../testData/appTypes'
 import { formatAppTypesForFilters } from './formatAppTypesForFilters'
 
 describe(formatAppTypesForFilters.name, () => {
@@ -16,10 +16,10 @@ describe(formatAppTypesForFilters.name, () => {
   } as unknown as jest.Mocked<ManagingPrisonerAppsService>
 
   const mockTypes = {
-    PIN_PHONE_EMERGENCY_CREDIT_TOP_UP: 5,
-    PIN_PHONE_ADD_NEW_SOCIAL_CONTACT: 9,
-    PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS: 4,
-    PIN_PHONE_SUPPLY_LIST_OF_CONTACTS: 2,
+    '1': { id: 1, name: 'Add emergency phone credit', count: 5 },
+    '2': { id: 2, name: 'Add new social PIN phone contact', count: 9 },
+    '3': { id: 3, name: 'Swap visiting orders (VOs) for PIN credit', count: 4 },
+    '4': { id: 4, name: 'Supply list of PIN phone contacts', count: 2 },
   }
 
   beforeEach(() => managingPrisonerAppsService.getAppTypes.mockResolvedValue(legacyAppTypes))
@@ -30,31 +30,33 @@ describe(formatAppTypesForFilters.name, () => {
 
     const result = await formatAppTypesForFilters(managingPrisonerAppsService, mockUser, mockTypes, selectedFilters)
 
-    const expected = Object.entries(mockTypes)
-      .map(([key, count]) => {
-        const matchingType = legacyAppTypes.find(type => type.key === key)
-        if (!matchingType) return null
-
-        return {
-          value: matchingType.key,
-          text: `${matchingType.name} (${count})`,
-          checked: false,
-        }
-      })
-      .filter(Boolean)
-
-    expect(result).toEqual(expected)
+    expect(result).toEqual(
+      expect.arrayContaining(
+        Object.values(mockTypes)
+          .map(value => {
+            const serviceKey = appTypeIdToLegacyKeyMap[value.id]
+            const matchingType = legacyAppTypes.find(type => type.key === serviceKey)
+            if (!matchingType) return null
+            return expect.objectContaining({
+              value: value.id.toString(),
+              text: `${matchingType.name} (${value.count})`,
+              checked: false,
+            })
+          })
+          .filter(Boolean),
+      ),
+    )
   })
 
   it('marks selected types as checked', async () => {
     const selectedFilters = {
-      types: ['PIN_PHONE_EMERGENCY_CREDIT_TOP_UP', 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT'],
+      types: ['1', '2'],
     }
 
     const result = await formatAppTypesForFilters(managingPrisonerAppsService, mockUser, mockTypes, selectedFilters)
 
-    selectedFilters.types.forEach(typeKey => {
-      const found = result.find(r => r.value === typeKey)
+    selectedFilters.types.forEach(typeValue => {
+      const found = result.find(r => r.value === typeValue)
       expect(found?.checked).toBe(true)
     })
 
@@ -75,7 +77,7 @@ describe(formatAppTypesForFilters.name, () => {
     const modifiedTypes = {
       ...mockTypes,
       NON_EXISTENT_KEY: 3,
-    }
+    } as unknown as Record<string, { id: number; name: string; count: number }>
 
     const result = await formatAppTypesForFilters(managingPrisonerAppsService, mockUser, modifiedTypes, {
       types: [],
