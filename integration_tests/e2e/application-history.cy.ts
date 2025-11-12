@@ -1,10 +1,6 @@
-import applicationTypesData from '../fixtures/legacyAppTypes.json'
-
 import TestData from '../../server/routes/testutils/testData'
-import Page from '../pages/page'
 import ApplicationHistoryPage from '../pages/applicationHistoryPage'
-
-const { legacyAppTypes } = applicationTypesData
+import Page from '../pages/page'
 
 context('Application History Page', () => {
   let page: ApplicationHistoryPage
@@ -14,7 +10,7 @@ context('Application History Page', () => {
     cy.resetAndSignIn()
     cy.task('stubGetPrisonerApp', { app })
     cy.task('stubGetHistory', { app })
-    cy.task('stubGetAppTypes')
+    cy.task('stubGetGroupsAndTypes')
 
     cy.visit(`/applications/${app.requestedBy.username}/${app.id}/history`, { failOnStatusCode: false })
 
@@ -34,7 +30,6 @@ context('Application History Page', () => {
   })
 
   it('should display the application type name in the caption', () => {
-    const appType = legacyAppTypes.find(type => type.key === app.appType)
-    page.pageCaption().should('include.text', appType.name)
+    page.pageCaption().should('include.text', 'Add a social PIN phone contact')
   })
 })

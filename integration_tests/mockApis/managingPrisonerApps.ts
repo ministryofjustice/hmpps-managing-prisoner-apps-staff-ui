@@ -1,9 +1,8 @@
 import { SuperAgentRequest } from 'superagent'
 
-import { App, ApplicationTypeKey } from '../../server/@types/managingAppsApi'
+import { App } from '../../server/@types/managingAppsApi'
 
 import TestData from '../../server/routes/testutils/testData'
-import { legacyAppTypes } from '../../server/testData/appTypes'
 import { groups } from '../../server/testData/groups'
 
 import { stubFor } from './wiremock'
@@ -86,24 +85,11 @@ export default {
       },
     })
   },
-  stubGetAppTypes: (): SuperAgentRequest => {
+  stubGetDepartments: ({ appType }: { appType: number }): SuperAgentRequest => {
     return stubFor({
       request: {
         method: 'GET',
-        url: `/managingPrisonerApps/v1/establishments/apps/types`,
-      },
-      response: {
-        status: 200,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: legacyAppTypes,
-      },
-    })
-  },
-  stubGetDepartments: ({ appType }: { appType: ApplicationTypeKey }): SuperAgentRequest => {
-    return stubFor({
-      request: {
-        method: 'GET',
-        url: `/managingPrisonerApps/v1/groups/app/types/${appType}`,
+        url: `/managingPrisonerApps/v1/groups/app/types/${appType.toString()}`,
       },
       response: {
         status: 200,

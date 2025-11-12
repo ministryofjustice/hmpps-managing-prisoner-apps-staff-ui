@@ -44,8 +44,10 @@ export default function changeAppRouter({
       )
 
       const additionalData = applicationData?.additionalData || {}
-      const formData = getAppTypeLogDetailsData(Number(applicationData?.type.value), additionalData)
+
+      const formData = getAppTypeLogDetailsData(application.applicationType.id, additionalData)
       const earlyDaysCentreValue = formatEarlyDaysCentre(applicationData?.earlyDaysCentre, application.firstNightCenter)
+
       const templateData = await getApplicationDetails(
         formData,
         personalRelationshipsService,
@@ -55,7 +57,11 @@ export default function changeAppRouter({
 
       return res.render(PATHS.APPLICATIONS.CHANGE_DETAILS, {
         application,
-        applicationType,
+        applicationType: applicationType.name
+          .replace(/[^\w\s]/g, '')
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, '-'),
         backLink: `${URLS.APPLICATIONS}/${prisonerId}/${applicationId}`,
         title: applicationType.name,
         errors: null,
@@ -72,19 +78,26 @@ export default function changeAppRouter({
       const { applicationData } = req.session
 
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
-      const applicationType = await getAppType(managingPrisonerAppsService, user, application.appType)
+      const applicationType = await getAppType(
+        managingPrisonerAppsService,
+        user,
+        application.applicationType.id.toString(),
+      )
 
       return handleApplicationDetails(req, res, {
         getAppType: () => applicationType,
         getTemplateData: async () => {
           const additionalData = applicationData?.additionalData || {}
+
           const formData = getAppTypeLogDetailsData(applicationType.id, additionalData)
+
           const templateData = await getApplicationDetails(
             formData,
             personalRelationshipsService,
             application,
             applicationData?.earlyDaysCentre,
           )
+
           return {
             application,
             applicationType,
@@ -115,6 +128,11 @@ export default function changeAppRouter({
 
       return res.render(PATHS.LOG_APPLICATION.CONFIRM_DETAILS, {
         application,
+        applicationType: applicationType.name
+          .replace(/[^\w\s]/g, '')
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, '-'),
         applicationData: {
           prisoner: `${application.requestedBy.firstName} ${application.requestedBy.lastName}`,
           earlyDaysCentre: formatEarlyDaysCentre(applicationData?.earlyDaysCentre, application.firstNightCenter, true),

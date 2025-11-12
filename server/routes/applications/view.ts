@@ -194,7 +194,11 @@ export default function viewAppsRouter({
 
       return res.render(PATHS.APPLICATIONS.VIEW, {
         title: applicationType.name,
-        applicationType,
+        applicationType: applicationType.name
+          .replace(/[^\w\s]/g, '')
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, '-'),
         application: {
           ...application,
           createdDate: format(new Date(application.createdDate), 'd MMMM yyyy'),

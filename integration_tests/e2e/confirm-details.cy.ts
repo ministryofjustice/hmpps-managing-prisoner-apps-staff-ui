@@ -10,7 +10,6 @@ context('Confirm Details Page', () => {
     cy.resetAndSignIn()
 
     cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
-    cy.task('stubGetAppTypes')
     cy.task('stubGetGroupsAndTypes')
     cy.task('stubGetDepartments', { appType: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS' })
   })

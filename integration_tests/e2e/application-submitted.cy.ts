@@ -13,7 +13,7 @@ context('Application Submitted Page', () => {
     cy.task('stubGetPrisonerApp', {
       app,
     })
-    cy.task('stubGetAppTypes')
+    cy.task('stubGetGroupsAndTypes')
 
     cy.visit(`/log/submit/${app.requestedBy.username}/${app.id}`)
 
@@ -22,7 +22,7 @@ context('Application Submitted Page', () => {
 
   it('should display the panel title and body', () => {
     page.panelTitle().should('exist')
-    page.panelBody('Swap visiting orders (VOs) for PIN credit').should('exist')
+    page.panelBody('Add a social PIN phone contact').should('exist')
   })
 
   it('should display submission text with department info', () => {

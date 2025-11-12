@@ -10,7 +10,7 @@ context('Comments Page', () => {
     cy.resetAndSignIn()
     cy.task('stubGetPrisonerApp', { app })
     cy.task('stubGetComments', { app })
-    cy.task('stubGetAppTypes')
+    cy.task('stubGetGroupsAndTypes')
 
     cy.visit(`/applications/${app.requestedBy.username}/${app.id}/comments`)
 

@@ -37,6 +37,7 @@ export default function confirmAppRouter({
       })
 
       return res.render(PATHS.LOG_APPLICATION.CONFIRM_DETAILS, {
+        applicationType: applicationData?.type.key,
         applicationData: {
           earlyDaysCentre: convertToTitleCase(applicationData?.earlyDaysCentre?.toString()),
           prisoner: `${applicationData?.prisonerName} (${applicationData?.prisonerId})`,
