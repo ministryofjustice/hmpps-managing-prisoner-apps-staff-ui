@@ -37,6 +37,13 @@
     },
     {
       "id": 6,
+      "name": "Supply list of contacts",
+      "genericType": false,
+      "logDetailRequired": false,
+      "legacyKey": "PIN_PHONE_SUPPLY_LIST_OF_CONTACTS"
+    },
+    {
+      "id": 7,
       "name": "Make a general PIN phone enquiry",
       "genericType": true,
       "logDetailRequired": true,

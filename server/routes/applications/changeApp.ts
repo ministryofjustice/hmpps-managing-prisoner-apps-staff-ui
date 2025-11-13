@@ -138,6 +138,7 @@ export default function changeAppRouter({
           earlyDaysCentre: formatEarlyDaysCentre(applicationData?.earlyDaysCentre, application.firstNightCenter, true),
           request: applicationData.additionalData,
           type: applicationType,
+          group: application.applicationGroup.name,
           department: application.assignedGroup.name,
         },
         backLink: `${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/change`,

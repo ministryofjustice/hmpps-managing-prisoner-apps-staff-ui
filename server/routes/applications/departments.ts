@@ -39,8 +39,7 @@ export default function departmentsRouter({
       }
 
       const selectedDepartment = applicationData?.department || null
-      const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.legacyKey)
-
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.value)
       if (!departments) {
         return res.redirect(URLS.LOG_APPLICATION_TYPE)
       }
@@ -72,7 +71,7 @@ export default function departmentsRouter({
       }
 
       const selectedDepartment = req.body.department
-      const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.legacyKey)
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.value)
       const selectedDepartmentId = departments.find(dept => dept.name === selectedDepartment)?.id
 
       if (!selectedDepartment) {

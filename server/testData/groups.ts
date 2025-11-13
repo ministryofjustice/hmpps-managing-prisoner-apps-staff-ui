@@ -11,6 +11,7 @@ export const groups = [
       appTypes.addNewSocialContact,
       appTypes.addOrRemoveContact,
       appTypes.swapVOs,
+      appTypes.supplyContactList,
       appTypes.makeGeneralEnquiry,
     ],
   },

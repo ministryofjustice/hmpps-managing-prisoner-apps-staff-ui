@@ -10,7 +10,7 @@ function startApplication(appType: string): ApplicationDetailsPage {
   cy.resetAndSignIn()
   cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
   cy.task('stubGetGroupsAndTypes')
-  cy.task('stubGetDepartments', { appType: appConfig?.legacyKey })
+  cy.task('stubGetDepartments', { appType: appConfig?.id.toString() })
   cy.task('stubGetRelationships', 'SOCIAL_RELATIONSHIP')
 
   cy.visit('/log/application-details')

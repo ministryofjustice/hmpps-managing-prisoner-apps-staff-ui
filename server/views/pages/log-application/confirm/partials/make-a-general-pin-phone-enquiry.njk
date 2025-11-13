@@ -1,0 +1,11 @@
+{{ appTypeSummaryListHeader("Application details", application.requestedBy.username, application.id, isUpdate) }}
+
+{{ govukSummaryList({
+  classes: "govuk-!-margin-bottom-9",
+  rows: [
+    {
+      key: { text: "Details" },
+      value: { text: applicationData.request.details }
+    }
+  ]
+}) }}

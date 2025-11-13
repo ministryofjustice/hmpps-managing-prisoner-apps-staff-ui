@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-  '/v1/prisoners/{prisonerId}/apps/{appId}': {
+  '/v2/prisoners/{prisonerId}/apps/{appId}': {
     parameters: {
       query?: never
       header?: never
@@ -24,7 +24,27 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/v1/prisoners/{prisonerId}/apps': {
+  '/v1/prisoners/{prisonerId}/apps/{appId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /**
+     * Update App request form data for a prisoner
+     * @description This api endpoint is for updating app request for a prisoner. The logged staff and prisoner should belongs to same establishment. Requires role ROLE_MANAGING_PRISONER_APPS
+     */
+    put: operations['updateAppRequestData_1']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v2/prisoners/{prisonerId}/apps': {
     parameters: {
       query?: never
       header?: never
@@ -38,6 +58,66 @@ export interface paths {
      * @description This api endpoint is for submitting app request for a prisoner. The logged staff and prisoner should belongs to same establishment. Requires role ROLE_MANAGING_PRISONER_APPS
      */
     post: operations['submitApp']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v2/prisoners/apps/search': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Search apps by search filter
+     * @description This api endpoint is for searching apps by using search filter which are app status, assigned group, app type, prisoner id and establishment. The logged staff can search only apps which belongs to staff establishment. Requires role ROLE_MANAGING_PRISONER_APPS
+     */
+    post: operations['getAppsBySearchFilter']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v2/apps/{appId}/forward/groups/{groupId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Forward app to another group.
+     * @description This api endpoint is forwarding app to a different group. The logged staff and prisoner to which this app belongs should have same establishment. Requires role ROLE_MANAGING_PRISONER_APPS
+     */
+    post: operations['forwardAppToGroup']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/prisoners/{prisonerId}/apps': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Submit App request for a prisoner
+     * @description This api endpoint is for submitting app request for a prisoner. The logged staff and prisoner should belongs to same establishment. Requires role ROLE_MANAGING_PRISONER_APPS
+     */
+    post: operations['submitApp_1']
     delete?: never
     options?: never
     head?: never
@@ -101,7 +181,7 @@ export interface paths {
      * Search apps by search filter
      * @description This api endpoint is for searching apps by using search filter which are app status, assigned group, app type, prisoner id and establishment. The logged staff can search only apps which belongs to staff establishment. Requires role ROLE_MANAGING_PRISONER_APPS
      */
-    post: operations['getAppsBySearchFilter']
+    post: operations['getAppsBySearchFilter_1']
     delete?: never
     options?: never
     head?: never
@@ -121,14 +201,14 @@ export interface paths {
      * Forward app to another group.
      * @description This api endpoint is forwarding app to a different group. The logged staff and prisoner to which this app belongs should have same establishment. Requires role ROLE_MANAGING_PRISONER_APPS
      */
-    post: operations['forwardAppToGroup']
+    post: operations['forwardAppToGroup_1']
     delete?: never
     options?: never
     head?: never
     patch?: never
     trace?: never
   }
-  '/v1/prisoners/{prisonerId}/apps/{id}': {
+  '/v2/prisoners/{prisonerId}/apps/{id}': {
     parameters: {
       query?: never
       header?: never
@@ -148,7 +228,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/v1/prisoners/{prisonerId}/apps/{id}/history': {
+  '/v2/prisoners/{prisonerId}/apps/{id}/history': {
     parameters: {
       query?: never
       header?: never
@@ -160,6 +240,82 @@ export interface paths {
      * @description This api endpoint to get all activities associated with an app by app id. The logged staff and prisoner should belongs to same establishment. Requires role ROLE_MANAGING_PRISONER_APPS
      */
     get: operations['getHistoryByAppId']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v2/prisoners/search': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Search prisoners by name either first or lastname or both
+     * @description This api endpoint is for searching prisoners for whom the app request has been submitted. The user can see only the prisoners name for their own establishment only. The logged staff and prisoner to which this app belongs should have same establishment. Requires role ROLE_MANAGING_PRISONER_APPS
+     */
+    get: operations['getRequestedByTextSearch']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v2/establishments/apps/groups': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['getAppGroupsByEstablishment']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/prisoners/{prisonerId}/apps/{id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get app by id for a prisoner
+     * @description This api endpoint to get prisoner app. The logged staff and prisoner should belongs to same establishment. Requires role ROLE_MANAGING_PRISONER_APPS
+     */
+    get: operations['getAppById_1']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/prisoners/{prisonerId}/apps/{id}/history': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get all activity associated with an app.
+     * @description This api endpoint to get all activities associated with an app by app id. The logged staff and prisoner should belongs to same establishment. Requires role ROLE_MANAGING_PRISONER_APPS
+     */
+    get: operations['getHistoryByAppId_1']
     put?: never
     post?: never
     delete?: never
@@ -219,7 +375,7 @@ export interface paths {
      * Search prisoners by name either first or lastname or both
      * @description This api endpoint is for searching prisoners for whom the app request has been submitted. The user can see only the prisoners name for their own establishment only. The logged staff and prisoner to which this app belongs should have same establishment. Requires role ROLE_MANAGING_PRISONER_APPS
      */
-    get: operations['getRequestedByTextSearch']
+    get: operations['getRequestedByTextSearch_1']
     put?: never
     post?: never
     delete?: never
@@ -388,13 +544,15 @@ export interface components {
       reference?: string
       assignedGroup: unknown
       /** @enum {string} */
-      appType:
+      appType?:
         | 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP'
         | 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT'
         | 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT'
         | 'PIN_PHONE_REMOVE_CONTACT'
         | 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS'
         | 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS'
+      applicationType: components['schemas']['ApplicationTypeResponse']
+      applicationGroup: components['schemas']['ApplicationGroupResponse']
       /** Format: date-time */
       requestedDate: string
       /** Format: date-time */
@@ -416,9 +574,28 @@ export interface components {
       responses?: string[]
       firstNightCenter: boolean
     }
+    ApplicationGroupResponse: {
+      /** Format: int64 */
+      id: number
+      name: string
+      appTypes?: components['schemas']['ApplicationTypeResponse'][]
+    }
+    ApplicationTypeResponse: {
+      /** Format: int64 */
+      id: number
+      name: string
+      genericType?: boolean
+      logDetailRequired?: boolean
+      /** Format: int64 */
+      count?: number
+    }
     AppRequestDto: {
       reference?: string
-      type: string
+      type?: string
+      /** Format: int64 */
+      applicationType?: number
+      /** Format: int64 */
+      applicationGroup?: number
       /** Format: date-time */
       requestedDate?: string
       requests: {
@@ -428,6 +605,54 @@ export interface components {
       firstNightCenter?: boolean
       /** Format: uuid */
       department?: string
+    }
+    AppsSearchQueryDto: {
+      /** Format: int64 */
+      page: number
+      /** Format: int64 */
+      size: number
+      status: ('PENDING' | 'APPROVED' | 'DECLINED')[]
+      applicationTypes?: number[]
+      requestedBy?: string
+      assignedGroups?: string[]
+      firstNightCenter?: boolean
+    }
+    AppListViewDto: {
+      /** Format: uuid */
+      id: string
+      establishmentId: string
+      status: string
+      appType: components['schemas']['ApplicationTypeResponse']
+      requestedBy: string
+      requestedByFirstName: string
+      requestedByLastName: string
+      /** Format: date-time */
+      createdDate: string
+      assignedGroup: unknown
+    }
+    AppResponseListDto: {
+      /** Format: int32 */
+      page: number
+      /** Format: int64 */
+      totalRecords: number
+      exhausted: boolean
+      applicationTypes: {
+        [key: string]: components['schemas']['ApplicationTypeResponse']
+      }
+      assignedGroups: components['schemas']['GroupAppListViewDto'][]
+      /** Format: int64 */
+      firstNightCenter: number
+      apps: components['schemas']['AppListViewDto'][]
+    }
+    GroupAppListViewDto: {
+      /** Format: uuid */
+      id: string
+      name: string
+      /** Format: int64 */
+      count?: number
+    }
+    CommentRequestDto: {
+      message: string
     }
     AppDecisionRequestDto: {
       reason: string
@@ -449,9 +674,6 @@ export interface components {
       createdBy: unknown
       appliesTo: string[]
     }
-    CommentRequestDto: {
-      message: string
-    }
     CommentResponseDtoObject: {
       /** Format: uuid */
       id: string
@@ -462,58 +684,6 @@ export interface components {
       /** Format: date-time */
       createdDate: string
       createdBy: unknown
-    }
-    AppsSearchQueryDto: {
-      /** Format: int64 */
-      page: number
-      /** Format: int64 */
-      size: number
-      status: ('PENDING' | 'APPROVED' | 'DECLINED')[]
-      types?: (
-        | 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP'
-        | 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT'
-        | 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT'
-        | 'PIN_PHONE_REMOVE_CONTACT'
-        | 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS'
-        | 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS'
-      )[]
-      requestedBy?: string
-      assignedGroups?: string[]
-      firstNightCenter?: boolean
-    }
-    AppListViewDto: {
-      /** Format: uuid */
-      id: string
-      establishmentId: string
-      status: string
-      appType: string
-      requestedBy: string
-      requestedByFirstName: string
-      requestedByLastName: string
-      /** Format: date-time */
-      createdDate: string
-      assignedGroup: unknown
-    }
-    AppResponseListDto: {
-      /** Format: int32 */
-      page: number
-      /** Format: int64 */
-      totalRecords: number
-      exhausted: boolean
-      types: {
-        [key: string]: number
-      }
-      assignedGroups: components['schemas']['GroupAppListViewDto'][]
-      /** Format: int64 */
-      firstNightCenter: number
-      apps: components['schemas']['AppListViewDto'][]
-    }
-    GroupAppListViewDto: {
-      /** Format: uuid */
-      id: string
-      name: string
-      /** Format: int64 */
-      count?: number
     }
     ActivityMessage: {
       header: string
@@ -532,6 +702,11 @@ export interface components {
       /** Format: date-time */
       createdDate: string
     }
+    RequestedByNameSearchResult: {
+      firstName: string
+      lastName: string
+      prisonerId: string
+    }
     PageResultComments: {
       /** Format: int32 */
       page: number
@@ -540,24 +715,13 @@ export interface components {
       exhausted: boolean
       contents: components['schemas']['CommentResponseDtoObject'][]
     }
-    RequestedByNameSearchResult: {
-      firstName: string
-      lastName: string
-      prisonerId: string
-    }
     AssignedGroupDto: {
       /** Format: uuid */
       id: string
       name: string
       establishment: components['schemas']['EstablishmentDto']
-      /** @enum {string} */
-      initialApp?:
-        | 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP'
-        | 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT'
-        | 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT'
-        | 'PIN_PHONE_REMOVE_CONTACT'
-        | 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS'
-        | 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS'
+      /** Format: int64 */
+      initialApp?: number
       /** @enum {string} */
       type?: 'WING' | 'DEPARTMENT'
     }
@@ -573,6 +737,8 @@ export interface components {
         | 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS'
       )[]
       defaultDepartments: boolean
+      blacklistedAppGroups: number[]
+      blacklistedAppTypes: number[]
     }
     AppTypeResponse: {
       key: string
@@ -637,7 +803,183 @@ export interface operations {
       }
     }
   }
+  updateAppRequestData_1: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        prisonerId: string
+        appId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AppUpdateDto']
+      }
+    }
+    responses: {
+      /** @description App form data updated */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AppResponseDtoObjectObject']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden to access this endpoint */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   submitApp: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        prisonerId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AppRequestDto']
+      }
+    }
+    responses: {
+      /** @description App request submitted */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AppResponseDtoObjectObject']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden to access this endpoint */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getAppsBySearchFilter: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AppsSearchQueryDto']
+      }
+    }
+    responses: {
+      /** @description List of apps based on search filter parameter values */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AppResponseListDto']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden to access this endpoint */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  forwardAppToGroup: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        groupId: string
+        appId: string
+      }
+      cookie?: never
+    }
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['CommentRequestDto']
+      }
+    }
+    responses: {
+      /** @description App successfully forwarded to another group */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AppResponseDtoObjectObject']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden to access this endpoint */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  submitApp_1: {
     parameters: {
       query?: never
       header?: never
@@ -816,7 +1158,7 @@ export interface operations {
       }
     }
   }
-  getAppsBySearchFilter: {
+  getAppsBySearchFilter_1: {
     parameters: {
       query?: never
       header?: never
@@ -858,7 +1200,7 @@ export interface operations {
       }
     }
   }
-  forwardAppToGroup: {
+  forwardAppToGroup_1: {
     parameters: {
       query?: never
       header?: never
@@ -988,6 +1330,151 @@ export interface operations {
       }
     }
   }
+  getRequestedByTextSearch: {
+    parameters: {
+      query: {
+        name: string
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description App successfully forwarded to another group */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['RequestedByNameSearchResult'][]
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden to access this endpoint */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getAppGroupsByEstablishment: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ApplicationGroupResponse'][]
+        }
+      }
+    }
+  }
+  getAppById_1: {
+    parameters: {
+      query?: {
+        requestedBy?: boolean
+        assignedGroup?: boolean
+      }
+      header?: never
+      path: {
+        prisonerId: string
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successfully got app by id. */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['AppResponseDtoObjectObject']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden to access this endpoint */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getHistoryByAppId_1: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        prisonerId: string
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description All activity associated with processing app request provided in response. */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['HistoryResponse'][]
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden to access this endpoint */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   getResponseById: {
     parameters: {
       query?: {
@@ -1076,7 +1563,7 @@ export interface operations {
       }
     }
   }
-  getRequestedByTextSearch: {
+  getRequestedByTextSearch_1: {
     parameters: {
       query: {
         name: string
@@ -1199,13 +1686,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        type:
-          | 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP'
-          | 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT'
-          | 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT'
-          | 'PIN_PHONE_REMOVE_CONTACT'
-          | 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS'
-          | 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS'
+        type: number
       }
       cookie?: never
     }
