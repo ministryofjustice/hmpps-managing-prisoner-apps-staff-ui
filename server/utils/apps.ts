@@ -2,7 +2,7 @@ import { format, getTime } from 'date-fns'
 
 import { ViewAppListApp } from '../@types/managingAppsApi'
 import { APPLICATION_STATUS } from '../constants/applicationStatus'
-import { getLegacyAppType } from '../helpers/application/getLegacyAppType'
+import { getAppType } from '../helpers/application/getAppType'
 import { HmppsUser } from '../interfaces/hmppsUser'
 import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
 
@@ -24,7 +24,7 @@ export const formatAppsToRows = async (
       const formattedDate = format(date, 'd MMMM yyyy')
       const sortValue = getTime(date).toString()
 
-      const type = await getLegacyAppType(managingPrisonerAppsService, user, appType)
+      const type = await getAppType(managingPrisonerAppsService, user, appType.id.toString())
       const statusText =
         status === APPLICATION_STATUS.PENDING ? null : status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
 

@@ -99,7 +99,8 @@ export default async function getApplicationDetails(
       }
     }
 
-    case 8:
+    case 4:
+    case 7:
     case 6: {
       const { details } = application?.requests?.[0] ?? {}
       return {

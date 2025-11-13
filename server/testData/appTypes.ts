@@ -31,8 +31,14 @@ export const appTypes = {
     genericType: false,
     logDetailRequired: false,
   },
-  makeGeneralEnquiry: {
+  supplyContactList: {
     id: 6,
+    name: 'Supply list of contacts',
+    genericType: false,
+    logDetailRequired: false,
+  },
+  makeGeneralEnquiry: {
+    id: 7,
     name: 'Make a general PIN phone enquiry',
     genericType: true,
     logDetailRequired: true,
@@ -78,4 +84,5 @@ export const appTypeIdToLegacyKeyMap: Record<number, string> = {
   3: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
   4: 'PIN_PHONE_REMOVE_CONTACT',
   5: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
+  6: 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS',
 }

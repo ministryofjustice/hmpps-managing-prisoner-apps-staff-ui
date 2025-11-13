@@ -8,7 +8,7 @@ context('Department Page', () => {
     cy.resetAndSignIn()
     cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
     cy.task('stubGetGroupsAndTypes')
-    cy.task('stubGetDepartments', { appType: 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT' })
+    cy.task('stubGetDepartments', { appType: '3' })
 
     cy.visit('/log/department')
 

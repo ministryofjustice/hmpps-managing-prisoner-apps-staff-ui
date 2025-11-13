@@ -1,4 +1,3 @@
-import { HmppsAuthClient } from '../data'
 import { HmppsUser } from '../interfaces/hmppsUser'
 import TestData from '../routes/testutils/testData'
 import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
@@ -12,8 +11,6 @@ jest.mock('../helpers/application/getLegacyAppType', () => ({
 describe('formatAppsToRows', () => {
   let managingPrisonerAppsService: ManagingPrisonerAppsService
 
-  const mockGetSystemClientToken = jest.fn()
-
   const mockUser: HmppsUser = {
     ...new TestData().user,
     authSource: 'nomis',
@@ -21,11 +18,15 @@ describe('formatAppsToRows', () => {
   }
 
   beforeEach(() => {
-    const mockHmppsAuthClient = {
-      getSystemClientToken: mockGetSystemClientToken,
-    } as unknown as jest.Mocked<HmppsAuthClient>
-
-    managingPrisonerAppsService = new ManagingPrisonerAppsService(mockHmppsAuthClient)
+    managingPrisonerAppsService = {
+      getGroupsAndTypes: jest.fn().mockResolvedValue([
+        {
+          id: 1,
+          name: 'Business Hub',
+          appTypes: [{ id: 2, name: 'Add new official PIN phone contact' }],
+        },
+      ]),
+    } as unknown as ManagingPrisonerAppsService
   })
 
   it('should correctly format applications', async () => {
@@ -33,6 +34,7 @@ describe('formatAppsToRows', () => {
       {
         ...new TestData().appSearchResponse.apps[0],
         prisonerName: 'Doe, John',
+        appType: { id: 2, name: 'Add new official PIN phone contact' },
       },
     ]
 

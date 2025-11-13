@@ -23,6 +23,24 @@
 {% else %}
   {% set appTypeActions = {
     items: [{
+      href: "/log/group",
+      text: "Change",
+      visuallyHiddenText: "application group"
+    }]
+  } %}
+{% endif %}
+
+{% set _ = rows.push({
+  key: { text: "Application group" },
+  value: { text: applicationData.group },
+  actions: appTypeActions
+}) %}
+
+{% if isUpdate %}
+  {% set appTypeActions = { items: [] } %}
+{% else %}
+  {% set appTypeActions = {
+    items: [{
       href: "/log/application-type",
       text: "Change",
       visuallyHiddenText: "application type"

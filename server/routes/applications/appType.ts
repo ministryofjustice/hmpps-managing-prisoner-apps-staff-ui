@@ -27,17 +27,17 @@ export default function appTypeRouter({
   const router = Router()
 
   const buildAppTypes = (group: Group, selectedValue: string | null): AppTypeItem[] => {
-    const items: AppTypeItem[] = group.appTypes.map(appType => ({
-      value: appType.id.toString(),
-      text: appType.name,
-      checked: selectedValue === appType.id.toString(),
-    }))
-
-    if (items.length > 1) {
-      const lastItem = items.pop()
-      items.push({ divider: 'or' })
-      items.push(lastItem)
-    }
+    const items: AppTypeItem[] = []
+    group.appTypes.forEach((appType, index) => {
+      if (appType.genericType && index > 0) {
+        items.push({ divider: 'or' })
+      }
+      items.push({
+        value: appType.id.toString(),
+        text: appType.name,
+        checked: selectedValue === appType.id.toString(),
+      })
+    })
     return items
   }
 

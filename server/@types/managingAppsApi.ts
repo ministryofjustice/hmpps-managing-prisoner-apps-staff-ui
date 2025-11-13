@@ -21,7 +21,7 @@ export interface ViewAppsListResponse {
   page: number
   totalRecords: number
   exhausted: boolean
-  types: Record<string, number>
+  applicationTypes: Record<string, { id: number; name: string; count: number }>
   assignedGroups: {
     id: string
     name: string
