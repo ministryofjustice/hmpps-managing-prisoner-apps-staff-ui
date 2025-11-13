@@ -32,7 +32,7 @@
 
 {% set _ = rows.push({
   key: { text: "Application group" },
-  value: { text: applicationData.group },
+  value: { text: applicationData.group.name or applicationData.group },
   actions: appTypeActions
 }) %}
 
