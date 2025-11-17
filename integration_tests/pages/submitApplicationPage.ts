@@ -14,9 +14,7 @@ export default class SubmitApplicationPage extends Page {
   bulletPoints = () => cy.get('.govuk-list--bullet')
 
   logAnotherApplicationForSamePrisonerLink = (prisonerName: string) =>
-    cy
-      .get(`a[href="/log/application-type?isLoggingForSamePrisoner=true"]`)
-      .contains(`another application for ${prisonerName}`)
+    cy.get(`a[href="/log/group?isLoggingForSamePrisoner=true"]`).contains(`another application for ${prisonerName}`)
 
   logNewApplicationLink = () => cy.get(`a[href="/log/prisoner-details"]`).contains('a new application')
 

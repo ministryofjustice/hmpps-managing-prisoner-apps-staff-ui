@@ -45,7 +45,7 @@ export default function appTypeRouter({
     URLS.LOG_APPLICATION_TYPE,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
-      const { applicationData } = req.session
+      const { applicationData, isLoggingForSamePrisoner } = req.session
 
       if (!applicationData?.group) {
         return res.redirect(URLS.LOG_GROUP)
@@ -69,6 +69,7 @@ export default function appTypeRouter({
         title: 'Select application type',
         applicationTypes: buildAppTypes(selectedGroup, selectedValue),
         errorMessage: null,
+        isLoggingForSamePrisoner,
         prisonerName: applicationData.prisonerName,
       })
     }),
