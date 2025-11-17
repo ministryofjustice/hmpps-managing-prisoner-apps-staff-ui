@@ -35,7 +35,7 @@ context('Application Submitted Page', () => {
     page
       .logAnotherApplicationForSamePrisonerLink(prisonerName)
       .should('exist')
-      .and('have.attr', 'href', '/log/application-type?isLoggingForSamePrisoner=true')
+      .and('have.attr', 'href', '/log/group?isLoggingForSamePrisoner=true')
 
     page.logNewApplicationLink().should('exist').and('have.attr', 'href', '/log/prisoner-details')
 
