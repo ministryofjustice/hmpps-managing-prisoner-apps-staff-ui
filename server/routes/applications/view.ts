@@ -107,12 +107,7 @@ export default function viewAppsRouter({
         return { ...app, prisonerName }
       })
 
-      const appTypes = await formatAppTypesForFilters(
-        managingPrisonerAppsService,
-        user,
-        applicationTypes,
-        selectedFilters,
-      )
+      const appTypes = formatAppTypesForFilters(applicationTypes, selectedFilters)
       const groups = formatGroupsForFilters(assignedGroups, selectedFilters)
       const priority = formatPriorityForFilters(selectedFilters, firstNightCenter)
 
