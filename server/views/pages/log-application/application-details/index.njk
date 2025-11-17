@@ -17,16 +17,16 @@
 
 {% block content %}
   <div class="govuk-body govuk-width-container">
-    {{ govukBackLink({
-      text: "Back",
-      href: "/log/department"
-    }) }}
-
-    {{ loggingForSamePrisonerBanner(isLoggingForSamePrisoner, prisonerName) }}
-
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-half">
+        {{ govukBackLink({
+          text: "Back",
+          href: "/log/department"
+        }) }}
+
         {{ renderErrorSummary(errors) }}
+        {{ loggingForSamePrisonerBanner(isLoggingForSamePrisoner, prisonerName) }}
+
         <span class="govuk-caption-xl">{{ applicationType.name }}</span>
         <h1 class="govuk-heading-xl govuk-!-margin-top-0">Log details</h1>
 
