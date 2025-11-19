@@ -46,14 +46,12 @@ export default function viewAppsRouter({
       const { user } = res.locals
       const page = Number(req.query.page) || 1
 
-      // Normalise status values from query
       const rawStatus = extractQueryParamArray(req.query.status).map(s => s.toString().toUpperCase())
       const status: AllowedStatus[] = rawStatus.filter((s): s is AllowedStatus =>
         ['APPROVED', 'DECLINED', 'PENDING'].includes(s),
       )
       if (status.length === 0) status.push('PENDING')
 
-      // For UI: if Approved or Declined are selected, also mark CLOSED as selected
       const selectedStatusValues: UiStatus[] = [...status]
       if (status.includes('APPROVED') || status.includes('DECLINED')) {
         selectedStatusValues.push('CLOSED')
