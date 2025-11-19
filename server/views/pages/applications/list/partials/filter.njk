@@ -1,8 +1,6 @@
 {%- from "../../../../components/accessibleAutocomplete/macro.njk" import accessibleAutocomplete -%}
 
 <form novalidate>
-  <input type="hidden" name="status" value="{{ status }}">
-
   {%- set filterOptionsHtml %}
     {{ govukCheckboxes({
       idPrefix: "status",
@@ -16,30 +14,22 @@
       },
       items: [
         {
-          value: "pending",
+          value: "PENDING",
           text: "Pending",
-          checked: filters.selectedFilters.status and ("pending" in filters.selectedFilters.status)
+          checked: filters.selectedStatusValues and ("PENDING" in filters.selectedStatusValues)
         },
         {
-          value: "closed",
+          value: "CLOSED",
           text: "Closed",
-          checked: filters.selectedFilters.status and ("closed" in filters.selectedFilters.status),
+          checked: filters.selectedStatusValues and ("CLOSED" in filters.selectedStatusValues),
           conditional: {
             html: govukCheckboxes({
               idPrefix: "closed-sub",
-              name: "closedSub",
+              name: "status",
               classes: "govuk-checkboxes--small",
               items: [
-                {
-                  value: "approved",
-                  text: "Approved",
-                  checked: true
-                },
-                {
-                  value: "declined",
-                  text: "Declined",
-                  checked: true
-                }
+                { value: "APPROVED", text: "Approved", checked: filters.selectedStatusValues and ("APPROVED" in filters.selectedStatusValues) },
+                { value: "DECLINED", text: "Declined", checked: filters.selectedStatusValues and ("DECLINED" in filters.selectedStatusValues) }
               ]
             })
           }

@@ -1,0 +1,21 @@
+{% from "../../../../components/pagination/macro.njk" import pagination as paginationMacro %}
+
+<div class="app-results-table">
+  {% if apps.length %}
+    {{ govukTable({
+      head: [
+        { text: "Date", attributes: { "aria-sort": "descending" } },
+        { text: "Application type" },
+        { text: "From" },
+        { text: "Department" },
+        { text: "" }
+      ],
+      rows: apps,
+      attributes: { "data-qa": "app-results-table", "data-module": "moj-sortable-table" }
+    }) }}
+  {% else %}
+    <p class="govuk-body">No applications found</p>
+  {% endif %}
+</div>
+
+{{ paginationMacro(pagination, query) }}
