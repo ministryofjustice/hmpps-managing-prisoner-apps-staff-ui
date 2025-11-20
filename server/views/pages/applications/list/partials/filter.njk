@@ -1,9 +1,42 @@
 {%- from "../../../../components/accessibleAutocomplete/macro.njk" import accessibleAutocomplete -%}
 
 <form novalidate>
-  <input type="hidden" name="status" value="{{ status }}">
-
   {%- set filterOptionsHtml %}
+    {{ govukCheckboxes({
+      idPrefix: "status",
+      name: "status",
+      classes: "govuk-checkboxes--small",
+      fieldset: {
+        legend: {
+          text: "Status",
+          classes: "govuk-fieldset__legend--s"
+        }
+      },
+      items: [
+        {
+          value: "PENDING",
+          text: "Pending",
+          checked: filters.selectedStatusValues and ("PENDING" in filters.selectedStatusValues)
+        },
+        {
+          value: "CLOSED",
+          text: "Closed",
+          checked: filters.selectedStatusValues and ("CLOSED" in filters.selectedStatusValues),
+          conditional: {
+            html: govukCheckboxes({
+              idPrefix: "closed-sub",
+              name: "status",
+              classes: "govuk-checkboxes--small",
+              items: [
+                { value: "APPROVED", text: "Approved", checked: filters.selectedStatusValues and ("APPROVED" in filters.selectedStatusValues) },
+                { value: "DECLINED", text: "Declined", checked: filters.selectedStatusValues and ("DECLINED" in filters.selectedStatusValues) }
+              ]
+            })
+          }
+        }
+      ]
+    }) }}
+
     {{ accessibleAutocomplete({
       label: "Prisoner name or number",
       nonce: cspNonce,
@@ -24,7 +57,6 @@
       items: filters.priority
     }) }}
 
-    
     {{ govukCheckboxes({
       idPrefix: "group",
       name: "group",
@@ -53,6 +85,13 @@
   {% endset -%}
 
   {% set categories = [] %}
+
+  {% if filters.selectedFilters.status | length %}
+    {% set categories = categories.concat([{
+      heading: { text: "Status" },
+      items: filters.selectedFilters.status
+    }]) %}
+  {% endif %}
 
   {% if filters.selectedFilters.priority | length %}
     {% set categories = categories.concat([{
@@ -98,4 +137,3 @@
     }) }}
   {% endif %}
 </form>
-

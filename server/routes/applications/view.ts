@@ -19,13 +19,15 @@ import PrisonService from '../../services/prisonService'
 
 import { formatAppsToRows } from '../../utils/apps'
 import { checkSelectedFilters, extractQueryParamArray, removeFilterFromHref } from '../../utils/filters'
-import { getStatusesForQuery } from '../../utils/getStatusesForQuery'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { getPaginationData } from '../../utils/pagination'
 import { convertToTitleCase } from '../../utils/utils'
 
 import logger from '../../../logger'
 import config from '../../config'
+
+type AllowedStatus = 'APPROVED' | 'DECLINED' | 'PENDING'
+type UiStatus = AllowedStatus | 'CLOSED'
 
 export default function viewAppsRouter({
   auditService,
@@ -42,24 +44,30 @@ export default function viewAppsRouter({
     URLS.APPLICATIONS,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
-
-      const statusQuery = req.query.status?.toString().toUpperCase()
       const page = Number(req.query.page) || 1
 
-      const status = getStatusesForQuery(statusQuery)
+      const rawStatus = extractQueryParamArray(req.query.status).map(s => s.toString().toUpperCase())
+      const status: AllowedStatus[] = rawStatus.filter((s): s is AllowedStatus =>
+        ['APPROVED', 'DECLINED', 'PENDING'].includes(s),
+      )
+      if (status.length === 0) status.push('PENDING')
 
-      const selectedFilters = (() => {
-        const prisonerLabel = req.query.prisoner?.toString() || ''
-        const prisonerId = prisonerLabel.match(/\(([^)]+)\)/)?.[1] || null
+      const selectedStatusValues: UiStatus[] = [...status]
+      if (status.includes('APPROVED') || status.includes('DECLINED')) {
+        selectedStatusValues.push('CLOSED')
+      }
 
-        return {
-          groups: extractQueryParamArray(req.query.group),
-          types: extractQueryParamArray(req.query.type).map(type => type.toString()),
-          priority: extractQueryParamArray(req.query.priority),
-          prisonerLabel,
-          prisonerId,
-        }
-      })()
+      const prisonerLabel = req.query.prisoner?.toString() || ''
+      const prisonerId = prisonerLabel.match(/\(([^)]+)\)/)?.[1] || null
+
+      const selectedFilters = {
+        groups: extractQueryParamArray(req.query.group),
+        types: extractQueryParamArray(req.query.type).map(type => type.toString()),
+        priority: extractQueryParamArray(req.query.priority),
+        prisonerLabel,
+        prisonerId,
+        status,
+      }
 
       const payload: ApplicationSearchPayload = {
         page,
@@ -88,12 +96,10 @@ export default function viewAppsRouter({
         ])
 
       let error = null
-
       if (selectedFilters.prisonerId) {
         const foundPrisoner = prisonerDetails.find(
           prisoner => prisoner && prisoner?.offenderNo === selectedFilters.prisonerId,
         )
-
         if (!foundPrisoner) {
           error = {
             message: 'Check your spelling or clear the search, then try again',
@@ -112,6 +118,10 @@ export default function viewAppsRouter({
       const priority = formatPriorityForFilters(selectedFilters, firstNightCenter)
 
       const selectedFilterTags = {
+        status: status.map(s => ({
+          href: removeFilterFromHref(req, 'status', s),
+          text: s.charAt(0) + s.slice(1).toLowerCase(),
+        })),
         priority: selectedFilters.priority.includes('first-night-centre')
           ? [
               {
@@ -151,10 +161,11 @@ export default function viewAppsRouter({
           selectedFilters: selectedFilterTags,
           selectedPrisonerLabel: selectedFilters.prisonerLabel,
           selectedPrisonerId: selectedFilters.prisonerId,
+          selectedStatusValues,
         },
         pagination: getPaginationData(page, totalRecords),
         query: req.query,
-        status: statusQuery || APPLICATION_STATUS.PENDING,
+        status,
         error,
       })
     }),

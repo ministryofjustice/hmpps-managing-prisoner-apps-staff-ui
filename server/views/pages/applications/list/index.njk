@@ -54,24 +54,7 @@
       </div>
 
       <div class="govuk-grid-column-two-thirds">
-        <div class="govuk-tabs">
-          <ul class="govuk-tabs__list">
-            <li class="govuk-tabs__list-item {{ 'govuk-tabs__list-item--selected' if status == 'PENDING' else '' }}">
-              <a href="/applications?status=pending" class="govuk-tabs__tab">Pending</a>
-            </li>
-            <li class="govuk-tabs__list-item {{ 'govuk-tabs__list-item--selected' if status == 'CLOSED' else '' }}">
-              <a href="/applications?status=closed" class="govuk-tabs__tab">Closed</a>
-            </li>
-          </ul>
-
-          {% if status == "PENDING" %}
-            {% include './partials/pending.njk' %}
-          {% endif %}
-          
-          {% if status == "CLOSED" %}
-            {% include './partials/closed.njk' %}
-          {% endif %}
-        </div>
+        {% include './partials/results.njk' %}
       </div>
     </div>
   </div>
