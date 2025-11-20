@@ -119,7 +119,7 @@ export default function viewAppsRouter({
 
       const selectedFilterTags = {
         status: status.map(s => ({
-          href: removeFilterFromHref(req, 'status', s.toLowerCase()),
+          href: removeFilterFromHref(req, 'status', s),
           text: s.charAt(0) + s.slice(1).toLowerCase(),
         })),
         priority: selectedFilters.priority.includes('first-night-centre')

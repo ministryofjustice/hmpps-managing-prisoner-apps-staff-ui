@@ -1,7 +1,6 @@
 import { format, getTime } from 'date-fns'
 
 import { ViewAppListApp } from '../@types/managingAppsApi'
-import { APPLICATION_STATUS } from '../constants/applicationStatus'
 import { getAppType } from '../helpers/application/getAppType'
 import { HmppsUser } from '../interfaces/hmppsUser'
 import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
@@ -18,15 +17,13 @@ export const formatAppsToRows = async (
 ) => {
   return Promise.all(
     applications.map(async application => {
-      const { createdDate, appType, requestedBy, assignedGroup, status, id, prisonerName } = application
+      const { createdDate, appType, requestedBy, assignedGroup, id, prisonerName } = application
 
       const date = new Date(createdDate)
       const formattedDate = format(date, 'd MMMM yyyy')
       const sortValue = getTime(date).toString()
 
       const type = await getAppType(managingPrisonerAppsService, user, appType.id.toString())
-      const statusText =
-        status === APPLICATION_STATUS.PENDING ? null : status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
 
       const row = [
         { text: formattedDate, attributes: { 'data-sort-value': sortValue }, classes: 'govuk-!-text-nowrap' },
@@ -35,7 +32,6 @@ export const formatAppsToRows = async (
           html: `${prisonerName}<br/><span class="govuk-table__subtext govuk-body-s">${requestedBy}</span>`,
         },
         { text: assignedGroup?.name || 'N/A' },
-        statusText && { text: statusText },
         {
           html: `<a href="/applications/${requestedBy}/${id}" class="govuk-link">View</a>`,
         },

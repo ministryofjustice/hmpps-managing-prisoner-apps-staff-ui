@@ -2,6 +2,8 @@
 
 <div class="app-results-table">
   {% if apps.length %}
+    <h2 class="govuk-heading-m">{{ pagination.totalCount }} applications</h2>
+
     {{ govukTable({
       head: [
         { text: "Date", attributes: { "aria-sort": "descending" } },
@@ -11,11 +13,12 @@
         { text: "" }
       ],
       rows: apps,
+      classes: "govuk-table",
       attributes: { "data-qa": "app-results-table", "data-module": "moj-sortable-table" }
     }) }}
   {% else %}
     <p class="govuk-body">No applications found</p>
   {% endif %}
-</div>
 
-{{ paginationMacro(pagination, query) }}
+  {{ paginationMacro(pagination, query) }}
+</div>
