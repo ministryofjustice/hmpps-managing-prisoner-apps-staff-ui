@@ -24,8 +24,8 @@
               name: "status",
               classes: "govuk-checkboxes--small",
               items: [
-                { value: "APPROVED", text: "Approved", checked: filters.selectedStatusValues and ("APPROVED" in filters.selectedStatusValues) },
-                { value: "DECLINED", text: "Declined", checked: filters.selectedStatusValues and ("DECLINED" in filters.selectedStatusValues) }
+                { value: "APPROVED", html: 'Approved <span class="govuk-visually-hidden">Decision</span>', checked: filters.selectedStatusValues and ("APPROVED" in filters.selectedStatusValues) },
+                { value: "DECLINED", html: 'Declined <span class="govuk-visually-hidden">Decision</span>', checked: filters.selectedStatusValues and ("DECLINED" in filters.selectedStatusValues) }
               ]
             })
           }
