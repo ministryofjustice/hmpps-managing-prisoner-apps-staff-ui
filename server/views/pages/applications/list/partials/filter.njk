@@ -7,29 +7,36 @@
       name: "status",
       classes: "govuk-checkboxes--small",
       fieldset: {
-        legend: {
-          text: "Status",
-          classes: "govuk-fieldset__legend--s"
-        }
+        legend: { text: "Status", classes: "govuk-fieldset__legend--s" }
       },
       items: [
         {
           value: "PENDING",
           text: "Pending",
-          checked: filters.selectedStatusValues and ("PENDING" in filters.selectedStatusValues)
+          checked: filters.selectedStatusValues and ("PENDING" in filters.selectedStatusValues),
+          attributes: { id: "status-pending" }
         },
         {
           value: "CLOSED",
           text: "Closed",
           checked: filters.selectedStatusValues and ("CLOSED" in filters.selectedStatusValues),
+          attributes: { id: "status-closed" },
           conditional: {
             html: govukCheckboxes({
               idPrefix: "closed-sub",
               name: "status",
               classes: "govuk-checkboxes--small",
               items: [
-                { value: "APPROVED", text: "Approved", checked: filters.selectedStatusValues and ("APPROVED" in filters.selectedStatusValues) },
-                { value: "DECLINED", text: "Declined", checked: filters.selectedStatusValues and ("DECLINED" in filters.selectedStatusValues) }
+                {
+                  value: "APPROVED",
+                  html: 'Approved <span class="govuk-visually-hidden">Decision</span>',
+                  checked: filters.selectedStatusValues and ("APPROVED" in filters.selectedStatusValues)
+                },
+                {
+                  value: "DECLINED",
+                  html: 'Declined <span class="govuk-visually-hidden">Decision</span>',
+                  checked: filters.selectedStatusValues and ("DECLINED" in filters.selectedStatusValues)
+                }
               ]
             })
           }
