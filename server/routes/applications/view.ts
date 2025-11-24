@@ -118,10 +118,21 @@ export default function viewAppsRouter({
       const priority = formatPriorityForFilters(selectedFilters, firstNightCenter)
 
       const selectedFilterTags = {
-        status: status.map(s => ({
-          href: removeFilterFromHref(req, 'status', s),
-          text: s.charAt(0) + s.slice(1).toLowerCase(),
-        })),
+        status: status.map(s => {
+          let text
+          if (s === 'APPROVED') {
+            text = 'Closed (Approved)'
+          } else if (s === 'DECLINED') {
+            text = 'Closed (Declined)'
+          } else {
+            text = s.charAt(0) + s.slice(1).toLowerCase()
+          }
+
+          return {
+            href: removeFilterFromHref(req, 'status', s),
+            text,
+          }
+        }),
         priority: selectedFilters.priority.includes('first-night-centre')
           ? [
               {

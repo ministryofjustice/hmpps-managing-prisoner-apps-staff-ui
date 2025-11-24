@@ -87,3 +87,34 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }
 })
+
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.querySelector('form')
+  const closed = form && form.querySelector('input[name="status"][value="CLOSED"]')
+  const approved = form && form.querySelector('input[name="status"][value="APPROVED"]')
+  const declined = form && form.querySelector('input[name="status"][value="DECLINED"]')
+  if (!closed || !approved || !declined) return
+
+  closed.addEventListener('change', () => {
+    if (closed.checked) {
+      if (!approved.checked && !declined.checked) {
+        approved.checked = true
+        declined.checked = true
+      }
+    } else {
+      approved.checked = false
+      declined.checked = false
+    }
+  })
+
+  form.addEventListener('submit', () => {
+    if (!closed.checked) {
+      approved.checked = false
+      declined.checked = false
+    }
+    if (closed.checked && !approved.checked && !declined.checked) {
+      approved.checked = true
+      declined.checked = true
+    }
+  })
+})
