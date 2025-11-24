@@ -13,17 +13,14 @@
         {
           value: "PENDING",
           text: "Pending",
-          checked: filters.selectedStatusValues and ("PENDING" in filters.selectedStatusValues),
-          attributes: { id: "status-pending" }
+          checked: filters.selectedStatusValues and ("PENDING" in filters.selectedStatusValues)
         },
         {
           value: "CLOSED",
           text: "Closed",
           checked: filters.selectedStatusValues and ("CLOSED" in filters.selectedStatusValues),
-          attributes: { id: "status-closed" },
           conditional: {
             html: govukCheckboxes({
-              idPrefix: "closed-sub",
               name: "status",
               classes: "govuk-checkboxes--small",
               items: [
