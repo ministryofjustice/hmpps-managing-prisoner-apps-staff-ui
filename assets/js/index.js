@@ -89,25 +89,35 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('✅ Status sync script loaded') // temp log
+
   const form = document.querySelector('form')
   const closed = form && form.querySelector('input[name="status"][value="CLOSED"]')
   const approved = form && form.querySelector('input[name="status"][value="APPROVED"]')
   const declined = form && form.querySelector('input[name="status"][value="DECLINED"]')
-  if (!closed || !approved || !declined) return
+
+  if (!closed || !approved || !declined) {
+    console.log('⚠️ Status checkboxes not found') // another useful log
+    return
+  }
 
   closed.addEventListener('change', () => {
+    console.log('Closed checkbox changed:', closed.checked)
     if (closed.checked) {
       if (!approved.checked && !declined.checked) {
         approved.checked = true
         declined.checked = true
+        console.log('Approved + Declined auto‑checked')
       }
     } else {
       approved.checked = false
       declined.checked = false
+      console.log('Approved + Declined cleared')
     }
   })
 
   form.addEventListener('submit', () => {
+    console.log('Form submit normalisation running')
     if (!closed.checked) {
       approved.checked = false
       declined.checked = false
