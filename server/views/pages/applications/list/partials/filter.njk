@@ -7,10 +7,7 @@
       name: "status",
       classes: "govuk-checkboxes--small",
       fieldset: {
-        legend: {
-          text: "Status",
-          classes: "govuk-fieldset__legend--s"
-        }
+        legend: { text: "Status", classes: "govuk-fieldset__legend--s" }
       },
       items: [
         {
@@ -24,7 +21,6 @@
           checked: filters.selectedStatusValues and ("CLOSED" in filters.selectedStatusValues),
           conditional: {
             html: govukCheckboxes({
-              idPrefix: "closed-sub",
               name: "status",
               classes: "govuk-checkboxes--small",
               items: [
