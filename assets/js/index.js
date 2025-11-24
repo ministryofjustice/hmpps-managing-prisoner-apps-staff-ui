@@ -88,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 })
 
+/* eslint-disable no-console */
 document.addEventListener('DOMContentLoaded', () => {
   console.log('✅ Status sync script loaded') // temp log
 
