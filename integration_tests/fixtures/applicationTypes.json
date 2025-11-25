@@ -4,6 +4,7 @@
       "id": 1,
       "name": "Add emergency phone credit",
       "genericType": false,
+      "genericForm": false,
       "logDetailRequired": false,
       "legacyKey": "PIN_PHONE_EMERGENCY_CREDIT_TOP_UP"
     },
@@ -11,6 +12,7 @@
       "id": 2,
       "name": "Add an official PIN phone contact",
       "genericType": false,
+      "genericForm": false,
       "logDetailRequired": false,
       "legacyKey": "PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT"
     },
@@ -18,6 +20,7 @@
       "id": 3,
       "name": "Add a social PIN phone contact",
       "genericType": false,
+      "genericForm": false,
       "logDetailRequired": false,
       "legacyKey": "PIN_PHONE_ADD_NEW_SOCIAL_CONTACT"
     },
@@ -25,6 +28,7 @@
       "id": 4,
       "name": "Add or remove a PIN phone contact",
       "genericType": false,
+      "genericForm": false,
       "logDetailRequired": false,
       "legacyKey": "PIN_PHONE_REMOVE_CONTACT"
     },
@@ -32,6 +36,7 @@
       "id": 5,
       "name": "Swap Visiting Orders (VOs) for PIN Credit",
       "genericType": false,
+      "genericForm": false,
       "logDetailRequired": false,
       "legacyKey": "PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS"
     },
@@ -39,6 +44,7 @@
       "id": 6,
       "name": "Supply list of contacts",
       "genericType": false,
+      "genericForm": false,
       "logDetailRequired": false,
       "legacyKey": "PIN_PHONE_SUPPLY_LIST_OF_CONTACTS"
     },
@@ -46,6 +52,7 @@
       "id": 7,
       "name": "Make a general PIN phone enquiry",
       "genericType": true,
+      "genericForm": true,
       "logDetailRequired": true,
       "legacyKey": ""
     }

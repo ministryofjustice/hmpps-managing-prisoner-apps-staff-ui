@@ -16,6 +16,7 @@ export default class TestData {
   app: App = {
     id: '13d2c453-be11-44a8-9861-21fd8ae6e911',
     reference: '1232143',
+    genericForm: false,
     assignedGroup: {
       id: '591185f2-863a-4a32-9812-c12f40b94ccb',
       name: 'Business Hub',
@@ -144,6 +145,7 @@ export default class TestData {
         requestedByFirstName: 'John',
         requestedByLastName: 'Smith',
         createdDate: '2025-03-24T14:03:13Z',
+        genericForm: false,
         assignedGroup: {
           id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
           name: 'Business Hub',
@@ -175,6 +177,7 @@ export default class TestData {
         requestedByFirstName: 'John',
         requestedByLastName: 'Smith',
         createdDate: '2025-03-23T14:03:13Z',
+        genericForm: false,
         assignedGroup: {
           id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
           name: 'Business Hub',
@@ -206,6 +209,7 @@ export default class TestData {
         requestedByFirstName: 'John',
         requestedByLastName: 'Smith',
         createdDate: '2025-03-21T14:03:13Z',
+        genericForm: false,
         assignedGroup: {
           id: '60d7303f-f6e5-4ffd-8ef1-769a52d00983',
           name: 'Business Hub',

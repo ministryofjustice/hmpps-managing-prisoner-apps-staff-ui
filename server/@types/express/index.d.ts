@@ -28,6 +28,8 @@ export declare module 'express-session' {
       key: string
       name: string
       value: string
+      genericType?: boolean
+      genericForm?: boolean
       legacyKey?: string
     }
     department?: string
@@ -42,6 +44,7 @@ export declare module 'express-session' {
     | AddNewOfficialPinPhoneContactDetails
     | RemovePinPhoneContactDetails
     | GeneralPinPhoneEnquiryDetails
+    | GenericLogDetails
 
   interface SwapVOsForPinCreditDetails {
     details?: string
@@ -57,6 +60,10 @@ export declare module 'express-session' {
   }
 
   interface GeneralPinPhoneEnquiryDetails {
+    details: string
+  }
+
+  interface GenericLogDetails {
     details: string
   }
 

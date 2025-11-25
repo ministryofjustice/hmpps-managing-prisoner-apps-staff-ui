@@ -235,6 +235,7 @@ export default function viewAppsRouter({
           (application?.requests?.[0] as Partial<{ organisation?: string; company?: string }>)?.organisation?.trim() ||
           (application?.requests?.[0] as Partial<{ organisation?: string; company?: string }>)?.company?.trim() ||
           '',
+        isGeneric: applicationType.genericType || applicationType.genericForm,
       })
     }),
   )

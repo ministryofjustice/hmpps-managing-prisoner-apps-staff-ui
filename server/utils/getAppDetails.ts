@@ -15,8 +15,13 @@ export default async function getApplicationDetails(
   personalRelationshipsService: PersonalRelationshipsService,
   application?: App,
   earlyDaysCentre?: string,
+  isGeneric = false,
 ): Promise<Record<string, unknown>> {
-  if (!applicationDetails) return {}
+  if (!applicationDetails || isGeneric || !('type' in applicationDetails)) {
+    const details =
+      (applicationDetails as { details?: string })?.details?.trim() || application?.requests?.[0]?.details || ''
+    return { details }
+  }
 
   const isValid = (value: unknown): boolean =>
     value !== undefined && value !== null && !(typeof value === 'string' && value.trim() === '')

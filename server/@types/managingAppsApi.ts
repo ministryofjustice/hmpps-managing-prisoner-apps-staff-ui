@@ -87,6 +87,7 @@ export interface ApplicationType {
   id: number
   name: string
   genericType: boolean
+  genericForm: boolean
   logDetailRequired: boolean
 }
 

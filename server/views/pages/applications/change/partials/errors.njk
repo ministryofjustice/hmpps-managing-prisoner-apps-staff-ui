@@ -16,18 +16,6 @@
       {% set errorList = errorList.concat([{ text: errors.Reason.text, href: "#reason" }]) %}
     {% endif %}
 
-    {% if errors.Details %}
-      {% set errorList = errorList.concat([{ text: errors.Details.text, href: "#details" }]) %}
-    {% endif %}
-
-    {% if errors.Amount %}
-      {% set errorList = errorList.concat([{ text: errors.Amount.text, href: "#amount" }]) %}
-    {% endif %}
-
-    {% if errors.Reason %}
-      {% set errorList = errorList.concat([{ text: errors.Reason.text, href: "#reason" }]) %}
-    {% endif %}
-
     {% if errors.firstName %}
       {% set errorList = errorList.concat([{ text: errors.firstName.text, href: "#firstName" }]) %}
     {% endif %}

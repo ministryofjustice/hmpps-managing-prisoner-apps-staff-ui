@@ -33,7 +33,11 @@
         <form method="POST" id="log-details">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-          {% include "./partials/" + applicationType.key + ".njk" %}
+          {% if isGeneric %}
+            {% include "./partials/application-type-generic-details.njk" %}
+          {% else %}
+            {% include "./partials/" + applicationType.key + ".njk" %}
+          {% endif %}
 
           {{ govukButton({
             text: "Continue",

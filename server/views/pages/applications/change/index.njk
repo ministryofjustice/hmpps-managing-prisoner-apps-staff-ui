@@ -28,9 +28,11 @@
         
         <form method="POST" id="log-swap-vos-pin-credit-details">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-
-          {% include "./partials/" + applicationType + ".njk" %}
-
+          {% if isGeneric %}
+            {% include "./partials/application-type-generic-details.njk" %}
+          {% else %}
+            {% include "./partials/" + applicationType + ".njk" %}
+          {% endif %}
           {{ govukButton({
             text: "Continue",
             classes: "govuk-button--primary"

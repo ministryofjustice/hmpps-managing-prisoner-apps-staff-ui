@@ -48,6 +48,7 @@ export default function confirmAppRouter({
         },
         backLink: URLS.LOG_APPLICATION_DETAILS,
         title: applicationType.name,
+        isGeneric: applicationType.genericType || applicationType.genericForm,
       })
     }),
   )

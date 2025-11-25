@@ -39,7 +39,13 @@
     <div class="govuk-grid-column-two-thirds">
       {% include "./partials/application-details.njk" %}
       {% include "./partials/prisoner-details.njk" %}
-      {% include "./partials/" + applicationType + ".njk" %}
+      
+      {% if isGeneric %}
+        {% include "./partials/application-type-generic-details.njk" %}
+      {% else %}
+        {% include "./partials/" + applicationType + ".njk" %}
+      {% endif %}
+
     </div>
   </div>
 </div>
