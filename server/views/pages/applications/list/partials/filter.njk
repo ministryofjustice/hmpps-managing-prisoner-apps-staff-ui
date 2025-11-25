@@ -2,6 +2,30 @@
 
 <form novalidate>
   {%- set filterOptionsHtml %}
+
+    {{ govukRadios({
+      name: "order",
+      classes: "govuk-radios--small",
+      fieldset: {
+        legend: {
+          text: "Order",
+          classes: "govuk-fieldset__legend--s"
+        }
+      },
+      items: [
+        {
+          value: "newest",
+          text: "Newest",
+          checked: not filters.oldestAppFirst
+        },
+        {
+          value: "oldest",
+          text: "Oldest",
+          checked: filters.oldestAppFirst
+        }
+      ]
+    }) }}
+
     {{ govukCheckboxes({
       idPrefix: "status",
       name: "status",
