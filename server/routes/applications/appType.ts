@@ -28,16 +28,25 @@ export default function appTypeRouter({
 
   const buildAppTypes = (group: Group, selectedValue: string | null): AppTypeItem[] => {
     const items: AppTypeItem[] = []
-    group.appTypes.forEach((appType, index) => {
-      if (appType.genericType && index > 0) {
-        items.push({ divider: 'or' })
-      }
+
+    const genericAppType = group.appTypes.find(appType => appType.genericType)
+    const nonGenericAppTypes = group.appTypes.filter(appType => !appType.genericType)
+    nonGenericAppTypes.forEach(appType => {
       items.push({
         value: appType.id.toString(),
         text: appType.name,
         checked: selectedValue === appType.id.toString(),
       })
     })
+    if (genericAppType) {
+      items.push({ divider: 'or' })
+      items.push({
+        value: genericAppType.id.toString(),
+        text: genericAppType.name,
+        checked: selectedValue === genericAppType.id.toString(),
+      })
+    }
+
     return items
   }
 
@@ -106,6 +115,8 @@ export default function appTypeRouter({
             .replace(/\s+/g, '-'),
           name: selectedAppType.name,
           value: selectedAppType.id.toString(),
+          genericType: selectedAppType.genericType || false,
+          genericForm: selectedAppType.genericForm || false,
           legacyKey: appTypeIdToLegacyKeyMap[selectedAppType.id],
         },
       })

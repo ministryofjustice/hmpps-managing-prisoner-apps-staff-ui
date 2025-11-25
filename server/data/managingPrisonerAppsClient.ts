@@ -75,6 +75,7 @@ export default class ManagingPrisonerAppsApiClient {
         reference: '',
         type: type.legacyKey,
         applicationType: type.value,
+        genericForm: type.genericForm,
         applicationGroup: group.value,
         requests: [additionalData],
         firstNightCenter,
