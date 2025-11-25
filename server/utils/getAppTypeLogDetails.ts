@@ -29,6 +29,10 @@ export type GeneralEnquiryAppType = {
   details: string
 }
 
+export type GenericAppType = {
+  details: string
+}
+
 export type AddNewSocialContactAppType = {
   type: 2
   firstName: string
@@ -73,8 +77,18 @@ export type AppTypeData =
   | AddNewOfficialContactAppType
   | RemoveContactAppType
   | GeneralEnquiryAppType
+  | GenericAppType
 
-export function getAppTypeLogDetailsData(id: number, additionalData: unknown): AppTypeData | null {
+export function getAppTypeLogDetailsData(
+  id: number | null,
+  additionalData: unknown,
+  isGeneric: boolean,
+): AppTypeData | null {
+  if (isGeneric) {
+    const details = (additionalData as Record<string, unknown>)?.details
+    return { details: typeof details === 'string' ? details : '' }
+  }
+
   const handlers: Record<number, (data: unknown) => AppTypeData> = {
     1: data => {
       const { amount = '', reason = '' } = data as AddEmergencyPinPhoneCreditDetails
@@ -185,6 +199,8 @@ export function getAppTypeLogDetailsData(id: number, additionalData: unknown): A
       }
     },
   }
+
+  if (id === null) return null
 
   const handler = handlers[id]
   return handler ? handler(additionalData) : null
