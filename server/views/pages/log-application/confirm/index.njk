@@ -23,7 +23,7 @@
         {% include "./partials/application-details.njk" %}
 
           {% if isGeneric %}
-            {% include "./partials/add-a-generic-details.njk" %} 
+            {% include "./partials/application-type-generic-details.njk" %} 
           {% else %}
             {% include "./partials/" + applicationType + ".njk" %}
           {% endif %}
