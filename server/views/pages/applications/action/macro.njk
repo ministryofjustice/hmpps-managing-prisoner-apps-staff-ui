@@ -7,10 +7,10 @@
       <dd class="govuk-summary-list__value">{{ applicationType.name }}</dd>
     </div>
 
-    {% if applicationType.key in [
-      "PIN_PHONE_ADD_NEW_SOCIAL_CONTACT",
-      "PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT",
-      "PIN_PHONE_REMOVE_CONTACT"
+    {% if applicationType.name in [
+      "Add a social PIN phone contact",
+      "Add an official PIN phone contact",
+      "Add or remove a PIN phone contact"
     ] %}
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">Contact</dt>
@@ -18,7 +18,7 @@
     </div>
     {% endif %}
 
-    {% if applicationType.key === "PIN_PHONE_EMERGENCY_CREDIT_TOP_UP" %}
+    {% if applicationType.name == "Add emergency phone credit" %}
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">Amount</dt>
       <dd class="govuk-summary-list__value">£{{ application.requests[0].amount }}</dd>
