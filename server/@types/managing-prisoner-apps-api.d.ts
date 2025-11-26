@@ -619,6 +619,7 @@ export interface components {
       requestedBy?: string
       assignedGroups?: string[]
       firstNightCenter?: boolean
+      oldestAppFirst?: boolean
     }
     AppListViewDto: {
       /** Format: uuid */
