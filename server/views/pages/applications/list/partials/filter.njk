@@ -75,18 +75,25 @@
       items: filters.groups
     }) }}
 
-    {{ govukCheckboxes({
-      idPrefix: "type",
-      name: "type",
-      classes: "govuk-checkboxes--small",
-      fieldset: {
-        legend: {
-          text: "Application type",
-          classes: "govuk-fieldset__legend--s"
-        }
+    {{ govukInput({
+      id: "application-type-filter",
+      name: "applicationTypeFilter",
+      label: {
+        text: "Application type",
+        classes: "govuk-fieldset__legend--s govuk-!-margin-bottom-2"
       },
-      items: filters.appTypes
+      classes: "govuk-input",
+      value: filters.applicationTypeFilter
     }) }}
+
+    <div class="app-type-filter-checkbox-wrapper">
+      {{ govukCheckboxes({
+        idPrefix: "type",
+        name: "type",
+        classes: "govuk-checkboxes--small app-type-filter-scroll-box",
+        items: filters.appTypes
+      }) }}
+    </div>
   {% endset -%}
 
   {% set categories = [] %}

@@ -52,6 +52,8 @@ export default function viewAppsRouter({
       )
       if (status.length === 0) status.push('PENDING')
 
+      const applicationTypeFilter = req.query.applicationTypeFilter?.toString() || ''
+
       const selectedStatusValues: UiStatus[] = [...status]
       if (status.includes('APPROVED') || status.includes('DECLINED')) {
         selectedStatusValues.push('CLOSED')
@@ -82,18 +84,12 @@ export default function viewAppsRouter({
         firstNightCenter: selectedFilters.priority.includes('first-night-centre') ? true : undefined,
       }
 
-      const [{ apps, applicationTypes, assignedGroups, totalRecords, firstNightCenter }, prisonerDetails] =
-        await Promise.all([
-          managingPrisonerAppsService.getApps(payload, user),
-          managingPrisonerAppsService.getApps(payload, user).then(response =>
-            Promise.all(
-              response.apps.map(async app => {
-                if (!app.requestedBy) return null
-                return prisonService.getPrisonerByPrisonNumber(app.requestedBy, user)
-              }),
-            ),
-          ),
-        ])
+      const response = await managingPrisonerAppsService.getApps(payload, user)
+      const { apps, applicationTypes, assignedGroups, totalRecords, firstNightCenter } = response
+
+      const prisonerDetails = await Promise.all(
+        apps.map(app => (app.requestedBy ? prisonService.getPrisonerByPrisonNumber(app.requestedBy, user) : null)),
+      )
 
       let error = null
       if (selectedFilters.prisonerId) {
@@ -173,6 +169,7 @@ export default function viewAppsRouter({
           selectedPrisonerLabel: selectedFilters.prisonerLabel,
           selectedPrisonerId: selectedFilters.prisonerId,
           selectedStatusValues,
+          applicationTypeFilter,
         },
         pagination: getPaginationData(page, totalRecords),
         query: req.query,
