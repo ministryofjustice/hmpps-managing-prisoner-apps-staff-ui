@@ -124,17 +124,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
   const filterInput = document.getElementById('application-type-filter')
-  const checkboxesContainer = document.getElementById('type').closest('.govuk-checkboxes')
-  if (!filterInput || !checkboxesContainer) return
+  const typeEl = document.getElementById('type')
+  if (!filterInput || !typeEl) return
+
+  const checkboxesContainer = typeEl.closest('.govuk-checkboxes')
+  if (!checkboxesContainer) return
 
   const applyFilter = () => {
     const query = filterInput.value.toLowerCase()
-    checkboxesContainer.querySelectorAll('.govuk-checkboxes__item').forEach(item => {
-      const label = item.querySelector('.govuk-label')
+    const items = checkboxesContainer.querySelectorAll('.govuk-checkboxes__item')
+
+    for (const el of items) {
+      const label = el.querySelector('.govuk-label')
       const text = label ? label.textContent.toLowerCase() : ''
-      // eslint-disable-next-line no-param-reassign
-      item.style.display = !query || text.includes(query) ? '' : 'none'
-    })
+      el.style.display = !query || text.includes(query) ? '' : 'none'
+    }
   }
 
   applyFilter()
