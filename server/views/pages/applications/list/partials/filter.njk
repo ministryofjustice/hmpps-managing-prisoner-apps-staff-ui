@@ -2,120 +2,125 @@
 
 <form novalidate>
   {%- set filterOptionsHtml %}
-    {{ govukRadios({
-      name: "order",
-      classes: "govuk-radios--small",
-      fieldset: {
-        legend: {
-          text: "Order",
-          classes: "govuk-fieldset__legend--s"
-        }
-      },
-      items: [
-        {
-          value: "newest",
-          text: "Newest",
-          checked: not filters.oldestAppFirst
-        },
-        {
-          value: "oldest",
-          text: "Oldest",
-          checked: filters.oldestAppFirst
-        }
-      ]
-    }) }}
-
-    {{ govukCheckboxes({
-      idPrefix: "status",
-      name: "status",
-      classes: "govuk-checkboxes--small",
-      fieldset: {
-        legend: { text: "Status", classes: "govuk-fieldset__legend--s" }
-      },
-      items: [
-        {
-          value: "PENDING",
-          text: "Pending",
-          checked: filters.selectedStatusValues and ("PENDING" in filters.selectedStatusValues)
-        },
-        {
-          value: "CLOSED",
-          text: "Closed",
-          checked: filters.selectedStatusValues and ("CLOSED" in filters.selectedStatusValues),
-          conditional: {
-            html: govukCheckboxes({
-              idPrefix: "status-closed",
-              name: "status",
-              classes: "govuk-checkboxes--small",
-              items: [
-                {
-                  value: "APPROVED",
-                  html: 'Approved <span class="govuk-visually-hidden">Decision</span>',
-                  checked: filters.selectedStatusValues and ("APPROVED" in filters.selectedStatusValues)
-                },
-                {
-                  value: "DECLINED",
-                  html: 'Declined <span class="govuk-visually-hidden">Decision</span>',
-                  checked: filters.selectedStatusValues and ("DECLINED" in filters.selectedStatusValues)
-                }
-              ]
-            })
+    <div class="filter-section">
+      {{ govukRadios({
+        name: "order",
+        classes: "govuk-radios--small",
+        fieldset: {
+          legend: {
+            text: "Order",
+            classes: "govuk-fieldset__legend--s"
           }
-        }
-      ]
-    }) }}
-
-    {{ accessibleAutocomplete({
-      label: "Prisoner name or number",
-      nonce: cspNonce,
-      selectedLabel: filters.selectedPrisonerLabel,
-      selectedValue: filters.selectedPrisonerId
-    }) }}
-
-    {{ govukCheckboxes({
-      idPrefix: "priority",
-      name: "priority",
-      classes: "govuk-checkboxes--small",
-      fieldset: {
-        legend: {
-          text: "Priority",
-          classes: "govuk-fieldset__legend--s"
-        }
-      },
-      items: filters.priority
-    }) }}
-
-    {{ govukCheckboxes({
-      idPrefix: "group",
-      name: "group",
-      classes: "govuk-checkboxes--small",
-      fieldset: {
-        legend: {
-          text: "Department",
-          classes: "govuk-fieldset__legend--s"
-        }
-      },
-      items: filters.groups
-    }) }}
-
-    {{ govukInput({
-      id: "application-type-filter",
-      name: "applicationTypeFilter",
-      label: {
-        text: "Application type",
-        classes: "govuk-fieldset__legend--s govuk-!-margin-bottom-2"
-      },
-      classes: "govuk-input",
-      value: filters.applicationTypeFilter
-    }) }}
-
-    <div class="app-type-filter-checkbox-wrapper">
-      {{ govukCheckboxes({
-        idPrefix: "type",
-        name: "type",
-        classes: "govuk-checkboxes--small app-type-filter-scroll-box",
-        items: filters.appTypes
+        },
+        items: [
+          {
+            value: "newest",
+            text: "Newest",
+            checked: not filters.oldestAppFirst
+          },
+          {
+            value: "oldest",
+            text: "Oldest",
+            checked: filters.oldestAppFirst
+          }
+        ]
       }) }}
+    </div>
+
+    <div class="filter-section">
+      {{ govukCheckboxes({
+        idPrefix: "status",
+        name: "status",
+        classes: "govuk-checkboxes--small",
+        fieldset: {
+          legend: { text: "Status", classes: "govuk-fieldset__legend--s" }
+        },
+        items: [
+          {
+            value: "PENDING",
+            text: "Pending",
+            checked: filters.selectedStatusValues and ("PENDING" in filters.selectedStatusValues)
+          },
+          {
+            value: "CLOSED",
+            text: "Closed",
+            checked: filters.selectedStatusValues and ("CLOSED" in filters.selectedStatusValues),
+            conditional: {
+              html: govukCheckboxes({
+                idPrefix: "status-closed",
+                name: "status",
+                classes: "govuk-checkboxes--small",
+                items: [
+                  {
+                    value: "APPROVED",
+                    html: 'Approved <span class="govuk-visually-hidden">Decision</span>',
+                    checked: filters.selectedStatusValues and ("APPROVED" in filters.selectedStatusValues)
+                  },
+                  {
+                    value: "DECLINED",
+                    html: 'Declined <span class="govuk-visually-hidden">Decision</span>',
+                    checked: filters.selectedStatusValues and ("DECLINED" in filters.selectedStatusValues)
+                  }
+                ]
+              })
+            }
+          }
+        ]
+      }) }}
+    </div>
+
+    <div class="filter-section">
+      {{ accessibleAutocomplete({
+        label: "Prisoner name or number",
+        nonce: cspNonce,
+        selectedLabel: filters.selectedPrisonerLabel,
+        selectedValue: filters.selectedPrisonerId
+      }) }}
+
+      {{ govukCheckboxes({
+        idPrefix: "priority",
+        name: "priority",
+        classes: "govuk-checkboxes--small",
+        items: filters.priority
+      }) }}
+    </div>
+
+    <div class="filter-section">
+      {{ govukCheckboxes({
+        idPrefix: "group",
+        name: "group",
+        classes: "govuk-checkboxes--small",
+        fieldset: {
+          legend: {
+            text: "Department",
+            classes: "govuk-fieldset__legend--s"
+          }
+        },
+        items: filters.groups
+      }) }}
+    </div>
+
+    <div class="filter-section">
+      {{ govukInput({
+        id: "application-type-filter",
+        name: "applicationTypeFilter",
+        label: {
+          text: "Application type",
+          classes: "govuk-fieldset__legend--s govuk-!-margin-bottom-2"
+        },
+        classes: "govuk-input",
+        value: filters.applicationTypeFilter
+      }) }}
+      
+
+      <div class="app-type-filter-checkbox-wrapper">
+        {{ govukCheckboxes({
+          idPrefix: "type",
+          name: "type",
+          classes: "govuk-checkboxes--small app-type-filter-scroll-box",
+          items: filters.appTypes
+        }) }}
+      </div>
     </div>
   {% endset -%}
 
