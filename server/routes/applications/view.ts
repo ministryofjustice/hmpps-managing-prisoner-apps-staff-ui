@@ -56,6 +56,7 @@ export default function viewAppsRouter({
       if (status.includes('APPROVED') || status.includes('DECLINED')) {
         selectedStatusValues.push('CLOSED')
       }
+      const oldestAppFirst = req.query.order === 'oldest'
 
       const prisonerLabel = req.query.prisoner?.toString() || ''
       const prisonerId = prisonerLabel.match(/\(([^)]+)\)/)?.[1] || null
@@ -80,6 +81,7 @@ export default function viewAppsRouter({
         requestedBy: selectedFilters.prisonerId || undefined,
         assignedGroups: selectedFilters.groups.length > 0 ? selectedFilters.groups : undefined,
         firstNightCenter: selectedFilters.priority.includes('first-night-centre') ? true : undefined,
+        oldestAppFirst,
       }
 
       const [{ apps, applicationTypes, assignedGroups, totalRecords, firstNightCenter }, prisonerDetails] =
@@ -173,6 +175,7 @@ export default function viewAppsRouter({
           selectedPrisonerLabel: selectedFilters.prisonerLabel,
           selectedPrisonerId: selectedFilters.prisonerId,
           selectedStatusValues,
+          oldestAppFirst,
         },
         pagination: getPaginationData(page, totalRecords),
         query: req.query,
