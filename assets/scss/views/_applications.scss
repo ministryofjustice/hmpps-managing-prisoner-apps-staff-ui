@@ -128,3 +128,9 @@
     margin-top: -20px;
   }
 }
+
+.filter-section {
+  border-bottom: 1px solid $govuk-border-colour;
+  padding-bottom: govuk-spacing(4);
+  margin-bottom: govuk-spacing(4);
+}
