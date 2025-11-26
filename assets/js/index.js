@@ -121,3 +121,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
 })
+
+document.addEventListener('DOMContentLoaded', () => {
+  const filterInput = document.getElementById('application-type-filter')
+  const typeEl = document.getElementById('type')
+  if (!filterInput || !typeEl) return
+
+  const checkboxesContainer = typeEl.closest('.govuk-checkboxes')
+  if (!checkboxesContainer) return
+
+  const applyFilter = () => {
+    const query = filterInput.value.toLowerCase()
+    const items = checkboxesContainer.querySelectorAll('.govuk-checkboxes__item')
+
+    for (const el of items) {
+      const label = el.querySelector('.govuk-label')
+      const text = label ? label.textContent.toLowerCase() : ''
+      el.style.display = !query || text.includes(query) ? '' : 'none'
+    }
+  }
+
+  applyFilter()
+
+  filterInput.addEventListener('input', applyFilter)
+})
