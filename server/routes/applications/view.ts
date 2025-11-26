@@ -58,6 +58,7 @@ export default function viewAppsRouter({
       if (status.includes('APPROVED') || status.includes('DECLINED')) {
         selectedStatusValues.push('CLOSED')
       }
+      const oldestAppFirst = req.query.order === 'oldest'
 
       const prisonerLabel = req.query.prisoner?.toString() || ''
       const prisonerId = prisonerLabel.match(/\(([^)]+)\)/)?.[1] || null
@@ -82,6 +83,7 @@ export default function viewAppsRouter({
         requestedBy: selectedFilters.prisonerId || undefined,
         assignedGroups: selectedFilters.groups.length > 0 ? selectedFilters.groups : undefined,
         firstNightCenter: selectedFilters.priority.includes('first-night-centre') ? true : undefined,
+        oldestAppFirst,
       }
 
       const response = await managingPrisonerAppsService.getApps(payload, user)
@@ -170,6 +172,7 @@ export default function viewAppsRouter({
           selectedPrisonerId: selectedFilters.prisonerId,
           selectedStatusValues,
           applicationTypeFilter,
+          oldestAppFirst,
         },
         pagination: getPaginationData(page, totalRecords),
         query: req.query,
@@ -232,6 +235,7 @@ export default function viewAppsRouter({
           (application?.requests?.[0] as Partial<{ organisation?: string; company?: string }>)?.organisation?.trim() ||
           (application?.requests?.[0] as Partial<{ organisation?: string; company?: string }>)?.company?.trim() ||
           '',
+        isGeneric: applicationType.genericType || applicationType.genericForm,
       })
     }),
   )

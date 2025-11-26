@@ -552,6 +552,7 @@ export interface components {
         | 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS'
         | 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS'
       applicationType: components['schemas']['ApplicationTypeResponse']
+      genericForm: boolean
       applicationGroup: components['schemas']['ApplicationGroupResponse']
       /** Format: date-time */
       requestedDate: string
@@ -585,6 +586,7 @@ export interface components {
       id: number
       name: string
       genericType?: boolean
+      genericForm?: boolean
       logDetailRequired?: boolean
       /** Format: int64 */
       count?: number
@@ -594,6 +596,7 @@ export interface components {
       type?: string
       /** Format: int64 */
       applicationType?: number
+      genericForm: boolean
       /** Format: int64 */
       applicationGroup?: number
       /** Format: date-time */
@@ -616,6 +619,7 @@ export interface components {
       requestedBy?: string
       assignedGroups?: string[]
       firstNightCenter?: boolean
+      oldestAppFirst?: boolean
     }
     AppListViewDto: {
       /** Format: uuid */
@@ -623,6 +627,7 @@ export interface components {
       establishmentId: string
       status: string
       appType: components['schemas']['ApplicationTypeResponse']
+      genericForm: boolean
       requestedBy: string
       requestedByFirstName: string
       requestedByLastName: string
@@ -745,9 +750,31 @@ export interface components {
       value: string
       name: string
     }
+    Attachment: {
+      /**
+       * Format: int32
+       * @description The number of the attachment which will match any corresponding reference in the content section
+       */
+      attachmentNumber: number
+      /** @description The name or description of the attachment which will be included in the report */
+      name: string
+      /** @description The content type of the attachment */
+      contentType: string
+      /** @description The url to be used to download the attachment file */
+      url: string
+      /**
+       * Format: int32
+       * @description The size of the attachment file in bytes
+       */
+      filesize: number
+      /** @description The filename of attachment file */
+      filename: string
+    }
     HmppsSubjectAccessRequestContent: {
       /** @description The content of the subject access request response */
       content: unknown
+      /** @description The details of any attachments for the subject access request response */
+      attachments?: components['schemas']['Attachment'][]
     }
   }
   responses: never

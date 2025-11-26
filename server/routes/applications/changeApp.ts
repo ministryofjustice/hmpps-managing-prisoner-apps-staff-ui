@@ -43,9 +43,9 @@ export default function changeAppRouter({
         Page.CHANGE_APPLICATION_PAGE,
       )
 
+      const isGeneric = Boolean(applicationType.genericType || applicationType.genericForm)
       const additionalData = applicationData?.additionalData || {}
-
-      const formData = getAppTypeLogDetailsData(application.applicationType.id, additionalData)
+      const formData = getAppTypeLogDetailsData(application.applicationType.id, additionalData, isGeneric)
       const earlyDaysCentreValue = formatEarlyDaysCentre(applicationData?.earlyDaysCentre, application.firstNightCenter)
 
       const templateData = await getApplicationDetails(
@@ -53,6 +53,7 @@ export default function changeAppRouter({
         personalRelationshipsService,
         application,
         earlyDaysCentreValue,
+        isGeneric,
       )
 
       return res.render(PATHS.APPLICATIONS.CHANGE_DETAILS, {
@@ -66,6 +67,7 @@ export default function changeAppRouter({
         title: applicationType.name,
         errors: null,
         ...templateData,
+        isGeneric,
       })
     }),
   )
@@ -89,7 +91,11 @@ export default function changeAppRouter({
         getTemplateData: async () => {
           const additionalData = applicationData?.additionalData || {}
 
-          const formData = getAppTypeLogDetailsData(applicationType.id, additionalData)
+          const formData = getAppTypeLogDetailsData(
+            applicationType.id,
+            additionalData,
+            applicationType.genericType || applicationType.genericForm,
+          )
 
           const templateData = await getApplicationDetails(
             formData,
@@ -100,7 +106,12 @@ export default function changeAppRouter({
 
           return {
             application,
-            applicationType,
+            applicationType: applicationType.name
+              .replace(/[^\w\s]/g, '')
+              .trim()
+              .toLowerCase()
+              .replace(/\s+/g, '-'),
+            isGeneric: Boolean(applicationType.genericType || applicationType.genericForm),
             backLink: `${URLS.APPLICATIONS}/${prisonerId}/${applicationId}`,
             ...templateData,
           }
@@ -144,6 +155,7 @@ export default function changeAppRouter({
         backLink: `${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/change`,
         isUpdate: true,
         title: applicationType.name,
+        isGeneric: applicationType.genericType || applicationType.genericForm,
       })
     }),
   )

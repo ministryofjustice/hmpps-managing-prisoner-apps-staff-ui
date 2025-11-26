@@ -53,7 +53,9 @@ export default function appDetailsRouter({
         return res.redirect(URLS.LOG_APPLICATION_TYPE)
       }
 
-      const logDetails = getAppTypeLogDetailsData(selectedAppType.id, applicationData.additionalData || {})
+      const isGeneric = selectedAppType.genericType || selectedAppType.genericForm
+
+      const logDetails = getAppTypeLogDetailsData(selectedAppType.id, applicationData.additionalData || {}, isGeneric)
 
       if (!logDetails) {
         return res.redirect(URLS.LOG_APPLICATION_TYPE)
@@ -76,6 +78,7 @@ export default function appDetailsRouter({
         applicationType: applicationData.type,
         title: 'Log details',
         isLoggingForSamePrisoner,
+        isGeneric,
         prisonerName: isLoggingForSamePrisoner ? applicationData.prisonerName : null,
       })
     }),
@@ -109,6 +112,7 @@ export default function appDetailsRouter({
             applicationType: applicationData.type,
             formattedRelationshipList,
             countries: formattedCountryList,
+            isGeneric: applicationType.genericType || applicationType.genericForm,
           }
         },
         isUpdate: false,
