@@ -46,18 +46,25 @@ export default function viewAppsRouter({
       const { user } = res.locals
       const page = Number(req.query.page) || 1
 
-      const rawStatus = extractQueryParamArray(req.query.status).map(s => s.toString().toUpperCase())
-      const status: AllowedStatus[] = rawStatus.filter((s): s is AllowedStatus =>
-        ['APPROVED', 'DECLINED', 'PENDING'].includes(s),
-      )
-      if (status.length === 0) status.push('PENDING')
+      const clearFilters = req.query.clearFilters === 'true'
 
-      const applicationTypeFilter = req.query.applicationTypeFilter?.toString() || ''
+      let status: AllowedStatus[] = extractQueryParamArray(req.query.status)
+        .map(s => s.toString().toUpperCase())
+        .filter((s): s is AllowedStatus => ['APPROVED', 'DECLINED', 'PENDING'].includes(s))
 
-      const selectedStatusValues: UiStatus[] = [...status]
-      if (status.includes('APPROVED') || status.includes('DECLINED')) {
+      if (clearFilters) {
+        status = ['PENDING', 'APPROVED', 'DECLINED']
+      } else if (status.length === 0) {
+        status = ['PENDING']
+      }
+
+      const selectedStatusValues: UiStatus[] = clearFilters ? [] : [...status]
+
+      if (!clearFilters && (status.includes('APPROVED') || status.includes('DECLINED'))) {
         selectedStatusValues.push('CLOSED')
       }
+
+      const applicationTypeFilter = req.query.applicationTypeFilter?.toString() || ''
       const oldestAppFirst = req.query.order === 'oldest'
 
       const prisonerLabel = req.query.prisoner?.toString() || ''
@@ -116,21 +123,23 @@ export default function viewAppsRouter({
       const priority = formatPriorityForFilters(selectedFilters, firstNightCenter)
 
       const selectedFilterTags = {
-        status: status.map(s => {
-          let text
-          if (s === 'APPROVED') {
-            text = 'Closed (Approved)'
-          } else if (s === 'DECLINED') {
-            text = 'Closed (Declined)'
-          } else {
-            text = s.charAt(0) + s.slice(1).toLowerCase()
-          }
+        status: clearFilters
+          ? []
+          : status.map(s => {
+              let text
+              if (s === 'APPROVED') {
+                text = 'Closed (Approved)'
+              } else if (s === 'DECLINED') {
+                text = 'Closed (Declined)'
+              } else {
+                text = s.charAt(0) + s.slice(1).toLowerCase()
+              }
 
-          return {
-            href: removeFilterFromHref(req, 'status', s),
-            text,
-          }
-        }),
+              return {
+                href: removeFilterFromHref(req, 'status', s),
+                text,
+              }
+            }),
         priority: selectedFilters.priority.includes('first-night-centre')
           ? [
               {

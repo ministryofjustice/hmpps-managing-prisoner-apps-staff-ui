@@ -89,6 +89,14 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search)
+  if (params.get('clearFilters') === 'true') {
+    document.querySelectorAll('input[name="status"]').forEach(el => {
+      // eslint-disable-next-line no-param-reassign
+      el.checked = false
+    })
+  }
+
   const form = document.querySelector('form')
   const closed = document.getElementById('status-2')
   const approved = document.getElementById('status-closed')
