@@ -1,4 +1,5 @@
 {%- from "../../../../components/accessibleAutocomplete/macro.njk" import accessibleAutocomplete -%}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 <form novalidate>
   {%- set filterOptionsHtml %}
@@ -53,15 +54,21 @@
                 items: [
                   {
                     value: "APPROVED",
-                    html: 'Approved <span class="govuk-visually-hidden">Decision</span>',
+                    html: 'Approved',
                     checked: filters.selectedStatusValues and ("APPROVED" in filters.selectedStatusValues)
                   },
                   {
                     value: "DECLINED",
-                    html: 'Declined <span class="govuk-visually-hidden">Decision</span>',
+                    html: 'Declined',
                     checked: filters.selectedStatusValues and ("DECLINED" in filters.selectedStatusValues)
                   }
-                ]
+                ],
+                fieldset: {
+                  legend: {
+                    text: "Decision",
+                    classes: "govuk-visually-hidden"
+                  }
+                }
               })
             }
           }
@@ -100,13 +107,18 @@
       }) }}
     </div>
 
-    <div class="filter-section">
+    <div class="filter-section filter-section__app-type">
       {{ govukInput({
         id: "application-type-filter",
         name: "applicationTypeFilter",
         label: {
           text: "Application type",
           classes: "govuk-fieldset__legend--s govuk-!-margin-bottom-2"
+        },
+        prefix: {
+          html: '<svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17.4444 15.3333L13.2222 11.1111C14 10 14.4444 8.66667 14.4444 7.22222C14.4444 3.22222 11.2222 0 7.22222 0C3.22222 0 0 3.22222 0 7.22222C0 11.2222 3.22222 14.4444 7.22222 14.4444C9 14.4444 10.5556 13.7778 11.7778 12.7778L15.8889 16.8889L17.4444 15.3333ZM2.22222 7.22222C2.22222 4.44444 4.44444 2.22222 7.22222 2.22222C10 2.22222 12.2222 4.44444 12.2222 7.22222C12.2222 10 10 12.2222 7.22222 12.2222C4.44444 12.2222 2.22222 10 2.22222 7.22222Z" fill="black"/>
+                </svg>'
         },
         classes: "govuk-input",
         value: filters.applicationTypeFilter
@@ -121,6 +133,14 @@
           items: filters.appTypes
         }) }}
       </div>
+    </div>
+
+    <div class="filter-section filter-section__submit">
+      {{ govukButton({
+        text: "Apply filters",
+        type: "submit",
+        attributes: { "data-test-id": "submit-button-bottom" }
+      }) }}
     </div>
   {% endset -%}
 
