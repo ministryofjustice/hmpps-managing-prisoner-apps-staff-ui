@@ -22,9 +22,9 @@ export const appTypes = {
     genericForm: false,
     logDetailRequired: false,
   },
-  addOrRemoveContact: {
+  removeContact: {
     id: 4,
-    name: 'Add or remove a PIN phone contact',
+    name: 'Remove a PIN phone contact',
     genericType: false,
     genericForm: false,
     logDetailRequired: false,

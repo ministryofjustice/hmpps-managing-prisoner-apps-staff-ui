@@ -9,7 +9,7 @@ export const groups = [
       appTypes.emergencyCredit,
       appTypes.addNewOfficialContact,
       appTypes.addNewSocialContact,
-      appTypes.addOrRemoveContact,
+      appTypes.removeContact,
       appTypes.swapVOs,
       appTypes.supplyContactList,
       appTypes.makeGeneralEnquiry,
