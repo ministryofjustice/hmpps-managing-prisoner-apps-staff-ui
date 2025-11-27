@@ -133,4 +133,19 @@
   border-bottom: 1px solid $govuk-border-colour;
   padding-bottom: govuk-spacing(4);
   margin-bottom: govuk-spacing(4);
+
+  &__app-type {
+    .govuk-input__prefix {
+      background: white;
+    }
+  }
+
+  &__submit {
+    padding-bottom: 0;
+    border-bottom: none;
+
+    .govuk-button {
+      margin-bottom: 0;
+    }
+  }
 }
