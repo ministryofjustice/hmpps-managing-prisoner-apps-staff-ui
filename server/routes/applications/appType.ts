@@ -39,7 +39,9 @@ export default function appTypeRouter({
       })
     })
     if (genericAppType) {
-      items.push({ divider: 'or' })
+      if (nonGenericAppTypes.length > 0) {
+        items.push({ divider: 'or' })
+      }
       items.push({
         value: genericAppType.id.toString(),
         text: genericAppType.name,
