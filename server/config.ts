@@ -114,10 +114,10 @@ export default {
       url: get('MANAGING_PRISONER_APPS_API_URL', 'http://localhost:8080', requiredInProduction),
       healthPath: '/health/ping',
       timeout: {
-        response: Number(get('MANAGING_PRISONER_APPS_API_TIMEOUT_RESPONSE', 10000)),
-        deadline: Number(get('MANAGING_PRISONER_APPS_API_TIMEOUT_RESPONSE', 10000)),
+        response: Number(get('MANAGING_PRISONER_APPS_API_TIMEOUT_RESPONSE', 30000)),
+        deadline: Number(get('MANAGING_PRISONER_APPS_API_TIMEOUT_DEADLINE', 30000)),
       },
-      agent: new AgentConfig(Number(get('MANAGING_PRISONER_APPS_API_TIMEOUT_RESPONSE', 10000))),
+      agent: new AgentConfig(Number(get('MANAGING_PRISONER_APPS_API_TIMEOUT_RESPONSE', 30000))),
       enabled: get('MANAGING_PRISONER_APPS_ENABLED', 'false') === 'true',
     },
     personalRelationships: {
