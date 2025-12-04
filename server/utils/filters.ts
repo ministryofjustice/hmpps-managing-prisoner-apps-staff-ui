@@ -1,5 +1,7 @@
 import { Request } from 'express'
 import { ParsedQs } from 'qs'
+import { ListFilters } from 'express-session'
+import { FILTER_KEYS } from '../constants/filters'
 
 export const removeFilterFromHref = (req: Request, filterKey: string, valueToRemove: string) => {
   const newQuery = new URLSearchParams(req.query as Record<string, string | string[]>)
@@ -60,3 +62,33 @@ export const checkSelectedFilters = (
       selectedFilterTags.types.length > 0 ||
       selectedFilterTags.priority.length > 0,
   )
+
+export const retainFilters = (req: Request): void => {
+  const clearFilters = req.query.clearFilters === 'true'
+  const hasQueryParams = FILTER_KEYS.some(key => req.query[key] !== undefined)
+
+  if (clearFilters || hasQueryParams || !req.session.listFilters) return
+
+  FILTER_KEYS.forEach(key => {
+    const saved = req.session.listFilters?.[key]
+    if (saved !== undefined) {
+      req.query[key] = saved
+    }
+  })
+}
+
+export const saveFiltersToSession = (req: Request): void => {
+  const saved: ListFilters = {}
+
+  FILTER_KEYS.forEach(key => {
+    const value = req.query[key]
+
+    if (Array.isArray(value)) {
+      saved[key] = value.map(v => v.toString()) as string[] & string
+    } else if (value !== undefined) {
+      saved[key] = value.toString() as string[] & string
+    }
+  })
+
+  req.session.listFilters = saved
+}

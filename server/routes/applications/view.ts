@@ -18,7 +18,13 @@ import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsServ
 import PrisonService from '../../services/prisonService'
 
 import { formatAppsToRows } from '../../utils/apps'
-import { checkSelectedFilters, extractQueryParamArray, removeFilterFromHref } from '../../utils/filters'
+import {
+  checkSelectedFilters,
+  extractQueryParamArray,
+  removeFilterFromHref,
+  retainFilters,
+  saveFiltersToSession,
+} from '../../utils/filters'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { getPaginationData } from '../../utils/pagination'
 import { convertToTitleCase } from '../../utils/utils'
@@ -48,12 +54,15 @@ export default function viewAppsRouter({
 
       const clearFilters = req.query.clearFilters === 'true'
 
+      retainFilters(req)
+
       let status: AllowedStatus[] = extractQueryParamArray(req.query.status)
         .map(s => s.toString().toUpperCase())
         .filter((s): s is AllowedStatus => ['APPROVED', 'DECLINED', 'PENDING'].includes(s))
 
       if (clearFilters) {
         status = ['PENDING', 'APPROVED', 'DECLINED']
+        delete req.session.listFilters
       } else if (status.length === 0) {
         status = ['PENDING']
       }
@@ -163,6 +172,10 @@ export default function viewAppsRouter({
       }
 
       const hasSelectedFilters = checkSelectedFilters(selectedFilters, selectedFilterTags)
+
+      if (!clearFilters) {
+        saveFiltersToSession(req)
+      }
 
       await auditService.logPageView(Page.VIEW_APPLICATIONS_PAGE, {
         who: user.username,

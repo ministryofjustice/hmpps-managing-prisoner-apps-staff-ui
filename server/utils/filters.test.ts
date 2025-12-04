@@ -1,5 +1,8 @@
 import { Request } from 'express'
-import { removeFilterFromHref } from './filters'
+import { ListFilters } from 'express-session'
+import { removeFilterFromHref, retainFilters, saveFiltersToSession } from './filters'
+
+const FILTER_KEYS = ['order', 'status', 'prisoner', 'priority', 'group', 'applicationTypeFilter', 'type'] as const
 
 describe('removeFilterFromHref', () => {
   const mockReq = (query: Record<string, string | string[]>): Request => ({ query }) as Request
@@ -74,5 +77,65 @@ describe('removeFilterFromHref', () => {
     const req = mockReq({})
     const result = removeFilterFromHref(req, 'type', 'business-hub')
     expect(result).toBe('/applications?')
+  })
+})
+
+describe('retainFilters', () => {
+  const mockReq = (query: Record<string, string | string[] | undefined> = {}, listFilters?: ListFilters): Request =>
+    ({
+      query,
+      session: { listFilters },
+    }) as unknown as Request
+
+  it('should do nothing if clearFilters is true', () => {
+    const req = mockReq({ clearFilters: 'true' }, { status: ['PENDING'] })
+    retainFilters(req)
+    expect(req.query.status).toBeUndefined()
+  })
+
+  it('should do nothing if query params already exist', () => {
+    const req = mockReq({ status: ['APPROVED'] }, { status: ['PENDING'] })
+    retainFilters(req)
+    expect(req.query.status).toEqual(['APPROVED'])
+  })
+
+  it('should restore filters from session if no query params and clearFilters is false', () => {
+    const listFilters: ListFilters = {
+      order: 'newest',
+      status: ['PENDING'],
+      prisoner: 'ABC123',
+      priority: 'first-night-centre',
+      group: ['group1', 'group2'],
+      applicationTypeFilter: ['appTypeA'],
+      type: ['1', '2'],
+    }
+    const req = mockReq({}, listFilters)
+    retainFilters(req)
+
+    FILTER_KEYS.forEach(key => {
+      expect(req.query[key]).toEqual(listFilters[key])
+    })
+  })
+})
+
+describe('saveFiltersToSession', () => {
+  const mockReq = (query: Record<string, string | string[] | undefined> = {}): Request =>
+    ({
+      query,
+      session: {},
+    }) as unknown as Request
+
+  it('should save single string filters to session', () => {
+    const req = mockReq({ prisoner: 'ABC123', priority: 'first-night-centre' })
+    saveFiltersToSession(req)
+    expect(req.session.listFilters?.prisoner).toEqual('ABC123')
+    expect(req.session.listFilters?.priority).toEqual('first-night-centre')
+  })
+
+  it('should save array filters to session', () => {
+    const req = mockReq({ status: ['PENDING', 'APPROVED'], group: ['group1', 'group2'] })
+    saveFiltersToSession(req)
+    expect(req.session.listFilters?.status).toEqual(['PENDING', 'APPROVED'])
+    expect(req.session.listFilters?.group).toEqual(['group1', 'group2'])
   })
 })
