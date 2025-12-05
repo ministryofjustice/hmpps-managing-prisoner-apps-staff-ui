@@ -6,7 +6,7 @@ import {
   History,
   Response,
   ViewAppsListResponse,
-  ViewApplicationsResponseAssignedGroup,
+  ViewAppListAssignedGroup,
 } from '../../@types/managingAppsApi'
 import { InmateDetail } from '../../@types/prisonApi'
 import { APPLICATION_STATUS } from '../../constants/applicationStatus'
@@ -327,7 +327,7 @@ export default class TestData {
 
   supportedPrisonIds = ({ prisonIds = ['HEI', 'BLI'] } = {}): string[] => prisonIds
 
-  assignedGroups: ViewApplicationsResponseAssignedGroup[] = [
+  assignedGroups: ViewAppListAssignedGroup[] = [
     {
       id: '343a7876-07b9-4ef8-947c-7cf554fae864',
       name: 'Business Hub',
