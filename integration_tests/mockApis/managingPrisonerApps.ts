@@ -101,8 +101,15 @@ export default {
   stubOfficialAppTypeWithCompanyField: (): SuperAgentRequest => {
     const officialApp = {
       id: 'official-app-id',
+      status: 'PENDING',
       requestedBy: { username: 'A1234AA' },
       appType: 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT',
+      applicationType: {
+        id: 2,
+        name: 'Add an official PIN phone contact',
+      },
+      firstNightCenter: false,
+      createdDate: '2024-12-01T00:00:00Z',
       requests: [
         {
           id: 'req-official-001',
