@@ -1,15 +1,9 @@
 import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
 
-import { ApplicationSearchPayload } from '../../@types/managingAppsApi'
-
 import { APPLICATION_STATUS } from '../../constants/applicationStatus'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
-
-import { formatAppTypesForFilters } from '../../helpers/filters/formatAppTypesForFilters'
-import { formatGroupsForFilters } from '../../helpers/filters/formatGroupsForFilters'
-import { formatPriorityForFilters } from '../../helpers/filters/formatPriorityForFilters'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
@@ -19,11 +13,11 @@ import PrisonService from '../../services/prisonService'
 
 import { formatAppsToRows } from '../../utils/apps'
 import {
+  buildSelectedTags,
   checkSelectedFilters,
-  extractQueryParamArray,
-  removeFilterFromHref,
-  retainFilters,
-  saveFiltersToSession,
+  formatFilterOptions,
+  parseApplicationFilters,
+  retainFiltersMiddleware,
 } from '../../utils/filters'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { getPaginationData } from '../../utils/pagination'
@@ -31,9 +25,8 @@ import { convertToTitleCase } from '../../utils/utils'
 
 import logger from '../../../logger'
 import config from '../../config'
-
-type AllowedStatus = 'APPROVED' | 'DECLINED' | 'PENDING'
-type UiStatus = AllowedStatus | 'CLOSED'
+import { addPrisonerNames, buildApplicationsPayload } from '../../helpers/apps'
+import { validatePrisonerFilter } from '../../helpers/prisoner'
 
 export default function viewAppsRouter({
   auditService,
@@ -48,134 +41,27 @@ export default function viewAppsRouter({
 
   router.get(
     URLS.APPLICATIONS,
+    retainFiltersMiddleware,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
-      const page = Number(req.query.page) || 1
 
-      const clearFilters = req.query.clearFilters === 'true'
+      const filters = parseApplicationFilters(req)
+      const payload = buildApplicationsPayload(filters)
 
-      retainFilters(req)
-
-      let status: AllowedStatus[] = extractQueryParamArray(req.query.status)
-        .map(s => s.toString().toUpperCase())
-        .filter((s): s is AllowedStatus => ['APPROVED', 'DECLINED', 'PENDING'].includes(s))
-
-      if (clearFilters) {
-        status = ['PENDING', 'APPROVED', 'DECLINED']
-        delete req.session.listFilters
-      } else if (status.length === 0) {
-        status = ['PENDING']
-      }
-
-      const selectedStatusValues: UiStatus[] = clearFilters ? [] : [...status]
-
-      if (!clearFilters && (status.includes('APPROVED') || status.includes('DECLINED'))) {
-        selectedStatusValues.push('CLOSED')
-      }
-
-      const applicationTypeFilter = req.query.applicationTypeFilter?.toString() || ''
-      const oldestAppFirst = req.query.order === 'oldest'
-
-      const prisonerLabel = req.query.prisoner?.toString() || ''
-      const prisonerId = prisonerLabel.match(/\(([^)]+)\)/)?.[1] || null
-
-      const selectedFilters = {
-        groups: extractQueryParamArray(req.query.group),
-        types: extractQueryParamArray(req.query.type).map(type => type.toString()),
-        priority: extractQueryParamArray(req.query.priority),
-        prisonerLabel,
-        prisonerId,
-        status,
-      }
-
-      const payload: ApplicationSearchPayload = {
-        page,
-        size: 10,
-        status,
-        applicationTypes:
-          selectedFilters.types.length > 0
-            ? (selectedFilters.types.map(Number) as ApplicationSearchPayload['applicationTypes'])
-            : undefined,
-        requestedBy: selectedFilters.prisonerId || undefined,
-        assignedGroups: selectedFilters.groups.length > 0 ? selectedFilters.groups : undefined,
-        firstNightCenter: selectedFilters.priority.includes('first-night-centre') ? true : undefined,
-        oldestAppFirst,
-      }
-
-      const response = await managingPrisonerAppsService.getApps(payload, user)
-      const { apps, applicationTypes, assignedGroups, totalRecords, firstNightCenter } = response
+      const { apps, applicationTypes, assignedGroups, totalRecords, firstNightCenter } =
+        await managingPrisonerAppsService.getApps(payload, user)
 
       const prisonerDetails = await Promise.all(
         apps.map(app => (app.requestedBy ? prisonService.getPrisonerByPrisonNumber(app.requestedBy, user) : null)),
       )
+      const error = validatePrisonerFilter(filters, prisonerDetails)
 
-      let error = null
-      if (selectedFilters.prisonerId) {
-        const foundPrisoner = prisonerDetails.find(
-          prisoner => prisoner && prisoner?.offenderNo === selectedFilters.prisonerId,
-        )
-        if (!foundPrisoner) {
-          error = {
-            message: 'Check your spelling or clear the search, then try again',
-            summaryTitle: 'There is a problem',
-          }
-        }
-      }
+      const appsWithNames = addPrisonerNames(apps)
+      const rows = await formatAppsToRows(managingPrisonerAppsService, user, appsWithNames)
 
-      const appsWithNames = apps.map(app => {
-        const prisonerName = `${app.requestedByLastName}, ${app.requestedByFirstName}`
-        return { ...app, prisonerName }
-      })
-
-      const appTypes = formatAppTypesForFilters(applicationTypes, selectedFilters)
-      const groups = formatGroupsForFilters(assignedGroups, selectedFilters)
-      const priority = formatPriorityForFilters(selectedFilters, firstNightCenter)
-
-      const selectedFilterTags = {
-        status: clearFilters
-          ? []
-          : status.map(s => {
-              let text
-              if (s === 'APPROVED') {
-                text = 'Closed (Approved)'
-              } else if (s === 'DECLINED') {
-                text = 'Closed (Declined)'
-              } else {
-                text = s.charAt(0) + s.slice(1).toLowerCase()
-              }
-
-              return {
-                href: removeFilterFromHref(req, 'status', s),
-                text,
-              }
-            }),
-        priority: selectedFilters.priority.includes('first-night-centre')
-          ? [
-              {
-                href: removeFilterFromHref(req, 'priority', 'first-night-centre'),
-                text: 'First night or early days centre',
-              },
-            ]
-          : [],
-        groups: assignedGroups
-          .filter(group => selectedFilters.groups.includes(group.id))
-          .map(group => ({
-            href: removeFilterFromHref(req, 'group', group.id),
-            text: group.name,
-          })),
-        types: appTypes
-          .filter(type => type.checked)
-          .map(type => ({
-            href: removeFilterFromHref(req, 'type', type.value),
-            text: type.text.replace(/\s\(\d+\)$/, ''),
-          })),
-      }
-
-      const hasSelectedFilters = checkSelectedFilters(selectedFilters, selectedFilterTags)
-
-      if (!clearFilters) {
-        saveFiltersToSession(req)
-      }
+      const filterOptions = formatFilterOptions(applicationTypes, assignedGroups, filters, firstNightCenter)
+      const selectedTags = buildSelectedTags(req, filters, filterOptions)
+      const hasSelectedFilters = checkSelectedFilters(filters, selectedTags)
 
       await auditService.logPageView(Page.VIEW_APPLICATIONS_PAGE, {
         who: user.username,
@@ -183,22 +69,20 @@ export default function viewAppsRouter({
       })
 
       return res.render(PATHS.APPLICATIONS.LIST, {
-        apps: await formatAppsToRows(managingPrisonerAppsService, user, appsWithNames),
+        apps: rows,
         filters: {
-          appTypes,
-          groups,
-          priority,
+          ...filterOptions,
           hasSelectedFilters,
-          selectedFilters: selectedFilterTags,
-          selectedPrisonerLabel: selectedFilters.prisonerLabel,
-          selectedPrisonerId: selectedFilters.prisonerId,
-          selectedStatusValues,
-          applicationTypeFilter,
-          oldestAppFirst,
+          selectedFilters: selectedTags,
+          selectedPrisonerLabel: filters.prisonerLabel,
+          selectedPrisonerId: filters.prisonerId,
+          selectedStatusValues: filters.selectedStatusValues,
+          applicationTypeFilter: filters.applicationTypeFilter,
+          oldestAppFirst: filters.oldestAppFirst,
         },
-        pagination: getPaginationData(page, totalRecords),
+        pagination: getPaginationData(Number(req.query.page) || 1, totalRecords),
         query: req.query,
-        status,
+        status: filters.status,
         error,
       })
     }),

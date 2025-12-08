@@ -1,7 +1,30 @@
-import { Request } from 'express'
+import { Request, Response, NextFunction } from 'express'
 import { ParsedQs } from 'qs'
 import { ListFilters } from 'express-session'
 import { FILTER_KEYS } from '../constants/filters'
+import { ViewAppListAssignedGroup } from '../@types/managingAppsApi'
+import { formatAppTypesForFilters } from '../helpers/filters/formatAppTypesForFilters'
+import { formatGroupsForFilters } from '../helpers/filters/formatGroupsForFilters'
+import { formatPriorityForFilters } from '../helpers/filters/formatPriorityForFilters'
+
+type SelectedFilters = {
+  groups: string[]
+  priority: string[]
+  prisonerId: string
+  prisonerLabel: string
+  types: string[]
+}
+
+type SelectedFilterTags = {
+  groups: LinkText[]
+  priority: LinkText[]
+  types: LinkText[]
+}
+
+type LinkText = {
+  href: string
+  text: string
+}
 
 export const removeFilterFromHref = (req: Request, filterKey: string, valueToRemove: string) => {
   const newQuery = new URLSearchParams(req.query as Record<string, string | string[]>)
@@ -33,41 +56,169 @@ export const extractQueryParamArray = (
   return []
 }
 
-type SelectedFilters = {
-  groups: string[]
-  priority: string[]
-  prisonerId: string
+export const checkSelectedFilters = (selectedFilters: SelectedFilters, selectedFilterTags: SelectedFilterTags) => {
+  const { prisonerId } = selectedFilters
+  const { groups, types, priority } = selectedFilterTags
+
+  return Boolean(prisonerId || groups.length > 0 || types.length > 0 || priority.length > 0)
+}
+
+export type AllowedStatus = 'APPROVED' | 'DECLINED' | 'PENDING'
+export type UiStatus = AllowedStatus | 'CLOSED'
+
+export interface ParsedFilters {
+  page: number
+  clearFilters: boolean
+  status: AllowedStatus[]
+  selectedStatusValues: UiStatus[]
+  applicationTypeFilter: string
+  oldestAppFirst: boolean
   prisonerLabel: string
+  prisonerId: string | null
+  groups: string[]
   types: string[]
+  priority: string[]
 }
 
-type SelectedFilterTags = {
-  groups: LinkText[]
-  priority: LinkText[]
-  types: LinkText[]
+export function parseApplicationFilters(req: Request): ParsedFilters {
+  const clearFilters = req.query.clearFilters === 'true'
+
+  retainFilters(req)
+
+  const statusQuery = req.query.status
+  let statusArray: (string | ParsedQs)[]
+
+  if (Array.isArray(statusQuery)) {
+    statusArray = statusQuery
+  } else if (statusQuery) {
+    statusArray = [statusQuery]
+  } else {
+    statusArray = []
+  }
+
+  let status: AllowedStatus[] = statusArray
+    .map(s => s.toString().toUpperCase())
+    .filter((s): s is AllowedStatus => ['APPROVED', 'DECLINED', 'PENDING'].includes(s))
+
+  if (clearFilters) {
+    status = ['PENDING', 'APPROVED', 'DECLINED']
+    delete req.session.listFilters
+  } else if (status.length === 0) {
+    status = ['PENDING']
+  }
+
+  const selectedStatusValues: UiStatus[] = clearFilters ? [] : [...status]
+  if (!clearFilters && (status.includes('APPROVED') || status.includes('DECLINED'))) {
+    selectedStatusValues.push('CLOSED')
+  }
+
+  const prisonerLabel = req.query.prisoner?.toString() || ''
+
+  if (!clearFilters) {
+    saveFiltersToSession(req)
+  }
+
+  return {
+    page: Number(req.query.page) || 1,
+    clearFilters,
+    status,
+    selectedStatusValues,
+    applicationTypeFilter: req.query.applicationTypeFilter?.toString() || '',
+    oldestAppFirst: req.query.order === 'oldest',
+    prisonerLabel,
+    prisonerId: prisonerLabel.match(/\(([^)]+)\)/)?.[1] || null,
+    groups: extractArray(req.query.group),
+    types: extractArray(req.query.type).map(t => t.toString()),
+    priority: extractArray(req.query.priority),
+  }
 }
 
-type LinkText = {
-  href: string
-  text: string
+function extractArray(q: unknown): string[] {
+  if (!q) return []
+  return Array.isArray(q) ? q.map(String) : [String(q)]
 }
 
-export const checkSelectedFilters = (
-  selectedFilters: SelectedFilters,
-  selectedFilterTags: SelectedFilterTags,
-): boolean =>
-  Boolean(
-    selectedFilters.prisonerId ||
-      selectedFilterTags.groups.length > 0 ||
-      selectedFilterTags.types.length > 0 ||
-      selectedFilterTags.priority.length > 0,
-  )
+export function formatFilterOptions(
+  applicationTypes: Record<string, { id: number; name: string; count: number }>,
+  assignedGroups: ViewAppListAssignedGroup[],
+  filters: {
+    groups: string[]
+    types: string[]
+    priority: string[]
+    status: string[]
+    prisonerId: string | null
+    prisonerLabel: string
+  },
+  firstNightCenter: number,
+) {
+  const appTypes = formatAppTypesForFilters(applicationTypes, filters)
+  const groups = formatGroupsForFilters(assignedGroups, filters)
+  const priority = formatPriorityForFilters(filters, firstNightCenter)
 
-export const retainFilters = (req: Request): void => {
+  return {
+    appTypes,
+    groups,
+    priority,
+    assignedGroups,
+  }
+}
+
+export function buildSelectedTags(
+  req: Request,
+  filters: ParsedFilters,
+  options: {
+    appTypes: { value: string; text: string; checked: boolean }[]
+    assignedGroups: ViewAppListAssignedGroup[]
+  },
+) {
+  return {
+    status: filters.clearFilters
+      ? []
+      : filters.status.map(s => {
+          let text: string
+          if (s === 'APPROVED') {
+            text = 'Closed (Approved)'
+          } else if (s === 'DECLINED') {
+            text = 'Closed (Declined)'
+          } else {
+            text = s.charAt(0) + s.slice(1).toLowerCase()
+          }
+          return {
+            href: removeFilterFromHref(req, 'status', s),
+            text,
+          }
+        }),
+
+    priority: filters.priority.includes('first-night-centre')
+      ? [
+          {
+            href: removeFilterFromHref(req, 'priority', 'first-night-centre'),
+            text: 'First night or early days centre',
+          },
+        ]
+      : [],
+
+    groups: options.assignedGroups
+      .filter(g => filters.groups.includes(g.id))
+      .map(g => ({
+        href: removeFilterFromHref(req, 'group', g.id),
+        text: g.name,
+      })),
+
+    types: options.appTypes
+      .filter(t => t.checked)
+      .map(t => ({
+        href: removeFilterFromHref(req, 'type', t.value),
+        text: t.text.replace(/\s\(\d+\)$/, ''),
+      })),
+  }
+}
+
+export const retainFilters = (req: Request): boolean => {
   const clearFilters = req.query.clearFilters === 'true'
   const hasQueryParams = FILTER_KEYS.some(key => req.query[key] !== undefined)
 
-  if (clearFilters || hasQueryParams || !req.session.listFilters) return
+  if (clearFilters || hasQueryParams || !req.session.listFilters) return false
 
   FILTER_KEYS.forEach(key => {
     const saved = req.session.listFilters?.[key]
@@ -75,6 +226,31 @@ export const retainFilters = (req: Request): void => {
       req.query[key] = saved
     }
   })
+
+  return true
+}
+
+export const retainFiltersMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  const filtersRestored = retainFilters(req)
+
+  if (filtersRestored && !req.originalUrl.includes('?')) {
+    const queryParams = new URLSearchParams()
+
+    Object.entries(req.query).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach(v => {
+          const str = v.toString()
+          if (str) queryParams.append(key, str)
+        })
+      } else if (value !== undefined && value !== '') {
+        queryParams.append(key, value.toString())
+      }
+    })
+
+    return res.redirect(`${req.path}?${queryParams.toString()}`)
+  }
+
+  return next()
 }
 
 export const saveFiltersToSession = (req: Request): void => {
@@ -84,8 +260,11 @@ export const saveFiltersToSession = (req: Request): void => {
     const value = req.query[key]
 
     if (Array.isArray(value)) {
-      saved[key] = value.map(v => v.toString()) as string[] & string
-    } else if (value !== undefined) {
+      const filtered = value.filter(v => v && v.toString().trim() !== '')
+      if (filtered.length > 0) {
+        saved[key] = filtered.map(v => v.toString()) as string[] & string
+      }
+    } else if (value !== undefined && value.toString().trim() !== '') {
       saved[key] = value.toString() as string[] & string
     }
   })
