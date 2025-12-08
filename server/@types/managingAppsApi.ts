@@ -11,7 +11,7 @@ export type History = components['schemas']['HistoryResponse']
 export type PrisonerSearchResult = components['schemas']['RequestedByNameSearchResult']
 export type Response = components['schemas']['AppDecisionResponseDtoObject']
 export type ViewAppListDto = components['schemas']['AppListViewDto']
-export type ViewApplicationsResponseAssignedGroup = components['schemas']['GroupAppListViewDto']
+export type ViewAppListAssignedGroup = components['schemas']['GroupAppListViewDto']
 
 export interface ViewAppListApp extends ViewAppListDto {
   assignedGroup: AssignedGroup
@@ -96,9 +96,3 @@ export interface Group {
   name: string
   appTypes: ApplicationType[]
 }
-
-export type ApplicationTypeKey =
-  | 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP'
-  | 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT'
-  | 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS'
-  | 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS'

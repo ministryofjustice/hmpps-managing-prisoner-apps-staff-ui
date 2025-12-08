@@ -1,6 +1,8 @@
+import { ViewAppListAssignedGroup } from '../../@types/managingAppsApi'
+
 // eslint-disable-next-line import/prefer-default-export
 export const formatGroupsForFilters = (
-  assignedGroups: { id: string; name: string; count?: number }[],
+  assignedGroups: ViewAppListAssignedGroup[],
   selectedFilters: { groups: string[] },
 ) =>
   assignedGroups.map(group => ({
