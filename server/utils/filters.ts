@@ -1,5 +1,7 @@
-import { Request } from 'express'
+import { Request, Response, NextFunction } from 'express'
 import { ParsedQs } from 'qs'
+import { ListFilters } from 'express-session'
+import { FILTER_KEYS } from '../constants/filters'
 import { ViewAppListAssignedGroup } from '../@types/managingAppsApi'
 import { formatAppTypesForFilters } from '../helpers/filters/formatAppTypesForFilters'
 import { formatGroupsForFilters } from '../helpers/filters/formatGroupsForFilters'
@@ -81,6 +83,8 @@ export interface ParsedFilters {
 export function parseApplicationFilters(req: Request): ParsedFilters {
   const clearFilters = req.query.clearFilters === 'true'
 
+  retainFilters(req)
+
   const statusQuery = req.query.status
   let statusArray: (string | ParsedQs)[]
 
@@ -98,6 +102,7 @@ export function parseApplicationFilters(req: Request): ParsedFilters {
 
   if (clearFilters) {
     status = ['PENDING', 'APPROVED', 'DECLINED']
+    delete req.session.listFilters
   } else if (status.length === 0) {
     status = ['PENDING']
   }
@@ -108,6 +113,10 @@ export function parseApplicationFilters(req: Request): ParsedFilters {
   }
 
   const prisonerLabel = req.query.prisoner?.toString() || ''
+
+  if (!clearFilters) {
+    saveFiltersToSession(req)
+  }
 
   return {
     page: Number(req.query.page) || 1,
@@ -203,4 +212,62 @@ export function buildSelectedTags(
         text: t.text.replace(/\s\(\d+\)$/, ''),
       })),
   }
+}
+
+export const retainFilters = (req: Request): boolean => {
+  const clearFilters = req.query.clearFilters === 'true'
+  const hasQueryParams = FILTER_KEYS.some(key => req.query[key] !== undefined)
+
+  if (clearFilters || hasQueryParams || !req.session.listFilters) return false
+
+  FILTER_KEYS.forEach(key => {
+    const saved = req.session.listFilters?.[key]
+    if (saved !== undefined) {
+      req.query[key] = saved
+    }
+  })
+
+  return true
+}
+
+export const retainFiltersMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  const filtersRestored = retainFilters(req)
+
+  if (filtersRestored && !req.originalUrl.includes('?')) {
+    const queryParams = new URLSearchParams()
+
+    Object.entries(req.query).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach(v => {
+          const str = v.toString()
+          if (str) queryParams.append(key, str)
+        })
+      } else if (value !== undefined && value !== '') {
+        queryParams.append(key, value.toString())
+      }
+    })
+
+    return res.redirect(`${req.path}?${queryParams.toString()}`)
+  }
+
+  return next()
+}
+
+export const saveFiltersToSession = (req: Request): void => {
+  const saved: ListFilters = {}
+
+  FILTER_KEYS.forEach(key => {
+    const value = req.query[key]
+
+    if (Array.isArray(value)) {
+      const filtered = value.filter(v => v && v.toString().trim() !== '')
+      if (filtered.length > 0) {
+        saved[key] = filtered.map(v => v.toString()) as string[] & string
+      }
+    } else if (value !== undefined && value.toString().trim() !== '') {
+      saved[key] = value.toString() as string[] & string
+    }
+  })
+
+  req.session.listFilters = saved
 }
