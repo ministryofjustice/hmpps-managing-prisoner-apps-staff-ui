@@ -10,6 +10,7 @@ export declare module 'express-session' {
       prisonerName: string
     }
     isLoggingForSamePrisoner: boolean
+    listFilters?: ListFilters
   }
 
   interface ApplicationData {
@@ -34,6 +35,16 @@ export declare module 'express-session' {
     }
     department?: string
     departmentId?: string
+  }
+
+  type ListFilters = {
+    order?: string
+    status?: string[]
+    prisoner?: string
+    priority?: string
+    group?: string[]
+    applicationTypeFilter?: string[]
+    type?: string[]
   }
 
   type AdditionalApplicationData =

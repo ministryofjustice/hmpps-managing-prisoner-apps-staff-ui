@@ -17,6 +17,7 @@ import {
   checkSelectedFilters,
   formatFilterOptions,
   parseApplicationFilters,
+  retainFiltersMiddleware,
 } from '../../utils/filters'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { getPaginationData } from '../../utils/pagination'
@@ -40,6 +41,7 @@ export default function viewAppsRouter({
 
   router.get(
     URLS.APPLICATIONS,
+    retainFiltersMiddleware,
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
 
