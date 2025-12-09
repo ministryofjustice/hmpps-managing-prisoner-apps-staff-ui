@@ -1,6 +1,5 @@
 import { APPLICATION_STATUS } from '../../server/constants/applicationStatus'
-import TestData from '../../server/routes/testutils/testData'
-import { appTypes } from '../../server/testData/appTypes'
+import { app, appTypes } from '../../server/testData'
 import ActionAndReplyPage from '../pages/actionAndReply'
 import Page from '../pages/page'
 
@@ -16,17 +15,15 @@ context('Action and Reply Page', () => {
         let page: ActionAndReplyPage
 
         beforeEach(() => {
-          const testData = new TestData()
-          const app = { ...testData.app, status, applicationType: { id, name } }
+          const application = { ...app, status, applicationType: { id, name } }
 
           cy.resetAndSignIn()
 
-          cy.task('stubGetPrisonerApp', { app })
-          cy.task('stubGetAppResponse', { app })
+          cy.task('stubGetPrisonerApp', { application })
+          cy.task('stubGetAppResponse', { application })
           cy.task('stubGetGroupsAndTypes')
 
-          cy.visit(`/applications/${app.requestedBy.username}/${app.id}/reply`)
-
+          cy.visit(`/applications/${application.requestedBy.username}/${application.id}/reply`)
           page = Page.verifyOnPage(ActionAndReplyPage)
         })
 

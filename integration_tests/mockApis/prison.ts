@@ -1,5 +1,5 @@
 import { SuperAgentRequest } from 'superagent'
-import TestData from '../../server/routes/testutils/testData'
+import { prisoner } from '../../server/testData'
 import { stubFor } from './wiremock'
 
 export default {
@@ -12,7 +12,7 @@ export default {
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: new TestData().prisoner,
+        jsonBody: prisoner,
       },
     })
   },

@@ -10,7 +10,6 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
-import { appTypeIdToLegacyKeyMap } from '../../testData/appTypes'
 import { updateSessionData } from '../../utils/session'
 
 type AppTypeItem = { value: string; text: string; checked: boolean } | { divider: 'or' }
@@ -119,7 +118,6 @@ export default function appTypeRouter({
           value: selectedAppType.id.toString(),
           genericType: selectedAppType.genericType || false,
           genericForm: selectedAppType.genericForm || false,
-          legacyKey: appTypeIdToLegacyKeyMap[selectedAppType.id],
         },
       })
 

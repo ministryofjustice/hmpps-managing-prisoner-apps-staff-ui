@@ -1,6 +1,6 @@
+import { app } from '../../server/testData'
 import applicationTypesData from '../fixtures/applicationTypes.json'
 
-import TestData from '../../server/routes/testutils/testData'
 import ViewApplicationPage from '../pages/viewApplicationPage'
 
 const { applicationTypes } = applicationTypesData
@@ -10,18 +10,16 @@ applicationTypes
   .forEach(({ name, id }) => {
     context(`View Application Page - ${name}`, () => {
       let page: ViewApplicationPage
-      const { app: baseApp } = new TestData()
-      const app = { ...baseApp, applicationType: { id, name } }
+      const application = { ...app, applicationType: { id, name } }
 
       beforeEach(() => {
         cy.resetAndSignIn()
         cy.task('stubGetPrisonerApp', {
-          app,
+          application,
         })
         cy.task('stubGetGroupsAndTypes')
 
-        cy.visit(`/applications/${app.requestedBy.username}/${app.id}`)
-
+        cy.visit(`/applications/${application.requestedBy.username}/${application.id}`)
         page = new ViewApplicationPage(name)
       })
 

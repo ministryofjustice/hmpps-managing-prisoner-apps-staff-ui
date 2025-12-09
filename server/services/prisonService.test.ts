@@ -1,10 +1,8 @@
 import HmppsAuthClient from '../data/hmppsAuthClient'
-import TestData from '../routes/testutils/testData'
+import { prisoner, user } from '../testData'
 import PrisonService from './prisonService'
 
 const getPrisonerByPrisonNumber = jest.fn()
-
-const testData = new TestData()
 
 jest.mock('../data/hmppsAuthClient')
 jest.mock('../data/prisonClient', () => {
@@ -15,8 +13,6 @@ jest.mock('../data/prisonClient', () => {
 
 describe('Prison Service', () => {
   let service: PrisonService
-
-  const { prisoner, user } = testData
 
   beforeEach(() => {
     const hmppsAuthClient = new HmppsAuthClient(null) as jest.Mocked<HmppsAuthClient>
