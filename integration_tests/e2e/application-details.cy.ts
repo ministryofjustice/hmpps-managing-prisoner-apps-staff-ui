@@ -182,15 +182,17 @@ context(`Application Details Page - Add an official PIN phone contact`, () => {
   })
 })
 
-// TO FIX
-// context('Change Application Page - Legacy company field', () => {
-//   beforeEach(() => {
-//     startApplication('Add an official PIN phone contact')
-//     cy.task('stubOfficialAppTypeWithCompanyField')
-//     cy.visit('/applications/A1234AA/official-app-id/change')
-//   })
+context('Change Application Page - Legacy company field', () => {
+  beforeEach(() => {
+    cy.resetAndSignIn()
+    cy.task('stubOfficialAppTypeWithCompanyField')
+    cy.task('stubGetGroupsAndTypes')
+    cy.task('stubGetDepartments', { appType: '2' })
+    cy.task('stubGetRelationships', 'OFFICIAL_RELATIONSHIP')
+    cy.visit('/applications/A1234AA/official-app-id/change')
+  })
 
-//   it('should pre-fill Organisation field using legacy company value', () => {
-//     cy.get('#organisation').should('have.value', 'Legacy Company Ltd')
-//   })
-// })
+  it('should pre-fill Organisation field using legacy company value', () => {
+    cy.get('#organisation').should('have.value', 'Legacy Company Ltd')
+  })
+})
