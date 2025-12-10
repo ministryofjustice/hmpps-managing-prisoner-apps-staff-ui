@@ -29,9 +29,9 @@ context('Department Page', () => {
 
   it('should display radio buttons with department names', () => {
     cy.fixture('departments.json').then(({ departments }) => {
-      cy.get('.govuk-radios__item').should('have.length', departments.length)
+      page.radioButton().should('have.length', departments.length)
 
-      cy.get('.govuk-radios__item').each(($el, idx) => {
+      page.radioButton().each(($el, idx) => {
         const deptName = departments[idx].name
 
         cy.wrap($el)
@@ -48,15 +48,22 @@ context('Department Page', () => {
   })
 
   it('should display the continue button', () => {
-    cy.get('.govuk-button')
+    page
+      .continueButton()
       .should('exist')
       .invoke('text')
       .should('satisfy', text => text.trim() === 'Continue')
   })
 
-  it('should show error message when no department selected and form submitted', () => {
-    cy.get('.govuk-button').click()
-    cy.get('.govuk-error-summary').should('exist').and('contain', 'Choose a department')
-    cy.get('.govuk-error-message').should('exist').and('contain', 'Choose a department')
+  it('should show error message when no department selected', () => {
+    page.continueButton().click()
+    page.errorSummary().should('exist').and('contain', 'Choose a department')
+    page.errorMessage().should('exist').and('contain', 'Choose a department')
+  })
+
+  it('should successfully select a department and redirect to application details page', () => {
+    page.departmentLabel().click()
+    page.continueButton().click()
+    cy.url().should('include', '/log/application-details')
   })
 })

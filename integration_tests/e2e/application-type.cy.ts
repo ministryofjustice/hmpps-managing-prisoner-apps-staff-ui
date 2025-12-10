@@ -27,9 +27,9 @@ context('Application Type Page', () => {
 
   it('should display radio buttons with names', () => {
     cy.fixture('applicationTypes.json').then(({ applicationTypes }) => {
-      cy.get('.govuk-radios__item').should('have.length', applicationTypes.length)
+      page.radioButton().should('have.length', applicationTypes.length)
 
-      cy.get('.govuk-radios__item').each(($element, index) => {
+      page.radioButton().each(($element, index) => {
         const { name, id } = applicationTypes[index]
 
         cy.wrap($element)
@@ -46,20 +46,21 @@ context('Application Type Page', () => {
   })
 
   it('should display a divider with text "or" between the last two options', () => {
-    cy.get('.govuk-radios__divider').should('exist').and('have.text', 'or')
+    page.radioButtonOrDivider().should('exist').and('have.text', 'or')
   })
 
   it('should display the continue button', () => {
-    cy.get('.govuk-button')
+    page
+      .continueButton()
       .should('exist')
       .invoke('text')
       .should('satisfy', text => text.trim() === 'Continue')
   })
 
   it('should display the error message when no radio button is selected', () => {
-    cy.get('.govuk-button').click()
-    cy.get('.govuk-error-summary').should('exist').and('contain', 'Choose one application type')
-    cy.get('.govuk-error-message').should('exist').and('contain', 'Choose one application type')
+    page.continueButton().click()
+    page.errorSummary().should('exist').and('contain', 'Choose one application type')
+    page.errorMessage().should('exist').and('contain', 'Choose one application type')
   })
 
   it('should ensure links are functional (if paths are set)', () => {
@@ -80,5 +81,15 @@ context('Application Type Page', () => {
         cy.log(`Skipping link with href: ${href}`)
       }
     })
+  })
+
+  it('should successfully select an application type and redirect to department', () => {
+    cy.task('stubGetGroupsAndTypes')
+    cy.task('stubGetDepartments', { appType: '3' })
+
+    page.appTypeLabel().click()
+    page.continueButton().click()
+
+    cy.url().should('include', '/log/department')
   })
 })
