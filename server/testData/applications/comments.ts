@@ -9,7 +9,7 @@ export const comment: Comment = {
   createdBy: {
     username: 'TEST_GEN',
     userId: '487900',
-    fullName: 'Zak Faithfull',
+    fullName: 'Staff Name',
     category: 'STAFF',
     establishment: {
       id: 'TEST_ESTABLISHMENT_FIRST',
