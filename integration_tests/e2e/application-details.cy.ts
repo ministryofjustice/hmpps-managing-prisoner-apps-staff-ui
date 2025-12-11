@@ -6,12 +6,13 @@ const { applicationTypes } = applicationTypesData
 
 function startApplication(appType: string): ApplicationDetailsPage {
   const appConfig = applicationTypes.find(type => type.name === appType)
+  const relationshipType = appType.includes('official') ? 'OFFICIAL_RELATIONSHIP' : 'SOCIAL_RELATIONSHIP'
 
   cy.resetAndSignIn()
   cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
   cy.task('stubGetGroupsAndTypes')
   cy.task('stubGetDepartments', { appType: appConfig?.id.toString() })
-  cy.task('stubGetRelationships', 'SOCIAL_RELATIONSHIP')
+  cy.task('stubGetRelationships', relationshipType)
 
   cy.visit('/log/application-details')
 
@@ -34,16 +35,16 @@ applicationTypes.forEach(({ name, genericType, genericForm }) => {
     if (genericType || genericForm) {
       it('should render the generic Details form', () => {
         page.appTypeTitle().should('have.text', name)
-        cy.get('textarea#details').should('exist')
+        page.textArea().should('exist')
       })
 
       it('should allow entering details', () => {
-        cy.get('textarea#details').type('Generic info')
-        cy.get('textarea#details').should('have.value', 'Generic info')
+        page.textArea().type('Generic info')
+        page.textArea().should('have.value', 'Generic info')
       })
 
       it('should allow submitting the generic form', () => {
-        cy.get('textarea#details').type('Log generic details')
+        page.textArea().type('Log generic details')
         page.continueButton().click()
         cy.url().should('include', '/log/confirm')
       })
@@ -51,134 +52,153 @@ applicationTypes.forEach(({ name, genericType, genericForm }) => {
       return
     }
 
-    it('should render the correct app type title', () => {
-      page.appTypeTitle().should('have.text', name)
-    })
-    if (name === 'Remove PIN phone contact') {
+    if (name === 'Add emergency phone credit') {
+      it('should show validation errors when fields are missing', () => {
+        page.continueButton().click()
+
+        page.errorSummary().should('exist')
+        page.errorMessage().should('exist')
+      })
+      it('should enter the log details for emergency phone credit and proceed to check details page', () => {
+        page.emergencyPhoneCreditLogDetails()
+
+        page.continueButton().click()
+        cy.url().should('include', '/log/confirm')
+      })
+    }
+
+    if (name === 'Add an official PIN phone contact') {
+      it('should show validation errors when fields are missing', () => {
+        page.continueButton().click()
+
+        page.errorSummary().should('exist')
+        page.errorMessage().should('exist')
+      })
+      it('should enter log details for official PIN phone contact and proceed to check details page', () => {
+        page.officialPinPhoneContactLogDetails()
+
+        page.continueButton().click()
+        cy.url().should('include', '/log/confirm')
+      })
+    }
+
+    if (name === 'Add a social PIN phone contact') {
+      it('should render the first night or early days centre radio buttons', () => {
+        page
+          .firstNightOrEarlyDaysCentreLabel()
+          .should('exist')
+          .and('include.text', 'Is this person in the first night or early days centre?')
+        page.firstNightOrEarlyDaysCentre().should('exist')
+        page.firstNightOrEarlyDaysCentreYes().should('exist')
+        page.firstNightOrEarlyDaysCentreNo().should('exist')
+      })
+
+      it('should allow the user to select "No" for "Is this person in the first night or early days centre?"', () => {
+        page.selectFirstNightOption('no')
+      })
+
+      it('should allow the user to select "Yes" for "Is this person in the first night or early days centre?"', () => {
+        page.selectFirstNightOption('yes')
+      })
+
+      it('should show an error if no radio button is selected for "Is this person in the first night or early days centre?"', () => {
+        page.continueButton().click()
+        page.firstNightOrEarlyDaysCentreErrorMessage().should('exist')
+      })
+
+      it('should display date of birth inputs when selected', () => {
+        cy.get('input[value="dateofbirth"]').check({ force: true })
+        cy.get('#dob-day').should('exist')
+        cy.get('#dob-month').should('exist')
+        cy.get('#dob-year').should('exist')
+        cy.get('.govuk-hint').should('contain', 'For example, 7/10/2002')
+      })
+
+      it('should display age input when selected', () => {
+        cy.get('input[value="age"]').check({ force: true })
+        cy.get('#age').should('exist')
+      })
+
+      it('should show validation errors for missing required fields', () => {
+        page.firstNightOrEarlyDaysCentreNo().check({ force: true })
+        page.continueButton().click()
+
+        page.errorSummary().should('exist')
+        page.errorMessage().should('exist')
+      })
+
+      it('should validate telephone number format', () => {
+        page.firstNightOrEarlyDaysCentreNo().check({ force: true })
+        page.socialContactInvalidTelephoneLogDetails()
+
+        page.continueButton().click()
+        page.errorMessage().should('contain', 'Enter a phone number in the correct format')
+      })
+
+      it('should enter log details for social PIN phone contact and proceed to check details page', () => {
+        page.firstNightOrEarlyDaysCentreNo().check({ force: true })
+        page.socialPinPhoneContactLogDetails()
+
+        page.continueButton().click()
+        cy.url().should('include', '/log/confirm')
+      })
+    }
+
+    if (name === 'Remove a PIN phone contact') {
       it('should display "PIN phone contact to remove" text', () => {
         cy.contains('h2', 'PIN phone contact to remove').should('exist')
       })
 
-      it('should have first and last name inputs', () => {
-        cy.get('label[for="firstName"]').should('contain.text', 'First name')
-        cy.get('label[for="lastName"]').should('contain.text', 'Last name')
+      it('should show validation errors for missing required fields', () => {
+        page.continueButton().click()
+
+        page.errorSummary().should('exist')
+        page.errorMessage().should('exist')
       })
 
-      it('should display the telephone number inputs', () => {
-        cy.get('label[for="telephone1"]').should('contain.text', 'Telephone number 1')
-        cy.get('label[for="telephone2"]').should('contain.text', 'Telephone number 2')
-      })
+      it('should enter log details for removing a PIN phone contact and proceed to check details page', () => {
+        page.removePinPhoneContactLogDetails()
 
-      it('should display the relationship to prisoner field', () => {
-        cy.get('label[for="relationship"]').should('contain.text', 'Relationship to prisoner')
-        cy.get('#relationship').should('exist')
+        page.continueButton().click()
+        cy.url().should('include', '/log/confirm')
       })
     }
 
-    it('should have CSRF token and continue button', () => {
-      page.csrfToken().should('exist')
-      page.continueButton().should('contain.text', 'Continue')
-    })
-  })
-})
+    if (name === 'Swap Visiting Orders (VOs) for PIN Credit') {
+      it('should enter log details for swapping VOs for PIN credit and proceed to check details page', () => {
+        cy.get('textarea#details').type('Need to swap 2 visiting orders for phone credit')
 
-context(`Application Details Page - Add new social PIN contact`, () => {
-  let page: ApplicationDetailsPage
+        page.continueButton().click()
+        cy.url().should('include', '/log/confirm')
+      })
 
-  beforeEach(() => {
-    page = startApplication('Add a social PIN phone contact')
-  })
+      it('should allow proceed to check details page without entering log details (optional)', () => {
+        page.continueButton().click()
+        cy.url().should('include', '/log/confirm')
+      })
 
-  it('should render the correct app type title', () => {
-    page.appTypeTitle().should('have.text', 'Add a social PIN phone contact')
-  })
+      it('should enforce character limit on details field', () => {
+        const longText = 'a'.repeat(1001)
+        cy.get('textarea#details').invoke('val', longText).trigger('input')
 
-  it('should render the first night or early days centre radio buttons', () => {
-    page
-      .firstNightOrEarlyDaysCentreLabel()
-      .should('exist')
-      .and('include.text', 'Is this person in the first night or early days centre?')
-    page.firstNightOrEarlyDaysCentre().should('exist')
-    page.firstNightOrEarlyDaysCentreYes().should('exist')
-    page.firstNightOrEarlyDaysCentreNo().should('exist')
-  })
+        page.continueButton().click()
+        cy.get('.govuk-error-message').should('contain', '1000 characters')
+      })
+    }
 
-  it('should allow the user to select "No" for "Is this person in the first night or early days centre?"', () => {
-    page.firstNightOrEarlyDaysCentreNo().check({ force: true })
-    page.firstNightOrEarlyDaysCentreNo().should('be.checked')
-  })
+    if (name === 'Supply list of contacts') {
+      it('should enter log details for supply contact list and proceed to check details page', () => {
+        cy.get('textarea#details').type('Please provide full contact list for prisoner')
 
-  it('should allow the user to select "Yes" for "Is this person in the first night or early days centre?"', () => {
-    page.firstNightOrEarlyDaysCentreYes().check({ force: true })
-    page.firstNightOrEarlyDaysCentreYes().should('be.checked')
-  })
+        page.continueButton().click()
+        cy.url().should('include', '/log/confirm')
+      })
 
-  it('should show an error if no radio button is selected for "Is this person in the first night or early days centre?"', () => {
-    page.continueButton().click()
-    page.firstNightOrEarlyDaysCentreErrorMessage().should('exist')
-  })
-
-  it('should render the form fields', () => {
-    cy.get('#firstName').should('exist')
-    cy.get('#lastName').should('exist')
-    cy.get('input[value="dateofbirth"]').should('exist')
-    cy.get('input[value="age"]').should('exist')
-    cy.get('input[value="donotknow"]').should('exist')
-    cy.get('#addressline1').should('exist')
-    cy.get('#addressline2').should('exist')
-    cy.get('#townorcity').should('exist')
-    cy.get('#postcode').should('exist')
-    cy.get('#country').should('exist')
-    cy.get('#relationship').should('exist')
-    cy.get('#telephone1').should('exist')
-    cy.get('#telephone2').should('exist')
-  })
-
-  it('should display date of birth inputs when selected', () => {
-    cy.get('input[value="dateofbirth"]').check({ force: true })
-    cy.get('#dob-day').should('exist')
-    cy.get('#dob-month').should('exist')
-    cy.get('#dob-year').should('exist')
-    cy.get('.govuk-hint').should('contain', 'For example, 7/10/2002')
-  })
-
-  it('should display age input when selected', () => {
-    cy.get('input[value="age"]').check({ force: true })
-    cy.get('#age').should('exist')
-  })
-
-  it('should display the country dropdown', () => {
-    cy.get('#country').should('be.visible')
-  })
-
-  it('should display the relationship dropdown', () => {
-    cy.get('#relationship').should('be.visible')
-  })
-})
-
-context(`Application Details Page - Add an official PIN phone contact`, () => {
-  let page: ApplicationDetailsPage
-
-  beforeEach(() => {
-    page = startApplication('Add an official PIN phone contact')
-  })
-
-  it('should render the correct app type title', () => {
-    page.appTypeTitle().should('have.text', 'Add an official PIN phone contact')
-  })
-
-  it('should display Organisation input as optional', () => {
-    cy.get('label[for="organisation"]').should('contain.text', 'Organisation (optional)')
-    cy.get('#organisation').should('exist')
-  })
-
-  it('should not show an error when Organisation field is left empty', () => {
-    cy.get('#firstName').type('John')
-    cy.get('#lastName').type('Doe')
-    cy.get('#telephone1').type('07700900000')
-    cy.get('#organisation').should('have.value', '')
-    page.continueButton().click()
-    cy.get('.govuk-error-message').should('not.contain', 'organisation')
+      it('should allow proceed to check details page without entering log details (optional)', () => {
+        page.continueButton().click()
+        cy.url().should('include', '/log/confirm')
+      })
+    }
   })
 })
 
