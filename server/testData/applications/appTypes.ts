@@ -1,4 +1,4 @@
-import { APPLICATION_TYPE_VALUES, applicationTypeLabels } from '../constants/applicationTypes'
+import { APPLICATION_TYPE_VALUES, applicationTypeLabels } from '../../constants/applicationTypes'
 
 export const appTypes = {
   emergencyCredit: {

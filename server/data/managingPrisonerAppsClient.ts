@@ -2,6 +2,7 @@ import { ApplicationData } from 'express-session'
 import logger from '../../logger'
 import {
   App,
+  AppDecisionResponse,
   ApplicationSearchPayload,
   AppResponsePayload,
   AppTypeResponse,
@@ -11,7 +12,6 @@ import {
   Group,
   History,
   PrisonerSearchResult,
-  Response,
   ViewAppsListResponse,
 } from '../@types/managingAppsApi'
 import config, { ApiConfig } from '../config'
@@ -164,7 +164,7 @@ export default class ManagingPrisonerAppsApiClient {
     }
   }
 
-  async getResponse(prisonerId: string, appId: string, responseId: string): Promise<Response> {
+  async getResponse(prisonerId: string, appId: string, responseId: string): Promise<AppDecisionResponse> {
     try {
       return await this.restClient.get({
         path: `/v1/prisoners/${prisonerId}/apps/${appId}/responses/${responseId}?createdBy=true`,

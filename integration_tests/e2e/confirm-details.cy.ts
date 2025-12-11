@@ -1,10 +1,9 @@
-import TestData from '../../server/routes/testutils/testData'
+import { app } from '../../server/testData'
 import ConfirmDetailsPage from '../pages/confirmDetailsPage'
 import Page from '../pages/page'
 
 context('Confirm Details Page', () => {
   let page: ConfirmDetailsPage
-  const { app } = new TestData()
 
   beforeEach(() => {
     cy.resetAndSignIn()

@@ -1,17 +1,21 @@
 import nock from 'nock'
 import config from '../config'
-import TestData from '../routes/testutils/testData'
+import {
+  app,
+  appDecisionResponse,
+  appHistoryResponse,
+  appSearchPayload,
+  appSearchResponse,
+  submitPrisonerAppData,
+  user,
+} from '../testData'
 import ManagingPrisonerAppsApiClient from './managingPrisonerAppsClient'
-
-const testData = new TestData()
 
 jest.mock('../../logger')
 
 describe('ManagingPrisonerAppsApiClient', () => {
   let fakeManagingPrisonerAppApi: nock.Scope
   let client: ManagingPrisonerAppsApiClient
-
-  const { app, appSearchPayload, appSearchResponse, response, submitPrisonerAppData, historyResponse, user } = testData
 
   beforeEach(() => {
     fakeManagingPrisonerAppApi = nock(config.apis.managingPrisonerApps.url)
@@ -88,10 +92,10 @@ describe('ManagingPrisonerAppsApiClient', () => {
     fakeManagingPrisonerAppApi
       .get('/v1/prisoners/prisoner-id/apps/app-id/responses/response-id?createdBy=true')
       .matchHeader('authorization', `Bearer ${user.token}`)
-      .reply(200, response)
+      .reply(200, appDecisionResponse)
 
     const output = await client.getResponse('prisoner-id', 'app-id', 'response-id')
-    expect(output).toEqual(response)
+    expect(output).toEqual(appDecisionResponse)
   })
 
   it('should update the form data for an application', async () => {
@@ -111,9 +115,9 @@ describe('ManagingPrisonerAppsApiClient', () => {
     fakeManagingPrisonerAppApi
       .get('/v1/prisoners/prisoner-id/apps/app-id/history')
       .matchHeader('authorization', `Bearer ${user.token}`)
-      .reply(200, historyResponse)
+      .reply(200, appHistoryResponse)
 
     const output = await client.getHistory('prisoner-id', 'app-id')
-    expect(output).toEqual(historyResponse)
+    expect(output).toEqual(appHistoryResponse)
   })
 })
