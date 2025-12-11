@@ -14,9 +14,7 @@ applicationTypes
 
       beforeEach(() => {
         cy.resetAndSignIn()
-        cy.task('stubGetPrisonerApp', {
-          application,
-        })
+        cy.task('stubGetPrisonerApp', { app: application })
         cy.task('stubGetGroupsAndTypes')
 
         cy.visit(`/applications/${application.requestedBy.username}/${application.id}`)

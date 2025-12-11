@@ -19,8 +19,8 @@ context('Action and Reply Page', () => {
 
           cy.resetAndSignIn()
 
-          cy.task('stubGetPrisonerApp', { application })
-          cy.task('stubGetAppResponse', { application })
+          cy.task('stubGetPrisonerApp', { app: application })
+          cy.task('stubGetAppResponse', { app: application })
           cy.task('stubGetGroupsAndTypes')
 
           cy.visit(`/applications/${application.requestedBy.username}/${application.id}/reply`)
