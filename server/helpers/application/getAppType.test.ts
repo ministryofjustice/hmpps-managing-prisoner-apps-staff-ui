@@ -1,6 +1,6 @@
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
-import { groups } from '../../testData/groups'
+import { groups } from '../../testData/groups/groups'
 import { getAppType } from './getAppType'
 
 describe(getAppType.name, () => {

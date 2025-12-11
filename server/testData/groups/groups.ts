@@ -1,4 +1,4 @@
-import { appTypes } from './appTypes'
+import { appTypes } from '../applications/appTypes'
 
 // eslint-disable-next-line import/prefer-default-export
 export const groups = [

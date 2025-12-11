@@ -1,10 +1,9 @@
-import TestData from '../../server/routes/testutils/testData'
+import { app } from '../../server/testData'
 import CommentsPage from '../pages/comments'
 import Page from '../pages/page'
 
 context('Comments Page', () => {
   let page: CommentsPage
-  const { app } = new TestData()
 
   beforeEach(() => {
     cy.resetAndSignIn()

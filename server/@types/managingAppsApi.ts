@@ -9,7 +9,7 @@ export type CommentDto = components['schemas']['CommentResponseDtoObject']
 export type Department = components['schemas']['AssignedGroupDto']
 export type History = components['schemas']['HistoryResponse']
 export type PrisonerSearchResult = components['schemas']['RequestedByNameSearchResult']
-export type Response = components['schemas']['AppDecisionResponseDtoObject']
+export type AppDecisionResponse = components['schemas']['AppDecisionResponseDtoObject']
 export type ViewAppListDto = components['schemas']['AppListViewDto']
 export type ViewAppListAssignedGroup = components['schemas']['GroupAppListViewDto']
 

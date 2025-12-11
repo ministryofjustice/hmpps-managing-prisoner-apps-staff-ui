@@ -1,10 +1,9 @@
-import TestData from '../../server/routes/testutils/testData'
+import { app } from '../../server/testData'
 import Page from '../pages/page'
 import SubmitApplicationPage from '../pages/submitApplicationPage'
 
 context('Application Submitted Page', () => {
   let page: SubmitApplicationPage
-  const { app } = new TestData()
   const prisonerName = `${app.requestedBy.firstName} ${app.requestedBy.lastName}`
   const groupName = app.assignedGroup.name
 

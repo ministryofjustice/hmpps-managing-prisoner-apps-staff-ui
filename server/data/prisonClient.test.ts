@@ -1,16 +1,13 @@
 import nock from 'nock'
 import config from '../config'
-import TestData from '../routes/testutils/testData'
 import PrisonApiClient from './prisonClient'
-
-const testData = new TestData()
+import { prisoner, user } from '../testData'
 
 jest.mock('../../logger')
 
 describe('Prison API Client', () => {
   let fakePrisonApi: nock.Scope
   let client: PrisonApiClient
-  const { prisoner, user } = testData
 
   beforeEach(() => {
     fakePrisonApi = nock(config.apis.prison.url)

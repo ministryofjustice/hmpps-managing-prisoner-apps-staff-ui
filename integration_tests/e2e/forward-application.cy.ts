@@ -1,13 +1,10 @@
-import TestData from '../../server/routes/testutils/testData'
+import { app, departments } from '../../server/testData'
 import applicationTypesData from '../fixtures/applicationTypes.json'
 
 import ForwardApplicationPage from '../pages/forwardApplicationPage'
 import Page from '../pages/page'
 
 const { applicationTypes } = applicationTypesData
-const testData = new TestData()
-
-const { app, departments } = testData
 
 context(`Forward Application Page`, () => {
   let page: ForwardApplicationPage

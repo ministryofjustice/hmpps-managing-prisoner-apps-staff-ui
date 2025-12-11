@@ -1,10 +1,9 @@
-import TestData from '../../server/routes/testutils/testData'
+import { app } from '../../server/testData'
 import ApplicationHistoryPage from '../pages/applicationHistoryPage'
 import Page from '../pages/page'
 
 context('Application History Page', () => {
   let page: ApplicationHistoryPage
-  const { app } = new TestData()
 
   beforeEach(() => {
     cy.resetAndSignIn()

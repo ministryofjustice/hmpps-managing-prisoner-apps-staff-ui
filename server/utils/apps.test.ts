@@ -1,18 +1,13 @@
 import { HmppsUser } from '../interfaces/hmppsUser'
-import TestData from '../routes/testutils/testData'
 import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
-import { legacyAppTypes } from '../testData/appTypes'
+import { appSearchResponse, user } from '../testData'
 import { formatAppsToRows } from './apps'
 
-jest.mock('../helpers/application/getLegacyAppType', () => ({
-  getLegacyAppType: jest.fn(() => legacyAppTypes[2]),
-}))
-
-describe('formatAppsToRows', () => {
+describe(formatAppsToRows.name, () => {
   let managingPrisonerAppsService: ManagingPrisonerAppsService
 
   const mockUser: HmppsUser = {
-    ...new TestData().user,
+    ...user,
     authSource: 'nomis',
     staffId: 12345,
   }
@@ -32,7 +27,7 @@ describe('formatAppsToRows', () => {
   it('should correctly format applications', async () => {
     const applications = [
       {
-        ...new TestData().appSearchResponse.apps[0],
+        ...appSearchResponse.apps[0],
         prisonerName: 'Doe, John',
         appType: { id: 2, name: 'Add new official PIN phone contact' },
       },

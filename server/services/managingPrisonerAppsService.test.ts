@@ -1,6 +1,6 @@
 import { APPLICATION_STATUS } from '../constants/applicationStatus'
 import HmppsAuthClient from '../data/hmppsAuthClient'
-import TestData from '../routes/testutils/testData'
+import { app, appSearchPayload, user } from '../testData'
 import ManagingPrisonerAppsService from './managingPrisonerAppsService'
 
 const mockClientMethods = {
@@ -16,8 +16,6 @@ const mockClientMethods = {
   getHistory: jest.fn(),
 }
 
-const testData = new TestData()
-
 jest.mock('../data/hmppsAuthClient')
 jest.mock('../data/managingPrisonerAppsClient', () => {
   return jest.fn().mockImplementation(() => mockClientMethods)
@@ -25,8 +23,6 @@ jest.mock('../data/managingPrisonerAppsClient', () => {
 
 describe('ManagingPrisonerAppsService', () => {
   let service: ManagingPrisonerAppsService
-
-  const { appSearchPayload, app, user } = testData
 
   beforeEach(() => {
     const hmppsAuthClient = new HmppsAuthClient(null) as jest.Mocked<HmppsAuthClient>

@@ -2,8 +2,10 @@ import { SuperAgentRequest } from 'superagent'
 
 import { App } from '../../server/@types/managingAppsApi'
 
-import TestData from '../../server/routes/testutils/testData'
-import { groups } from '../../server/testData/groups'
+import { appDecisionResponse, commentsResponse } from '../../server/testData'
+import { appHistoryResponse } from '../../server/testData/applications/appHistory'
+import { departments } from '../../server/testData/groups/departments'
+import { groups } from '../../server/testData/groups/groups'
 
 import { stubFor } from './wiremock'
 
@@ -30,7 +32,7 @@ export default {
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: new TestData().response,
+        jsonBody: appDecisionResponse,
       },
     })
   },
@@ -43,7 +45,7 @@ export default {
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: new TestData().commentsResponse,
+        jsonBody: commentsResponse,
       },
     })
   },
@@ -56,7 +58,7 @@ export default {
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: new TestData().historyResponse,
+        jsonBody: appHistoryResponse,
       },
     })
   },
@@ -69,7 +71,7 @@ export default {
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: new TestData().supportedPrisonIds,
+        jsonBody: ['HEI', 'BLI'],
       },
     })
   },
@@ -94,7 +96,7 @@ export default {
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: new TestData().departments,
+        jsonBody: departments,
       },
     })
   },
