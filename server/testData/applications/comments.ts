@@ -7,7 +7,7 @@ export const comment: Comment = {
   prisonerNumber: 'G3682UE',
   createdDate: '2025-04-09T15:57:29Z',
   createdBy: {
-    username: 'ZFAITHFULL_GEN',
+    username: 'TEST_GEN',
     userId: '487900',
     fullName: 'Zak Faithfull',
     category: 'STAFF',

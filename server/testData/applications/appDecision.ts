@@ -9,7 +9,7 @@ export const appDecisionResponse: AppDecisionResponse = {
   decision: 'APPROVED',
   createdDate: '2025-04-10T14:11:14.440791',
   createdBy: {
-    username: 'ZFAITHFULL_GEN',
+    username: 'TEST_GEN',
     userId: '487900',
     fullName: 'Zak Faithfull',
     category: 'STAFF',
