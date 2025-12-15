@@ -11,7 +11,7 @@ import { validateAddNewOfficialContact } from '../routes/validate/validateNewOff
 import { validateAddNewSocialContact } from '../routes/validate/validateNewSocialPinPhoneContact'
 import { validateRemovePinPhoneContact } from '../routes/validate/validateRemovePinPhoneContact'
 import { validateTextField } from '../routes/validate/validateTextField'
-import { getCountryNameByCode } from './formatCountryList'
+import { getCountryNameByCode } from './countries'
 import { updateSessionData } from './session'
 
 type ContextOptions = {

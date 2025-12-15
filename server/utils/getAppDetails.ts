@@ -2,7 +2,7 @@ import { App } from '../@types/managingAppsApi'
 import { countries } from '../constants/countries'
 import { PERSONAL_RELATIONSHIPS_GROUP_CODES } from '../constants/personalRelationshipsGroupCodes'
 import PersonalRelationshipsService from '../services/personalRelationshipsService'
-import { getCountryNameByCode, getFormattedCountries } from './formatCountryList'
+import { getCountryNameByCode, getFormattedCountries } from './countries'
 import { AppTypeData } from './getAppTypeLogDetails'
 import getFormattedRelationshipDropdown from './getFormattedRelationshipDropdown'
 
