@@ -1,5 +1,5 @@
-import PersonalRelationshipsService from '../services/personalRelationshipsService'
-import { PERSONAL_RELATIONSHIPS_GROUP_CODES } from '../constants/personalRelationshipsGroupCodes'
+import PersonalRelationshipsService from '../../services/personalRelationshipsService'
+import { PERSONAL_RELATIONSHIPS_GROUP_CODES } from '../../constants/personalRelationshipsGroupCodes'
 
 export interface RelationshipOption {
   value: string

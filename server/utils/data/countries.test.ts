@@ -1,7 +1,7 @@
-import { Country } from '../constants/countries'
+import { Country } from '../../constants/countries'
 import { getCountryNameByCode, getFormattedCountries } from './countries'
 
-jest.mock('../constants/countries', () => ({
+jest.mock('../../constants/countries', () => ({
   countries: [
     { value: 'GB', text: 'United Kingdom' },
     { value: 'US', text: 'United States' },

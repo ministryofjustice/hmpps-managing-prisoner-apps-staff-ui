@@ -13,11 +13,11 @@ import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsServ
 import PersonalRelationshipsService from '../../services/personalRelationshipsService'
 
 import { PERSONAL_RELATIONSHIPS_GROUP_CODES } from '../../constants/personalRelationshipsGroupCodes'
-import { getFormattedCountries } from '../../utils/countries'
 import getApplicationDetails from '../../utils/getAppDetails'
 import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
-import getFormattedRelationshipDropdown from '../../utils/getFormattedRelationshipDropdown'
+import getFormattedRelationshipDropdown from '../../utils/formatters/getFormattedRelationshipDropdown'
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
+import { getFormattedCountries } from '../../utils/data/countries'
 
 export default function appDetailsRouter({
   auditService,

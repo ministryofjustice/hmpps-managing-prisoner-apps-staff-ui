@@ -1,5 +1,5 @@
 import { InmateDetail } from '../@types/prisonApi'
-import { ParsedFilters } from '../utils/filters'
+import { ParsedFilters } from '../utils/http/filters'
 
 // eslint-disable-next-line import/prefer-default-export
 export const validatePrisonerFilter = (filters: ParsedFilters, prisonerDetails: InmateDetail[]) => {

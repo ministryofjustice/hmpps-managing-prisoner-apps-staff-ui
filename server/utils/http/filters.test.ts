@@ -1,7 +1,7 @@
 import { Request } from 'express'
 import { ListFilters } from 'express-session'
 import { removeFilterFromHref, retainFilters, saveFiltersToSession } from './filters'
-import { FILTER_KEYS } from '../constants/filters'
+import { FILTER_KEYS } from '../../constants/filters'
 
 describe(removeFilterFromHref.name, () => {
   const mockReq = (query: Record<string, string | string[]>): Request => ({ query }) as Request

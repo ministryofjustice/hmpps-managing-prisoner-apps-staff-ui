@@ -9,7 +9,7 @@ import AuditService, { Page } from '../../services/auditService'
 import PrisonService from '../../services/prisonService'
 
 import config from '../../config'
-import { updateSessionData } from '../../utils/session'
+import { updateSessionData } from '../../utils/http/session'
 import validatePrisonerDetails from '../validate/validatePrisonerDetails'
 
 export default function prisonerRouter({

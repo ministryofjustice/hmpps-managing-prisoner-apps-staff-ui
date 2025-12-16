@@ -5,17 +5,17 @@ import * as validateNewOfficialContact from '../routes/validate/validateNewOffic
 import * as validateNewSocialContact from '../routes/validate/validateNewSocialPinPhoneContact'
 import * as validateRemovePinPhoneContact from '../routes/validate/validateRemovePinPhoneContact'
 import * as validateTextField from '../routes/validate/validateTextField'
-import * as countries from './countries'
-import * as session from './session'
+import * as countries from './data/countries'
 import { handleApplicationDetails } from './handleAppDetails'
+import * as session from './http/session'
 
 jest.mock('../routes/validate/validateAmountField')
 jest.mock('../routes/validate/validateNewOfficialContact')
 jest.mock('../routes/validate/validateNewSocialPinPhoneContact')
 jest.mock('../routes/validate/validateRemovePinPhoneContact')
 jest.mock('../routes/validate/validateTextField')
-jest.mock('./countries')
-jest.mock('./session')
+jest.mock('./data/countries')
+jest.mock('./http/session')
 
 describe(handleApplicationDetails.name, () => {
   let mockReq: Partial<Request>
