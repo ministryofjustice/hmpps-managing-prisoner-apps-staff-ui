@@ -1,4 +1,3 @@
-// getValidApplicationOrRedirect.test.ts
 import { Request, Response } from 'express'
 import { getAppType } from '../helpers/application/getAppType'
 import AuditService, { Page } from '../services/auditService'
