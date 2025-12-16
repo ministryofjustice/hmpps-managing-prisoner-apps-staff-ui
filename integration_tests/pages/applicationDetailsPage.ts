@@ -53,7 +53,7 @@ export default class ApplicationDetailsPage extends Page {
     cy.get('#firstName').type('Jane')
     cy.get('#lastName').type('Smith')
     cy.get('#organisation').type('Ministry of Justice')
-    cy.get('#relationship').select('Solicitor')
+    cy.get('#relationship').select('Probation Officer')
     cy.get('#telephone1').type('07701234560')
   }
 
