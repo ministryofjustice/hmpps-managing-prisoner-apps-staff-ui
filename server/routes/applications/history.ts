@@ -7,7 +7,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
-import formatApplicationHistory from '../../utils/formatApplicationHistory'
+import { formatApplicationHistory } from '../../utils/apps'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 
 export default function historyRouter({

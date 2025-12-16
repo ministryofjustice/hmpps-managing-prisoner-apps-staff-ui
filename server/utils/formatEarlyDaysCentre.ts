@@ -3,21 +3,19 @@ export default function formatEarlyDaysCentre(
   firstNightCenter?: boolean | null,
   capitalize = false,
 ): string {
-  let value: string
+  const capitalise = (val: string) => (capitalize ? val.charAt(0).toUpperCase() + val.slice(1) : val)
 
   if (earlyDaysCentreFromSession === 'yes' || earlyDaysCentreFromSession === 'no') {
-    value = earlyDaysCentreFromSession
-  } else if (firstNightCenter === true) {
-    value = 'yes'
-  } else if (firstNightCenter === false) {
-    value = 'no'
-  } else {
-    value = ''
+    return capitalise(earlyDaysCentreFromSession)
   }
 
-  if (capitalize && value) {
-    return value.charAt(0).toUpperCase() + value.slice(1)
+  if (firstNightCenter === true) {
+    return capitalise('yes')
   }
 
-  return value
+  if (firstNightCenter === false) {
+    return capitalise('no')
+  }
+
+  return ''
 }

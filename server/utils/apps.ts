@@ -1,6 +1,7 @@
 import { format, getTime } from 'date-fns'
 
-import { ViewAppListApp } from '../@types/managingAppsApi'
+import { AppDecisionResponse, Comment, History, ViewAppListApp } from '../@types/managingAppsApi'
+import { APPLICATION_HISTORY_ENTITY_TYPES } from '../constants/applicationHistoryEntityTypes'
 import { getAppType } from '../helpers/application/getAppType'
 import { HmppsUser } from '../interfaces/hmppsUser'
 import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
@@ -9,7 +10,6 @@ type ViewAppListAppWithName = ViewAppListApp & {
   prisonerName: string
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export const formatAppsToRows = async (
   managingPrisonerAppsService: ManagingPrisonerAppsService,
   user: HmppsUser,
@@ -40,4 +40,30 @@ export const formatAppsToRows = async (
       return row.filter(Boolean)
     }),
   )
+}
+
+export const formatApplicationHistory = (history: History[], comments: Comment[], responses: AppDecisionResponse[]) => {
+  return history.map(historyItem => {
+    const dateObj = new Date(historyItem.createdDate)
+    const formattedDate = format(dateObj, 'd MMMM yyyy')
+    const formattedTime = format(dateObj, 'HH:mm')
+
+    const commentMessage =
+      historyItem.entityType === APPLICATION_HISTORY_ENTITY_TYPES.COMMENT
+        ? comments.find(item => item?.id === historyItem.entityId)?.message || null
+        : null
+
+    const responseMessage =
+      historyItem.entityType === APPLICATION_HISTORY_ENTITY_TYPES.RESPONSE
+        ? responses.find(item => item?.id === historyItem.entityId)?.reason || null
+        : null
+
+    return {
+      ...historyItem,
+      date: formattedDate,
+      time: formattedTime,
+      commentMessage,
+      responseMessage,
+    }
+  })
 }
