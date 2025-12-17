@@ -15,6 +15,7 @@ import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsServ
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import { convertToTitleCase } from '../../utils/utils'
 
+import { getAppType } from '../../helpers/application/getAppType'
 import { validateActionAndReply } from '../validate/validateActionAndReply'
 
 export default function actionAppRouter({
@@ -89,6 +90,11 @@ export default function actionAppRouter({
       const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
       if (!application) return res.redirect(URLS.APPLICATIONS)
 
+      const applicationType = await getAppType(
+        managingPrisonerAppsService,
+        user,
+        application.applicationType.id.toString(),
+      )
       const errors = validateActionAndReply(decision, reason)
       const isAppPending = application.status === APPLICATION_STATUS.PENDING
       const [request] = application.requests ?? []
@@ -96,7 +102,7 @@ export default function actionAppRouter({
       if (Object.keys(errors).length > 0) {
         return renderActionAndReplyPage(res, {
           application,
-          applicationType: application.applicationType,
+          applicationType,
           isAppPending,
           selectedAction: decision,
           textareaValue: reason,
