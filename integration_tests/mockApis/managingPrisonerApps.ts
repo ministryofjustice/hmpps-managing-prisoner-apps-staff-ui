@@ -2,7 +2,13 @@ import { SuperAgentRequest } from 'superagent'
 
 import { App } from '../../server/@types/managingAppsApi'
 
-import { appDecisionResponse, commentsResponse } from '../../server/testData'
+import {
+  appDecisionResponse,
+  commentsResponse,
+  appSearchResponse,
+  buildAppsSearchResponse,
+} from '../../server/testData'
+
 import { appHistoryResponse } from '../../server/testData/applications/appHistory'
 import { departments } from '../../server/testData/groups/departments'
 import { groups } from '../../server/testData/groups/groups'
@@ -146,6 +152,23 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: groups,
+      },
+    })
+  },
+
+  stubGetApps: (
+    filteredAppsOrResponse?: typeof appSearchResponse | typeof appSearchResponse.apps,
+  ): SuperAgentRequest => {
+    const response = buildAppsSearchResponse(filteredAppsOrResponse)
+    return stubFor({
+      request: {
+        method: 'POST',
+        urlPathPattern: '/managingPrisonerApps/v1/prisoners/apps/search.*',
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: response,
       },
     })
   },
