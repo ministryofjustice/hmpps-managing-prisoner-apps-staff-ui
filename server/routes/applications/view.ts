@@ -11,22 +11,22 @@ import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PrisonService from '../../services/prisonService'
 
-import { formatAppsToRows } from '../../utils/apps'
+import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import {
   buildSelectedTags,
   checkSelectedFilters,
   formatFilterOptions,
   parseApplicationFilters,
   retainFiltersMiddleware,
-} from '../../utils/filters'
-import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
-import { getPaginationData } from '../../utils/pagination'
+} from '../../utils/http/filters'
 import { convertToTitleCase } from '../../utils/utils'
 
 import logger from '../../../logger'
 import config from '../../config'
 import { addPrisonerNames, buildApplicationsPayload } from '../../helpers/apps'
 import { validatePrisonerFilter } from '../../helpers/prisoner'
+import { formatAppsToRows } from '../../utils/formatters/formatAppsToRows'
+import { getPaginationData } from '../../utils/http/pagination'
 
 export default function viewAppsRouter({
   auditService,
