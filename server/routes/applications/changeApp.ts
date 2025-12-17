@@ -11,7 +11,7 @@ import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsServ
 import PersonalRelationshipsService from '../../services/personalRelationshipsService'
 
 import { getAppType } from '../../helpers/application/getAppType'
-import formatEarlyDaysCentre from '../../utils/formatEarlyDaysCentre'
+import formatEarlyDaysCentre from '../../utils/formatters/formatEarlyDaysCentre'
 import getApplicationDetails from '../../utils/getAppDetails'
 import { getAppTypeLogDetailsData } from '../../utils/getAppTypeLogDetails'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'

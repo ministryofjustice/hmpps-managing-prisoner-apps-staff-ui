@@ -1,4 +1,4 @@
-import { Country, countries } from '../constants/countries'
+import { countries, Country } from '../../constants/countries'
 
 export function getFormattedCountries(
   countryList: Country[],

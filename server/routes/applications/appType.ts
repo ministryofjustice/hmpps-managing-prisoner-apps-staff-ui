@@ -9,8 +9,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
-
-import { updateSessionData } from '../../utils/session'
+import { updateSessionData } from '../../utils/http/session'
 
 type AppTypeItem = { value: string; text: string; checked: boolean } | { divider: 'or' }
 

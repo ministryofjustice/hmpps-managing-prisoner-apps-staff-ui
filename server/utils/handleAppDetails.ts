@@ -11,8 +11,8 @@ import { validateAddNewOfficialContact } from '../routes/validate/validateNewOff
 import { validateAddNewSocialContact } from '../routes/validate/validateNewSocialPinPhoneContact'
 import { validateRemovePinPhoneContact } from '../routes/validate/validateRemovePinPhoneContact'
 import { validateTextField } from '../routes/validate/validateTextField'
-import { getCountryNameByCode } from './formatCountryList'
-import { updateSessionData } from './session'
+import { getCountryNameByCode } from './data/countries'
+import { updateSessionData } from './http/session'
 
 type ContextOptions = {
   getAppType: (req: Request, res: Response) => ApplicationType

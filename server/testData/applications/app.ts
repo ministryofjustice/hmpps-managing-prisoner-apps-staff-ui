@@ -29,7 +29,7 @@ export const app: App = {
   appType: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
   applicationType: {
     id: 3,
-    name: 'Swap visiting orders (VOs) for PIN credit',
+    name: 'Swap Visiting Orders (VOs) for PIN Credit',
   },
   applicationGroup: {
     id: 1,

@@ -1,9 +1,9 @@
 import { Request } from 'express'
 import { ListFilters } from 'express-session'
 import { removeFilterFromHref, retainFilters, saveFiltersToSession } from './filters'
-import { FILTER_KEYS } from '../constants/filters'
+import { FILTER_KEYS } from '../../constants/filters'
 
-describe('removeFilterFromHref', () => {
+describe(removeFilterFromHref.name, () => {
   const mockReq = (query: Record<string, string | string[]>): Request => ({ query }) as Request
 
   it('should remove a single type from the query', () => {
@@ -79,7 +79,7 @@ describe('removeFilterFromHref', () => {
   })
 })
 
-describe('retainFilters', () => {
+describe(retainFilters.name, () => {
   const mockReq = (query: Record<string, string | string[] | undefined> = {}, listFilters?: ListFilters): Request =>
     ({
       query,
@@ -117,7 +117,7 @@ describe('retainFilters', () => {
   })
 })
 
-describe('saveFiltersToSession', () => {
+describe(saveFiltersToSession.name, () => {
   const mockReq = (query: Record<string, string | string[] | undefined> = {}): Request =>
     ({
       query,

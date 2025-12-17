@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from 'express'
-import { ParsedQs } from 'qs'
+import { NextFunction, Request, Response } from 'express'
 import { ListFilters } from 'express-session'
-import { FILTER_KEYS } from '../constants/filters'
-import { ViewAppListAssignedGroup } from '../@types/managingAppsApi'
-import { formatAppTypesForFilters } from '../helpers/filters/formatAppTypesForFilters'
-import { formatGroupsForFilters } from '../helpers/filters/formatGroupsForFilters'
-import { formatPriorityForFilters } from '../helpers/filters/formatPriorityForFilters'
+import { ParsedQs } from 'qs'
+import { ViewAppListAssignedGroup } from '../../@types/managingAppsApi'
+import { FILTER_KEYS } from '../../constants/filters'
+import { formatAppTypesForFilters } from '../../helpers/filters/formatAppTypesForFilters'
+import { formatGroupsForFilters } from '../../helpers/filters/formatGroupsForFilters'
+import { formatPriorityForFilters } from '../../helpers/filters/formatPriorityForFilters'
 
 type SelectedFilters = {
   groups: string[]

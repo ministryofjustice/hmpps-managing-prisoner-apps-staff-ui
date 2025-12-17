@@ -2,9 +2,9 @@ import { App } from '../@types/managingAppsApi'
 import { countries } from '../constants/countries'
 import { PERSONAL_RELATIONSHIPS_GROUP_CODES } from '../constants/personalRelationshipsGroupCodes'
 import PersonalRelationshipsService from '../services/personalRelationshipsService'
-import { getCountryNameByCode, getFormattedCountries } from './formatCountryList'
+import { getCountryNameByCode, getFormattedCountries } from './data/countries'
+import getFormattedRelationshipDropdown from './formatters/getFormattedRelationshipDropdown'
 import { AppTypeData } from './getAppTypeLogDetails'
-import getFormattedRelationshipDropdown from './getFormattedRelationshipDropdown'
 
 type AddNewSocialContactRequest = Partial<Extract<AppTypeData, { type: 2 }>>
 type AddNewOfficialContactRequest = Partial<Extract<AppTypeData, { type: 1 }>>

@@ -1,5 +1,5 @@
 import { ViewAppListApp } from '../@types/managingAppsApi'
-import { ParsedFilters } from '../utils/filters'
+import { ParsedFilters } from '../utils/http/filters'
 
 export const buildApplicationsPayload = (filters: ParsedFilters) => {
   return {

@@ -8,7 +8,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import { Group } from '../../@types/managingAppsApi'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
-import { updateSessionData } from '../../utils/session'
+import { updateSessionData } from '../../utils/http/session'
 
 const ERROR_MESSAGE = 'Choose one application group'
 

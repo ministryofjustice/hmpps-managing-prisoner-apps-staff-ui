@@ -1,12 +1,9 @@
 import { format } from 'date-fns'
-import { AppDecisionResponse, Comment, History } from '../@types/managingAppsApi'
-import { APPLICATION_HISTORY_ENTITY_TYPES } from '../constants/applicationHistoryEntityTypes'
+import { AppDecisionResponse, Comment, History } from '../../@types/managingAppsApi'
+import { APPLICATION_HISTORY_ENTITY_TYPES } from '../../constants/applicationHistoryEntityTypes'
 
-export default function formatApplicationHistory(
-  history: History[],
-  comments: Comment[],
-  responses: AppDecisionResponse[],
-) {
+// eslint-disable-next-line import/prefer-default-export
+export const formatApplicationHistory = (history: History[], comments: Comment[], responses: AppDecisionResponse[]) => {
   return history.map(historyItem => {
     const dateObj = new Date(historyItem.createdDate)
     const formattedDate = format(dateObj, 'd MMMM yyyy')
