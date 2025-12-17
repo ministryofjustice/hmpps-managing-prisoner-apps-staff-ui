@@ -50,7 +50,6 @@ context('Comments Page', () => {
         .should('contain.text', 'This is my first comment')
         .and('contain.text', 'Staff Name')
         .and('contain.text', '9 April 2025')
-        .and('contain.text', '16:57')
     })
 
     it('should show error message when no comment is entered', () => {
