@@ -7,6 +7,7 @@ import {
   commentsResponse,
   appSearchResponse,
   buildAppsSearchResponse,
+  legacyAppTypes,
 } from '../../server/testData'
 
 import { appHistoryResponse } from '../../server/testData/applications/appHistory'
@@ -47,6 +48,19 @@ export default {
       request: {
         method: 'GET',
         url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/comments?page=1&size=20&createdBy=true`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: commentsResponse,
+      },
+    })
+  },
+  stubAddComments: ({ app }: { app: App }): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'POST',
+        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/comments`,
       },
       response: {
         status: 200,
@@ -155,7 +169,19 @@ export default {
       },
     })
   },
-
+  stubGetLegacyAppTypes: (): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        url: `/managingPrisonerApps/v1/establishments/apps/types`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: legacyAppTypes,
+      },
+    })
+  },
   stubGetApps: (
     filteredAppsOrResponse?: typeof appSearchResponse | typeof appSearchResponse.apps,
   ): SuperAgentRequest => {
