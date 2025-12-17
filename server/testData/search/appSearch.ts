@@ -33,9 +33,9 @@ export const appSearchResponse: ViewAppsListResponse = {
   totalRecords: 3,
   exhausted: true,
   applicationTypes: {
-    '1': { id: 1, name: 'Add new Social Contact', count: 1 },
-    '2': { id: 2, name: 'Add new Official Contact', count: 0 },
-    '3': { id: 3, name: 'Credit Swap Visiting Orders', count: 2 },
+    '1': { id: 3, name: 'Add a social PIN phone contact', count: 1 },
+    '2': { id: 2, name: 'Add an official PIN phone contact', count: 0 },
+    '3': { id: 5, name: 'Swap Visiting Orders (VOs) for PIN Credit', count: 2 },
   },
   assignedGroups: appListAssignedGroups,
   firstNightCenter: 3,
@@ -44,7 +44,7 @@ export const appSearchResponse: ViewAppsListResponse = {
       id: '1808f5e2-2bf4-499a-b79f-fb0a5f4bac7b',
       establishmentId: 'TEST_ESTABLISHMENT_FIRST',
       status: 'PENDING',
-      appType: { id: 3, name: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS' },
+      appType: { id: 5, name: 'Swap Visiting Orders (VOs) for PIN Credit' },
       requestedBy: 'A12345',
       requestedByFirstName: 'John',
       requestedByLastName: 'Smith',
@@ -76,7 +76,7 @@ export const appSearchResponse: ViewAppsListResponse = {
       id: '53a02b48-b6af-47d5-9c54-3d0137f6ed96',
       establishmentId: 'TEST_ESTABLISHMENT_FIRST',
       status: 'PENDING',
-      appType: { id: 3, name: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS' },
+      appType: { id: 3, name: 'Add a social PIN phone contact' },
       requestedBy: 'A12345',
       requestedByFirstName: 'John',
       requestedByLastName: 'Smith',
@@ -108,7 +108,7 @@ export const appSearchResponse: ViewAppsListResponse = {
       id: 'b4e9944b-3a27-4d10-b12b-895426349ea3',
       establishmentId: 'TEST_ESTABLISHMENT_FIRST',
       status: 'PENDING',
-      appType: { id: 3, name: 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS' },
+      appType: { id: 5, name: 'Swap Visiting Orders (VOs) for PIN Credit' },
       requestedBy: 'A12345',
       requestedByFirstName: 'John',
       requestedByLastName: 'Smith',
@@ -137,6 +137,39 @@ export const appSearchResponse: ViewAppsListResponse = {
       },
     },
   ],
+}
+
+export const getAppsByType = (typeId: number) => {
+  const filteredApps = appSearchResponse.apps.filter(a => a.appType.id === typeId) || []
+  return {
+    ...appSearchResponse,
+    apps: filteredApps,
+    totalRecords: filteredApps.length,
+  }
+}
+
+export const getAppsSortedByOldest = () => {
+  const sortedApps = [...appSearchResponse.apps].sort(
+    (a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime(),
+  )
+
+  return {
+    ...appSearchResponse,
+    apps: sortedApps,
+    totalRecords: sortedApps.length,
+  }
+}
+
+export const buildAppsSearchResponse = (input?: typeof appSearchResponse | typeof appSearchResponse.apps) => {
+  if (Array.isArray(input)) {
+    return {
+      ...appSearchResponse,
+      apps: input,
+      totalRecords: input.length,
+    }
+  }
+
+  return input ?? appSearchResponse
 }
 
 export const appSearchPayload: ApplicationSearchPayload = {

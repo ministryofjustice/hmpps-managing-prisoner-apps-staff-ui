@@ -215,6 +215,8 @@ export function buildSelectedTags(
 }
 
 export const retainFilters = (req: Request): boolean => {
+  if (!req.session.listFilters || Object.keys(req.session.listFilters).length === 0) return false
+
   const clearFilters = req.query.clearFilters === 'true'
   const hasQueryParams = FILTER_KEYS.some(key => req.query[key] !== undefined)
 
@@ -232,21 +234,17 @@ export const retainFilters = (req: Request): boolean => {
 
 export const retainFiltersMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const filtersRestored = retainFilters(req)
+  const hasRestoredFilters = Object.keys(req.query).length > 0
 
-  if (filtersRestored && !req.originalUrl.includes('?')) {
+  if (filtersRestored && hasRestoredFilters && !req.originalUrl.includes('?')) {
     const queryParams = new URLSearchParams()
-
     Object.entries(req.query).forEach(([key, value]) => {
       if (Array.isArray(value)) {
-        value.forEach(v => {
-          const str = v.toString()
-          if (str) queryParams.append(key, str)
-        })
-      } else if (value !== undefined && value !== '') {
+        value.forEach(v => v && queryParams.append(key, v.toString()))
+      } else if (value) {
         queryParams.append(key, value.toString())
       }
     })
-
     return res.redirect(`${req.path}?${queryParams.toString()}`)
   }
 
