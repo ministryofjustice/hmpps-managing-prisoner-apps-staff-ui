@@ -11,7 +11,6 @@ import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsServ
 
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 
-import { getLegacyAppType } from '../../helpers/application/getLegacyAppType'
 import { validateTextField } from '../validate/validateTextField'
 
 export default function commentsRouter({
@@ -75,8 +74,6 @@ export default function commentsRouter({
           return res.redirect(URLS.APPLICATIONS)
         }
 
-        const applicationType = await getLegacyAppType(managingPrisonerAppsService, user, application.appType)
-
         const formattedComments =
           comments?.contents?.map(({ message, createdBy, createdDate }) => {
             return {
@@ -89,7 +86,7 @@ export default function commentsRouter({
 
         return res.render(PATHS.APPLICATIONS.COMMENTS, {
           application,
-          applicationType,
+          applicationType: application.applicationType,
           comment,
           comments: formattedComments,
           errors,
