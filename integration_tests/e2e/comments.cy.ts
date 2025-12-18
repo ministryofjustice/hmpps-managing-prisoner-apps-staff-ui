@@ -10,7 +10,6 @@ context('Comments Page', () => {
     cy.task('stubGetPrisonerApp', { app })
     cy.task('stubGetComments', { app })
     cy.task('stubGetGroupsAndTypes')
-    cy.task('stubGetLegacyAppTypes')
 
     cy.visit(`/applications/${app.requestedBy.username}/${app.id}/comments`)
 
