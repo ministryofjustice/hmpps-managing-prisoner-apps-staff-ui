@@ -55,6 +55,19 @@ export default {
       },
     })
   },
+  stubAddComments: ({ app }: { app: App }): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'POST',
+        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/comments`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: commentsResponse,
+      },
+    })
+  },
   stubGetHistory: ({ app }: { app: App }): SuperAgentRequest => {
     return stubFor({
       request: {
@@ -155,7 +168,6 @@ export default {
       },
     })
   },
-
   stubGetApps: (
     filteredAppsOrResponse?: typeof appSearchResponse | typeof appSearchResponse.apps,
   ): SuperAgentRequest => {
