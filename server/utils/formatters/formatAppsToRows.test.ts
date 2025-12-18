@@ -1,7 +1,13 @@
-import { HmppsUser } from '../interfaces/hmppsUser'
-import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
-import { appSearchResponse, user } from '../testData'
-import { formatAppsToRows } from './apps'
+import { format } from 'date-fns'
+import { HmppsUser } from '../../interfaces/hmppsUser'
+import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
+import { appSearchResponse, user } from '../../testData'
+import { formatAppsToRows } from './formatAppsToRows'
+
+jest.mock('date-fns', () => ({
+  format: jest.fn(),
+  getTime: jest.fn((date: Date) => date.getTime()),
+}))
 
 describe(formatAppsToRows.name, () => {
   let managingPrisonerAppsService: ManagingPrisonerAppsService
@@ -13,6 +19,8 @@ describe(formatAppsToRows.name, () => {
   }
 
   beforeEach(() => {
+    jest.clearAllMocks()
+
     managingPrisonerAppsService = {
       getGroupsAndTypes: jest.fn().mockResolvedValue([
         {
@@ -25,6 +33,8 @@ describe(formatAppsToRows.name, () => {
   })
 
   it('should correctly format applications', async () => {
+    ;(format as jest.Mock).mockReturnValue('24 March 2025')
+
     const applications = [
       {
         ...appSearchResponse.apps[0],

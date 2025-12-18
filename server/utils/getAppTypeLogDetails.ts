@@ -3,9 +3,6 @@ import {
   AddNewOfficialPinPhoneContactDetails,
   AddNewSocialPinPhoneContactDetails,
   RemovePinPhoneContactDetails,
-  SupplyListOfPinPhoneContactsDetails,
-  SwapVOsForPinCreditDetails,
-  GeneralPinPhoneEnquiryDetails,
 } from 'express-session'
 
 export type SwapVOsAppType = {
@@ -79,6 +76,106 @@ export type AppTypeData =
   | GeneralEnquiryAppType
   | GenericAppType
 
+type AppTypeHandler = (data: unknown) => AppTypeData
+
+const createEmergencyCreditHandler = (): AppTypeHandler => data => {
+  const { amount = '', reason = '' } = data as AddEmergencyPinPhoneCreditDetails
+  return { type: 5, amount, reason }
+}
+
+const createOfficialContactHandler = (): AppTypeHandler => data => {
+  const {
+    firstName = '',
+    lastName = '',
+    organisation,
+    company,
+    relationship = '',
+    telephone1 = '',
+    telephone2 = '',
+  } = data as AddNewOfficialPinPhoneContactDetails & { company?: string }
+
+  return {
+    type: 1,
+    firstName,
+    lastName,
+    organisation: organisation || company || '',
+    relationship,
+    telephone1,
+    telephone2,
+  }
+}
+
+const createSocialContactHandler = (): AppTypeHandler => data => {
+  const {
+    firstName = '',
+    lastName = '',
+    dateOfBirthOrAge,
+    dob,
+    age,
+    relationship = '',
+    addressLine1,
+    addressLine2,
+    townOrCity,
+    postcode,
+    country,
+    telephone1 = '',
+    telephone2 = '',
+  } = data as AddNewSocialPinPhoneContactDetails
+
+  return {
+    type: 2,
+    firstName,
+    lastName,
+    dateOfBirthOrAge,
+    dob,
+    age,
+    relationship,
+    addressLine1,
+    addressLine2,
+    townOrCity,
+    postcode,
+    country,
+    telephone1,
+    telephone2,
+  }
+}
+
+const createRemoveContactHandler = (): AppTypeHandler => data => {
+  const {
+    firstName = '',
+    lastName = '',
+    telephone1 = '',
+    telephone2 = '',
+    relationship = '',
+  } = data as RemovePinPhoneContactDetails
+
+  return {
+    type: 3,
+    firstName,
+    lastName,
+    telephone1,
+    telephone2,
+    relationship,
+  }
+}
+
+const createDetailsHandler =
+  (type: 4 | 6 | 7): AppTypeHandler =>
+  data => {
+    const details = (data as { details?: string })?.details || ''
+    return { type, details }
+  }
+
+const APP_TYPE_HANDLERS: Record<number, AppTypeHandler> = {
+  1: createEmergencyCreditHandler(),
+  2: createOfficialContactHandler(),
+  3: createSocialContactHandler(),
+  4: createRemoveContactHandler(),
+  5: createDetailsHandler(4),
+  6: createDetailsHandler(6),
+  7: createDetailsHandler(7),
+}
+
 export function getAppTypeLogDetailsData(
   id: number | null,
   additionalData: unknown,
@@ -89,119 +186,10 @@ export function getAppTypeLogDetailsData(
     return { details: typeof details === 'string' ? details : '' }
   }
 
-  const handlers: Record<number, (data: unknown) => AppTypeData> = {
-    1: data => {
-      const { amount = '', reason = '' } = data as AddEmergencyPinPhoneCreditDetails
-      return {
-        type: 5,
-        amount,
-        reason,
-      }
-    },
-
-    2: data => {
-      const {
-        firstName = '',
-        lastName = '',
-        organisation,
-        company,
-        relationship = '',
-        telephone1 = '',
-        telephone2 = '',
-      } = data as AddNewOfficialPinPhoneContactDetails & { company?: string }
-
-      return {
-        type: 1,
-        firstName,
-        lastName,
-        organisation: organisation || company || '',
-        relationship,
-        telephone1,
-        telephone2,
-      }
-    },
-
-    3: data => {
-      const {
-        firstName = '',
-        lastName = '',
-        dateOfBirthOrAge,
-        dob,
-        age,
-        relationship = '',
-        addressLine1,
-        addressLine2,
-        townOrCity,
-        postcode,
-        country,
-        telephone1 = '',
-        telephone2 = '',
-      } = data as AddNewSocialPinPhoneContactDetails
-
-      return {
-        type: 2,
-        firstName,
-        lastName,
-        dateOfBirthOrAge,
-        dob,
-        age,
-        relationship,
-        addressLine1,
-        addressLine2,
-        townOrCity,
-        postcode,
-        country,
-        telephone1,
-        telephone2,
-      }
-    },
-
-    4: data => {
-      const {
-        firstName = '',
-        lastName = '',
-        telephone1 = '',
-        telephone2 = '',
-        relationship = '',
-      } = data as RemovePinPhoneContactDetails
-
-      return {
-        type: 3,
-        firstName,
-        lastName,
-        telephone1,
-        telephone2,
-        relationship,
-      }
-    },
-
-    5: data => {
-      const { details = '' } = data as SwapVOsForPinCreditDetails
-      return {
-        type: 4,
-        details,
-      }
-    },
-
-    6: data => {
-      const { details = '' } = data as SupplyListOfPinPhoneContactsDetails
-      return {
-        type: 6,
-        details,
-      }
-    },
-
-    7: data => {
-      const { details = '' } = data as GeneralPinPhoneEnquiryDetails
-      return {
-        type: 7,
-        details,
-      }
-    },
+  if (id === null) {
+    return null
   }
 
-  if (id === null) return null
-
-  const handler = handlers[id]
+  const handler = APP_TYPE_HANDLERS[id]
   return handler ? handler(additionalData) : null
 }

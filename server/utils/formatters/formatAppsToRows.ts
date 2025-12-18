@@ -1,9 +1,9 @@
 import { format, getTime } from 'date-fns'
 
-import { ViewAppListApp } from '../@types/managingAppsApi'
-import { getAppType } from '../helpers/application/getAppType'
-import { HmppsUser } from '../interfaces/hmppsUser'
-import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
+import { ViewAppListApp } from '../../@types/managingAppsApi'
+import { getAppType } from '../../helpers/application/getAppType'
+import { HmppsUser } from '../../interfaces/hmppsUser'
+import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
 type ViewAppListAppWithName = ViewAppListApp & {
   prisonerName: string
