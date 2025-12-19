@@ -31,4 +31,8 @@ context('Application History Page', () => {
   it('should display the application type name in the caption', () => {
     page.pageCaption().should('include.text', 'Add a social PIN phone contact')
   })
+
+  it('should display the history page content', () => {
+    cy.contains('History of this application').should('exist')
+  })
 })

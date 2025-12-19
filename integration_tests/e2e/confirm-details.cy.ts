@@ -25,10 +25,18 @@ context('Confirm Details Page', () => {
           cy.selectDepartment('Business Hub')
 
           cy.contains('button', 'Continue').click()
-        } else if (route.includes('/change')) {
+        } else {
+          const changeApp = {
+            ...app,
+            appType: '5',
+            applicationType: { id: '5', name: 'Swap Visiting Orders (VOs) for PIN Credit' },
+            assignedGroup: { name: 'Business Hub', id: '591185f2-863a-4a32-9812-c12f40b94ccb' },
+          }
           cy.task('stubGetPrisonerApp', {
-            app,
+            app: changeApp,
           })
+          cy.task('stubGetHistory', { app: changeApp })
+          cy.task('stubGetAppResponse', { app: changeApp })
 
           cy.visit(route)
           cy.contains('button', 'Continue').click()
@@ -70,10 +78,10 @@ context('Confirm Details Page', () => {
     true,
   )
 
-  // testConfirmDetailsPage(
-  //   'Updating an existing application - Confirm details',
-  //   `/applications/${app.requestedBy.username}/${app.id}/change`,
-  //   `/applications/${app.requestedBy.username}/${app.id}/change`,
-  //   false,
-  // )
+  testConfirmDetailsPage(
+    'Updating an existing application - Confirm details',
+    `/applications/${app.requestedBy.username}/${app.id}/change`,
+    `/applications/${app.requestedBy.username}/${app.id}/change`,
+    false,
+  )
 })
