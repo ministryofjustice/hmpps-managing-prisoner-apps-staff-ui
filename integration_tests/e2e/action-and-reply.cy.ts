@@ -13,15 +13,16 @@ context('Action and Reply Page', () => {
     testCases.forEach(({ status, label, isClosed }) => {
       describe(`AppType: ${id} | Status: ${label}`, () => {
         let page: ActionAndReplyPage
+        let application: typeof app
 
         beforeEach(() => {
-          const application = { ...app, status, applicationType: { id, name } }
+          application = { ...app, status, applicationType: { id, name } }
 
           cy.resetAndSignIn()
 
           cy.task('stubGetPrisonerApp', { app: application })
-          cy.task('stubGetAppResponse', { app: application })
           cy.task('stubGetGroupsAndTypes')
+          cy.task('stubGetAppResponse', { app: application, decision: isClosed ? 'APPROVED' : undefined })
 
           cy.visit(`/applications/${application.requestedBy.username}/${application.id}/reply`)
           page = Page.verifyOnPage(ActionAndReplyPage)
@@ -66,6 +67,40 @@ context('Action and Reply Page', () => {
           })
           cy.get('#print-button').click()
           cy.get('@printStub').should('have.been.calledOnce')
+        })
+
+        it('should validate action and reason before submission', function validateActionAndReason() {
+          if (isClosed) this.skip()
+
+          page.saveButton().click()
+          page.errorSummary().should('exist').and('contain', 'Select an action')
+          page.selectAction('DECLINED')
+          page.reasonInput().clear()
+          page.saveButton().click()
+          page.errorSummary().should('exist').and('contain', 'Add a reason')
+        })
+
+        it('should successfully submit with APPROVED decision', function submitApproved() {
+          if (isClosed) this.skip()
+
+          cy.task('stubAddAppResponse', { app: application })
+
+          page.selectAction('APPROVED')
+          page.saveButton().click()
+
+          cy.url().should('include', `/applications/${application.requestedBy.username}/${application.id}/reply`)
+        })
+
+        it('should successfully submit with DECLINED decision and reason', function submitDeclined() {
+          if (isClosed) this.skip()
+
+          cy.task('stubAddAppResponse', { app: application })
+
+          page.selectAction('DECLINED')
+          page.reasonInput().type('Application does not meet the required criteria')
+          page.saveButton().click()
+
+          cy.url().should('include', `/applications/${application.requestedBy.username}/${application.id}/reply`)
         })
       })
     })
