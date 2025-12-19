@@ -13,7 +13,14 @@ context('Confirm Details Page', () => {
     cy.task('stubGetDepartments', { appType: '5' })
   })
 
-  const testConfirmDetailsPage = (title, route, backLink, hasChangeLinks) => {
+  const testConfirmDetailsPage = (title, route, backLink, hasChangeLinks, isUpdate = false) => {
+    const changeApp = {
+      ...app,
+      appType: '5',
+      applicationType: { id: '5', name: 'Swap Visiting Orders (VOs) for PIN Credit' },
+      assignedGroup: { name: 'Business Hub', id: '591185f2-863a-4a32-9812-c12f40b94ccb' },
+    }
+
     context(title, () => {
       beforeEach(() => {
         if (route === '/log/confirm') {
@@ -26,12 +33,6 @@ context('Confirm Details Page', () => {
 
           cy.contains('button', 'Continue').click()
         } else {
-          const changeApp = {
-            ...app,
-            appType: '5',
-            applicationType: { id: '5', name: 'Swap Visiting Orders (VOs) for PIN Credit' },
-            assignedGroup: { name: 'Business Hub', id: '591185f2-863a-4a32-9812-c12f40b94ccb' },
-          }
           cy.task('stubGetPrisonerApp', {
             app: changeApp,
           })
@@ -68,6 +69,30 @@ context('Confirm Details Page', () => {
       it('should render a Continue button with the correct text', () => {
         page.continueButton().should('contain.text', 'Save')
       })
+
+      it('should successfully submit the application and redirect', () => {
+        if (isUpdate) {
+          cy.task('stubUpdatePrisonerApp', { app: changeApp })
+          cy.task('stubGetPrisonerApp', { app: changeApp })
+
+          page.continueButton().click()
+
+          cy.url().should('include', `/applications/${changeApp.requestedBy.username}/${changeApp.id}/change/submit`)
+        } else {
+          const submittedApp = {
+            ...app,
+            id: '13d2c453-be11-44a8-9861-21fd8ae6e911',
+            requestedBy: { ...app.requestedBy, username: 'A1234AA' },
+            applicationType: { id: 5, name: 'Swap Visiting Orders (VOs) for PIN Credit' },
+          }
+          cy.task('stubSubmitPrisonerApp', { app: submittedApp })
+          cy.task('stubGetPrisonerApp', { app: submittedApp })
+
+          page.continueButton().click()
+
+          cy.url().should('include', `/log/submit/A1234AA/${submittedApp.id}`)
+        }
+      })
     })
   }
 
@@ -76,6 +101,7 @@ context('Confirm Details Page', () => {
     '/log/confirm',
     '/log/application-details',
     true,
+    false,
   )
 
   testConfirmDetailsPage(
@@ -83,5 +109,6 @@ context('Confirm Details Page', () => {
     `/applications/${app.requestedBy.username}/${app.id}/change`,
     `/applications/${app.requestedBy.username}/${app.id}/change`,
     false,
+    true,
   )
 })
