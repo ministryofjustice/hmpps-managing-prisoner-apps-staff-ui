@@ -29,6 +29,32 @@ export default {
       },
     })
   },
+  stubSubmitPrisonerApp: ({ app }: { app: App }): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'POST',
+        urlPathPattern: '/managingPrisonerApps/v1/prisoners/.*/apps',
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: app,
+      },
+    })
+  },
+  stubUpdatePrisonerApp: ({ app }: { app: App }): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'PUT',
+        urlPathPattern: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: app,
+      },
+    })
+  },
   stubGetAppResponse: ({
     app,
     decision = 'APPROVED',
