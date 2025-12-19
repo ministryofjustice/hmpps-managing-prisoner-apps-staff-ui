@@ -74,7 +74,10 @@ describe(formatApplicationHistory.name, () => {
     ;(format as jest.Mock).mockReturnValue('formatted')
 
     const responseHistoryItem = getHistoryItem('RESPONSE')
-    const response = { ...appDecisionResponse, id: responseHistoryItem.entityId, reason: 'Application rejected' }
+    const response = {
+      ...appDecisionResponse({ decision: 'DECLINED', reason: 'Application rejected' }),
+      id: responseHistoryItem.entityId,
+    }
 
     const result = formatApplicationHistory(appHistoryResponse, [], [response])
 

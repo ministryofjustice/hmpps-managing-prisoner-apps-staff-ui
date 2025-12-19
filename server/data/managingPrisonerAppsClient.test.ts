@@ -89,13 +89,14 @@ describe('ManagingPrisonerAppsApiClient', () => {
   })
 
   it('should fetch the response for an application', async () => {
+    const response = appDecisionResponse({ decision: 'APPROVED' })
     fakeManagingPrisonerAppApi
       .get('/v1/prisoners/prisoner-id/apps/app-id/responses/response-id?createdBy=true')
       .matchHeader('authorization', `Bearer ${user.token}`)
-      .reply(200, appDecisionResponse)
+      .reply(200, response)
 
     const output = await client.getResponse('prisoner-id', 'app-id', 'response-id')
-    expect(output).toEqual(appDecisionResponse)
+    expect(output).toEqual(response)
   })
 
   it('should update the form data for an application', async () => {
