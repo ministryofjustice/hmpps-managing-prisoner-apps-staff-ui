@@ -29,7 +29,15 @@ export default {
       },
     })
   },
-  stubGetAppResponse: ({ app }: { app: App }): SuperAgentRequest => {
+  stubGetAppResponse: ({
+    app,
+    decision = 'APPROVED',
+    reason = '',
+  }: {
+    app: App
+    decision?: 'APPROVED' | 'DECLINED'
+    reason?: string
+  }): SuperAgentRequest => {
     return stubFor({
       request: {
         method: 'GET',
@@ -38,7 +46,28 @@ export default {
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: appDecisionResponse,
+        jsonBody: appDecisionResponse({ decision, reason }),
+      },
+    })
+  },
+  stubAddAppResponse: ({
+    app,
+    decision = 'APPROVED',
+    reason = '',
+  }: {
+    app: App
+    decision?: 'APPROVED' | 'DECLINED'
+    reason?: string
+  }): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'POST',
+        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/responses`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: appDecisionResponse({ decision, reason }),
       },
     })
   },

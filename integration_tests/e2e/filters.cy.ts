@@ -71,7 +71,6 @@ context('Applications List - Filter Functionality', () => {
       page.tableRows().first().find('td').eq(1).should('contain', `${selectedApp.appType.name}`)
 
       cy.task('stubGetPrisonerApp', { app: application })
-      cy.task('stubGetAppResponse', { app: application })
       cy.task('stubGetComments', { app: application })
       cy.task('stubGetHistory', { app: application })
       cy.task('stubGetPrisonerByPrisonerNumber', application.requestedBy.username)
