@@ -4,6 +4,7 @@ import {
   AddNewSocialPinPhoneContactDetails,
   RemovePinPhoneContactDetails,
 } from 'express-session'
+import { OsPlacesAddressService } from '@ministryofjustice/hmpps-connect-dps-shared-items'
 
 import { ApplicationType } from '../@types/managingAppsApi'
 import { validateAmountField } from '../routes/validate/validateAmountField'
@@ -20,6 +21,7 @@ type ContextOptions = {
   isUpdate: boolean
   renderPath: string
   successRedirect: (req: Request, res: Response) => string
+  osPlacesAddressService?: OsPlacesAddressService
 }
 
 type SelectOption = {
@@ -121,6 +123,42 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
       }
 
       case 3: {
+        if (req.body.uprn && options.osPlacesAddressService) {
+          try {
+            const address = await options.osPlacesAddressService.getAddressByUprn(req.body.uprn)
+            if (address) {
+              const addressLine1Parts = []
+              if (address.subBuildingName) addressLine1Parts.push(address.subBuildingName)
+              if (address.buildingName) {
+                addressLine1Parts.push(address.buildingName)
+              } else if (address.buildingNumber) {
+                addressLine1Parts.push(address.buildingNumber)
+              }
+              if (address.thoroughfareName) addressLine1Parts.push(address.thoroughfareName)
+
+              req.body.addressLine1 = addressLine1Parts.join(', ')
+              req.body.addressLine2 = address.dependentLocality || ''
+              req.body.townOrCity = address.postTown || ''
+              req.body.postcode = address.postcode || ''
+
+              const countryCodeMap: Record<string, string> = {
+                ENG: 'GB',
+                SCT: 'GB',
+                WLS: 'GB',
+                NIR: 'GB',
+                E: 'GB',
+                S: 'GB',
+                W: 'GB',
+                N: 'GB',
+              }
+              req.body.country = countryCodeMap[address.country || ''] || address.country || ''
+            }
+          } catch (error) {
+            // If address lookup fails, continue with manual fields
+            console.error('Error fetching address by UPRN:', error)
+          }
+        }
+
         const formData: AddNewSocialPinPhoneContactDetails = {
           ...req.body,
           dob: {

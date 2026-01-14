@@ -50,9 +50,23 @@ export default function applicationsRoutes({
   )
 
   router.use(actionAppRouter({ auditService, managingPrisonerAppsService }))
-  router.use(appDetailsRouter({ auditService, managingPrisonerAppsService, personalRelationshipsService }))
+  router.use(
+    appDetailsRouter({
+      auditService,
+      managingPrisonerAppsService,
+      personalRelationshipsService,
+      osPlacesAddressService,
+    }),
+  )
   router.use(appTypeRouter({ auditService, managingPrisonerAppsService }))
-  router.use(changeAppRouter({ auditService, managingPrisonerAppsService, personalRelationshipsService }))
+  router.use(
+    changeAppRouter({
+      auditService,
+      managingPrisonerAppsService,
+      personalRelationshipsService,
+      osPlacesAddressService,
+    }),
+  )
   router.use(commentsRouter({ auditService, managingPrisonerAppsService }))
   router.use(confirmAppRouter({ auditService, managingPrisonerAppsService }))
   router.use(departmentsRouter({ auditService, managingPrisonerAppsService }))
