@@ -33,7 +33,7 @@ export default function applicationsRoutes({
   managingPrisonerAppsService: ManagingPrisonerAppsService
   prisonService: PrisonService
   personalRelationshipsService: PersonalRelationshipsService
-  osPlacesAddressService: OsPlacesAddressService
+  osPlacesAddressService?: OsPlacesAddressService
 }): Router {
   const router = Router()
 

@@ -29,7 +29,7 @@ export default function appDetailsRouter({
   auditService: AuditService
   managingPrisonerAppsService: ManagingPrisonerAppsService
   personalRelationshipsService: PersonalRelationshipsService
-  osPlacesAddressService: OsPlacesAddressService
+  osPlacesAddressService?: OsPlacesAddressService
 }): Router {
   const router = Router()
 

@@ -28,7 +28,7 @@ export default function changeAppRouter({
   auditService: AuditService
   managingPrisonerAppsService: ManagingPrisonerAppsService
   personalRelationshipsService: PersonalRelationshipsService
-  osPlacesAddressService: OsPlacesAddressService
+  osPlacesAddressService?: OsPlacesAddressService
 }): Router {
   const router = Router()
 
