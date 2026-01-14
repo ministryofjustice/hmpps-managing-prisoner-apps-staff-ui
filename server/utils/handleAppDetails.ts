@@ -14,6 +14,7 @@ import { validateRemovePinPhoneContact } from '../routes/validate/validateRemove
 import { validateTextField } from '../routes/validate/validateTextField'
 import { getCountryNameByCode } from './data/countries'
 import { updateSessionData } from './http/session'
+import logger from '../../logger'
 
 type ContextOptions = {
   getAppType: (req: Request, res: Response) => ApplicationType
@@ -154,8 +155,7 @@ export async function handleApplicationDetails(req: Request, res: Response, opti
               req.body.country = countryCodeMap[address.country || ''] || address.country || ''
             }
           } catch (error) {
-            // If address lookup fails, continue with manual fields
-            console.error('Error fetching address by UPRN:', error)
+            logger.warn('Failed to fetch address by UPRN, continuing with manual fields', error)
           }
         }
 
