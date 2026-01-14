@@ -1,3 +1,4 @@
+import { OsPlacesAddressService } from '@ministryofjustice/hmpps-connect-dps-shared-items'
 import { Request, Response, Router } from 'express'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
@@ -26,11 +27,13 @@ export default function applicationsRoutes({
   managingPrisonerAppsService,
   prisonService,
   personalRelationshipsService,
+  osPlacesAddressService,
 }: {
   auditService: AuditService
   managingPrisonerAppsService: ManagingPrisonerAppsService
   prisonService: PrisonService
   personalRelationshipsService: PersonalRelationshipsService
+  osPlacesAddressService: OsPlacesAddressService
 }): Router {
   const router = Router()
 
@@ -59,6 +62,26 @@ export default function applicationsRoutes({
   router.use(prisonerRouter({ auditService, prisonService }))
   router.use(submitAppRouter({ auditService, managingPrisonerAppsService }))
   router.use(viewAppsRouter({ auditService, managingPrisonerAppsService, prisonService }))
+
+  router.get(
+    '/api/addresses/find/:query',
+    asyncMiddleware(async (req: Request, res: Response) => {
+      try {
+        const { query } = req.params
+        if (!query) {
+          res.status(400).json({ status: 400, error: 'Query parameter is required' })
+          return
+        }
+
+        const results = await osPlacesAddressService.getAddressesMatchingQuery(query)
+
+        res.json({ status: 200, results })
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+        res.status(500).json({ status: 500, error: errorMessage })
+      }
+    }),
+  )
 
   return router
 }

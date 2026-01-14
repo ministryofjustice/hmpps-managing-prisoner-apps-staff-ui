@@ -1,3 +1,5 @@
+{% from "dps/components/address-autosuggest/macro.njk" import addressAutosuggest %}
+
 {{ govukRadios({
   classes: "govuk-radios--inline",
   name: "earlyDaysCentre",
@@ -167,57 +169,71 @@
 <h2 class="govuk-heading-m govuk-!-margin-bottom-1">Address</h2>
 <p class="govuk-hint">Fill this in if your establishment requires it</p>
 
-{{ govukInput({
-  id: "addressline1",
-  name: "addressLine1",
-  label: {
-    text: "Address line 1",
-    classes: "govuk-label--s"
-  },
-  value: addressLine1
+{{ addressAutosuggest({
+  uprn: uprn,
+  inputValue: addressAutosuggestInput,
+  errorMessage: errors.addressAutosuggest.text if errors.addressAutosuggest else undefined,
+  classes: 'govuk-!-margin-bottom-4',
+  findUrl: '/api/addresses/find'
 }) }}
 
-{{ govukInput({
-  id: "addressline2",
-  name: "addressLine2",
-  label: {
-    text: "Address line 2",
-    classes: "govuk-label--s"
-  },
-  value: addressLine2
-}) }}
+<p class="govuk-body">
+  <a href="#" class="govuk-link" id="enter-address-manually-link">Enter address manually</a>
+</p>
 
-{{ govukInput({
-  id: "townorcity",
-  name: "townOrCity",
-  label: {
-    text: "Town or city",
-    classes: "govuk-label--s"
-  },
-  value: townOrCity,
-  classes: "govuk-input--width-20"
-}) }}
+<div id="manual-address-fields" class="govuk-!-display-none">
+  {{ govukInput({
+    id: "addressline1",
+    name: "addressLine1",
+    label: {
+      text: "Address line 1",
+      classes: "govuk-label--s"
+    },
+    value: addressLine1
+  }) }}
 
-{{ govukInput({
-  id: "postcode",
-  name: "postcode",
-  label: {
-    text: "Postcode",
-    classes: "govuk-label--s"
-  },
-  value: postcode,
-  classes: "govuk-!-width-one-half"
-}) }}
+  {{ govukInput({
+    id: "addressline2",
+    name: "addressLine2",
+    label: {
+      text: "Address line 2",
+      classes: "govuk-label--s"
+    },
+    value: addressLine2
+  }) }}
 
-{{ govukSelect({
-  id: "country",
-  name: "country",
-  label: {
-    text: "Country",
-     classes: "govuk-label--s"
-  },
-  items: countries
-}) }}
+  {{ govukInput({
+    id: "townorcity",
+    name: "townOrCity",
+    label: {
+      text: "Town or city",
+      classes: "govuk-label--s"
+    },
+    value: townOrCity,
+    classes: "govuk-input--width-20"
+  }) }}
+
+  {{ govukInput({
+    id: "postcode",
+    name: "postcode",
+    label: {
+      text: "Postcode",
+      classes: "govuk-label--s"
+    },
+    value: postcode,
+    classes: "govuk-!-width-one-half"
+  }) }}
+
+  {{ govukSelect({
+    id: "country",
+    name: "country",
+    label: {
+      text: "Country",
+       classes: "govuk-label--s"
+    },
+    items: countries
+  }) }}
+</div>
 
 <h2 class="govuk-heading-m govuk-!-margin-bottom-1">Telephone numbers</h2>
 <p class="govuk-hint">Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192. Include area code or international code, if overseas.</p>

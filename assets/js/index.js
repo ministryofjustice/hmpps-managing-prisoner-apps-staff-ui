@@ -1,9 +1,11 @@
 /* eslint-disable no-unused-vars */
 import * as govukFrontend from 'govuk-frontend'
 import * as mojFrontend from '@ministryofjustice/frontend'
+import * as addressAutosuggest from '@ministryofjustice/hmpps-connect-dps-shared-items/dist/assets/dps/components/address-autosuggest'
 
 govukFrontend.initAll()
 mojFrontend.initAll()
+addressAutosuggest.init()
 
 document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
   const findPrisonerButton = document.getElementById('prisoner-number-lookup')
@@ -152,4 +154,32 @@ document.addEventListener('DOMContentLoaded', () => {
   applyFilter()
 
   filterInput.addEventListener('input', applyFilter)
+})
+
+document.addEventListener('DOMContentLoaded', () => {
+  const manualLink = document.getElementById('enter-address-manually-link')
+  const manualFields = document.getElementById('manual-address-fields')
+  const autosuggestContainer = document.querySelector('[data-module="dps-address-autosuggest"]')
+
+  if (!manualLink || !manualFields) return
+
+  manualLink.addEventListener('click', e => {
+    e.preventDefault()
+
+    if (manualFields.classList.contains('govuk-!-display-none')) {
+      // Show manual fields, hide autosuggest
+      manualFields.classList.remove('govuk-!-display-none')
+      if (autosuggestContainer) {
+        autosuggestContainer.classList.add('govuk-!-display-none')
+      }
+      manualLink.textContent = 'Use address lookup'
+    } else {
+      // Show autosuggest, hide manual fields
+      manualFields.classList.add('govuk-!-display-none')
+      if (autosuggestContainer) {
+        autosuggestContainer.classList.remove('govuk-!-display-none')
+      }
+      manualLink.textContent = 'Enter address manually'
+    }
+  })
 })

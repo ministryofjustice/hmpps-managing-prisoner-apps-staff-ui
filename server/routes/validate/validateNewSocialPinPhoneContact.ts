@@ -10,6 +10,12 @@ export type AddNewSocialPinPhoneContactForm = {
   'dob-year'?: string
   age?: string
   relationship: string
+  uprn?: string
+  addressLine1?: string
+  addressLine2?: string
+  townOrCity?: string
+  postcode?: string
+  country?: string
   telephone1: string
   telephone2?: string
 }
