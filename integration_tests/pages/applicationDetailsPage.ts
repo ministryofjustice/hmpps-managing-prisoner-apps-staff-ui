@@ -77,7 +77,6 @@ export default class ApplicationDetailsPage extends Page {
     cy.get('#dob-year').type('1990')
     cy.get('#relationship').select('Cousin')
 
-    // Click "Enter address manually" to show address fields
     cy.get('#enter-address-manually-link').click()
 
     cy.get('#addressline1').type('123 Main St')
