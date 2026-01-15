@@ -169,17 +169,22 @@
 <h2 class="govuk-heading-m govuk-!-margin-bottom-1">Address</h2>
 <p class="govuk-hint">Fill this in if your establishment requires it</p>
 
-{{ addressAutosuggest({
-  uprn: uprn,
-  inputValue: addressAutosuggestInput,
-  errorMessage: errors.addressAutosuggest.text if errors.addressAutosuggest else undefined,
-  classes: 'govuk-!-margin-bottom-4',
-  findUrl: '/api/addresses/find'
-}) }}
+<div id="address-lookup-section">
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Find address</h3>
+  <p class="govuk-hint">Type part of address or postcode to begin</p>
 
-<p class="govuk-body">
-  <a href="#" class="govuk-link" id="enter-address-manually-link">Enter address manually</a>
-</p>
+  {{ addressAutosuggest({
+    uprn: uprn,
+    inputValue: addressAutosuggestInput,
+    errorMessage: errors.addressAutosuggest.text if errors.addressAutosuggest else undefined,
+    classes: 'govuk-!-margin-bottom-4',
+    findUrl: '/api/addresses/find'
+  }) }}
+
+  <p class="govuk-body">
+    <a href="#" class="govuk-link" id="enter-address-manually-link">Enter address manually</a>
+  </p>
+</div>
 
 <div id="manual-address-fields" class="govuk-!-display-none">
   {{ govukInput({
@@ -233,6 +238,10 @@
     },
     items: countries
   }) }}
+
+  <p class="govuk-body">
+    <a href="#" class="govuk-link" id="lookup-address-link">Look up address</a>
+  </p>
 </div>
 
 <h2 class="govuk-heading-m govuk-!-margin-bottom-1">Telephone numbers</h2>

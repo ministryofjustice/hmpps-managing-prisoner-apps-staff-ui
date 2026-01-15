@@ -158,28 +158,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
   const manualLink = document.getElementById('enter-address-manually-link')
+  const lookupLink = document.getElementById('lookup-address-link')
   const manualFields = document.getElementById('manual-address-fields')
-  const autosuggestContainer = document.querySelector('[data-module="dps-address-autosuggest"]')
+  const lookupSection = document.getElementById('address-lookup-section')
 
-  if (!manualLink || !manualFields) return
+  if (!manualLink || !manualFields || !lookupSection) return
+
+  const showManualFields = () => {
+    manualFields.classList.remove('govuk-!-display-none')
+    lookupSection.classList.add('govuk-!-display-none')
+  }
+
+  const showLookupSection = () => {
+    manualFields.classList.add('govuk-!-display-none')
+    lookupSection.classList.remove('govuk-!-display-none')
+  }
 
   manualLink.addEventListener('click', e => {
     e.preventDefault()
-
-    if (manualFields.classList.contains('govuk-!-display-none')) {
-      // Show manual fields, hide autosuggest
-      manualFields.classList.remove('govuk-!-display-none')
-      if (autosuggestContainer) {
-        autosuggestContainer.classList.add('govuk-!-display-none')
-      }
-      manualLink.textContent = 'Use address lookup'
-    } else {
-      // Show autosuggest, hide manual fields
-      manualFields.classList.add('govuk-!-display-none')
-      if (autosuggestContainer) {
-        autosuggestContainer.classList.remove('govuk-!-display-none')
-      }
-      manualLink.textContent = 'Enter address manually'
-    }
+    showManualFields()
   })
+
+  if (lookupLink) {
+    lookupLink.addEventListener('click', e => {
+      e.preventDefault()
+      showLookupSection()
+    })
+  }
 })
