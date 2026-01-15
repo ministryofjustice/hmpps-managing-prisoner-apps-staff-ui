@@ -10,6 +10,11 @@ $govuk-page-width: $moj-page-width;
 @import '@ministryofjustice/frontend/moj/all';
 @import '@ministryofjustice/hmpps-connect-dps-components/dist/assets/footer';
 @import '@ministryofjustice/hmpps-connect-dps-components/dist/assets/header-bar';
+@import '@ministryofjustice/hmpps-connect-dps-shared-items/dist/assets/dps/components/address-autosuggest/address-autosuggest';
 
 @import './components/header-bar';
 @import './views/applications';
+
+.hmpps-display-none {
+  display: none !important;
+}

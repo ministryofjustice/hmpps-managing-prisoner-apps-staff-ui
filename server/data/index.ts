@@ -1,8 +1,5 @@
 /* eslint-disable import/first */
-/*
- * Do appinsights first as it does some magic instrumentation work, i.e. it affects other 'require's
- * In particular, applicationinsights automatically collects bunyan logs
- */
+import { OsPlacesApiClient } from '@ministryofjustice/hmpps-connect-dps-shared-items'
 import applicationInfoSupplier from '../applicationInfo'
 import { buildAppInsightsClient, initialiseAppInsights } from '../utils/azureAppInsights'
 
@@ -11,6 +8,7 @@ initialiseAppInsights()
 buildAppInsightsClient(applicationInfo)
 
 import config from '../config'
+import logger from '../../logger'
 import HmppsAuthClient from './hmppsAuthClient'
 import { createRedisClient } from './redisClient'
 import InMemoryTokenStore from './tokenStore/inMemoryTokenStore'
@@ -23,6 +21,7 @@ export const dataAccess = () => ({
   hmppsAuthClient: new HmppsAuthClient(
     config.redis.enabled ? new RedisTokenStore(createRedisClient()) : new InMemoryTokenStore(),
   ),
+  osPlacesApiClient: new OsPlacesApiClient(logger, config.apis.osPlacesApi),
 })
 
 export type DataAccess = ReturnType<typeof dataAccess>
