@@ -10,12 +10,19 @@ export default function routes({
   managingPrisonerAppsService,
   prisonService,
   personalRelationshipsService,
+  osPlacesAddressService,
 }: Services): Router {
   const router = Router()
 
   router.use(
     '/',
-    applicationsRoutes({ auditService, managingPrisonerAppsService, prisonService, personalRelationshipsService }),
+    applicationsRoutes({
+      auditService,
+      managingPrisonerAppsService,
+      prisonService,
+      personalRelationshipsService,
+      osPlacesAddressService,
+    }),
   )
   router.use('/', staticPagesRoutes())
 

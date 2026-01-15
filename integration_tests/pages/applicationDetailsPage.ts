@@ -76,6 +76,9 @@ export default class ApplicationDetailsPage extends Page {
     cy.get('#dob-month').type('01')
     cy.get('#dob-year').type('1990')
     cy.get('#relationship').select('Cousin')
+
+    cy.get('#enter-address-manually-link').click()
+
     cy.get('#addressline1').type('123 Main St')
     cy.get('#townorcity').type('London')
     cy.get('#postcode').type('SW1A 1AA')

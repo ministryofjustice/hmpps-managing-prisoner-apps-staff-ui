@@ -5,6 +5,7 @@ import tokenVerification from './integration_tests/mockApis/tokenVerification'
 import { resetStubs } from './integration_tests/mockApis/wiremock'
 import prison from './integration_tests/mockApis/prison'
 import personalRelationships from './integration_tests/mockApis/personalRelationships'
+import osPlaces from './integration_tests/mockApis/osPlaces'
 
 export default defineConfig({
   chromeWebSecurity: false,
@@ -25,6 +26,7 @@ export default defineConfig({
         ...personalRelationships,
         ...prison,
         ...tokenVerification,
+        ...osPlaces,
       })
     },
     baseUrl: 'http://localhost:3007',

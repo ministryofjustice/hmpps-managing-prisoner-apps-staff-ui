@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express'
 import { AddNewOfficialPinPhoneContactDetails } from 'express-session'
+import { OsPlacesAddressService } from '@ministryofjustice/hmpps-connect-dps-shared-items'
 
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
@@ -22,10 +23,12 @@ export default function changeAppRouter({
   auditService,
   managingPrisonerAppsService,
   personalRelationshipsService,
+  osPlacesAddressService,
 }: {
   auditService: AuditService
   managingPrisonerAppsService: ManagingPrisonerAppsService
   personalRelationshipsService: PersonalRelationshipsService
+  osPlacesAddressService?: OsPlacesAddressService
 }): Router {
   const router = Router()
 
@@ -119,6 +122,7 @@ export default function changeAppRouter({
         isUpdate: true,
         renderPath: PATHS.APPLICATIONS.CHANGE_DETAILS,
         successRedirect: () => `${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/change/confirm`,
+        osPlacesAddressService,
       })
     }),
   )

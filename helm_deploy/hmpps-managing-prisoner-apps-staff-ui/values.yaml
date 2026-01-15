@@ -46,14 +46,15 @@ generic-service:
       CLIENT_CREDS_CLIENT_ID: 'CLIENT_CREDS_CLIENT_ID'
       CLIENT_CREDS_CLIENT_SECRET: 'CLIENT_CREDS_CLIENT_SECRET'
       SESSION_SECRET: 'SESSION_SECRET'
+      OS_PLACES_API_KEY: 'OS_PLACES_API_KEY'
     elasticache-redis:
       REDIS_HOST: 'primary_endpoint_address'
       REDIS_AUTH_TOKEN: 'auth_token'
     application-insights:
-      APPLICATIONINSIGHTS_CONNECTION_STRING: "APPLICATIONINSIGHTS_CONNECTION_STRING"
+      APPLICATIONINSIGHTS_CONNECTION_STRING: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
     sqs-hmpps-audit-secret:
-      AUDIT_SQS_QUEUE_URL: "sqs_queue_url"
-      AUDIT_SQS_QUEUE_NAME: "sqs_queue_name"
+      AUDIT_SQS_QUEUE_URL: 'sqs_queue_url'
+      AUDIT_SQS_QUEUE_NAME: 'sqs_queue_name'
 
   allowlist:
     groups:
