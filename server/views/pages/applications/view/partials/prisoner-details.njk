@@ -5,7 +5,7 @@
 {% set _ = rows.push({
   key: { text: "Prisoner" },
   value: {
-    text: application.requestedByLastName + ", " + application.requestedByFirstName + " (" + application.requestedBy.username + ")"
+    text: application.prisonerName + " (" + application.requestedBy.username + ")"
   },
   actions: {
     items: [{

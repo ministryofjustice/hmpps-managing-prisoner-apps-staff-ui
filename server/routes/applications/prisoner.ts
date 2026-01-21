@@ -10,6 +10,7 @@ import PrisonService from '../../services/prisonService'
 
 import config from '../../config'
 import { updateSessionData } from '../../utils/http/session'
+import { formatName } from '../../utils/formatters/formatName'
 import validatePrisonerDetails from '../validate/validatePrisonerDetails'
 
 export default function prisonerRouter({
@@ -60,7 +61,7 @@ export default function prisonerRouter({
       }
 
       res.json({
-        prisonerName: `${prisoner.lastName}, ${prisoner.firstName}`,
+        prisonerName: formatName(prisoner.firstName, prisoner.middleName, prisoner.lastName),
         activeAlertCount: prisoner.activeAlertCount ?? 0,
       })
     }),
@@ -83,7 +84,7 @@ export default function prisonerRouter({
         if (!prisoner) {
           errors.prisonNumber = { text: 'Enter a valid prison number' }
         } else {
-          req.body.prisonerName = `${prisoner.lastName}, ${prisoner.firstName}`
+          req.body.prisonerName = formatName(prisoner.firstName, prisoner.middleName, prisoner.lastName)
         }
       }
 

@@ -1,5 +1,6 @@
 import { ViewAppListApp } from '../@types/managingAppsApi'
 import { ParsedFilters } from '../utils/http/filters'
+import { formatName } from '../utils/formatters/formatName'
 
 export const buildApplicationsPayload = (filters: ParsedFilters) => {
   return {
@@ -17,6 +18,6 @@ export const buildApplicationsPayload = (filters: ParsedFilters) => {
 export const addPrisonerNames = (apps: ViewAppListApp[]) => {
   return apps.map(app => ({
     ...app,
-    prisonerName: `${app.requestedByLastName}, ${app.requestedByFirstName}`,
+    prisonerName: formatName(app.requestedByFirstName, '', app.requestedByLastName),
   }))
 }

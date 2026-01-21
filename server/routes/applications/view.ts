@@ -11,6 +11,7 @@ import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PrisonService from '../../services/prisonService'
 
+import { formatName } from '../../utils/formatters/formatName'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import {
   buildSelectedTags,
@@ -102,7 +103,7 @@ export default function viewAppsRouter({
 
       const formattedResults = prisoners.map(prisoner => ({
         prisonerId: prisoner.prisonerId,
-        label: `${prisoner.lastName}, ${prisoner.firstName} (${prisoner.prisonerId})`,
+        label: `${formatName(prisoner.firstName, '', prisoner.lastName)} (${prisoner.prisonerId})`,
       }))
 
       res.json(formattedResults)
@@ -132,6 +133,7 @@ export default function viewAppsRouter({
           .replace(/\s+/g, '-'),
         application: {
           ...application,
+          prisonerName: formatName(application.requestedByFirstName, '', application.requestedByLastName),
           createdDate: format(new Date(application.createdDate), 'd MMMM yyyy'),
           status: application.status === APPLICATION_STATUS.PENDING ? convertToTitleCase(application.status) : 'Closed',
         },
