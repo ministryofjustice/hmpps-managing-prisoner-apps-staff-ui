@@ -20,6 +20,7 @@ function startApplication(appType: string): ApplicationDetailsPage {
   cy.selectGroup('Pin Phone Contact Apps')
   cy.selectApplicationType(appType)
   cy.selectDepartment('Business Hub')
+  cy.selectLoggingMethod('manual')
 
   return Page.verifyOnPage(ApplicationDetailsPage)
 }

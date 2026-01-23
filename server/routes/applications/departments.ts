@@ -85,7 +85,7 @@ export default function departmentsRouter({
       }
 
       updateSessionData(req, { department: selectedDepartment, departmentId: selectedDepartmentId })
-      return res.redirect(URLS.LOG_APPLICATION_DETAILS)
+      return res.redirect(URLS.LOG_METHOD)
     }),
   )
 
