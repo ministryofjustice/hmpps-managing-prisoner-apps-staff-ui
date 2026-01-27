@@ -5,6 +5,8 @@ import { URLS } from '../../constants/urls'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
+import config from '../../config'
+
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
@@ -85,6 +87,11 @@ export default function departmentsRouter({
       }
 
       updateSessionData(req, { department: selectedDepartment, departmentId: selectedDepartmentId })
+
+      if (!config.featureFlags.logMethodPageEnabled) {
+        return res.redirect(URLS.LOG_APPLICATION_DETAILS)
+      }
+
       return res.redirect(URLS.LOG_METHOD)
     }),
   )

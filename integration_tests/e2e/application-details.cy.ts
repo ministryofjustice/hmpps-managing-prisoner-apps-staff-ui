@@ -7,6 +7,7 @@ const { applicationTypes } = applicationTypesData
 function startApplication(appType: string): ApplicationDetailsPage {
   const appConfig = applicationTypes.find(type => type.name === appType)
   const relationshipType = appType.includes('official') ? 'OFFICIAL_RELATIONSHIP' : 'SOCIAL_RELATIONSHIP'
+  const logMethodEnabled = Cypress.env('LOG_METHOD_PAGE_ENABLED') === 'true'
 
   cy.resetAndSignIn()
   cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
@@ -20,8 +21,13 @@ function startApplication(appType: string): ApplicationDetailsPage {
   cy.selectGroup('Pin Phone Contact Apps')
   cy.selectApplicationType(appType)
   cy.selectDepartment('Business Hub')
-  cy.selectLoggingMethod('manual')
-
+  if (logMethodEnabled) {
+    cy.url().should('include', '/log/method')
+    cy.selectLoggingMethod('manual')
+    cy.url().should('include', '/log/application-details')
+    return Page.verifyOnPage(ApplicationDetailsPage)
+  }
+  cy.url().should('include', '/log/application-details')
   return Page.verifyOnPage(ApplicationDetailsPage)
 }
 
