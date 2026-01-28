@@ -9,6 +9,8 @@ import { getAppType } from '../../helpers/application/getAppType'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
+import config from '../../config'
+
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PersonalRelationshipsService from '../../services/personalRelationshipsService'
@@ -83,6 +85,7 @@ export default function appDetailsRouter({
         isLoggingForSamePrisoner,
         isGeneric,
         prisonerName: isLoggingForSamePrisoner ? applicationData.prisonerName : null,
+        backLink: config.featureFlags.logMethodPageEnabled ? URLS.LOG_METHOD : URLS.LOG_DEPARTMENT,
       })
     }),
   )
