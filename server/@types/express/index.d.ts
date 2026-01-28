@@ -35,6 +35,7 @@ export declare module 'express-session' {
     }
     department?: string
     departmentId?: string
+    loggingMethod?: 'manual' | 'webcam'
   }
 
   type ListFilters = {

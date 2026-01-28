@@ -21,6 +21,8 @@ import historyRouter from './history'
 import prisonerRouter from './prisoner'
 import submitAppRouter from './submitApp'
 import viewAppsRouter from './view'
+import logMethodRouter from './logMethod'
+import photoCaptureRouter from './photoCapture'
 
 export default function applicationsRoutes({
   auditService,
@@ -76,6 +78,8 @@ export default function applicationsRoutes({
   router.use(prisonerRouter({ auditService, prisonService }))
   router.use(submitAppRouter({ auditService, managingPrisonerAppsService }))
   router.use(viewAppsRouter({ auditService, managingPrisonerAppsService, prisonService }))
+  router.use(logMethodRouter({ auditService }))
+  router.use(photoCaptureRouter({ auditService }))
 
   router.get(
     '/api/addresses/find/:query',

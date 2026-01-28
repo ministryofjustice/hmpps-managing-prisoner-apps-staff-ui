@@ -168,4 +168,7 @@ export default {
   analytics: {
     ga4SiteId: get('GA4_SITE_ID', 'G-HE5P4PEE48', requiredInProduction),
   },
+  featureFlags: {
+    logMethodPageEnabled: get('LOG_METHOD_PAGE_ENABLED', 'false') === 'true',
+  },
 }

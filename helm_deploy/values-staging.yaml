@@ -19,6 +19,7 @@ generic-service:
     PRISON_API_URL: 'https://prison-api-dev.prison.service.justice.gov.uk'
     PERSONAL_RELATIONSHIPS_API_URL: 'https://personal-relationships-api-dev.hmpps.service.justice.gov.uk'
     OS_PLACES_API_URL: 'https://api.os.uk/search/places/v1'
+    LOG_METHOD_PAGE_ENABLED: 'false'
     ENVIRONMENT_NAME: STAGING
     AUDIT_ENABLED: 'false'
     GA4_SITE_ID: 'G-HE5P4PEE48'

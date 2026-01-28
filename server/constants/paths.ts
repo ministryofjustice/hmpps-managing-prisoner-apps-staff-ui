@@ -14,6 +14,8 @@ export const PATHS = {
     PRISONER_DETAILS: 'pages/log-application/prisoner-details/index',
     SELECT_DEPARTMENT: 'pages/log-application/select-department/index',
     SELECT_GROUP: 'pages/log-application/select-group/index',
+    SELECT_METHOD: 'pages/log-application/select-logging-method/index',
+    PHOTO_CAPTURE: 'pages/log-application/photo-capture/index',
     APPLICATION_DETAILS: 'pages/log-application/application-details/index',
     CONFIRM_DETAILS: 'pages/log-application/confirm/index',
     SUBMIT: 'pages/log-application/submit/index',

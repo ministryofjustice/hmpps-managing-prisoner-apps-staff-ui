@@ -35,5 +35,11 @@ declare namespace Cypress {
      * @example cy.selectDepartment('Business Hub')
      */
     selectDepartment(departmentName: string): Chainable<void>
+
+    /**
+     * Selects a logging method and continues.
+     * @example cy.selectLoggingMethod('manual')
+     */
+    selectLoggingMethod(method: 'manual' | 'webcam'): Chainable<void>
   }
 }

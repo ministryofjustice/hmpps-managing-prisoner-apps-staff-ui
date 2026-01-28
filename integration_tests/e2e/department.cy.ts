@@ -61,9 +61,9 @@ context('Department Page', () => {
     page.errorMessage().should('exist').and('contain', 'Choose a department')
   })
 
-  it('should successfully select a department and redirect to application details page', () => {
+  it('should successfully select a department and redirect to logging method page', () => {
     page.departmentLabel().click()
     page.continueButton().click()
-    cy.url().should('include', '/log/application-details')
+    cy.url().should('include', '/log/method')
   })
 })

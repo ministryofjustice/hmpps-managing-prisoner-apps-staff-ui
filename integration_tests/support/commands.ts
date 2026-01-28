@@ -31,3 +31,9 @@ Cypress.Commands.add('selectDepartment', (departmentName: string) => {
   cy.contains(departmentName).click()
   cy.contains('button', 'Continue').click()
 })
+
+Cypress.Commands.add('selectLoggingMethod', (method: 'manual' | 'webcam') => {
+  const value = method === 'manual' ? 'manual' : 'webcam'
+  cy.get(`input[name="loggingMethod"][value="${value}"]`).check({ force: true })
+  cy.contains('button', 'Continue').click()
+})
