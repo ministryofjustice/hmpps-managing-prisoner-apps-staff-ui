@@ -4,7 +4,7 @@ import express, { Router } from 'express'
 import { monitoringMiddleware, endpointHealthComponent } from '@ministryofjustice/hmpps-monitoring'
 import type { ApplicationInfo } from '../applicationInfo'
 import logger from '../../logger'
-import config from '../config'
+import config, { AgentConfig } from '../config'
 import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
 
 export default function setUpHealthChecks(
@@ -13,7 +13,9 @@ export default function setUpHealthChecks(
 ): Router {
   const router = express.Router()
 
-  const apiConfig = Object.entries(config.apis)
+  const apiConfig = Object.entries(config.apis).filter(([, options]) => 'healthPath' in options) as Array<
+    [string, { healthPath: string; url: string; timeout: { response: number; deadline: number }; agent: AgentConfig }]
+  >
 
   const middleware = monitoringMiddleware({
     applicationInfo,
