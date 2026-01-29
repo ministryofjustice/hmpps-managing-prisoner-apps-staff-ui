@@ -37,7 +37,7 @@ context('Logging Method Page', () => {
     page.manualOption().should('exist')
   })
 
-  it('should display "Upload image of the paper application" option', () => {
+  it('should display "Take a photo of the paper application" option', () => {
     page.webcamOption().should('exist')
   })
 
@@ -55,7 +55,7 @@ context('Logging Method Page', () => {
     cy.url().should('include', '/log/application-details')
   })
 
-  it('should redirect to photo capture when upload an imageis selected', () => {
+  it('should redirect to photo capture when upload an image is selected', () => {
     page.webcamOption().click()
     page.submitButton().click()
 

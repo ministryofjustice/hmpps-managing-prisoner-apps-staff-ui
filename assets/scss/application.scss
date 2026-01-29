@@ -11,6 +11,7 @@ $govuk-page-width: $moj-page-width;
 @import '@ministryofjustice/hmpps-connect-dps-components/dist/assets/footer';
 @import '@ministryofjustice/hmpps-connect-dps-components/dist/assets/header-bar';
 @import '@ministryofjustice/hmpps-connect-dps-shared-items/dist/assets/dps/components/address-autosuggest/address-autosuggest';
+@import '@ministryofjustice/hmpps-connect-dps-shared-items/dist/assets/dps/components/webcam-capture/webcam-capture';
 
 @import './components/header-bar';
 @import './views/applications';

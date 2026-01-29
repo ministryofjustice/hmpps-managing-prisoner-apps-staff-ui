@@ -1,9 +1,24 @@
-{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
-
 {% extends "../../../partials/layout.njk" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "dps/components/webcam-capture/macro.njk" import hmppsWebcamCapture %}
 
 {% set pageTitle = applicationName + " - " + title %}
 {% set mainClasses = "app-container govuk-body applications-landing-page" %}
+{% set photoInstructionsHtml %}
+<div>
+  <h2 class="govuk-heading-s govuk-!-margin-bottom-2">
+    To take a photo of an application.
+  </h2>
+  <ul class="govuk-list govuk-list--bullet">
+    <li>Place the paper flat on a clear desk.</li>
+    <li>Make sure the paper is straight and aligned underneath the webcam window.</li>
+    <li>Select "Take photo".</li>
+    <li>Select "Save and continue".</li>
+    <li>On the next page, you can crop or rotate the image if needed.</li>
+    <li>You can save up to two images per application.</li>
+  </ul>
+</div>
+{% endset %}
 
 {% block content %}
   <div class="govuk-body govuk-width-container">
@@ -16,7 +31,23 @@
         }) }}
         
         <span class="govuk-caption-xl">{{ applicationType }}</span>
-        <h1 class="govuk-heading-xl govuk-!-margin-top-0">Upload an image</h1>
+        <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
+
+        <form method="POST" action="{{ LOG_PHOTO_CAPTURE }}" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        
+        {{ hmppsWebcamCapture({
+          fileName: "application-photo",
+          fileField: {
+            name: "file"
+          },
+          cancelUrl: backLink,
+          photoInstructions: {
+            html: photoInstructionsHtml
+          },
+          reportErrors: true 
+        }) }}
+        </form>
 
       </div>
     </div>
