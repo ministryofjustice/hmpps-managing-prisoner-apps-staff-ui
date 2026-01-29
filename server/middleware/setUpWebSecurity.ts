@@ -32,7 +32,7 @@ export default function setUpWebSecurity(): Router {
           styleSrc: ["'self'", (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`],
           fontSrc: ["'self'"],
           formAction: [`'self' ${config.apis.hmppsAuth.externalUrl}`],
-          imgSrc: ["'self'", 'https://*.googletagmanager.com', 'https://*.google-analytics.com'],
+          imgSrc: ["'self'", 'data:', 'blob:', 'https://*.googletagmanager.com', 'https://*.google-analytics.com'],
           connectSrc: [
             "'self'",
             'https://*.googletagmanager.com',

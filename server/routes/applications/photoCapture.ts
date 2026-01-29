@@ -26,7 +26,7 @@ export default function photoCaptureRouter({ auditService }: { auditService: Aud
       })
 
       return res.render(PATHS.LOG_APPLICATION.PHOTO_CAPTURE, {
-        title: 'Upload an image',
+        title: 'Take a photo of the application',
         applicationType: applicationData.type.name,
       })
     }),

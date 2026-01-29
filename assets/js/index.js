@@ -2,10 +2,12 @@
 import * as govukFrontend from 'govuk-frontend'
 import * as mojFrontend from '@ministryofjustice/frontend'
 import * as addressAutosuggest from '@ministryofjustice/hmpps-connect-dps-shared-items/dist/assets/dps/components/address-autosuggest'
+import * as connectDps from '@ministryofjustice/hmpps-connect-dps-shared-items/dist/assets/js/all'
 
 govukFrontend.initAll()
 mojFrontend.initAll()
 addressAutosuggest.init()
+connectDps.initAll()
 
 document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
   const findPrisonerButton = document.getElementById('prisoner-number-lookup')
