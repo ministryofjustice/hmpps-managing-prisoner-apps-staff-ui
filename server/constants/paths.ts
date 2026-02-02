@@ -16,6 +16,8 @@ export const PATHS = {
     SELECT_GROUP: 'pages/log-application/select-group/index',
     SELECT_METHOD: 'pages/log-application/select-logging-method/index',
     PHOTO_CAPTURE: 'pages/log-application/photo-capture/index',
+    CONFIRM_PHOTO_CAPTURE: 'pages/log-application/confirm-photo/index',
+    ADD_ANOTHER_PHOTO: 'pages/log-application/another-photo/index',
     APPLICATION_DETAILS: 'pages/log-application/application-details/index',
     CONFIRM_DETAILS: 'pages/log-application/confirm/index',
     SUBMIT: 'pages/log-application/submit/index',

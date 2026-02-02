@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { csrfSync } from 'csrf-sync'
+import { URLS } from '../constants/urls'
 
 const testMode = process.env.NODE_ENV === 'test'
 
@@ -18,7 +19,16 @@ export default function setUpCsrf(): Router {
       },
     })
 
-    router.use(csrfSynchronisedProtection)
+    // Skip CSRF for routes that use multer (they handle CSRF after parsing multipart data)
+    router.use((req, res, next) => {
+      if (
+        (req.path === URLS.LOG_PHOTO_CAPTURE && req.method === 'POST') ||
+        (req.path === URLS.LOG_CONFIRM_PHOTO_CAPTURE && req.method === 'POST')
+      ) {
+        return next() // Skip global CSRF, route has its own after multer
+      }
+      return csrfSynchronisedProtection(req, res, next)
+    })
   }
 
   router.use((req, res, next) => {

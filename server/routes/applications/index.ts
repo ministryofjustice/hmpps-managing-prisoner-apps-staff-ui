@@ -23,6 +23,8 @@ import submitAppRouter from './submitApp'
 import viewAppsRouter from './view'
 import logMethodRouter from './logMethod'
 import photoCaptureRouter from './photoCapture'
+import confirmPhotoRouter from './confirmPhoto'
+import anotherPhotoRouter from './anotherPhoto'
 
 export default function applicationsRoutes({
   auditService,
@@ -80,6 +82,8 @@ export default function applicationsRoutes({
   router.use(viewAppsRouter({ auditService, managingPrisonerAppsService, prisonService }))
   router.use(logMethodRouter({ auditService }))
   router.use(photoCaptureRouter({ auditService }))
+  router.use(confirmPhotoRouter({ auditService }))
+  router.use(anotherPhotoRouter({ auditService }))
 
   router.get(
     '/api/addresses/find/:query',
