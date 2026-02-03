@@ -3,6 +3,8 @@ import * as govukFrontend from 'govuk-frontend'
 import * as mojFrontend from '@ministryofjustice/frontend'
 import * as addressAutosuggest from '@ministryofjustice/hmpps-connect-dps-shared-items/dist/assets/dps/components/address-autosuggest'
 import * as connectDps from '@ministryofjustice/hmpps-connect-dps-shared-items/dist/assets/js/all'
+import 'cropperjs'
+import initPhotoCropper from './photo-cropper'
 
 govukFrontend.initAll()
 mojFrontend.initAll()
@@ -186,5 +188,11 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault()
       showLookupSection()
     })
+  }
+})
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('photo-cropper-container')) {
+    initPhotoCropper()
   }
 })
