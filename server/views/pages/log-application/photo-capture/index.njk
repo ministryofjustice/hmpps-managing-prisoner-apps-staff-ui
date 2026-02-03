@@ -33,8 +33,9 @@
         <span class="govuk-caption-xl">{{ applicationType }}</span>
         <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
 
-        <form method="POST" action="{{ LOG_PHOTO_CAPTURE }}" enctype="multipart/form-data">
+        <form method="POST" enctype="multipart/form-data">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        <input type="hidden" name="photoType" value="webcam" />
         
         {{ hmppsWebcamCapture({
           fileName: "application-photo",

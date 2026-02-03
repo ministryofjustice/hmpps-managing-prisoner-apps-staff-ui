@@ -10,5 +10,7 @@ export const URLS = {
   LOG_METHOD: '/log/method',
   LOG_SUBMIT_APPLICATION: '/log/submit',
   LOG_PHOTO_CAPTURE: '/log/photo-capture',
+  LOG_CONFIRM_PHOTO_CAPTURE: '/log/confirm-photo-capture',
+  LOG_ADD_ANOTHER_PHOTO: '/log/add-another-photo',
   SEARCH_PRISONERS: `/applications/search-prisoners`,
 }

@@ -36,6 +36,7 @@ export declare module 'express-session' {
     department?: string
     departmentId?: string
     loggingMethod?: 'manual' | 'webcam'
+    photos?: Photo[]
   }
 
   type ListFilters = {
@@ -115,6 +116,13 @@ export declare module 'express-session' {
     telephone1: string
     telephone2?: string
     relationship?: string
+  }
+
+  interface Photo {
+    buffer: Buffer
+    mimetype: string
+    filename: string
+    imgSrc?: string
   }
 }
 
