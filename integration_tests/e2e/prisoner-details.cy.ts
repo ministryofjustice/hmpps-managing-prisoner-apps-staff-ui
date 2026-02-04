@@ -80,4 +80,19 @@ context(`Log Prisoner Details Page`, () => {
     page.continueButton().click()
     cy.url().should('include', '/log/group')
   })
+
+  it('should remove spaces and dots from prison number input in real-time', () => {
+    page.prisonNumberInput().type('A1234 . UE')
+    page.prisonNumberInput().should('have.value', 'A1234UE')
+  })
+
+  it('should convert lowercase letters to uppercase in prison number', () => {
+    page.prisonNumberInput().type('a1234ue')
+    page.prisonNumberInput().should('have.value', 'A1234UE')
+  })
+
+  it('should handle double-space auto-correction', () => {
+    page.prisonNumberInput().type('A1234  AA')
+    page.prisonNumberInput().should('have.value', 'A1234AA')
+  })
 })

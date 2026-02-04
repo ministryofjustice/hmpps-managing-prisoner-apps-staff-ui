@@ -34,6 +34,10 @@ document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
     return
   }
 
+  prisonerNumberInput.addEventListener('input', e => {
+    e.target.value = e.target.value.replace(/[\s.]+/g, '').toUpperCase()
+  })
+
   function setPrisonerNotFound() {
     prisonerExistsInput.value = 'false'
     prisonerNameInput.value = ''
