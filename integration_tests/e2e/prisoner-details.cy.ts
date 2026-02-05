@@ -80,4 +80,18 @@ context(`Log Prisoner Details Page`, () => {
     page.continueButton().click()
     cy.url().should('include', '/log/group')
   })
+
+  it('sanitises prison number before submitting to the API', () => {
+    cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
+    page.prisonNumberInput().type('A1234 . AA')
+    page.findPrisonerButton().click()
+    page.prisonerNameInsetText().should('contain', 'Prisoner name:')
+  })
+
+  it('normalises lowercase prison number before lookup', () => {
+    cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
+    page.prisonNumberInput().type('a1234aa')
+    page.findPrisonerButton().click()
+    page.prisonerNameInsetText().should('contain', 'Prisoner name:')
+  })
 })

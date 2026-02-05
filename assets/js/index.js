@@ -44,7 +44,8 @@ document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
   async function handlePrisonerLookup(event) {
     event.preventDefault()
 
-    const prisonNumber = prisonerNumberInput.value.trim()
+    let prisonNumber = prisonerNumberInput.value.trim()
+    prisonNumber = prisonNumber.replace(/[\s.]+/g, '').toUpperCase()
 
     if (!prisonNumber) {
       setPrisonerNotFound()
