@@ -72,5 +72,58 @@ context('Confirm Photo Capture Page', () => {
     it('should have save and continue button', () => {
       confirmPage.saveAndContinue().should('exist')
     })
+
+    it('should allow user to add a second photo and go to additional details page', () => {
+      cy.get('button').contains('Save and continue').click()
+
+      cy.url().should('include', '/log/add-another-photo')
+      cy.get('input[value="yes"]').check()
+      cy.get('button[type="submit"]').click()
+      cy.url().should('include', '/log/photo-capture')
+
+      cy.fixture('test-image.jpg', 'base64').then(fileContent => {
+        const blob = Cypress.Blob.base64StringToBlob(fileContent, 'image/jpeg')
+        const file = new File([blob], 'test-image.jpg', { type: 'image/jpeg' })
+        const dataTransfer = new DataTransfer()
+        dataTransfer.items.add(file)
+
+        cy.get('input[type="file"]').then($input => {
+          const input = $input[0] as HTMLInputElement
+          input.files = dataTransfer.files
+          cy.wrap($input).trigger('change', { force: true })
+        })
+      })
+
+      cy.get('form').submit()
+      cy.url().should('include', '/log/confirm-photo-capture')
+      cy.get('button').contains('Save and continue').click()
+      cy.url().should('include', '/log/additional-photo-details')
+    })
+
+    it('should navigate to additional details page when user selects No for `Do you want to add another photo?`', () => {
+      cy.get('button').contains('Save and continue').click()
+
+      cy.url().should('include', '/log/add-another-photo')
+
+      cy.get('input[value="no"]').check()
+      cy.get('button[type="submit"]').click()
+
+      cy.url().should('include', '/log/additional-photo-details')
+    })
+
+    it('should show validation error if no option is selected on Add Another Photo page', () => {
+      cy.get('button').contains('Save and continue').click()
+
+      cy.url().should('include', '/log/add-another-photo')
+
+      cy.get('button[type="submit"]').click()
+
+      cy.get('.govuk-error-summary').should(
+        'contain.text',
+        'You need to select if you want to take another photo of the application.',
+      )
+
+      cy.get('#addAnotherPhoto-error').should('contain.text', 'Select one')
+    })
   })
 })

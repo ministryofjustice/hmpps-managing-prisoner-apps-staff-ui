@@ -59,23 +59,16 @@ export default function photoCaptureRouter({ auditService }: { auditService: Aud
 
       const photos = applicationData.photos || []
 
-      if (photos.length >= 2) {
-        return res.redirect(URLS.LOG_PHOTO_CAPTURE)
-      }
+      const allPhotos = [
+        ...photos,
+        {
+          buffer: file.buffer,
+          mimetype: file.mimetype,
+          filename: `${file.originalname.replace(/\.[^/.]+$/, '')}[${photos.length}].${file.originalname.split('.').pop()}`,
+        },
+      ]
 
-      const imgSrc = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`
-
-      updateSessionData(req, {
-        photos: [
-          ...photos,
-          {
-            buffer: file.buffer,
-            mimetype: file.mimetype,
-            filename: file.originalname,
-            imgSrc,
-          },
-        ],
-      })
+      updateSessionData(req, { photos: allPhotos })
 
       return res.redirect(URLS.LOG_CONFIRM_PHOTO_CAPTURE)
     }),
