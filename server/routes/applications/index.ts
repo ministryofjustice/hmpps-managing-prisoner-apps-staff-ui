@@ -25,6 +25,7 @@ import logMethodRouter from './logMethod'
 import photoCaptureRouter from './photoCapture'
 import confirmPhotoRouter from './confirmPhoto'
 import anotherPhotoRouter from './anotherPhoto'
+import additionalPhotoDetailsRouter from './additionalPhotoDetails'
 
 export default function applicationsRoutes({
   auditService,
@@ -84,6 +85,7 @@ export default function applicationsRoutes({
   router.use(photoCaptureRouter({ auditService }))
   router.use(confirmPhotoRouter({ auditService }))
   router.use(anotherPhotoRouter({ auditService }))
+  router.use(additionalPhotoDetailsRouter({ auditService }))
 
   router.get(
     '/api/addresses/find/:query',

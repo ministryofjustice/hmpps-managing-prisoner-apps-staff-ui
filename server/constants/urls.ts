@@ -12,5 +12,6 @@ export const URLS = {
   LOG_PHOTO_CAPTURE: '/log/photo-capture',
   LOG_CONFIRM_PHOTO_CAPTURE: '/log/confirm-photo-capture',
   LOG_ADD_ANOTHER_PHOTO: '/log/add-another-photo',
+  LOG_ADDITIONAL_PHOTO_DETAILS: '/log/additional-photo-details',
   SEARCH_PRISONERS: `/applications/search-prisoners`,
 }

@@ -1,0 +1,38 @@
+import { Request, Response, Router } from 'express'
+import asyncMiddleware from '../../middleware/asyncMiddleware'
+import { PATHS } from '../../constants/paths'
+import { URLS } from '../../constants/urls'
+import AuditService, { Page } from '../../services/auditService'
+
+export default function additionalPhotoDetailsRouter({ auditService }: { auditService: AuditService }): Router {
+  const router = Router()
+
+  router.get(
+    URLS.LOG_ADDITIONAL_PHOTO_DETAILS,
+    asyncMiddleware(async (req: Request, res: Response) => {
+      const { applicationData } = req.session
+
+      if (!applicationData?.photos?.length) {
+        return res.redirect(URLS.LOG_PHOTO_CAPTURE)
+      }
+
+      await auditService.logPageView(Page.LOG_ADDITIONAL_PHOTO_DETAILS_PAGE, {
+        who: res.locals.user.username,
+        correlationId: req.id,
+      })
+
+      const photos = applicationData.photos || []
+
+      const backLink = photos.length >= 2 ? URLS.LOG_CONFIRM_PHOTO_CAPTURE : URLS.LOG_ADD_ANOTHER_PHOTO
+
+      return res.render(PATHS.LOG_APPLICATION.ADDITIONAL_PHOTO_DETAILS, {
+        title: 'Enter additional details',
+        applicationType: applicationData.type.name,
+        photos: applicationData.photos,
+        backLink,
+      })
+    }),
+  )
+
+  return router
+}
