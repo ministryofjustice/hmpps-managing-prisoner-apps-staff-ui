@@ -18,6 +18,7 @@ export const PATHS = {
     PHOTO_CAPTURE: 'pages/log-application/photo-capture/index',
     CONFIRM_PHOTO_CAPTURE: 'pages/log-application/confirm-photo/index',
     ADD_ANOTHER_PHOTO: 'pages/log-application/another-photo/index',
+    ADDITIONAL_PHOTO_DETAILS: 'pages/log-application/additional-photo-details/index',
     APPLICATION_DETAILS: 'pages/log-application/application-details/index',
     CONFIRM_DETAILS: 'pages/log-application/confirm/index',
     SUBMIT: 'pages/log-application/submit/index',

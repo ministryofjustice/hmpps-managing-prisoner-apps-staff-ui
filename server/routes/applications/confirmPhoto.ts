@@ -66,7 +66,7 @@ export default function confirmPhotoRouter({ auditService }: { auditService: Aud
       photos[photos.length - 1] = {
         buffer: req.file.buffer,
         mimetype: req.file.mimetype,
-        filename: req.file.originalname,
+        filename: photos[photos.length - 1].filename,
       }
 
       updateSessionData(req, { photos })
