@@ -38,7 +38,6 @@ export default function anotherPhotoRouter({ auditService }: { auditService: Aud
       return res.render(PATHS.LOG_APPLICATION.ADD_ANOTHER_PHOTO, {
         title: 'Do you want to add another photo?',
         applicationType: applicationData.type.name,
-        LOG_ADD_ANOTHER_PHOTO: URLS.LOG_ADD_ANOTHER_PHOTO,
         backLink: URLS.LOG_CONFIRM_PHOTO_CAPTURE,
         addAnotherPhoto: applicationData.addAnotherPhoto || null,
       })
@@ -68,13 +67,7 @@ export default function anotherPhotoRouter({ auditService }: { auditService: Aud
 
       updateSessionData(req, { addAnotherPhoto })
 
-      if (addAnotherPhoto === 'yes') {
-        return res.redirect(URLS.LOG_PHOTO_CAPTURE)
-      }
-      if (addAnotherPhoto === 'no') {
-        return res.redirect(URLS.LOG_ADDITIONAL_PHOTO_DETAILS)
-      }
-      return res.redirect(URLS.LOG_METHOD)
+      return res.redirect(addAnotherPhoto === 'yes' ? URLS.LOG_PHOTO_CAPTURE : URLS.LOG_ADDITIONAL_PHOTO_DETAILS)
     }),
   )
 

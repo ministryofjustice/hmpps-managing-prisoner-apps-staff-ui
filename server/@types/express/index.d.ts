@@ -38,6 +38,7 @@ export declare module 'express-session' {
     loggingMethod?: 'manual' | 'webcam'
     addAnotherPhoto?: 'yes' | 'no'
     photos?: Photo[]
+    photoAdditionalDetails?: string
   }
 
   type ListFilters = {
