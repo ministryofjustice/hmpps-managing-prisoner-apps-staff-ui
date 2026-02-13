@@ -46,7 +46,10 @@ export default function confirmAppRouter({
           type: applicationData?.type,
           department: applicationData?.department,
         },
-        backLink: URLS.LOG_APPLICATION_DETAILS,
+        backLink:
+          applicationData?.loggingMethod === 'manual'
+            ? URLS.LOG_APPLICATION_DETAILS
+            : URLS.LOG_ADDITIONAL_PHOTO_DETAILS,
         title: applicationType.name,
         isGeneric: applicationType.genericType || applicationType.genericForm,
       })

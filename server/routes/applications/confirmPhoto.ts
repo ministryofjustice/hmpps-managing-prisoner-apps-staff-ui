@@ -1,11 +1,16 @@
 import { Request, Response, Router } from 'express'
 import multer from 'multer'
 import { csrfSync } from 'csrf-sync'
-import asyncMiddleware from '../../middleware/asyncMiddleware'
+
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
+import { PHOTO_KEYS } from '../../constants/photos'
+
+import asyncMiddleware from '../../middleware/asyncMiddleware'
+
 import AuditService, { Page } from '../../services/auditService'
 import { updateSessionData } from '../../utils/http/session'
+import { getBackLink, createPhotoFromFile } from '../../helpers/photos'
 
 const upload = multer({ storage: multer.memoryStorage() })
 
@@ -23,14 +28,19 @@ export default function confirmPhotoRouter({ auditService }: { auditService: Aud
       const { user } = res.locals
       const { applicationData } = req.session
 
-      const photos = applicationData.photos || []
-      if (!photos.length) {
-        return res.redirect(URLS.LOG_PHOTO_CAPTURE)
+      if (!applicationData?.loggingMethod) {
+        return res.redirect(URLS.LOG_METHOD)
       }
 
-      const currentPhoto = photos[photos.length - 1]
-      const buffer = Buffer.from(currentPhoto.buffer)
-      const imgSrc = `data:${currentPhoto.mimetype};base64,${buffer.toString('base64')}`
+      const photos = applicationData.photos ?? {}
+      const { currentPhoto } = applicationData
+
+      if (!currentPhoto || !photos?.[currentPhoto]) {
+        return res.redirect(URLS.LOG_PHOTO_CAPTURE)
+      }
+      const photoData = photos[currentPhoto]
+      const buffer = Buffer.from(photoData.buffer)
+      const imgSrc = `data:${photoData.mimetype};base64,${buffer.toString('base64')}`
 
       await auditService.logPageView(Page.LOG_CONFIRM_PHOTO_CAPTURE_PAGE, {
         who: user.username,
@@ -42,8 +52,9 @@ export default function confirmPhotoRouter({ auditService }: { auditService: Aud
         csrfToken: req.csrfToken(),
         applicationType: applicationData.type.name,
         imgSrc,
-        fileName: currentPhoto.filename,
-        fileType: currentPhoto.mimetype,
+        fileName: photoData.filename,
+        fileType: photoData.mimetype,
+        backLink: getBackLink(req),
       })
     }),
   )
@@ -53,25 +64,29 @@ export default function confirmPhotoRouter({ auditService }: { auditService: Aud
     upload.single('file'),
     csrfSynchronisedProtection,
     asyncMiddleware(async (req: Request, res: Response) => {
-      if (!req.file) {
+      const { applicationData } = req.session
+      const { file } = req
+
+      if (!applicationData?.loggingMethod) {
+        return res.redirect(URLS.LOG_METHOD)
+      }
+
+      const photos = applicationData.photos ?? {}
+      const { currentPhoto } = applicationData
+
+      if (!file || !currentPhoto || !photos[currentPhoto]) {
         return res.redirect(URLS.LOG_PHOTO_CAPTURE)
       }
 
-      const photos = req.session.applicationData.photos || []
-
-      if (!photos.length) {
-        return res.redirect(URLS.LOG_PHOTO_CAPTURE)
-      }
-
-      photos[photos.length - 1] = {
-        buffer: req.file.buffer,
-        mimetype: req.file.mimetype,
-        filename: photos[photos.length - 1].filename,
-      }
+      photos[currentPhoto] = createPhotoFromFile(file, currentPhoto)
 
       updateSessionData(req, { photos })
 
-      return res.redirect(URLS.LOG_ADD_ANOTHER_PHOTO)
+      if (currentPhoto === PHOTO_KEYS.PHOTO_1 && !photos[PHOTO_KEYS.PHOTO_2]) {
+        return res.redirect(URLS.LOG_ADD_ANOTHER_PHOTO)
+      }
+
+      return res.redirect(URLS.LOG_ADDITIONAL_PHOTO_DETAILS)
     }),
   )
 
