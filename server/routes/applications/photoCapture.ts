@@ -1,15 +1,17 @@
 import { Request, Response, Router } from 'express'
-
 import multer from 'multer'
 import { csrfSync } from 'csrf-sync'
+
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
+import { PHOTO_KEYS } from '../../constants/photos'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
 import AuditService, { Page } from '../../services/auditService'
 
 import { updateSessionData } from '../../utils/http/session'
+import { getBackLink, createPhotoFromFile } from '../../helpers/photos'
 
 const upload = multer({ storage: multer.memoryStorage() })
 
@@ -40,7 +42,7 @@ export default function photoCaptureRouter({ auditService }: { auditService: Aud
         title: 'Take a photo of the application',
         applicationType: applicationData.type.name,
         LOG_PHOTO_CAPTURE: URLS.LOG_PHOTO_CAPTURE,
-        backLink: URLS.LOG_METHOD,
+        backLink: getBackLink(req),
       })
     }),
   )
@@ -53,22 +55,14 @@ export default function photoCaptureRouter({ auditService }: { auditService: Aud
       const { applicationData } = req.session
       const { file } = req
 
-      if (!file) {
-        return res.redirect(URLS.LOG_PHOTO_CAPTURE)
-      }
+      if (!file) return res.redirect(URLS.LOG_PHOTO_CAPTURE)
 
-      const photos = applicationData.photos || []
+      const currentPhoto = applicationData.currentPhoto ?? PHOTO_KEYS.PHOTO_1
+      const photos = applicationData.photos ?? {}
 
-      const allPhotos = [
-        ...photos,
-        {
-          buffer: file.buffer,
-          mimetype: file.mimetype,
-          filename: `${file.originalname.replace(/\.[^/.]+$/, '')}[${photos.length}].${file.originalname.split('.').pop()}`,
-        },
-      ]
+      photos[currentPhoto] = createPhotoFromFile(file, currentPhoto)
 
-      updateSessionData(req, { photos: allPhotos })
+      updateSessionData(req, { photos, currentPhoto })
 
       return res.redirect(URLS.LOG_CONFIRM_PHOTO_CAPTURE)
     }),
