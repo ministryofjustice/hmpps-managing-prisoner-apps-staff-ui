@@ -78,6 +78,12 @@ export default function appDetailsRouter({
         correlationId: req.id,
       })
 
+      let backLink = URLS.LOG_DEPARTMENT
+
+      if (config.featureFlags.logMethodPageEnabled && isGeneric) {
+        backLink = URLS.LOG_METHOD
+      }
+
       return res.render(PATHS.LOG_APPLICATION.APPLICATION_DETAILS, {
         ...templateFields,
         applicationType: applicationData.type,
@@ -85,7 +91,7 @@ export default function appDetailsRouter({
         isLoggingForSamePrisoner,
         isGeneric,
         prisonerName: isLoggingForSamePrisoner ? applicationData.prisonerName : null,
-        backLink: config.featureFlags.logMethodPageEnabled ? URLS.LOG_METHOD : URLS.LOG_DEPARTMENT,
+        backLink,
       })
     }),
   )

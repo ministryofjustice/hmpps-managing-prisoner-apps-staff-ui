@@ -24,6 +24,8 @@ export default function additionalPhotoDetailsRouter({ auditService }: { auditSe
       const photos = applicationData.photos ?? {}
       if (Object.keys(photos).length === 0) return res.redirect(URLS.LOG_PHOTO_CAPTURE)
 
+      const additionalDetails = applicationData.photoAdditionalDetails ?? ''
+
       await auditService.logPageView(Page.LOG_ADDITIONAL_PHOTO_DETAILS_PAGE, {
         who: res.locals.user.username,
         correlationId: req.id,
@@ -34,6 +36,7 @@ export default function additionalPhotoDetailsRouter({ auditService }: { auditSe
         applicationType: applicationData.type.name,
         photos: Object.values(photos),
         backLink: getBackLink(req),
+        additionalDetails,
       })
     }),
   )

@@ -1,6 +1,8 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+ {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+ {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "pages/log-application/confirm/partials/app-type-summary-list-header.njk" import appTypeSummaryListHeader %}
 
 {% extends "../../../partials/layout.njk" %}
@@ -28,14 +30,33 @@
             {% include "./partials/" + applicationType + ".njk" %}
           {% endif %}
 
-        <form method="POST">
-          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {% if loggingMethod %}
+          <form method="POST">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-          {{ govukButton({
-            text: "Save",
-            classes: "govuk-button--primary"
-          }) }}
-        </form>
+            <div class="govuk-button-group">
+              {{ govukButton({
+                text: "Submit application",
+                classes: "govuk-button--primary",
+                preventDoubleClick: true,
+                disabled: hasNoPhotos
+              }) }}
+
+              <a href="/" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+            </div>
+          </form>
+
+        {% else %}
+        
+          <form method="POST">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+            {{ govukButton({
+              text: "Save",
+              classes: "govuk-button--primary"
+            }) }}
+          </form>
+        {% endif %}
       </div>
     </div>
   </div>

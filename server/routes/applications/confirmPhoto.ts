@@ -71,8 +71,8 @@ export default function confirmPhotoRouter({ auditService }: { auditService: Aud
         return res.redirect(URLS.LOG_METHOD)
       }
 
+      const { currentPhoto, isFromCheckDetailsPage } = applicationData
       const photos = applicationData.photos ?? {}
-      const { currentPhoto } = applicationData
 
       if (!file || !currentPhoto || !photos[currentPhoto]) {
         return res.redirect(URLS.LOG_PHOTO_CAPTURE)
@@ -81,6 +81,11 @@ export default function confirmPhotoRouter({ auditService }: { auditService: Aud
       photos[currentPhoto] = createPhotoFromFile(file, currentPhoto)
 
       updateSessionData(req, { photos })
+
+      if (isFromCheckDetailsPage) {
+        updateSessionData(req, { isFromCheckDetailsPage: false })
+        return res.redirect(URLS.LOG_CONFIRM_DETAILS)
+      }
 
       if (currentPhoto === PHOTO_KEYS.PHOTO_1 && !photos[PHOTO_KEYS.PHOTO_2]) {
         return res.redirect(URLS.LOG_ADD_ANOTHER_PHOTO)

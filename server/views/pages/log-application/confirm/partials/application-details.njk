@@ -1,21 +1,9 @@
 {% set rows = [] %}
 
-{% if isUpdate %}
-  {% set prisonerActions = { items: [] } %}
-{% else %}
-  {% set prisonerActions = {
-    items: [{
-      href: "/log/prisoner-details",
-      text: "Change",
-      visuallyHiddenText: "prisoner"
-    }]
-  } %}
-{% endif %}
-
 {% set _ = rows.push({
   key: { text: "Prisoner" },
-  value: { text: applicationData.prisoner },
-  actions: prisonerActions
+  value: { text: applicationData.prisoner }
+  
 }) %}
 
 {% if isUpdate %}

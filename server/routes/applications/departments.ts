@@ -71,7 +71,6 @@ export default function departmentsRouter({
       if (!applicationData?.type) {
         return res.redirect(URLS.LOG_APPLICATION_TYPE)
       }
-
       const selectedDepartment = req.body.department
       const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.value)
       const selectedDepartmentId = departments.find(dept => dept.name === selectedDepartment)?.id
@@ -88,8 +87,15 @@ export default function departmentsRouter({
 
       updateSessionData(req, { department: selectedDepartment, departmentId: selectedDepartmentId })
 
-      if (!config.featureFlags.logMethodPageEnabled) {
+      if (
+        !config.featureFlags.logMethodPageEnabled ||
+        (!applicationData.type.genericForm && !applicationData.type.genericType)
+      ) {
         return res.redirect(URLS.LOG_APPLICATION_DETAILS)
+      }
+
+      if (applicationData?.loggingMethod) {
+        return res.redirect(URLS.LOG_CONFIRM_DETAILS)
       }
 
       return res.redirect(URLS.LOG_METHOD)

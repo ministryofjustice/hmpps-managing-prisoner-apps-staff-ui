@@ -11,7 +11,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 
 import { updateSessionData } from '../../utils/http/session'
-import { getBackLink, createPhotoFromFile } from '../../helpers/photos'
+import { getBackLink, createPhotoFromFile, handlePhotoQueryParams } from '../../helpers/photos'
 
 const upload = multer({ storage: multer.memoryStorage() })
 
@@ -28,10 +28,13 @@ export default function photoCaptureRouter({ auditService }: { auditService: Aud
     asyncMiddleware(async (req: Request, res: Response) => {
       const { user } = res.locals
       const { applicationData } = req.session
+      const { retake, image } = req.query
 
       if (!applicationData?.loggingMethod) {
         return res.redirect(URLS.LOG_METHOD)
       }
+
+      handlePhotoQueryParams(req, retake as string, image as string)
 
       await auditService.logPageView(Page.LOG_PHOTO_CAPTURE_PAGE, {
         who: user.username,
@@ -65,6 +68,28 @@ export default function photoCaptureRouter({ auditService }: { auditService: Aud
       updateSessionData(req, { photos, currentPhoto })
 
       return res.redirect(URLS.LOG_CONFIRM_PHOTO_CAPTURE)
+    }),
+  )
+
+  router.get(
+    `${URLS.LOG_VIEW_PHOTO}/:photoKey`,
+    asyncMiddleware(async (req: Request, res: Response) => {
+      const { applicationData } = req.session
+      const photoKey = req.params.photoKey as 'photo1' | 'photo2'
+
+      const photo = applicationData?.photos?.[photoKey]
+
+      if (!photo) {
+        res.status(404).render('pages/error', {
+          message: 'Photo not found',
+          status: 404,
+        })
+        return
+      }
+
+      res.setHeader('Content-Type', photo.mimetype)
+      res.setHeader('Content-Disposition', `inline; filename="${photo.filename}"`)
+      res.send(Buffer.from(photo.buffer))
     }),
   )
 

@@ -4,6 +4,7 @@ import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
 import { getAppType } from '../../helpers/application/getAppType'
+import { getPhotosForDisplay } from '../../helpers/photos'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
@@ -36,6 +37,8 @@ export default function confirmAppRouter({
         correlationId: req.id,
       })
 
+      const { photosForDisplay, photoDetails, hasNoPhotos } = getPhotosForDisplay(applicationData)
+
       return res.render(PATHS.LOG_APPLICATION.CONFIRM_DETAILS, {
         applicationType: applicationData?.type.key,
         applicationData: {
@@ -46,8 +49,12 @@ export default function confirmAppRouter({
           type: applicationData?.type,
           department: applicationData?.department,
         },
+        photos: photosForDisplay,
+        photoDetails,
+        loggingMethod: applicationData?.loggingMethod,
+        hasNoPhotos,
         backLink:
-          applicationData?.loggingMethod === 'manual'
+          applicationData?.loggingMethod === 'manual' || !applicationData?.loggingMethod
             ? URLS.LOG_APPLICATION_DETAILS
             : URLS.LOG_ADDITIONAL_PHOTO_DETAILS,
         title: applicationType.name,

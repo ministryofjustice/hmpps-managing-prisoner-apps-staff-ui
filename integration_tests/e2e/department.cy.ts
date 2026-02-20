@@ -8,13 +8,13 @@ context('Department Page', () => {
     cy.resetAndSignIn()
     cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
     cy.task('stubGetGroupsAndTypes')
-    cy.task('stubGetDepartments', { appType: '3' })
+    cy.task('stubGetDepartments', { appType: '7' })
 
     cy.visit('/log/department')
 
     cy.enterPrisonerDetails()
     cy.selectGroup('Pin Phone Contact Apps')
-    cy.selectApplicationType('Add a social PIN phone contact')
+    cy.selectApplicationType('Make a general PIN phone enquiry')
 
     page = Page.verifyOnPage(DepartmentPage)
   })
@@ -65,5 +65,31 @@ context('Department Page', () => {
     page.departmentLabel().click()
     page.continueButton().click()
     cy.url().should('include', '/log/method')
+  })
+
+  it('should redirect to application details page for non-generic types', () => {
+    cy.clearCookies()
+    cy.clearLocalStorage()
+    cy.clearAllSessionStorage()
+
+    cy.resetAndSignIn()
+    cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
+    cy.task('stubGetGroupsAndTypes')
+    cy.task('stubGetDepartments', { appType: '5' })
+    cy.visit('/log/prisoner-details')
+    cy.enterPrisonerDetails()
+
+    cy.url().should('include', '/log/group')
+    cy.selectGroup('Pin Phone Contact Apps')
+
+    cy.url().should('include', '/log/application-type')
+    cy.selectApplicationType('Swap Visiting Orders (VOs) for PIN Credit')
+
+    cy.url().should('include', '/log/department')
+
+    cy.selectDepartment('Business Hub')
+
+    cy.url().should('include', '/log/application-details')
+    cy.url().should('not.include', '/log/method')
   })
 })

@@ -254,3 +254,30 @@ $hmpps-cropper-height: 276px;
     height: auto;
   }
 }
+
+.photo-thumbnail {
+  border: 1px solid #b1b4b6;
+  padding: 8px;
+  margin-bottom: 20px;
+  background: #f3f2f1;
+  text-align: center;
+}
+
+.thumbnail-img {
+  width: 180px;      
+  height: 225px; 
+  object-fit: cover;
+  display: block;
+  transition: transform 0.2s ease-in-out;
+}
+
+.thumbnail-img:hover {
+  transform: scale(1.03);
+}
+
+.govuk-summary-list__key,
+.govuk-summary-list__value,
+.govuk-summary-list__actions {
+  vertical-align: top;
+}
+
