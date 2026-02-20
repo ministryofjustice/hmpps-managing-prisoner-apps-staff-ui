@@ -43,6 +43,7 @@ export declare module 'express-session' {
     }
     currentPhoto?: 'photo1' | 'photo2'
     photoAdditionalDetails?: string
+    isFromCheckDetailsPage?: boolean
   }
 
   type ListFilters = {

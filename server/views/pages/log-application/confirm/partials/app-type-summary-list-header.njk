@@ -1,4 +1,4 @@
-{% macro appTypeSummaryListHeader(title, username, appId, isUpdate) %}
+{% macro appTypeSummaryListHeader(title, username, appId, isUpdate, loggingMethod) %}
   {% if isUpdate %}
     {% set changeUrl = "/applications/" + username + "/" + appId + "/change" %}
   {% else %}
@@ -7,8 +7,10 @@
 
   <div class="govuk-summary-list--header">
     <h2 class="govuk-heading-m">{{ title }}</h2>
-    <a href="{{ changeUrl }}" class="govuk-body">
-      Change <span class="govuk-visually-hidden">log details</span>
-    </a>
+    {% if not loggingMethod  %}
+      <a href="{{ changeUrl }}" class="govuk-body">
+        Change <span class="govuk-visually-hidden">log details</span>
+      </a>
+    {% endif %}
   </div>
 {% endmacro %}

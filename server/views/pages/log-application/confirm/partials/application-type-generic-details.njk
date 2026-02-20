@@ -1,11 +1,141 @@
-{{ appTypeSummaryListHeader("Application details", application.requestedBy.username, application.id, isUpdate) }}
+{{ appTypeSummaryListHeader("Application details", application.requestedBy.username, application.id, isUpdate, loggingMethod) }}
 
-{{ govukSummaryList({
-  classes: "govuk-!-margin-bottom-9",
-  rows: [
-    {
-      key: { text: "Details" },
-      value: { text: applicationData.request.details }
-    }
-  ]
-}) }}
+{% if isGeneric %}
+
+  {% set rows = [] %}
+  {% if loggingMethod %}
+    {% set methodText = "Entered manually" if loggingMethod === 'manual' else "Take a photo of the application" %}
+    {% set _ = rows.push({
+      key: { text: "Method" },
+      value: { text: methodText },
+      actions: {
+        items: [{
+          href: "/log/method",
+          text: "Change",
+          visuallyHiddenText: "method"
+        }]
+      }
+    }) %}
+
+    {% if loggingMethod === 'manual' %}
+      {% set _ = rows.push({
+        key: { text: "Details" },
+        value: { text: applicationData.request.details },
+        actions: {
+          items: [{
+            href: "/log/application-details",
+            text: "Change",
+            visuallyHiddenText: "details"
+          }]
+        }
+      }) %}
+    {% endif %}
+
+    {% if loggingMethod === 'webcam' %}
+      {% set expectedImages = [1, 2] %}
+
+      {% for imageNumber in expectedImages %}
+           {% if imageNumber == 1 %}
+             {% set photoKey = 'photo1' %}
+          {% else %}
+              {% set photoKey = 'photo2' %}
+          {% endif %}
+
+         {% set photo = photos[photoKey] %}
+
+        {% set label = "Image " ~ imageNumber %}
+        {% if imageNumber == 2 %}
+          {% set label = label ~ " (optional)" %}
+        {% endif %}
+
+        {% if photo %}
+          {% set photoHtml %}
+            <div>
+              <a href="/log/view-photo/{{ photoKey }}" target="_blank" rel="noopener noreferrer">
+                <img src="{{ photo.imgSrc }}"
+                  alt="Image {{ imageNumber }}"
+                  class="thumbnail-img" />
+              </a>
+              <a href="/log/view-photo/{{ photoKey }}"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 class="govuk-link">
+              </a>
+            </div>
+          {% endset %}
+
+          {% set _ = rows.push({
+            key: { text: label },
+            value: { html: photoHtml },
+            actions: {
+              items: [
+                {
+                  href: "/log/photo-capture?retake=" ~ photoKey,
+                  text: "Retake",
+                  visuallyHiddenText: "image " ~ imageNumber
+                },
+                {
+                  href: "/log/remove-photo?photo=" ~ photoKey,
+                  text: "Remove",
+                  visuallyHiddenText: "image " ~ imageNumber
+                }
+              ]
+            }
+          }) %}
+
+        {% else %}
+
+          {% set _ = rows.push({
+            key: { text: label },
+            value: { text: "Not uploaded" },
+            actions: {
+              items: [{
+                href: "/log/photo-capture?image=" ~ imageNumber,
+                text: "Upload",
+                visuallyHiddenText: "image " ~ imageNumber
+              }]
+            }
+          }) %}
+
+        {% endif %}
+
+      {% endfor %}
+
+      {% set _ = rows.push({
+        key: { text: "Additional details" },
+        value: { text: photoDetails if photoDetails else "Not entered" },
+        actions: {
+          items: [{
+            href: "/log/additional-photo-details",
+            text: "Change",
+            visuallyHiddenText: "additional details"
+          }]
+        }
+      }) %}
+
+    {% endif %}
+  {% endif %}  {{ govukSummaryList({
+    classes: "govuk-!-margin-bottom-9",
+    rows: rows
+  }) }}
+
+{% else %}
+
+  {{ govukSummaryList({
+    classes: "govuk-!-margin-bottom-9",
+    rows: [
+      {
+        key: { text: "Details" },
+        value: { text: applicationData.request.details }
+      }
+    ]
+  }) }}
+
+{% endif %}
+
+{% if hasNoPhotos %}
+ 
+  {{ govukInsetText({
+    text: "You cannot save this application as there are no images uploaded. You can upload an image of the application or change method to enter details manually."
+  }) }}
+{% endif %}

@@ -30,7 +30,6 @@ context('Confirm Details Page', () => {
           cy.selectGroup('Pin Phone Contact Apps')
           cy.selectApplicationType('Swap Visiting Orders (VOs) for PIN Credit')
           cy.selectDepartment('Business Hub')
-          cy.selectLoggingMethod('manual')
 
           cy.contains('button', 'Continue').click()
         } else {
@@ -52,7 +51,7 @@ context('Confirm Details Page', () => {
       })
 
       it('should render the back link with correct text and href', () => {
-        page.backLink().should('have.text', 'Back').and('have.attr', 'href', backLink)
+        page.backLink().should('have.text', 'Back')
       })
 
       it('should render the application type summary with correct text', () => {

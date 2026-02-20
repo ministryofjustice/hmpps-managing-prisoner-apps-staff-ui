@@ -21,7 +21,10 @@ function startApplication(appType: string): ApplicationDetailsPage {
   cy.selectGroup('Pin Phone Contact Apps')
   cy.selectApplicationType(appType)
   cy.selectDepartment('Business Hub')
-  if (logMethodEnabled) {
+
+  const isGeneric = appConfig?.genericType || appConfig?.genericForm
+
+  if (logMethodEnabled && isGeneric) {
     cy.url().should('include', '/log/method')
     cy.selectLoggingMethod('manual')
     cy.url().should('include', '/log/application-details')
