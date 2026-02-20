@@ -64,12 +64,21 @@ export default function logMethodRouter({ auditService }: { auditService: AuditS
         })
       }
 
+      const methodChanged = applicationData.loggingMethod !== loggingMethod
       updateSessionData(req, { loggingMethod })
+
+      if (!methodChanged) {
+        return res.redirect(URLS.LOG_CONFIRM_DETAILS)
+      }
 
       if (loggingMethod === 'manual') {
         return res.redirect(URLS.LOG_APPLICATION_DETAILS)
       }
+
       if (loggingMethod === 'webcam') {
+        if (applicationData.photos?.photo1 && applicationData.photos?.photo2) {
+          return res.redirect(URLS.LOG_CONFIRM_DETAILS)
+        }
         return res.redirect(URLS.LOG_PHOTO_CAPTURE)
       }
 

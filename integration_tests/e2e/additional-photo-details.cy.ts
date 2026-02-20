@@ -9,11 +9,11 @@ context('Additional Photo Details Page', () => {
 
     cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
     cy.task('stubGetGroupsAndTypes')
-    cy.task('stubGetDepartments', { appType: '3' })
+    cy.task('stubGetDepartments', { appType: '7' })
     cy.visit('/log/prisoner-details')
     cy.enterPrisonerDetails()
     cy.selectGroup('Pin Phone Contact Apps')
-    cy.selectApplicationType('Add a social PIN phone contact')
+    cy.selectApplicationType('Make a general PIN phone enquiry')
     cy.selectDepartment('Business Hub')
     cy.selectLoggingMethod('webcam')
 
@@ -46,7 +46,7 @@ context('Additional Photo Details Page', () => {
 
   it('should display correct page content', () => {
     additionalPhotoDetailsPage.heading().should('contain.text', 'Enter additional details')
-    additionalPhotoDetailsPage.caption().should('contain.text', 'Add a social PIN phone contact')
+    additionalPhotoDetailsPage.caption().should('contain.text', 'Make a general PIN phone enquiry')
     additionalPhotoDetailsPage
       .detailsLabel()
       .should('contain.text', 'Add additional details about this application (optional)')

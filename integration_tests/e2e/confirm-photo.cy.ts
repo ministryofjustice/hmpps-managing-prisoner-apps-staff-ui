@@ -9,12 +9,12 @@ context('Confirm Photo Capture Page', () => {
 
     cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
     cy.task('stubGetGroupsAndTypes')
-    cy.task('stubGetDepartments', { appType: '3' })
+    cy.task('stubGetDepartments', { appType: '7' })
 
     cy.visit('/log/prisoner-details')
     cy.enterPrisonerDetails()
     cy.selectGroup('Pin Phone Contact Apps')
-    cy.selectApplicationType('Add a social PIN phone contact')
+    cy.selectApplicationType('Make a general PIN phone enquiry')
     cy.selectDepartment('Business Hub')
     cy.selectLoggingMethod('webcam')
   })
@@ -58,7 +58,7 @@ context('Confirm Photo Capture Page', () => {
     })
 
     it('should display the application type caption', () => {
-      cy.get('.govuk-caption-xl').should('contain.text', 'Add a social PIN phone contact')
+      cy.get('.govuk-caption-xl').should('contain.text', 'Make a general PIN phone enquiry')
     })
 
     it('should display edit instructions', () => {
