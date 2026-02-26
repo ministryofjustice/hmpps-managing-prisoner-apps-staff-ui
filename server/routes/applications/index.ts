@@ -7,6 +7,7 @@ import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PersonalRelationshipsService from '../../services/personalRelationshipsService'
 import PrisonService from '../../services/prisonService'
+import DocumentManagementService from '../../services/documentManagementService'
 
 import actionAppRouter from './actionApp'
 import appDetailsRouter from './appDetails'
@@ -31,12 +32,14 @@ import removePhotoRouter from './removePhoto'
 export default function applicationsRoutes({
   auditService,
   managingPrisonerAppsService,
+  documentManagementService,
   prisonService,
   personalRelationshipsService,
   osPlacesAddressService,
 }: {
   auditService: AuditService
   managingPrisonerAppsService: ManagingPrisonerAppsService
+  documentManagementService: DocumentManagementService
   prisonService: PrisonService
   personalRelationshipsService: PersonalRelationshipsService
   osPlacesAddressService?: OsPlacesAddressService
@@ -74,7 +77,7 @@ export default function applicationsRoutes({
     }),
   )
   router.use(commentsRouter({ auditService, managingPrisonerAppsService }))
-  router.use(confirmAppRouter({ auditService, managingPrisonerAppsService }))
+  router.use(confirmAppRouter({ auditService, managingPrisonerAppsService, documentManagementService }))
   router.use(departmentsRouter({ auditService, managingPrisonerAppsService }))
   router.use(forwardAppRouter({ auditService, managingPrisonerAppsService }))
   router.use(groupsRouter({ auditService, managingPrisonerAppsService }))

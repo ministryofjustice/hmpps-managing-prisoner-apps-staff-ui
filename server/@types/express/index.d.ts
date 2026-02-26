@@ -126,7 +126,7 @@ export declare module 'express-session' {
   }
 
   interface Photo {
-    buffer: Buffer
+    buffer: Buffer | string
     mimetype: string
     filename: string
     imgSrc?: string
