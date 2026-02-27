@@ -140,6 +140,16 @@ export default {
       agent: new AgentConfig(Number(get('PERSONAL_RELATIONSHIPS_API_TIMEOUT_RESPONSE', 10000))),
       enabled: get('PERSONAL_RELATIONSHIPS_ENABLED', 'false') === 'true',
     },
+    documentApi: {
+      url: get('DOCUMENT_API_URL', 'http://localhost:8080', requiredInProduction),
+      healthPath: '/health/ping',
+      timeout: {
+        response: Number(get('DOCUMENT_API_TIMEOUT_RESPONSE', 10000)),
+        deadline: Number(get('DOCUMENT_API_TIMEOUT_DEADLINE', 10000)),
+      },
+      agent: new AgentConfig(Number(get('DOCUMENT_API_TIMEOUT_RESPONSE', 10000))),
+      enabled: get('DOCUMENT_API_ENABLED', 'false') === 'true',
+    },
     hmppsManageUsers: {
       url: get('HMPPS_MANAGE_USERS_API_URL', 'http://localhost:8080', requiredInProduction),
       healthPath: '/health/ping',

@@ -39,8 +39,7 @@ export default function confirmPhotoRouter({ auditService }: { auditService: Aud
         return res.redirect(URLS.LOG_PHOTO_CAPTURE)
       }
       const photoData = photos[currentPhoto]
-      const buffer = Buffer.from(photoData.buffer)
-      const imgSrc = `data:${photoData.mimetype};base64,${buffer.toString('base64')}`
+      const imgSrc = `data:${photoData.mimetype};base64,${photoData.buffer}`
 
       await auditService.logPageView(Page.LOG_CONFIRM_PHOTO_CAPTURE_PAGE, {
         who: user.username,

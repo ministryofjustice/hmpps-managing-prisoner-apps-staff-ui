@@ -8,6 +8,7 @@ import staticPagesRoutes from './static-pages/staticPagesRoutes'
 export default function routes({
   auditService,
   managingPrisonerAppsService,
+  documentManagementService,
   prisonService,
   personalRelationshipsService,
   osPlacesAddressService,
@@ -19,6 +20,7 @@ export default function routes({
     applicationsRoutes({
       auditService,
       managingPrisonerAppsService,
+      documentManagementService,
       prisonService,
       personalRelationshipsService,
       osPlacesAddressService,

@@ -172,7 +172,7 @@ describe('Photo Helpers', () => {
       const result = createPhotoFromFile(mockFile, PHOTO_KEYS.PHOTO_1)
 
       expect(result).toEqual({
-        buffer: mockFile.buffer,
+        buffer: mockFile.buffer.toString('base64'),
         mimetype: 'image/jpeg',
         filename: 'test-photo[photo1].jpg',
       })
@@ -188,7 +188,7 @@ describe('Photo Helpers', () => {
       const result = createPhotoFromFile(mockFile, PHOTO_KEYS.PHOTO_2)
 
       expect(result).toEqual({
-        buffer: mockFile.buffer,
+        buffer: mockFile.buffer.toString('base64'),
         mimetype: 'image/png',
         filename: 'application[photo2].png',
       })
@@ -216,8 +216,8 @@ describe('Photo Helpers', () => {
 
       const result = createPhotoFromFile(mockFile, PHOTO_KEYS.PHOTO_1)
 
-      expect(result.buffer).toBe(testBuffer)
-      expect(result.buffer.toString()).toBe('important-image-data')
+      expect(result.buffer).toBe(testBuffer.toString('base64'))
+      expect(Buffer.from(result.buffer, 'base64').toString()).toBe('important-image-data')
     })
   })
 
@@ -326,7 +326,7 @@ describe('Photo Helpers', () => {
         loggingMethod: 'webcam',
         photos: {
           photo1: {
-            buffer: photoBuffer,
+            buffer: photoBuffer.toString('base64'),
             mimetype: 'image/jpeg',
             filename: 'test-photo[photo1].jpg',
           },
@@ -340,7 +340,7 @@ describe('Photo Helpers', () => {
       expect(result.photoDetails).toBe('Test details')
       expect(result.photosForDisplay).toBeDefined()
       expect(result.photosForDisplay?.photo1).toEqual({
-        buffer: photoBuffer,
+        buffer: photoBuffer.toString('base64'),
         mimetype: 'image/jpeg',
         filename: 'test-photo[photo1].jpg',
         imgSrc: `data:image/jpeg;base64,${photoBuffer.toString('base64')}`,
@@ -354,12 +354,12 @@ describe('Photo Helpers', () => {
         loggingMethod: 'webcam',
         photos: {
           photo1: {
-            buffer: photo1Buffer,
+            buffer: photo1Buffer.toString('base64'),
             mimetype: 'image/jpeg',
             filename: 'app[photo1].jpg',
           },
           photo2: {
-            buffer: photo2Buffer,
+            buffer: photo2Buffer.toString('base64'),
             mimetype: 'image/png',
             filename: 'app[photo2].png',
           },
@@ -375,14 +375,14 @@ describe('Photo Helpers', () => {
       expect(Object.keys(result.photosForDisplay!)).toHaveLength(2)
 
       expect(result.photosForDisplay?.photo1).toEqual({
-        buffer: photo1Buffer,
+        buffer: photo1Buffer.toString('base64'),
         mimetype: 'image/jpeg',
         filename: 'app[photo1].jpg',
         imgSrc: `data:image/jpeg;base64,${photo1Buffer.toString('base64')}`,
       })
 
       expect(result.photosForDisplay?.photo2).toEqual({
-        buffer: photo2Buffer,
+        buffer: photo2Buffer.toString('base64'),
         mimetype: 'image/png',
         filename: 'app[photo2].png',
         imgSrc: `data:image/png;base64,${photo2Buffer.toString('base64')}`,
@@ -395,7 +395,7 @@ describe('Photo Helpers', () => {
         loggingMethod: 'webcam',
         photos: {
           photo1: {
-            buffer: photoBuffer,
+            buffer: photoBuffer.toString('base64'),
             mimetype: 'image/webp',
             filename: 'photo[photo1].webp',
           },
@@ -438,7 +438,7 @@ describe('Photo Helpers', () => {
           loggingMethod: 'webcam',
           photos: {
             photo1: {
-              buffer: photoBuffer,
+              buffer: photoBuffer.toString('base64'),
               mimetype,
               filename: 'test[photo1].jpg',
             },
