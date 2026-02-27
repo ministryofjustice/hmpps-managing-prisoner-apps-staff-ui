@@ -5,10 +5,12 @@ import { PHOTO_KEYS, MAX_PHOTOS } from '../constants/photos'
 import { URLS } from '../constants/urls'
 import { updateSessionData } from '../utils/http/session'
 
+import DocumentManagementService from '../services/documentManagementService'
+
 type PhotoKey = (typeof PHOTO_KEYS)[keyof typeof PHOTO_KEYS]
 
 export interface PhotoForDisplay {
-  buffer: Buffer
+  buffer: Buffer | string
   mimetype: string
   filename: string
   imgSrc: string
@@ -70,7 +72,7 @@ export function createPhotoFromFile(
   file: Express.Multer.File,
   currentPhoto: string,
 ): {
-  buffer: Buffer
+  buffer: string
   mimetype: string
   filename: string
 } {
@@ -81,7 +83,7 @@ export function createPhotoFromFile(
   fileNameWithoutExt = fileNameWithoutExt.replace(/\[photo\d+\]$/, '')
 
   return {
-    buffer: file.buffer,
+    buffer: file.buffer.toString('base64'),
     mimetype: file.mimetype,
     filename: `${fileNameWithoutExt}[${currentPhoto}].${fileExtension}`,
   }
@@ -129,7 +131,7 @@ export function getPhotosForDisplay(applicationData: ApplicationData): GetPhotos
       const photo = photos[key as keyof typeof photos]
       photosForDisplay[key] = {
         ...photo,
-        imgSrc: `data:${photo.mimetype};base64,${Buffer.from(photo.buffer).toString('base64')}`,
+        imgSrc: `data:${photo.mimetype};base64,${Buffer.from(photo.buffer)}`,
       }
     }
 
@@ -141,4 +143,24 @@ export function getPhotosForDisplay(applicationData: ApplicationData): GetPhotos
     photoDetails,
     hasNoPhotos,
   }
+}
+
+export async function uploadWebcamPhotoDocuments(
+  applicationData: ApplicationData,
+  username: string,
+  documentManagementService: DocumentManagementService,
+) {
+  if (
+    applicationData?.loggingMethod !== 'webcam' ||
+    !applicationData?.photos ||
+    Object.keys(applicationData.photos).length === 0
+  ) {
+    return []
+  }
+
+  const uploadedDocuments = await documentManagementService.uploadDocument(applicationData, {
+    username,
+  })
+
+  return uploadedDocuments
 }

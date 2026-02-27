@@ -4,21 +4,24 @@ import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
 import { getAppType } from '../../helpers/application/getAppType'
-import { getPhotosForDisplay } from '../../helpers/photos'
+import { getPhotosForDisplay, uploadWebcamPhotoDocuments } from '../../helpers/photos'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
+import DocumentManagementService from '../../services/documentManagementService'
 
 import { convertToTitleCase } from '../../utils/utils'
 
 export default function confirmAppRouter({
   auditService,
   managingPrisonerAppsService,
+  documentManagementService,
 }: {
   auditService: AuditService
   managingPrisonerAppsService: ManagingPrisonerAppsService
+  documentManagementService: DocumentManagementService
 }): Router {
   const router = Router()
 
@@ -68,6 +71,18 @@ export default function confirmAppRouter({
     asyncMiddleware(async (req: Request, res: Response) => {
       const { applicationData } = req.session
       const { user } = res.locals
+
+      // TODO: Backend needs to support storing document UUIDs before enabling photo upload
+      if (applicationData?.loggingMethod === 'webcam' && applicationData?.photos) {
+        return res.redirect(URLS.LOG_CONFIRM_DETAILS)
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const uploadedDocuments = await uploadWebcamPhotoDocuments(
+        applicationData,
+        user.username,
+        documentManagementService,
+      )
 
       const application = await managingPrisonerAppsService.submitPrisonerApp(applicationData, user)
 
