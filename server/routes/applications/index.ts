@@ -21,6 +21,7 @@ import groupsRouter from './groups'
 import historyRouter from './history'
 import prisonerRouter from './prisoner'
 import submitAppRouter from './submitApp'
+import viewDocumentRouter from './viewDocument'
 import viewAppsRouter from './view'
 import logMethodRouter from './logMethod'
 import photoCaptureRouter from './photoCapture'
@@ -58,6 +59,8 @@ export default function applicationsRoutes({
     }),
   )
 
+  router.use(viewDocumentRouter({ documentManagementService }))
+
   router.use(actionAppRouter({ auditService, managingPrisonerAppsService }))
   router.use(
     appDetailsRouter({
@@ -84,14 +87,13 @@ export default function applicationsRoutes({
   router.use(historyRouter({ auditService, managingPrisonerAppsService }))
   router.use(prisonerRouter({ auditService, prisonService }))
   router.use(submitAppRouter({ auditService, managingPrisonerAppsService }))
-  router.use(viewAppsRouter({ auditService, managingPrisonerAppsService, prisonService }))
+  router.use(viewAppsRouter({ auditService, managingPrisonerAppsService, prisonService, documentManagementService }))
   router.use(logMethodRouter({ auditService }))
   router.use(photoCaptureRouter({ auditService }))
   router.use(confirmPhotoRouter({ auditService }))
   router.use(anotherPhotoRouter({ auditService }))
   router.use(additionalPhotoDetailsRouter({ auditService }))
   router.use(removePhotoRouter({ auditService }))
-
   router.get(
     '/api/addresses/find/:query',
     asyncMiddleware(async (req: Request, res: Response) => {

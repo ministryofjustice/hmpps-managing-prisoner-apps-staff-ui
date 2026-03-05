@@ -63,6 +63,7 @@ export const app: App = {
   requestedByFirstName: '',
   requestedByLastName: '',
   establishmentId: '',
+  files: [],
 }
 
 export const submitPrisonerAppData = {
@@ -80,4 +81,56 @@ export const submitPrisonerAppData = {
   department: '343a7876-07b9-4ef8-947c-7cf554fae864',
   date: new Date('2024-09-15').toISOString(),
   additionalData: { details: 'Swap visiting orders (VOs) for PIN credit' },
+}
+
+export const appWithPhotos: App = {
+  ...app,
+  id: '23d2c453-be11-44a8-9861-21fd8ae6e922',
+  requests: [
+    {
+      id: '8c33eb4e-9f32-411e-bb09-225615f0a266',
+      responseId: '34500d92-10df-418b-b285-81cef7d0eb7a',
+      details: 'Testing photo details',
+    },
+  ],
+  files: [
+    {
+      id: '019cb568',
+      documentId: 'uuid-1234',
+      fileName: 'application-photo[photo1].jpg',
+      fileType: 'image/jpeg',
+      createdDate: '2024-09-15T00:00:00Z',
+      createdBy: 'TEST_USER',
+    },
+    {
+      id: '019cb5',
+      documentId: 'uuid-9876',
+      fileName: 'application-photo[photo2].jpg',
+      fileType: 'image/jpeg',
+      createdDate: '2024-09-15T00:00:00Z',
+      createdBy: 'TEST_USER',
+    },
+  ],
+}
+
+export const submitPrisonerAppDataWithPhotos = {
+  ...submitPrisonerAppData,
+  loggingMethod: 'webcam' as const,
+  photoAdditionalDetails: 'Testing photo details',
+
+  additionalData: {
+    details: 'Testing photo details',
+  },
+  appFile: [
+    {
+      documentId: 'uuid-4523',
+      fileName: 'application-photo[photo1].jpg',
+      fileType: 'image/jpeg',
+    },
+    {
+      documentId: 'uuid-9876',
+      fileName: 'application-photo[photo2].jpg',
+      fileType: 'image/jpeg',
+    },
+  ],
 }

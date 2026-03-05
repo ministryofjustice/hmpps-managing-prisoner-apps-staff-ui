@@ -72,19 +72,18 @@ export default function confirmAppRouter({
       const { applicationData } = req.session
       const { user } = res.locals
 
-      // TODO: Backend needs to support storing document UUIDs before enabling photo upload
-      if (applicationData?.loggingMethod === 'webcam' && applicationData?.photos) {
-        return res.redirect(URLS.LOG_CONFIRM_DETAILS)
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const uploadedDocuments = await uploadWebcamPhotoDocuments(
         applicationData,
         user.username,
         documentManagementService,
       )
 
-      const application = await managingPrisonerAppsService.submitPrisonerApp(applicationData, user)
+      const applicationPayload = {
+        ...applicationData,
+        ...(uploadedDocuments.length > 0 && { appFile: uploadedDocuments }),
+      }
+
+      const application = await managingPrisonerAppsService.submitPrisonerApp(applicationPayload, user)
 
       const prisonerContext = applicationData?.prisonerId && {
         prisonerId: applicationData.prisonerId,
