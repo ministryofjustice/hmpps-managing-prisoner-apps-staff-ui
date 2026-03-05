@@ -7,28 +7,45 @@
 {% if documents and documents.length > 0 %}
   {% set imageRows = [] %}
 
-  {% for doc in documents %}
-  {% set imageLabel = "Image " + loop.index %}
-    {% if loop.index > 1 %}
-      {% set imageLabel = imageLabel + " (optional)" %}  
-    {% endif %}
+  {% set doc1 = documents[0] %}
+  {% set imageRows = imageRows.concat([{
+    key: { text: "Image 1" },
+    value: { 
+      html: '<a href="/applications/' + application.requestedBy.username + '/' + application.id + '/documents/' + doc1.documentUuid + '" alt="' + doc1.filename + '" target="_blank" rel="noopener noreferrer">
+              <img 
+                src="/applications/' + application.requestedBy.username + '/' + application.id + '/documents/' + doc1.documentUuid + '" 
+                alt="Photo 1"
+                class="thumbnail-img" 
+              />
+            </a>'
+    }
+  }]) %}
+
+    {% if documents.length > 1 %}
+    {% set doc2 = documents[1] %}
     {% set imageRows = imageRows.concat([{
-      key: { text: imageLabel },
+      key: { text: "Image 2 (optional)" },
       value: { 
-        html: '<a href="/applications/' + application.requestedBy.username + '/' + application.id + '/documents/' + doc.documentUuid + '" alt="' + doc.filename + '" target="_blank" rel="noopener noreferrer">
+        html: '<a href="/applications/' + application.requestedBy.username + '/' + application.id + '/documents/' + doc2.documentUuid + '" alt="' + doc2.filename + '" target="_blank" rel="noopener noreferrer">
                 <img 
-                  src="/applications/' + application.requestedBy.username + '/' + application.id + '/documents/' + doc.documentUuid + '" 
-                  alt="Photo ' + loop.index + '"
+                  src="/applications/' + application.requestedBy.username + '/' + application.id + '/documents/' + doc2.documentUuid + '" 
+                  alt="Photo 2"
                   class="thumbnail-img" 
                 />
               </a>'
       }
     }]) %}
-  {% endfor %}
+  {% else %}
+    {% set imageRows = imageRows.concat([{
+      key: { text: "Image 2 (optional)" },
+      value: { text: "Not taken" }
+    }]) %}
+  {% endif %}
 
+  {% set additionalDetails = application.requests[0].details %}
   {% set allRows = imageRows.concat([{
     key: { text: "Additional details" },
-    value: { text: application.requests[0].details or '' }
+    value: { text: additionalDetails if additionalDetails else "Not entered" }
   }]) %}
   {{ govukSummaryList({ rows: allRows }) }}
 
