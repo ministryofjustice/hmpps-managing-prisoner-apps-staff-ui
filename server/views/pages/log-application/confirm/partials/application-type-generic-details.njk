@@ -4,6 +4,7 @@
 
   {% set rows = [] %}
   {% if loggingMethod %}
+    {% if not isUpdate  %}
     {% set methodText = "Entered manually" if loggingMethod === 'manual' else "Take a photo of the application" %}
     {% set _ = rows.push({
       key: { text: "Method" },
@@ -16,14 +17,17 @@
         }]
       }
     }) %}
+     {% endif %}
 
     {% if loggingMethod === 'manual' %}
+    {% set detailsText = applicationData.additionalData.details or applicationData.request.details %}
+
       {% set _ = rows.push({
         key: { text: "Details" },
-        value: { text: applicationData.request.details },
+        value: { text: detailsText },
         actions: {
           items: [{
-            href: "/log/application-details",
+            href: "/applications/" ~ application.requestedBy.username ~ "/" ~ application.id ~ "/change" if isUpdate else "/log/application-details",
             text: "Change",
             visuallyHiddenText: "details"
           }]
@@ -134,7 +138,6 @@
 {% endif %}
 
 {% if hasNoPhotos %}
- 
   {{ govukInsetText({
     text: "You cannot save this application as there are no images uploaded. You can upload an image of the application or change method to enter details manually."
   }) }}

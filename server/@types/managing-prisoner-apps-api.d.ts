@@ -574,6 +574,7 @@ export interface components {
       establishmentId: string
       responses?: string[]
       firstNightCenter: boolean
+      files: components['schemas']['FileResponseDto'][]
     }
     ApplicationGroupResponse: {
       /** Format: int64 */
@@ -590,6 +591,17 @@ export interface components {
       logDetailRequired?: boolean
       /** Format: int64 */
       count?: number
+    }
+    FileResponseDto: {
+      /** Format: uuid */
+      id: string
+      /** Format: uuid */
+      documentId: string
+      fileName: string
+      /** Format: date-time */
+      createdDate: string
+      createdBy: string
+      fileType: string
     }
     AppRequestDto: {
       reference?: string
@@ -608,6 +620,13 @@ export interface components {
       firstNightCenter?: boolean
       /** Format: uuid */
       department?: string
+      fileRequestDtos: components['schemas']['FileRequestDto'][]
+    }
+    FileRequestDto: {
+      /** Format: uuid */
+      documentId: string
+      fileName: string
+      fileType: string
     }
     AppsSearchQueryDto: {
       /** Format: int64 */

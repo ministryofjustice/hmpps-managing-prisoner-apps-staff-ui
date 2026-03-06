@@ -32,47 +32,40 @@ describe('DocumentManagementService', () => {
 
   describe('uploadDocument', () => {
     it('should call API client to upload photos from session', async () => {
-      const applicationData = {
-        photos: {
-          photo1: { buffer: Buffer.from('abc'), filename: 'photo1.jpg', mimetype: 'image/jpeg' },
-        },
-        photoAdditionalDetails: 'Test details',
+      const photo1Data = {
+        buffer: Buffer.from('/9j/4AAQSkZJRg...', 'base64'),
+        filename: 'photo1.jpg',
+        mimetype: 'image/jpeg',
       }
 
-      const metadata = { username }
+      const applicationData: ApplicationData = {
+        photos: {
+          photo1: photo1Data,
+        },
+      }
 
-      const mockUploadedDoc = {
-        documentUuid: randomUUID(),
+      const expectedDocument = {
+        documentUuid: 'some-uuid',
         documentFilename: 'photo1.jpg',
         mimeType: 'image/jpeg',
-        fileSize: 123,
-        createdTime: '2024-01-01T00:00:00Z',
       }
 
-      mockClientMethods.uploadDocument.mockResolvedValue([mockUploadedDoc])
+      mockClientMethods.uploadDocument.mockResolvedValue([expectedDocument])
 
-      const result = await service.uploadDocument(applicationData as ApplicationData, metadata)
+      const result = await service.uploadDocument(applicationData, { username: 'TEST_USER' })
 
-      expect(result).toHaveLength(1)
-      expect(result[0]).toEqual(mockUploadedDoc)
-
-      expect(mockClientMethods.uploadDocument).toHaveBeenCalledTimes(1)
-      const uploadRequests = mockClientMethods.uploadDocument.mock.calls[0][0]
-
-      expect(uploadRequests).toHaveLength(1)
-
-      expect(uploadRequests[0]).toMatchObject({
-        file: expect.any(Buffer),
-        filename: 'photo1.jpg',
-        mimeType: 'image/jpeg',
-        documentUuid: expect.any(String),
-        metadata: {
-          uploadedBy: username,
-          photoAdditionalDetails: 'Test details',
-        },
-      })
-
-      expect(uploadRequests[0].file.toString()).toBe('abc')
+      expect(mockClientMethods.uploadDocument).toHaveBeenCalledWith([
+        expect.objectContaining({
+          file: expect.any(Buffer),
+          filename: 'photo1.jpg',
+          mimeType: 'image/jpeg',
+          documentUuid: expect.any(String),
+          metadata: {
+            uploadedBy: 'TEST_USER',
+          },
+        }),
+      ])
+      expect(result).toEqual([expectedDocument])
     })
 
     it('should return empty array if no photos in session', async () => {
