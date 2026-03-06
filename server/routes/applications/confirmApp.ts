@@ -71,12 +71,7 @@ export default function confirmAppRouter({
     asyncMiddleware(async (req: Request, res: Response) => {
       const { applicationData } = req.session
       const { user } = res.locals
-
-      const uploadedDocuments = await uploadWebcamPhotoDocuments(
-        applicationData,
-        user.username,
-        documentManagementService,
-      )
+      const uploadedDocuments = await uploadWebcamPhotoDocuments(applicationData, user, documentManagementService)
 
       const applicationPayload = {
         ...applicationData,

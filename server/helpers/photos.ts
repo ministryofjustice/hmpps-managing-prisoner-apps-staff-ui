@@ -6,6 +6,7 @@ import { URLS } from '../constants/urls'
 import { updateSessionData } from '../utils/http/session'
 
 import DocumentManagementService from '../services/documentManagementService'
+import { HmppsUser, PrisonUser } from '../interfaces/hmppsUser'
 
 type PhotoKey = (typeof PHOTO_KEYS)[keyof typeof PHOTO_KEYS]
 
@@ -147,7 +148,7 @@ export function getPhotosForDisplay(applicationData: ApplicationData): GetPhotos
 
 export async function uploadWebcamPhotoDocuments(
   applicationData: ApplicationData,
-  username: string,
+  user: HmppsUser,
   documentManagementService: DocumentManagementService,
 ) {
   if (
@@ -158,8 +159,15 @@ export async function uploadWebcamPhotoDocuments(
     return []
   }
 
+  let activeCaseLoadId: string | undefined
+  if (user.authSource === 'nomis') {
+    const prisonUser = user as PrisonUser
+    activeCaseLoadId = prisonUser.activeCaseLoadId
+  }
+
   const uploadedDocuments = await documentManagementService.uploadDocument(applicationData, {
-    username,
+    username: user.username,
+    activeCaseLoadId,
   })
 
   const fileRequestDtos = uploadedDocuments.map(doc => ({

@@ -19,6 +19,7 @@ jest.mock('../data/hmppsAuthClient')
 describe('DocumentManagementService', () => {
   let service: DocumentManagementService
   const username = 'TEST_USER'
+  const activeCaseLoadId = 'MDI'
   const token = 'auth-token'
 
   beforeEach(() => {
@@ -52,19 +53,28 @@ describe('DocumentManagementService', () => {
 
       mockClientMethods.uploadDocument.mockResolvedValue([expectedDocument])
 
-      const result = await service.uploadDocument(applicationData, { username: 'TEST_USER' })
+      const result = await service.uploadDocument(applicationData, {
+        username: 'TEST_USER',
+        activeCaseLoadId: 'MDI',
+      })
 
-      expect(mockClientMethods.uploadDocument).toHaveBeenCalledWith([
-        expect.objectContaining({
-          file: expect.any(Buffer),
-          filename: 'photo1.jpg',
-          mimeType: 'image/jpeg',
-          documentUuid: expect.any(String),
-          metadata: {
-            uploadedBy: 'TEST_USER',
-          },
-        }),
-      ])
+      expect(mockClientMethods.uploadDocument).toHaveBeenCalledWith(
+        [
+          expect.objectContaining({
+            file: expect.any(Buffer),
+            filename: 'photo1.jpg',
+            mimeType: 'image/jpeg',
+            documentUuid: expect.any(String),
+            metadata: {
+              establishment: 'MDI',
+            },
+          }),
+        ],
+        {
+          username: 'TEST_USER',
+          activeCaseLoadId: 'MDI',
+        },
+      )
       expect(result).toEqual([expectedDocument])
     })
 
@@ -90,10 +100,13 @@ describe('DocumentManagementService', () => {
       }
       mockClientMethods.getDocument.mockResolvedValue(fakeDoc)
 
-      const result = await service.getDocument(documentUuid, username)
+      const result = await service.getDocument(documentUuid, username, activeCaseLoadId)
 
       expect(result).toEqual(fakeDoc)
-      expect(mockClientMethods.getDocument).toHaveBeenCalledWith(documentUuid)
+      expect(mockClientMethods.getDocument).toHaveBeenCalledWith(documentUuid, {
+        username: 'TEST_USER',
+        activeCaseLoadId: 'MDI',
+      })
     })
   })
 
@@ -103,10 +116,13 @@ describe('DocumentManagementService', () => {
       const buffer = Buffer.from('file content')
       mockClientMethods.downloadDocument.mockResolvedValue(buffer)
 
-      const result = await service.downloadDocument(documentUuid, username)
+      const result = await service.downloadDocument(documentUuid, username, activeCaseLoadId)
 
       expect(result).toEqual(buffer)
-      expect(mockClientMethods.downloadDocument).toHaveBeenCalledWith(documentUuid)
+      expect(mockClientMethods.downloadDocument).toHaveBeenCalledWith(documentUuid, {
+        username: 'TEST_USER',
+        activeCaseLoadId: 'MDI',
+      })
     })
   })
 })

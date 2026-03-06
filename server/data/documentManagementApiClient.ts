@@ -13,6 +13,11 @@ export interface UploadDocumentRequest {
   metadata?: Record<string, string>
 }
 
+export interface DocumentHeaders {
+  username?: string
+  activeCaseLoadId?: string
+}
+
 const DOCUMENT_TYPE: DocumentType = 'PRISONER_APPLICATION'
 const SERVICE_NAME = 'hmpps-managing-prisoner-apps'
 
@@ -33,7 +38,7 @@ export default class DocumentManagementApiClient {
     return this.token
   }
 
-  async uploadDocument(requests: UploadDocumentRequest[]): Promise<Document[]> {
+  async uploadDocument(requests: UploadDocumentRequest[], headers?: DocumentHeaders): Promise<Document[]> {
     const token = this.getToken()
 
     if (!requests || requests.length === 0) {
@@ -47,7 +52,7 @@ export default class DocumentManagementApiClient {
       const documentUuid = request.documentUuid ?? randomUUID()
 
       try {
-        const result = await superagent
+        let uploadRequest = superagent
           .post(`${this.apiConfig.url}/documents/${DOCUMENT_TYPE}/${documentUuid}`)
           .attach('file', request.file, {
             filename: request.filename,
@@ -57,6 +62,16 @@ export default class DocumentManagementApiClient {
           .auth(token, { type: 'bearer' })
           .set('Service-Name', SERVICE_NAME)
           .timeout(this.apiConfig.timeout)
+
+        if (headers?.username) {
+          uploadRequest = uploadRequest.set('Username', headers.username)
+        }
+
+        if (headers?.activeCaseLoadId) {
+          uploadRequest = uploadRequest.set('Active-Case-Load-Id', headers.activeCaseLoadId)
+        }
+
+        const result = await uploadRequest
 
         logger.info(`Successfully uploaded document ${documentUuid} (${request.filename})`)
         return result.body as Document
@@ -76,13 +91,23 @@ export default class DocumentManagementApiClient {
     return successfullUploads
   }
 
-  async getDocument(documentUuid: string): Promise<Document | null> {
+  async getDocument(documentUuid: string, headers?: DocumentHeaders): Promise<Document | null> {
     try {
+      const requestHeaders: Record<string, string> = {
+        'Service-Name': SERVICE_NAME,
+      }
+
+      if (headers?.username) {
+        requestHeaders.Username = headers.username
+      }
+
+      if (headers?.activeCaseLoadId) {
+        requestHeaders['Active-Case-Load-Id'] = headers.activeCaseLoadId
+      }
+
       return await this.restClient.get({
         path: `/documents/${documentUuid}`,
-        headers: {
-          'Service-Name': 'hmpps-managing-prisoner-apps',
-        },
+        headers: requestHeaders,
       })
     } catch (error) {
       logger.error(`Error fetching document ${documentUuid}:`, error)
@@ -90,19 +115,28 @@ export default class DocumentManagementApiClient {
     }
   }
 
-  async downloadDocument(documentUuid: string): Promise<Buffer | null> {
+  async downloadDocument(documentUuid: string, headers?: DocumentHeaders): Promise<Buffer | null> {
     const token = this.getToken()
 
     const url = `${this.apiConfig.url}/documents/${documentUuid}/file`
 
     try {
-      const result = await superagent
+      let downloadRequest = superagent
         .get(url)
         .auth(token, { type: 'bearer' })
         .set('Service-Name', SERVICE_NAME)
         .responseType('blob')
         .timeout(this.apiConfig.timeout)
 
+      if (headers?.username) {
+        downloadRequest = downloadRequest.set('Username', headers.username)
+      }
+
+      if (headers?.activeCaseLoadId) {
+        downloadRequest = downloadRequest.set('Active-Case-Load-Id', headers.activeCaseLoadId)
+      }
+
+      const result = await downloadRequest
       if (Buffer.isBuffer(result.body)) {
         logger.info(`Successfully downloaded document ${documentUuid}, size: ${result.body.length} bytes`)
         return result.body
