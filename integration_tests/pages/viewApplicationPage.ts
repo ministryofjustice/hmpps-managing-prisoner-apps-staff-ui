@@ -34,4 +34,14 @@ export default class ViewApplicationPage extends Page {
   summaryListRowKey(keyText: string) {
     return cy.get('.govuk-summary-list__key').contains(keyText)
   }
+
+  image1Label = () => cy.contains('dt', 'Image 1')
+
+  image2Label = () => cy.contains('dt', 'Image 2 (optional)')
+
+  thumbnailImages = () => cy.get('img.thumbnail-img')
+
+  additionalDetailsLabel = () => cy.contains('dt', 'Additional details')
+
+  changeButton = () => cy.get('.govuk-summary-list--header').contains('Change')
 }

@@ -30,7 +30,7 @@
             {% include "./partials/" + applicationType + ".njk" %}
           {% endif %}
 
-        {% if loggingMethod %}
+        {% if loggingMethod and not isUpdate %}
           <form method="POST">
             <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 

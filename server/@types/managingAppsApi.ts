@@ -12,6 +12,7 @@ export type PrisonerSearchResult = components['schemas']['RequestedByNameSearchR
 export type AppDecisionResponse = components['schemas']['AppDecisionResponseDtoObject']
 export type ViewAppListDto = components['schemas']['AppListViewDto']
 export type ViewAppListAssignedGroup = components['schemas']['GroupAppListViewDto']
+export type FileResponseDto = components['schemas']['FileResponseDto']
 
 export interface ViewAppListApp extends ViewAppListDto {
   assignedGroup: AssignedGroup
@@ -39,6 +40,7 @@ export interface App extends ApplicationDto {
   assignedGroup: AssignedGroup
   requestedBy: AppRequestedBy
   requests: AppRequest[]
+  files: FileResponseDto[]
 }
 
 export interface AppRequest {

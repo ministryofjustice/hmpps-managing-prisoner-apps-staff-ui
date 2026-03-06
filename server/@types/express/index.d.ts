@@ -44,6 +44,7 @@ export declare module 'express-session' {
     currentPhoto?: 'photo1' | 'photo2'
     photoAdditionalDetails?: string
     isFromCheckDetailsPage?: boolean
+    appFile?: UploadedDocument[]
   }
 
   type ListFilters = {
@@ -130,6 +131,13 @@ export declare module 'express-session' {
     mimetype: string
     filename: string
     imgSrc?: string
+    documentUuid?: string
+  }
+
+  interface UploadedDocument {
+    documentId: string
+    fileName: string
+    fileType: string
   }
 }
 

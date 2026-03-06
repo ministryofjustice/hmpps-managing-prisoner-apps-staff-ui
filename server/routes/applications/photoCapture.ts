@@ -89,7 +89,9 @@ export default function photoCaptureRouter({ auditService }: { auditService: Aud
 
       res.setHeader('Content-Type', photo.mimetype)
       res.setHeader('Content-Disposition', `inline; filename="${photo.filename}"`)
-      res.send(Buffer.from(photo.buffer))
+
+      const buffer = Buffer.from(photo.buffer as string, 'base64')
+      res.send(buffer)
     }),
   )
 

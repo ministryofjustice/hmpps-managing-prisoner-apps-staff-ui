@@ -1,4 +1,4 @@
-import { app } from '../../server/testData'
+import { app, appWithPhotos } from '../../server/testData'
 import applicationTypesData from '../fixtures/applicationTypes.json'
 
 import ViewApplicationPage from '../pages/viewApplicationPage'
@@ -92,3 +92,72 @@ applicationTypes
       })
     })
   })
+
+context('View Application Page - With Photos', () => {
+  let page: ViewApplicationPage
+  const applicationWithPhotos = {
+    ...appWithPhotos,
+    applicationType: { id: 7, name: 'Make a general PIN phone enquiry' },
+  }
+
+  beforeEach(() => {
+    cy.resetAndSignIn()
+    cy.task('stubGetPrisonerApp', { app: applicationWithPhotos })
+    cy.task('stubGetGroupsAndTypes')
+    cy.task('stubGetDocument', { documentUuid: 'uuid-1234' })
+    cy.task('stubGetDocument', { documentUuid: 'uuid-9876' })
+    cy.task('stubDownloadDocument', { documentUuid: 'uuid-1234' })
+    cy.task('stubDownloadDocument', { documentUuid: 'uuid-9876' })
+
+    cy.visit(`/applications/${applicationWithPhotos.requestedBy.username}/${applicationWithPhotos.id}`)
+    page = new ViewApplicationPage('Make a general PIN phone enquiry')
+  })
+
+  it('should display Image 1 and Image 2 (optional) labels', () => {
+    page.image1Label().should('exist')
+    page.image2Label().should('exist')
+  })
+
+  it('should make images clickable links that open in new tab', () => {
+    cy.get('a[target="_blank"][rel="noopener noreferrer"]').first().should('have.attr', 'href')
+  })
+
+  it('should display Additional details field', () => {
+    page.additionalDetailsLabel().should('exist')
+  })
+
+  it('should not display Change button when photos exist', () => {
+    page.changeButton().should('not.exist')
+  })
+})
+
+context('View Application Page - Without Photos', () => {
+  let page: ViewApplicationPage
+  const applicationWithoutPhotos = {
+    ...app,
+    applicationType: { id: 3, name: 'Add a social PIN phone contact' },
+    files: [],
+  }
+
+  beforeEach(() => {
+    cy.resetAndSignIn()
+    cy.task('stubGetPrisonerApp', { app: applicationWithoutPhotos })
+    cy.task('stubGetGroupsAndTypes')
+
+    cy.visit(`/applications/${applicationWithoutPhotos.requestedBy.username}/${applicationWithoutPhotos.id}`)
+    page = new ViewApplicationPage('Add a social PIN phone contact')
+  })
+
+  it('should not display image labels when no photos', () => {
+    page.image1Label().should('not.exist')
+    page.image2Label().should('not.exist')
+  })
+
+  it('should not display any image thumbnails', () => {
+    page.thumbnailImages().should('not.exist')
+  })
+
+  it('should not display Additional details field (photo-specific field)', () => {
+    page.additionalDetailsLabel().should('not.exist')
+  })
+})

@@ -88,7 +88,10 @@ export default function changeAppRouter({
         user,
         application.applicationType.id.toString(),
       )
-
+      req.session.applicationData = {
+        ...req.session.applicationData,
+        loggingMethod: 'manual',
+      }
       return handleApplicationDetails(req, res, {
         getAppType: () => applicationType,
         getTemplateData: async () => {
@@ -160,6 +163,7 @@ export default function changeAppRouter({
         isUpdate: true,
         title: applicationType.name,
         isGeneric: applicationType.genericType || applicationType.genericForm,
+        loggingMethod: applicationData?.loggingMethod,
       })
     }),
   )

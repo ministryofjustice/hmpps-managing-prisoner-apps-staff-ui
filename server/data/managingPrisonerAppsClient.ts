@@ -67,9 +67,24 @@ export default class ManagingPrisonerAppsApiClient {
 
   async submitPrisonerApp(applicationData: ApplicationData): Promise<App | null> {
     try {
-      const { prisonerId, type, group, departmentId, earlyDaysCentre, additionalData } = applicationData
+      const {
+        prisonerId,
+        type,
+        group,
+        departmentId,
+        earlyDaysCentre,
+        additionalData,
+        appFile,
+        photoAdditionalDetails,
+      } = applicationData
+
       const firstNightCenter =
         typeof earlyDaysCentre === 'string' ? earlyDaysCentre === 'yes' : Boolean(earlyDaysCentre)
+
+      const requestData = {
+        ...additionalData,
+        ...(photoAdditionalDetails && { details: photoAdditionalDetails }),
+      }
 
       const payload = {
         reference: '',
@@ -77,9 +92,10 @@ export default class ManagingPrisonerAppsApiClient {
         applicationType: type.value,
         genericForm: type.genericForm,
         applicationGroup: group.value,
-        requests: [additionalData],
+        requests: [requestData],
         firstNightCenter,
         department: departmentId,
+        fileRequestDtos: appFile && appFile.length > 0 ? appFile : [],
       }
 
       return await this.restClient.post({

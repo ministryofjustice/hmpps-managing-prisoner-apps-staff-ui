@@ -28,15 +28,18 @@ import { addPrisonerNames, buildApplicationsPayload } from '../../helpers/apps'
 import { validatePrisonerFilter } from '../../helpers/prisoner'
 import { formatAppsToRows } from '../../utils/formatters/formatAppsToRows'
 import { getPaginationData } from '../../utils/http/pagination'
+import DocumentManagementService from '../../services/documentManagementService'
 
 export default function viewAppsRouter({
   auditService,
   managingPrisonerAppsService,
   prisonService,
+  documentManagementService,
 }: {
   auditService: AuditService
   managingPrisonerAppsService: ManagingPrisonerAppsService
   prisonService: PrisonService
+  documentManagementService: DocumentManagementService
 }): Router {
   const router = Router()
 
@@ -116,13 +119,18 @@ export default function viewAppsRouter({
   router.get(
     `${URLS.APPLICATIONS}/:prisonerId/:applicationId`,
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { application, applicationType } = await getValidApplicationOrRedirect(
+      const { application, applicationType, documents } = await getValidApplicationOrRedirect(
         req,
         res,
         auditService,
         managingPrisonerAppsService,
         Page.VIEW_APPLICATION_PAGE,
+        documentManagementService,
       )
+
+      logger.info(`Application ${application.id} has ${application.files?.length || 0} files`)
+      logger.info(`Fetched ${documents?.length || 0} documents`)
+      logger.info(`Documents:`, JSON.stringify(documents, null, 2))
 
       return res.render(PATHS.APPLICATIONS.VIEW, {
         title: applicationType.name,
@@ -144,6 +152,7 @@ export default function viewAppsRouter({
           (application?.requests?.[0] as Partial<{ organisation?: string; company?: string }>)?.company?.trim() ||
           '',
         isGeneric: applicationType.genericType || applicationType.genericForm,
+        documents,
       })
     }),
   )

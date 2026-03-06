@@ -1,7 +1,7 @@
 import { Document } from '../../@types/documentManagementApi'
 
 export const mockDocument: Document = {
-  documentUuid: '123e4567-e89b-12d3-a456-426614174000',
+  documentUuid: 'uuid-1234',
   documentType: 'PRISONER_APPLICATION',
   documentFilename: 'test-photo.jpg',
   filename: 'test-photo.jpg',
@@ -30,7 +30,6 @@ export const mockDocuments: Document[] = [
     fileHash: 'hash1',
     mimeType: 'image/jpeg',
     metadata: {
-      prisonerId: 'A1234BC',
       uploadedBy: 'TEST_USER',
     },
     createdTime: '2024-01-01T12:00:00Z',
@@ -77,8 +76,6 @@ export const mockUploadRequest = {
   mimeType: 'image/jpeg',
   documentUuid: '123e4567-e89b-12d3-a456-426614174000',
   metadata: {
-    prisonerId: 'A1234BC',
     uploadedBy: 'TEST_USER',
-    photoAdditionalDetails: 'Test photo details',
   },
 }

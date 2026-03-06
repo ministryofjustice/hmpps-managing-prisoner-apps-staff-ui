@@ -162,5 +162,11 @@ export async function uploadWebcamPhotoDocuments(
     username,
   })
 
-  return uploadedDocuments
+  const fileRequestDtos = uploadedDocuments.map(doc => ({
+    documentId: doc.documentUuid,
+    fileName: doc.documentFilename,
+    fileType: doc.mimeType,
+  }))
+
+  return fileRequestDtos
 }

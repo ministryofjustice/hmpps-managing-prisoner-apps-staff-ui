@@ -1,10 +1,62 @@
-{{ appTypeSummaryListHeader("Application details", application.requestedBy.username, application.id, isClosed) }}
+{% if documents and documents.length > 0 %}
+  {{ appTypeSummaryListHeader("Application details", application.requestedBy.username, application.id, isClosed, hideChangeButton=true) }}
+{% else %}
+  {{ appTypeSummaryListHeader("Application details", application.requestedBy.username, application.id, isClosed) }}
+{% endif %}
 
-{{ govukSummaryList({
-  rows: [
-    { 
-      key: { text: "Details" }, 
-      value: { text: application.requests[0].details }  
+{% if documents and documents.length > 0 %}
+  {% set imageRows = [] %}
+
+  {% set doc1 = documents[0] %}
+  {% set imageRows = imageRows.concat([{
+    key: { text: "Image 1" },
+    value: { 
+      html: '<a href="/applications/' + application.requestedBy.username + '/' + application.id + '/documents/' + doc1.documentUuid + '" alt="' + doc1.filename + '" target="_blank" rel="noopener noreferrer">
+              <img 
+                src="/applications/' + application.requestedBy.username + '/' + application.id + '/documents/' + doc1.documentUuid + '" 
+                alt="Photo 1"
+                class="thumbnail-img" 
+              />
+            </a>'
     }
-  ]
-}) }}
+  }]) %}
+
+    {% if documents.length > 1 %}
+    {% set doc2 = documents[1] %}
+    {% set imageRows = imageRows.concat([{
+      key: { text: "Image 2 (optional)" },
+      value: { 
+        html: '<a href="/applications/' + application.requestedBy.username + '/' + application.id + '/documents/' + doc2.documentUuid + '" alt="' + doc2.filename + '" target="_blank" rel="noopener noreferrer">
+                <img 
+                  src="/applications/' + application.requestedBy.username + '/' + application.id + '/documents/' + doc2.documentUuid + '" 
+                  alt="Photo 2"
+                  class="thumbnail-img" 
+                />
+              </a>'
+      }
+    }]) %}
+  {% else %}
+    {% set imageRows = imageRows.concat([{
+      key: { text: "Image 2 (optional)" },
+      value: { text: "Not taken" }
+    }]) %}
+  {% endif %}
+
+  {% set additionalDetails = application.requests[0].details %}
+  {% set allRows = imageRows.concat([{
+    key: { text: "Additional details" },
+    value: { text: additionalDetails if additionalDetails else "Not entered" }
+  }]) %}
+  {{ govukSummaryList({ rows: allRows }) }}
+
+{% else %}
+
+  {{ govukSummaryList({
+    rows: [
+      { 
+        key: { text: "Details" }, 
+        value: { text: application.requests[0].details }  
+      }
+    ]
+  }) }}
+{% endif %}

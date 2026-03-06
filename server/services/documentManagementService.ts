@@ -17,7 +17,7 @@ export default class DocumentManagementService {
     const token = await this.hmppsAuthClient.getSystemClientToken(metadata.username)
     const documentManagementApiClient = new DocumentManagementApiClient(token)
 
-    const { photos, photoAdditionalDetails } = applicationData
+    const { photos } = applicationData
 
     if (!photos || Object.keys(photos).length === 0) {
       logger.info(`No photos to upload`)
@@ -39,7 +39,6 @@ export default class DocumentManagementService {
         documentUuid,
         metadata: {
           uploadedBy: metadata.username,
-          photoAdditionalDetails: photoAdditionalDetails || '',
         },
       }
     })
