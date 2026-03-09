@@ -47,7 +47,7 @@ generic-service:
       CLIENT_CREDS_CLIENT_SECRET: 'CLIENT_CREDS_CLIENT_SECRET'
       SESSION_SECRET: 'SESSION_SECRET'
       OS_PLACES_API_KEY: 'OS_PLACES_API_KEY'
-    elasticache-redis:
+    hmpps-managing-prisoner-apps-staff-ui-elasticache-redis:
       REDIS_HOST: 'primary_endpoint_address'
       REDIS_AUTH_TOKEN: 'auth_token'
     application-insights:
