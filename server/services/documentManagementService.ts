@@ -12,6 +12,7 @@ export default class DocumentManagementService {
     applicationData: ApplicationData,
     metadata: {
       username: string
+      activeCaseLoadId?: string
     },
   ): Promise<Document[]> {
     const token = await this.hmppsAuthClient.getSystemClientToken(metadata.username)
@@ -38,24 +39,26 @@ export default class DocumentManagementService {
         mimeType: photo.mimetype,
         documentUuid,
         metadata: {
-          uploadedBy: metadata.username,
+          establishment: metadata.activeCaseLoadId,
         },
       }
     })
 
     logger.info(`Uploading ${uploadRequests.length} photos`)
 
-    const uploadedDocuments = await documentManagementApiClient.uploadDocument(uploadRequests)
+    const uploadedDocuments = await documentManagementApiClient.uploadDocument(uploadRequests, {
+      username: metadata.username,
+      activeCaseLoadId: metadata.activeCaseLoadId,
+    })
     return uploadedDocuments || []
   }
 
-  async getDocument(documentUuid: string, username: string): Promise<Document> {
+  async getDocument(documentUuid: string, username: string, activeCaseLoadId?: string): Promise<Document> {
     try {
       const token = await this.hmppsAuthClient.getSystemClientToken(username)
       const documentManagementApiClient = new DocumentManagementApiClient(token)
 
-      const document = await documentManagementApiClient.getDocument(documentUuid)
-
+      const document = await documentManagementApiClient.getDocument(documentUuid, { username, activeCaseLoadId })
       logger.info(`Successfully fetched document ${documentUuid}`)
 
       return document
@@ -65,12 +68,15 @@ export default class DocumentManagementService {
     }
   }
 
-  async downloadDocument(documentUuid: string, username: string): Promise<Buffer | null> {
+  async downloadDocument(documentUuid: string, username: string, activeCaseLoadId?: string): Promise<Buffer | null> {
     try {
       const token = await this.hmppsAuthClient.getSystemClientToken(username)
       const documentManagementApiClient = new DocumentManagementApiClient(token)
 
-      const fileBuffer = await documentManagementApiClient.downloadDocument(documentUuid)
+      const fileBuffer = await documentManagementApiClient.downloadDocument(documentUuid, {
+        username,
+        activeCaseLoadId,
+      })
 
       if (!fileBuffer) {
         return null
