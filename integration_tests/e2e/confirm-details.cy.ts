@@ -30,6 +30,7 @@ context('Confirm Details Page', () => {
           cy.selectGroup('Pin Phone Contact Apps')
           cy.selectApplicationType('Swap Visiting Orders (VOs) for PIN Credit')
           cy.selectDepartment('Business Hub')
+          cy.selectLoggingMethod('manual')
 
           cy.contains('button', 'Continue').click()
         } else {
@@ -67,7 +68,8 @@ context('Confirm Details Page', () => {
       })
 
       it('should render a Continue button with the correct text', () => {
-        page.continueButton().should('contain.text', 'Save')
+        const expectedButtonText = isUpdate ? 'Save' : 'Submit application'
+        page.continueButton().should('contain.text', expectedButtonText)
       })
 
       it('should successfully submit the application and redirect', () => {
