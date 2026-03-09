@@ -67,7 +67,7 @@ context('Department Page', () => {
     cy.url().should('include', '/log/method')
   })
 
-  it('should redirect to application details page for non-generic types', () => {
+  it('should redirect to application details page for excluded application types', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
     cy.clearAllSessionStorage()
@@ -75,7 +75,7 @@ context('Department Page', () => {
     cy.resetAndSignIn()
     cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
     cy.task('stubGetGroupsAndTypes')
-    cy.task('stubGetDepartments', { appType: '5' })
+    cy.task('stubGetDepartments', { appType: '2' })
     cy.visit('/log/prisoner-details')
     cy.enterPrisonerDetails()
 
@@ -83,7 +83,7 @@ context('Department Page', () => {
     cy.selectGroup('Pin Phone Contact Apps')
 
     cy.url().should('include', '/log/application-type')
-    cy.selectApplicationType('Swap Visiting Orders (VOs) for PIN Credit')
+    cy.selectApplicationType('Add an official PIN phone contact')
 
     cy.url().should('include', '/log/department')
 

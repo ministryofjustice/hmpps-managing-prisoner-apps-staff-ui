@@ -2,6 +2,7 @@ import { Request, Response, Router } from 'express'
 
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
+import { EXCLUDED_LOG_METHOD_APP_TYPES } from '../../constants/excludedApplicationTypes'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
@@ -87,10 +88,8 @@ export default function departmentsRouter({
 
       updateSessionData(req, { department: selectedDepartment, departmentId: selectedDepartmentId })
 
-      if (
-        !config.featureFlags.logMethodPageEnabled ||
-        (!applicationData.type.genericForm && !applicationData.type.genericType)
-      ) {
+      const isAppTypeExcluded = Object.values(EXCLUDED_LOG_METHOD_APP_TYPES).includes(applicationData.type.value)
+      if (!config.featureFlags.logMethodPageEnabled || isAppTypeExcluded) {
         return res.redirect(URLS.LOG_APPLICATION_DETAILS)
       }
 
