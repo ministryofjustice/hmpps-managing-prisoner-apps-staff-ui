@@ -2,11 +2,22 @@ import { jwtDecode } from 'jwt-decode'
 import express from 'express'
 import { convertToTitleCase } from '../utils/utils'
 import logger from '../../logger'
+import { PrisonUser } from '../interfaces/hmppsUser'
+import RestClient from '../data/restClient'
+import config from '../config'
+
+interface CaseLoad {
+  caseLoadId: string
+  description: string
+  type: string
+  caseloadFunction: string
+  currentlyActive: boolean
+}
 
 export default function setUpCurrentUser() {
   const router = express.Router()
 
-  router.use((req, res, next) => {
+  router.use(async (req, res, next) => {
     try {
       const {
         name,
@@ -27,7 +38,30 @@ export default function setUpCurrentUser() {
       }
 
       if (res.locals.user.authSource === 'nomis') {
-        res.locals.user.staffId = parseInt(userId, 10) || undefined
+        const prisonUser = res.locals.user as PrisonUser
+
+        prisonUser.staffId = parseInt(userId, 10) || undefined
+
+        try {
+          const restClient = new RestClient('Prison API', config.apis.prison, res.locals.user.token)
+          const caseLoads = await restClient.get<CaseLoad[]>({
+            path: '/api/users/me/caseLoads',
+          })
+
+          const activeCaseLoad = caseLoads.find(caseLoad => caseLoad.currentlyActive)
+
+          if (activeCaseLoad) {
+            prisonUser.activeCaseLoadId = activeCaseLoad.caseLoadId
+          } else if (caseLoads.length > 0) {
+            prisonUser.activeCaseLoadId = caseLoads[0].caseLoadId
+          }
+        } catch (error) {
+          logger.error('Failed to fetch activeCaseLoadId from Prison API:', error)
+        }
+
+        logger.info(
+          `Prison user ${prisonUser.username} - staffId: ${prisonUser.staffId}, activeCaseLoadId: ${prisonUser.activeCaseLoadId}`,
+        )
       }
 
       next()
