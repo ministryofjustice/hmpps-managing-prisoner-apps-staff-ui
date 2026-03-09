@@ -4,6 +4,8 @@ import Page from '../pages/page'
 
 const { applicationTypes } = applicationTypesData
 
+const EXCLUDED_LOG_METHOD_APP_TYPES = ['2', '3', '4']
+
 function startApplication(appType: string): ApplicationDetailsPage {
   const appConfig = applicationTypes.find(type => type.name === appType)
   const relationshipType = appType.includes('official') ? 'OFFICIAL_RELATIONSHIP' : 'SOCIAL_RELATIONSHIP'
@@ -22,9 +24,9 @@ function startApplication(appType: string): ApplicationDetailsPage {
   cy.selectApplicationType(appType)
   cy.selectDepartment('Business Hub')
 
-  const isGeneric = appConfig?.genericType || appConfig?.genericForm
+  const isExcludedFromLogMethod = EXCLUDED_LOG_METHOD_APP_TYPES.includes(appConfig?.id.toString())
 
-  if (logMethodEnabled && isGeneric) {
+  if (logMethodEnabled && !isExcludedFromLogMethod) {
     cy.url().should('include', '/log/method')
     cy.selectLoggingMethod('manual')
     cy.url().should('include', '/log/application-details')
