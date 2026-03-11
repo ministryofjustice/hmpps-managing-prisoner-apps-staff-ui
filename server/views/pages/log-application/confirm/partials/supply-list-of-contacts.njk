@@ -1,11 +1,30 @@
-{{ appTypeSummaryListHeader("Supply contact list", application.requestedBy.username, application.id, isUpdate) }}
+{% from "pages/log-application/confirm/partials/logging-method-summary.njk" import loggingMethodSummary %}
+
+{{ appTypeSummaryListHeader("Supply contact list", application.requestedBy.username, application.id, isUpdate,  loggingMethod) }}
+
+{% if not isExcluded %}
+{{ loggingMethodSummary(loggingMethod, photos, photoDetails, isUpdate) }}
+{% endif %}
+
+{% if loggingMethod === 'manual' %}
+  {% set changeUrl = "/applications/" ~ application.requestedBy.username ~ "/" ~ application.id ~ "/change" if isUpdate else "/log/application-details" %}
+
 
 {{ govukSummaryList({
   classes: "govuk-!-margin-bottom-9",
   rows: [
     {
       key: { text: "Details" },
-      value: { text: applicationData.request.details }
+      value: { text: applicationData.request.details },
+      actions: {
+          items: [{
+            href: changeUrl,
+            text: "Change",
+            visuallyHiddenText: "details"
+          }]
+        }
     }
   ]
 }) }}
+
+{% endif %}

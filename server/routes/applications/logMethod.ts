@@ -7,7 +7,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 
 import AuditService, { Page } from '../../services/auditService'
 
-import { updateSessionData } from '../../utils/http/session'
+import handleLoggingMethodSelection from '../../helpers/logMethod'
 
 const ERROR_MESSAGE = 'Select one'
 const ERROR_SUMMARY = 'You need to select a method to log the application'
@@ -64,25 +64,9 @@ export default function logMethodRouter({ auditService }: { auditService: AuditS
         })
       }
 
-      const methodChanged = applicationData.loggingMethod !== loggingMethod
-      updateSessionData(req, { loggingMethod })
+      const { redirectUrl } = handleLoggingMethodSelection(req, loggingMethod)
 
-      if (!methodChanged) {
-        return res.redirect(URLS.LOG_CONFIRM_DETAILS)
-      }
-
-      if (loggingMethod === 'manual') {
-        return res.redirect(URLS.LOG_APPLICATION_DETAILS)
-      }
-
-      if (loggingMethod === 'webcam') {
-        if (applicationData.photos?.photo1 && applicationData.photos?.photo2) {
-          return res.redirect(URLS.LOG_CONFIRM_DETAILS)
-        }
-        return res.redirect(URLS.LOG_PHOTO_CAPTURE)
-      }
-
-      return res.redirect(URLS.LOG_METHOD)
+      return res.redirect(redirectUrl)
     }),
   )
 

@@ -1,4 +1,12 @@
-{{ appTypeSummaryListHeader("Supply contact list", application.requestedBy.username, application.id, isClosed) }}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "pages/applications/view/partials/app-type-summary-list-header.njk" import appTypeSummaryListHeader %}
+{% from "pages/applications/view/partials/document-images-summary.njk" import documentImagesSummary %}
+
+{% if documents and documents.length > 0 %}
+  {{ appTypeSummaryListHeader("Supply contact list", application.requestedBy.username, application.id, isClosed, hideChangeButton=true) }}
+  {{ documentImagesSummary(documents, application.requestedBy.username, application.id, application.requests[0].details) }}
+{% else %}  
+  {{ appTypeSummaryListHeader("Supply contact list", application.requestedBy.username, application.id, isClosed) }}
 
 {{ govukSummaryList({
   rows: [
@@ -8,3 +16,4 @@
     }
   ]
 }) }}
+{% endif %}

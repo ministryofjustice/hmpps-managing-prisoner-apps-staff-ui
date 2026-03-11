@@ -1,12 +1,10 @@
 {{ appTypeSummaryListHeader("Application details", application.requestedBy.username, application.id, isUpdate, loggingMethod) }}
-
 {% if isGeneric %}
-
   {% set rows = [] %}
   {% if loggingMethod %}
-    {% if not isUpdate  %}
-    {% set methodText = "Entered manually" if loggingMethod === 'manual' else "Take a photo of the application" %}
-    {% set _ = rows.push({
+    {% if not isUpdate %}
+      {% set methodText = "Entered manually" if loggingMethod === 'manual' else "Take a photo of the application" %}
+      {% set _ = rows.push({
       key: { text: "Method" },
       value: { text: methodText },
       actions: {
@@ -17,11 +15,9 @@
         }]
       }
     }) %}
-     {% endif %}
-
+    {% endif %}
     {% if loggingMethod === 'manual' %}
-    {% set detailsText = applicationData.additionalData.details or applicationData.request.details %}
-
+      {% set detailsText = applicationData.additionalData.details or applicationData.request.details %}
       {% set _ = rows.push({
         key: { text: "Details" },
         value: { text: detailsText },
@@ -34,40 +30,28 @@
         }
       }) %}
     {% endif %}
-
     {% if loggingMethod === 'webcam' %}
       {% set expectedImages = [1, 2] %}
-
       {% for imageNumber in expectedImages %}
-           {% if imageNumber == 1 %}
-             {% set photoKey = 'photo1' %}
-          {% else %}
-              {% set photoKey = 'photo2' %}
-          {% endif %}
-
-         {% set photo = photos[photoKey] %}
-
+        {% if imageNumber == 1 %}
+          {% set photoKey = 'photo1' %}
+        {% else %}
+          {% set photoKey = 'photo2' %}
+        {% endif %}
+        {% set photo = photos[photoKey] %}
         {% set label = "Image " ~ imageNumber %}
         {% if imageNumber == 2 %}
           {% set label = label ~ " (optional)" %}
         {% endif %}
-
         {% if photo %}
           {% set photoHtml %}
-            <div>
-              <a href="/log/view-photo/{{ photoKey }}" target="_blank" rel="noopener noreferrer">
-                <img src="{{ photo.imgSrc }}"
-                  alt="Image {{ imageNumber }}"
-                  class="thumbnail-img" />
-              </a>
-              <a href="/log/view-photo/{{ photoKey }}"
-                 target="_blank"
-                 rel="noopener noreferrer"
-                 class="govuk-link">
-              </a>
-            </div>
+          <div>
+            <a href="/log/view-photo/{{ photoKey }}" target="_blank" rel="noopener noreferrer">
+              <img src="{{ photo.imgSrc }}" alt="Image {{ imageNumber }}" class="thumbnail-img"/>
+            </a>
+            <a href="/log/view-photo/{{ photoKey }}" target="_blank" rel="noopener noreferrer" class="govuk-link"></a>
+          </div>
           {% endset %}
-
           {% set _ = rows.push({
             key: { text: label },
             value: { html: photoHtml },
@@ -86,9 +70,7 @@
               ]
             }
           }) %}
-
         {% else %}
-
           {% set _ = rows.push({
             key: { text: label },
             value: { text: "Not uploaded" },
@@ -100,11 +82,8 @@
               }]
             }
           }) %}
-
         {% endif %}
-
       {% endfor %}
-
       {% set _ = rows.push({
         key: { text: "Additional details" },
         value: { text: photoDetails if photoDetails else "Not entered" },
@@ -116,15 +95,13 @@
           }]
         }
       }) %}
-
     {% endif %}
-  {% endif %}  {{ govukSummaryList({
+  {% endif %}
+  {{ govukSummaryList({
     classes: "govuk-!-margin-bottom-9",
     rows: rows
   }) }}
-
 {% else %}
-
   {{ govukSummaryList({
     classes: "govuk-!-margin-bottom-9",
     rows: [
@@ -134,9 +111,7 @@
       }
     ]
   }) }}
-
 {% endif %}
-
 {% if hasNoPhotos %}
   {{ govukInsetText({
     text: "You cannot save this application as there are no images uploaded. You can upload an image of the application or change method to enter details manually."

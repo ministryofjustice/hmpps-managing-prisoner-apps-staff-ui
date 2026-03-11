@@ -178,3 +178,7 @@ export async function uploadWebcamPhotoDocuments(
 
   return fileRequestDtos
 }
+
+export function getPhotoLabel(photoKey: string): string {
+  return photoKey === PHOTO_KEYS.PHOTO_2 ? 'Image 2 (optional)' : 'Image 1'
+}
