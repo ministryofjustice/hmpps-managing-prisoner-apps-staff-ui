@@ -11,7 +11,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AuditService, { Page } from '../../services/auditService'
 
 import { updateSessionData } from '../../utils/http/session'
-import { getBackLink, createPhotoFromFile, handlePhotoQueryParams } from '../../helpers/photos'
+import { getBackLink, createPhotoFromFile, handlePhotoQueryParams, getPhotoLabel } from '../../helpers/photos'
 
 const upload = multer({ storage: multer.memoryStorage() })
 
@@ -36,6 +36,8 @@ export default function photoCaptureRouter({ auditService }: { auditService: Aud
 
       handlePhotoQueryParams(req, retake as string, image as string)
 
+      const currentPhoto = req.session.applicationData?.currentPhoto || PHOTO_KEYS.PHOTO_1
+
       await auditService.logPageView(Page.LOG_PHOTO_CAPTURE_PAGE, {
         who: user.username,
         correlationId: req.id,
@@ -46,6 +48,8 @@ export default function photoCaptureRouter({ auditService }: { auditService: Aud
         applicationType: applicationData.type.name,
         LOG_PHOTO_CAPTURE: URLS.LOG_PHOTO_CAPTURE,
         backLink: getBackLink(req),
+        currentPhoto,
+        photoLabel: getPhotoLabel(currentPhoto),
       })
     }),
   )
