@@ -4,42 +4,45 @@
     {% set imageRows = [] %}
     {% set doc1 = documents[0] %}
     {% set imageRows = imageRows.concat([{
-    key: { text: "Image 1" },
-    value: { 
-      html: '<a href="/applications/' + application.requestedBy.username + '/' + application.id + '/documents/' + doc1.documentUuid + '" alt="' + doc1.filename + '" target="_blank" rel="noopener noreferrer">
-              <img 
-                src="/applications/' + application.requestedBy.username + '/' + application.id + '/documents/' + doc1.documentUuid + '" 
-                alt="Photo 1"
-                class="thumbnail-img" 
-              />
-            </a>'
-    }
-  }]) %}
-    {% if documents.length > 1 %}
-      {% set doc2 = documents[1] %}
-      {% set imageRows = imageRows.concat([{
-      key: { text: "Image 2 (optional)" },
+      key: { text: "Image 1" },
       value: { 
-        html: '<a href="/applications/' + application.requestedBy.username + '/' + application.id + '/documents/' + doc2.documentUuid + '" alt="' + doc2.filename + '" target="_blank" rel="noopener noreferrer">
+        html: '<a href="/applications/' + username + '/' + appId + '/documents/' + doc1.documentUuid + '" alt="Photo 1" target="_blank" rel="noopener noreferrer">
                 <img 
-                  src="/applications/' + application.requestedBy.username + '/' + application.id + '/documents/' + doc2.documentUuid + '" 
-                  alt="Photo 2"
+                  src="/applications/' + username + '/' + appId + '/documents/' + doc1.documentUuid + '" 
+                  alt="Photo 1"
                   class="thumbnail-img" 
                 />
               </a>'
       }
     }]) %}
+   
+    {% if documents.length > 1 %}
+      {% set doc2 = documents[1] %}
+      {% set imageRows = imageRows.concat([{
+        key: { text: "Image 2 (optional)" },
+        value: { 
+          html: '<a href="/applications/' + username + '/' + appId + '/documents/' + doc2.documentUuid + '" alt="Photo 2" target="_blank" rel="noopener noreferrer">
+                  <img 
+                    src="/applications/' + username + '/' + appId + '/documents/' + doc2.documentUuid + '" 
+                    alt="Photo 2"
+                    class="thumbnail-img" 
+                  />
+                </a>'
+        }
+      }]) %}
     {% else %}
       {% set imageRows = imageRows.concat([{
-      key: { text: "Image 2 (optional)" },
-      value: { text: "Not taken" }
-    }]) %}
+        key: { text: "Image 2 (optional)" },
+        value: { text: "Not taken" }
+      }]) %}
     {% endif %}
-    {% set additionalDetails = application.requests[0].details %}
+
     {% set allRows = imageRows.concat([{
-    key: { text: "Additional details" },
-    value: { text: additionalDetails if additionalDetails else "Not entered" }
-  }]) %}
-    {{ govukSummaryList({ rows: allRows }) }}
+      key: { text: "Additional details" },
+      value: { text: additionalDetails if additionalDetails else "Not entered" }
+    }]) %}
+    {{ govukSummaryList({ 
+      rows: allRows 
+    }) }}
   {% endif %}
 {% endmacro %}
