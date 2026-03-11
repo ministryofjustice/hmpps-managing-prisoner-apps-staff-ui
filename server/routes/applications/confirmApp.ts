@@ -2,6 +2,7 @@ import { Request, Response, Router } from 'express'
 
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
+import { EXCLUDED_LOG_METHOD_APP_TYPES } from '../../constants/excludedApplicationTypes'
 
 import { getAppType } from '../../helpers/application/getAppType'
 import { getPhotosForDisplay, uploadWebcamPhotoDocuments } from '../../helpers/photos'
@@ -41,6 +42,8 @@ export default function confirmAppRouter({
       })
 
       const { photosForDisplay, photoDetails, hasNoPhotos } = getPhotosForDisplay(applicationData)
+      const excludedAppTypeIds = Object.values(EXCLUDED_LOG_METHOD_APP_TYPES)
+      const isExcluded = excludedAppTypeIds.includes(applicationData?.type.value)
 
       return res.render(PATHS.LOG_APPLICATION.CONFIRM_DETAILS, {
         applicationType: applicationData?.type.key,
@@ -62,6 +65,7 @@ export default function confirmAppRouter({
             : URLS.LOG_ADDITIONAL_PHOTO_DETAILS,
         title: applicationType.name,
         isGeneric: applicationType.genericType || applicationType.genericForm,
+        isExcluded,
       })
     }),
   )

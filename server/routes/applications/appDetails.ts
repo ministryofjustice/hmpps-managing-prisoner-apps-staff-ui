@@ -4,6 +4,7 @@ import { OsPlacesAddressService } from '@ministryofjustice/hmpps-connect-dps-sha
 import { countries } from '../../constants/countries'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
+import { EXCLUDED_LOG_METHOD_APP_TYPES } from '../../constants/excludedApplicationTypes'
 
 import { getAppType } from '../../helpers/application/getAppType'
 
@@ -80,7 +81,10 @@ export default function appDetailsRouter({
 
       let backLink = URLS.LOG_DEPARTMENT
 
-      if (config.featureFlags.logMethodPageEnabled && isGeneric) {
+      const excludedAppTypeIds = Object.values(EXCLUDED_LOG_METHOD_APP_TYPES)
+      const isExcluded = excludedAppTypeIds.includes(selectedAppType.id.toString())
+
+      if (config.featureFlags.logMethodPageEnabled && !isExcluded) {
         backLink = URLS.LOG_METHOD
       }
 
