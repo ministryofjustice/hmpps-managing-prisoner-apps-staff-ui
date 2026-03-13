@@ -30,7 +30,7 @@
             {% include "./partials/" + applicationType + ".njk" %}
           {% endif %}
 
-        {% if loggingMethod and not isUpdate %}
+        {% if not isUpdate %}
           <form method="POST">
             <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
@@ -42,7 +42,7 @@
                 disabled: hasNoPhotos
               }) }}
 
-              <a href="/" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+              <a href="/log/cancel" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>
           </form>
 

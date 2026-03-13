@@ -70,7 +70,12 @@ export default function prisonerRouter({
   router.post(
     URLS.LOG_PRISONER_DETAILS,
     asyncMiddleware(async (req: Request, res: Response) => {
-      const { prisonNumber, prisonerLookupButton } = req.body
+      const { prisonNumber: prisonNumberInput, prisonerLookupButton } = req.body
+
+      const prisonNumber = prisonNumberInput
+        ?.trim()
+        .replace(/[\s.]+/g, '')
+        .toUpperCase()
 
       const errors = validatePrisonerDetails(prisonNumber)
 

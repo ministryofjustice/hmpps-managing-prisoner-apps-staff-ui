@@ -106,6 +106,14 @@ export default function appTypeRouter({
         })
       }
 
+      const appTypeChanged = applicationData?.type?.value !== selectedValue
+      if (appTypeChanged) {
+        delete req.session.applicationData.loggingMethod
+        delete req.session.applicationData.additionalData
+        delete req.session.applicationData.addAnotherPhoto
+        delete req.session.applicationData.photoAdditionalDetails
+      }
+
       updateSessionData(req, {
         type: {
           key: selectedAppType.name

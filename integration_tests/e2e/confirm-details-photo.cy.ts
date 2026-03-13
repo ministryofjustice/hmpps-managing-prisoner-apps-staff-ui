@@ -9,6 +9,8 @@ context('Check details page - webcam flow', () => {
     cy.visit('/log/prisoner-details')
     cy.enterPrisonerDetails()
 
+    cy.get('button[type="submit"]').click() // Add this line
+
     cy.url().should('include', '/log/group')
     cy.selectGroup('Pin Phone Contact Apps')
 

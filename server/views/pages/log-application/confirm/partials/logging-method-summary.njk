@@ -1,5 +1,6 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% macro loggingMethodSummary(loggingMethod, photos, photoDetails, isUpdate) %}
+
   {% set rows = [] %}
   {% if loggingMethod and not isUpdate %}
     {% set methodText = "Entered manually" if loggingMethod === 'manual' else "Take a photo of the application" %}
@@ -15,6 +16,7 @@
     }
   }) %}
   {% endif %}
+
   {% if loggingMethod === 'webcam' %}
     {% set expectedImages = [1,2] %}
     {% for imageNumber in expectedImages %}
@@ -64,6 +66,7 @@
       }) %}
       {% endif %}
     {% endfor %}
+
     {% set _ = rows.push({
     key: { text: "Additional details" },
     value: { text: photoDetails if photoDetails else "Not entered" },
@@ -76,8 +79,12 @@
     }
   }) %}
   {% endif %}
-  {{ govukSummaryList({
-  classes: "govuk-!-margin-bottom-9",
-  rows: rows
-}) }}
+  
+  {% if rows.length > 0 %}
+    {% set marginClass = "govuk-!-margin-bottom-9" if loggingMethod === 'webcam' else "govuk-!-margin-bottom-0" %}
+    {{ govukSummaryList({
+      classes: marginClass,
+      rows: rows
+    }) }}
+  {% endif %}
 {% endmacro %}
