@@ -29,6 +29,7 @@ context('Applications List - Filter Functionality', () => {
       page.tableHeaderAt(1).should('contain', 'Application type')
       page.tableHeaderAt(2).should('contain', 'From')
       page.tableHeaderAt(3).should('contain', 'Department')
+      page.tableHeaderAt(4).should('contain', 'Comments')
     })
 
     it('should display the filter panel with default values with Pending and Newest', () => {
@@ -48,7 +49,7 @@ context('Applications List - Filter Functionality', () => {
 
       cy.url().should('include', 'order=oldest')
 
-      page.tableRows().first().find('td').eq(0).should('contain', '21 March 2025')
+      page.tableRows().first().find('td').eq(0).should('contain', '21/03/2025')
     })
 
     it('should filter by app type and retain filters when navigating back', () => {
