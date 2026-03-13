@@ -95,6 +95,29 @@ context('Confirm Details Page', () => {
           cy.url().should('include', `/log/submit/A1234AA/${submittedApp.id}`)
         }
       })
+
+      if (!isUpdate) {
+        it('should display the cancel link', () => {
+          cy.get('a').contains('Cancel').should('have.attr', 'href', '/log/cancel')
+        })
+
+        it('should clear session data and redirect to home page when cancel is clicked', () => {
+          cy.get('a').contains('Cancel').click()
+
+          cy.url().should('eq', `${Cypress.config().baseUrl}/`)
+        })
+
+        it('should allow starting a fresh application after cancellation', () => {
+          cy.get('a').contains('Cancel').click()
+          cy.url().should('eq', `${Cypress.config().baseUrl}/`)
+          cy.visit('/log/prisoner-details')
+          cy.enterPrisonerDetails()
+          cy.selectGroup('Pin Phone Contact Apps')
+          cy.selectApplicationType('Swap Visiting Orders (VOs) for PIN Credit')
+
+          cy.url().should('include', '/log/department')
+        })
+      }
     })
   }
 

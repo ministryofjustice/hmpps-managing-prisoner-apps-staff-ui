@@ -16,7 +16,7 @@
     {
       key: { text: "Details" },
       value: { text: applicationData.request.details },
-      actions: {
+      actions: not isUpdate and {
           items: [{
             href: changeUrl,
             text: "Change",

@@ -7,7 +7,7 @@
 
   <div class="govuk-summary-list--header">
     <h2 class="govuk-heading-m">{{ title }}</h2>
-    {% if not loggingMethod  %}
+    {% if not loggingMethod or isUpdate %}
       <a href="{{ changeUrl }}" class="govuk-body">
         Change <span class="govuk-visually-hidden">log details</span>
       </a>

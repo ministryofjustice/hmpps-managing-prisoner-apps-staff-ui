@@ -2,7 +2,7 @@
 
 {{ appTypeSummaryListHeader("Emergency credit to add", application.requestedBy.username, application.id, isUpdate, loggingMethod) }}
 
-{% if not isExcluded %}
+{% if not isExcluded and not isUpdate%}
 {{ loggingMethodSummary(loggingMethod, photos, photoDetails, isUpdate) }}
 {% endif %}
 
@@ -15,7 +15,7 @@
     {
       key: { text: "Amount" },
       value: { text: "£" + applicationData.request.amount },
-       actions: {
+       actions: not isUpdate and {
           items: [{
             href: changeUrl,
             text: "Change",
@@ -26,7 +26,7 @@
     {
       key: { text: "Reason" },
       value: { text: applicationData.request.reason },
-       actions: {
+       actions: not isUpdate and {
           items: [{
             href: changeUrl,
             text: "Change",

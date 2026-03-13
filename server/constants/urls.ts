@@ -14,6 +14,7 @@ export const URLS = {
   LOG_ADD_ANOTHER_PHOTO: '/log/add-another-photo',
   LOG_ADDITIONAL_PHOTO_DETAILS: '/log/additional-photo-details',
   LOG_REMOVE_PHOTO: '/log/remove-photo',
+  LOG_CANCEL_APPLICATION: '/log/cancel',
   LOG_VIEW_PHOTO: '/log/view-photo',
   SEARCH_PRISONERS: `/applications/search-prisoners`,
 }
