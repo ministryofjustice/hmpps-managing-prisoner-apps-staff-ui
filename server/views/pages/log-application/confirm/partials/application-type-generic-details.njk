@@ -21,7 +21,7 @@
       {% set _ = rows.push({
         key: { text: "Details" },
         value: { text: detailsText },
-        actions: {
+        actions: not isUpdate and {
           items: [{
             href: "/applications/" ~ application.requestedBy.username ~ "/" ~ application.id ~ "/change" if isUpdate else "/log/application-details",
             text: "Change",

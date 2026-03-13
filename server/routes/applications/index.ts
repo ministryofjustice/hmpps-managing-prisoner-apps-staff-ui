@@ -29,6 +29,7 @@ import confirmPhotoRouter from './confirmPhoto'
 import anotherPhotoRouter from './anotherPhoto'
 import additionalPhotoDetailsRouter from './additionalPhotoDetails'
 import removePhotoRouter from './removePhoto'
+import cancelAppRouter from './cancelApp'
 
 export default function applicationsRoutes({
   auditService,
@@ -94,6 +95,7 @@ export default function applicationsRoutes({
   router.use(anotherPhotoRouter({ auditService }))
   router.use(additionalPhotoDetailsRouter({ auditService }))
   router.use(removePhotoRouter({ auditService }))
+  router.use(cancelAppRouter({ auditService }))
   router.get(
     '/api/addresses/find/:query',
     asyncMiddleware(async (req: Request, res: Response) => {
