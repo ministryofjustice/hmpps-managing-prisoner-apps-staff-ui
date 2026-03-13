@@ -8,6 +8,9 @@ import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsServ
 type ViewAppListAppWithName = ViewAppListApp & {
   prisonerName: string
 }
+const mojNotificationBadge = (options: { text: string }) => {
+  return `<span class="moj-notification-badge">${options.text}</span>`
+}
 
 // eslint-disable-next-line import/prefer-default-export
 export const formatAppsToRows = async (
@@ -17,10 +20,10 @@ export const formatAppsToRows = async (
 ) => {
   return Promise.all(
     applications.map(async application => {
-      const { createdDate, appType, requestedBy, assignedGroup, id, prisonerName } = application
+      const { createdDate, appType, requestedBy, assignedGroup, id, prisonerName, comments } = application
 
       const date = new Date(createdDate)
-      const formattedDate = format(date, 'd MMMM yyyy')
+      const formattedDate = format(date, 'dd/MM/yyyy')
       const sortValue = getTime(date).toString()
 
       const type = await getAppType(managingPrisonerAppsService, user, appType.id.toString())
@@ -32,6 +35,9 @@ export const formatAppsToRows = async (
           html: `${prisonerName}<br/><span class="govuk-table__subtext govuk-body-s">${requestedBy}</span>`,
         },
         { text: assignedGroup?.name || 'N/A' },
+        {
+          html: comments > 0 ? mojNotificationBadge({ text: `${comments}` }) : 'None',
+        },
         {
           html: `<a href="/applications/${requestedBy}/${id}" class="govuk-link">View</a>`,
         },
