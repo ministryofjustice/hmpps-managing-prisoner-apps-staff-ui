@@ -71,6 +71,7 @@ export const appSearchResponse: ViewAppsListResponse = {
         initialApp: 2,
         type: 'DEPARTMENT',
       },
+      comments: 2,
     },
     {
       id: '53a02b48-b6af-47d5-9c54-3d0137f6ed96',
@@ -103,6 +104,7 @@ export const appSearchResponse: ViewAppsListResponse = {
         initialApp: 3,
         type: 'DEPARTMENT',
       },
+      comments: 2,
     },
     {
       id: 'b4e9944b-3a27-4d10-b12b-895426349ea3',
@@ -135,6 +137,7 @@ export const appSearchResponse: ViewAppsListResponse = {
         initialApp: 3,
         type: 'DEPARTMENT',
       },
+      comments: 0,
     },
   ],
 }

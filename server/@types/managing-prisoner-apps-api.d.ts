@@ -653,6 +653,8 @@ export interface components {
       /** Format: date-time */
       createdDate: string
       assignedGroup: unknown
+      /** Format: int32 */
+      comments: number
     }
     AppResponseListDto: {
       /** Format: int32 */
@@ -721,7 +723,7 @@ export interface components {
       /** Format: uuid */
       entityId: string
       /** @enum {string} */
-      entityType: 'APP' | 'COMMENT' | 'RESPONSE' | 'ASSIGNED_GROUP'
+      entityType: 'APP' | 'COMMENT' | 'RESPONSE' | 'ASSIGNED_GROUP' | 'FILE'
       activityMessage: components['schemas']['ActivityMessage']
       /** Format: date-time */
       createdDate: string
