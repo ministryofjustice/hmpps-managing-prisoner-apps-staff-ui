@@ -76,6 +76,7 @@ context('Department Page', () => {
     cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
     cy.task('stubGetGroupsAndTypes')
     cy.task('stubGetDepartments', { appType: '2' })
+    cy.task('stubGetCaseLoads', 'HMI')
     cy.visit('/log/prisoner-details')
     cy.enterPrisonerDetails()
 
@@ -87,6 +88,47 @@ context('Department Page', () => {
 
     cy.url().should('include', '/log/department')
 
+    cy.selectDepartment('Business Hub')
+
+    cy.url().should('include', '/log/application-details')
+    cy.url().should('not.include', '/log/method')
+  })
+
+  it('should redirect to logging method page when caseload is enabled', () => {
+    cy.clearCookies()
+    cy.clearLocalStorage()
+    cy.clearAllSessionStorage()
+
+    cy.resetAndSignIn()
+    cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
+    cy.task('stubGetGroupsAndTypes')
+    cy.task('stubGetDepartments', { appType: '7' })
+    cy.task('stubGetCaseLoads', 'HMI')
+
+    cy.visit('/log/prisoner-details')
+    cy.enterPrisonerDetails()
+    cy.selectGroup('Pin Phone Contact Apps')
+    cy.selectApplicationType('Make a general PIN phone enquiry')
+    cy.selectDepartment('Business Hub')
+
+    cy.url().should('include', '/log/method')
+  })
+
+  it('should redirect to application details page when caseload is not enabled', () => {
+    cy.clearCookies()
+    cy.clearLocalStorage()
+    cy.clearAllSessionStorage()
+
+    cy.resetAndSignIn()
+    cy.task('stubGetPrisonerByPrisonerNumber', 'A1234AA')
+    cy.task('stubGetGroupsAndTypes')
+    cy.task('stubGetDepartments', { appType: '7' })
+    cy.task('stubGetCaseLoads', 'PEI')
+
+    cy.visit('/log/prisoner-details')
+    cy.enterPrisonerDetails()
+    cy.selectGroup('Pin Phone Contact Apps')
+    cy.selectApplicationType('Make a general PIN phone enquiry')
     cy.selectDepartment('Business Hub')
 
     cy.url().should('include', '/log/application-details')

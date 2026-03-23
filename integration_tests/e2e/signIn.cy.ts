@@ -7,6 +7,7 @@ context('Sign In', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
+    cy.task('stubGetCaseLoads', 'HMI')
   })
 
   it('Unauthenticated user directed to auth', () => {
@@ -35,10 +36,8 @@ context('Sign In', () => {
   it('User can manage their details', () => {
     cy.signIn()
     cy.task('stubAuthManageDetails')
-    const indexPage = Page.verifyOnPage(IndexPage)
 
-    indexPage.manageDetails().get('a').invoke('removeAttr', 'target')
-    indexPage.manageDetails().click()
+    cy.visit('/account-details')
     Page.verifyOnPage(AuthManageDetailsPage)
   })
 

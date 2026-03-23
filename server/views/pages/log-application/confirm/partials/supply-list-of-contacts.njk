@@ -6,7 +6,7 @@
 {{ loggingMethodSummary(loggingMethod, photos, photoDetails, isUpdate) }}
 {% endif %}
 
-{% if loggingMethod === 'manual' %}
+{% if loggingMethod === 'manual' or not loggingMethod %}
   {% set changeUrl = "/applications/" ~ application.requestedBy.username ~ "/" ~ application.id ~ "/change" if isUpdate else "/log/application-details" %}
 
 
@@ -16,7 +16,7 @@
     {
       key: { text: "Details" },
       value: { text: applicationData.request.details },
-      actions: not isUpdate and {
+      actions: (loggingMethod and not isUpdate) and {
           items: [{
             href: changeUrl,
             text: "Change",

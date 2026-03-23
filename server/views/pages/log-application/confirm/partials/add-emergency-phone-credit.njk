@@ -2,11 +2,11 @@
 
 {{ appTypeSummaryListHeader("Emergency credit to add", application.requestedBy.username, application.id, isUpdate, loggingMethod) }}
 
-{% if not isExcluded and not isUpdate%}
+{% if not isExcluded and not isUpdate %}
 {{ loggingMethodSummary(loggingMethod, photos, photoDetails, isUpdate) }}
 {% endif %}
 
-{% if loggingMethod === 'manual' %}
+{% if loggingMethod === 'manual' or not loggingMethod%}
   {% set changeUrl = "/applications/" ~ application.requestedBy.username ~ "/" ~ application.id ~ "/change" if isUpdate else "/log/application-details" %}
 
 {{ govukSummaryList({
@@ -15,7 +15,7 @@
     {
       key: { text: "Amount" },
       value: { text: "£" + applicationData.request.amount },
-       actions: not isUpdate and {
+       actions: (loggingMethod and not isUpdate) and {
           items: [{
             href: changeUrl,
             text: "Change",
@@ -26,7 +26,7 @@
     {
       key: { text: "Reason" },
       value: { text: applicationData.request.reason },
-       actions: not isUpdate and {
+       actions: (loggingMethod and not isUpdate)  and{
           items: [{
             href: changeUrl,
             text: "Change",
