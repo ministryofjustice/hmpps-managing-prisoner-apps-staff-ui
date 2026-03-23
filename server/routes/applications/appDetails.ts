@@ -23,6 +23,8 @@ import getFormattedRelationshipDropdown from '../../utils/formatters/getFormatte
 import { handleApplicationDetails } from '../../utils/handleAppDetails'
 import { getFormattedCountries } from '../../utils/data/countries'
 
+import { isLogMethodEnabledEstablishment } from '../../constants/enabledEstablishments'
+
 export default function appDetailsRouter({
   auditService,
   managingPrisonerAppsService,
@@ -83,8 +85,15 @@ export default function appDetailsRouter({
 
       const excludedAppTypeIds = Object.values(EXCLUDED_LOG_METHOD_APP_TYPES)
       const isExcluded = excludedAppTypeIds.includes(selectedAppType.id.toString())
+      const isEnabledEstablishment =
+        'activeCaseLoadId' in user && isLogMethodEnabledEstablishment(user.activeCaseLoadId)
 
-      if (config.featureFlags.logMethodPageEnabled && !isExcluded) {
+      if (
+        config.featureFlags.logMethodPageEnabled &&
+        isEnabledEstablishment &&
+        !isExcluded &&
+        applicationData?.loggingMethod
+      ) {
         backLink = URLS.LOG_METHOD
       }
 

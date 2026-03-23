@@ -13,6 +13,8 @@ import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsServ
 
 import { updateSessionData } from '../../utils/http/session'
 
+import { isLogMethodEnabledEstablishment } from '../../constants/enabledEstablishments'
+
 const ERROR_MESSAGE = 'Choose a department'
 
 export default function departmentsRouter({
@@ -88,8 +90,11 @@ export default function departmentsRouter({
 
       updateSessionData(req, { department: selectedDepartment, departmentId: selectedDepartmentId })
 
+      const isEnabledEstablishment =
+        'activeCaseLoadId' in user && isLogMethodEnabledEstablishment(user.activeCaseLoadId)
       const isAppTypeExcluded = Object.values(EXCLUDED_LOG_METHOD_APP_TYPES).includes(applicationData.type.value)
-      if (!config.featureFlags.logMethodPageEnabled || isAppTypeExcluded) {
+
+      if (!isEnabledEstablishment || !config.featureFlags.logMethodPageEnabled || isAppTypeExcluded) {
         return res.redirect(URLS.LOG_APPLICATION_DETAILS)
       }
 

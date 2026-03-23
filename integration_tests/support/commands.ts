@@ -6,6 +6,7 @@ Cypress.Commands.add('signIn', (options = { failOnStatusCode: true }) => {
 Cypress.Commands.add('resetAndSignIn', () => {
   cy.task('reset')
   cy.task('stubSignIn')
+  cy.task('stubGetCaseLoads', 'HMI')
   cy.signIn()
 })
 
