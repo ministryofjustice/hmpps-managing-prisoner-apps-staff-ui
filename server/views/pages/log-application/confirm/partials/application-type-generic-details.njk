@@ -5,16 +5,16 @@
     {% if not isUpdate %}
       {% set methodText = "Entered manually" if loggingMethod === 'manual' else "Take a photo of the application" %}
       {% set _ = rows.push({
-      key: { text: "Method" },
-      value: { text: methodText },
-      actions: {
-        items: [{
-          href: "/log/method",
-          text: "Change",
-          visuallyHiddenText: "method"
-        }]
-      }
-    }) %}
+        key: { text: "Method" },
+        value: { text: methodText },
+        actions: {
+          items: [{
+            href: "/log/method",
+            text: "Change",
+            visuallyHiddenText: "method"
+          }]
+        }
+      }) %}
     {% endif %}
     {% if loggingMethod === 'manual' %}
       {% set detailsText = applicationData.additionalData.details or applicationData.request.details %}
@@ -96,6 +96,19 @@
         }
       }) %}
     {% endif %}
+  {% else %}
+    {% set detailsText = applicationData.additionalData.details or applicationData.request.details %}
+    {% set _ = rows.push({
+      key: { text: "Details" },
+      value: { text: detailsText },
+      actions: (loggingMethod and not isUpdate) and {
+        items: [{
+          href: "/applications/" ~ application.requestedBy.username ~ "/" ~ application.id ~ "/change" if isUpdate else "/log/application-details",
+          text: "Change",
+          visuallyHiddenText: "details"
+        }]
+      }
+    }) %}
   {% endif %}
   {{ govukSummaryList({
     classes: "govuk-!-margin-bottom-9",

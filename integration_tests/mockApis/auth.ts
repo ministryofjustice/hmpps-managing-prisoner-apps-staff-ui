@@ -119,6 +119,7 @@ const token = (userToken: UserToken) =>
         access_token: createToken(userToken),
         token_type: 'bearer',
         user_name: 'USER1',
+        auth_source: 'nomis',
         expires_in: 599,
         scope: 'read',
         internalUser: true,

@@ -16,4 +16,25 @@ export default {
       },
     })
   },
+  stubGetCaseLoads: (activeCaseLoadId = 'HMI'): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        url: '/prison/api/users/me/caseLoads',
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: [
+          {
+            caseLoadId: activeCaseLoadId,
+            description: 'Test caseload',
+            type: 'INST',
+            caseloadFunction: 'GENERAL',
+            currentlyActive: true,
+          },
+        ],
+      },
+    })
+  },
 }
