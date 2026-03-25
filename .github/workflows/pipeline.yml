@@ -62,6 +62,21 @@ jobs:
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
 
+      - name: Start WireMock
+        run: docker compose -f docker-compose-test.yml up -d wiremock
+
+      - name: Wait for WireMock
+        run: |
+          for i in {1..30}; do
+            if curl -fsS http://localhost:9091/__admin/mappings >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "WireMock failed to become healthy"
+          docker compose -f docker-compose-test.yml logs wiremock || true
+          exit 1
+
       - name: Validate DEV test credentials
         env:
           PW_BASE_URL: ${{ secrets.MANAGE_APPS_BASE_URL }}
@@ -86,6 +101,10 @@ jobs:
         with:
           name: playwright-dev-report
           path: integration_tests/playwright_tests/reports
+
+      - name: Stop WireMock
+        if: always()
+        run: docker compose -f docker-compose-test.yml down
   helm_lint:
     strategy:
       matrix:
