@@ -2,17 +2,17 @@ import { type Page as PlaywrightPage, test as base } from '@playwright/test'
 import auth from '../../mockApis/auth'
 import { resetStubs } from '../../mockApis/wiremock'
 
-const getSignInUrlWithRetry = async (waitForTimeout: (timeout: number) => Promise<void>, attempts = 30): Promise<string> => {
-  for (let attempt = 1; attempt <= attempts; attempt += 1) {
-    try {
-      return await auth.getSignInUrl()
-    } catch (error) {
-      if (attempt === attempts) throw error
-      await waitForTimeout(100)
-    }
+const getSignInUrlWithRetry = async (
+  waitForTimeout: (timeout: number) => Promise<void>,
+  attempts = 30,
+): Promise<string> => {
+  try {
+    return await auth.getSignInUrl()
+  } catch (error) {
+    if (attempts <= 1) throw error
+    await waitForTimeout(100)
+    return getSignInUrlWithRetry(waitForTimeout, attempts - 1)
   }
-
-  throw new Error('Unable to resolve sign-in URL from auth authorize requests')
 }
 
 type Fixtures = {

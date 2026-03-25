@@ -10,7 +10,10 @@ export default abstract class Page {
     private readonly title: string,
   ) {}
 
-  static async verifyOnPage<T extends Page>(PageClass: new (page: PlaywrightPage) => T, page: PlaywrightPage): Promise<T> {
+  static async verifyOnPage<T extends Page>(
+    PageClass: new (page: PlaywrightPage) => T,
+    page: PlaywrightPage,
+  ): Promise<T> {
     const instance = new PageClass(page)
     await instance.checkOnPage()
     return instance

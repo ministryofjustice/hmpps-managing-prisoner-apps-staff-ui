@@ -1,9 +1,6 @@
 import { type Page as PlaywrightPage } from '@playwright/test'
 import Page, { type PageElement } from './page'
 
-const MANAGE_APPS_USERNAME = process.env.MANAGE_APPS_USERNAME || ''
-const MANAGE_APPS_PASSWORD = process.env.MANAGE_APPS_PASSWORD || ''
-
 export default class AuthSignInPage extends Page {
   constructor(page: PlaywrightPage) {
     super(page, 'Sign in')
@@ -22,8 +19,8 @@ export default class AuthSignInPage extends Page {
   }
 
   async signInWith(username: string, password: string): Promise<void> {
-    await this.usernameField().fill(MANAGE_APPS_USERNAME)
-    await this.passwordField().fill(MANAGE_APPS_PASSWORD)
+    await this.usernameField().fill(username)
+    await this.passwordField().fill(password)
     await this.signInButton().click()
   }
 }

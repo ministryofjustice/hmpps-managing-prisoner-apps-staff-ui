@@ -32,9 +32,7 @@ const getSignInUrl = (): Promise<string> =>
   }).then(data => {
     const { requests } = data.body
 
-    const matchingRequest = [...requests]
-      .reverse()
-      .find(request => request?.queryParams?.state?.values?.[0])
+    const matchingRequest = [...requests].reverse().find(request => request?.queryParams?.state?.values?.[0])
 
     if (!matchingRequest) {
       throw new Error('No auth authorize request with state parameter found')
@@ -155,6 +153,8 @@ export default {
   stubAuthPing: ping,
   stubAuthToken: token,
   stubAuthManageDetails: manageDetails,
-  stubSignIn: (userToken: UserToken = { roles: ['ROLE_PRISON'] }): Promise<[Response, Response, Response, Response, Response]> =>
+  stubSignIn: (
+    userToken: UserToken = { roles: ['ROLE_PRISON'] },
+  ): Promise<[Response, Response, Response, Response, Response]> =>
     Promise.all([favicon(), redirect(), signOut(), token(userToken), tokenVerification.stubVerifyToken()]),
 }
