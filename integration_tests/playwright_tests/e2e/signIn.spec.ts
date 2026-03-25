@@ -12,8 +12,10 @@ const isWiremock = process.env.PW_ENV === 'mock' || targetBaseUrl.includes('loca
 
 test.describe('Sign In', () => {
   test.beforeEach(async () => {
-    await resetStubs()
-    await auth.stubSignIn()
+    if (isWiremock) {
+      await resetStubs()
+      await auth.stubSignIn()
+    }
   })
 
   test('Unauthenticated user directed to auth', async ({ page }) => {
@@ -46,7 +48,6 @@ test.describe('Sign In', () => {
   test('User can manage their details', async ({ page, signIn }) => {
     test.skip(isWiremock, 'Manage details flow is only available in DEV')
     await signIn()
-    await auth.stubAuthManageDetails()
     const indexPage = await Page.verifyOnPage(IndexPage, page)
     await indexPage.openManageDetailsInSameTab()
     await Page.verifyOnPage(AuthManageDetailsPage, page)

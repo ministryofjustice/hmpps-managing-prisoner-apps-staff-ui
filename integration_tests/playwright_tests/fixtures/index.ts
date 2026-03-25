@@ -104,8 +104,10 @@ export const test = base.extend<Fixtures>({
 
   resetAndSignIn: async ({ page }, use) => {
     await use(async () => {
-      await resetStubs()
-      await auth.stubSignIn()
+      if (isLocalhost) {
+        await resetStubs()
+        await auth.stubSignIn()
+      }
       await page.goto('/')
       if (isLocalhost) {
         const signInUrl = await getSignInUrlWithRetry(timeout => page.waitForTimeout(timeout))

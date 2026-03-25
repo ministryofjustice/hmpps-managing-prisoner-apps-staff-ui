@@ -10,9 +10,11 @@ const isWiremock = process.env.PW_ENV === 'mock' || targetBaseUrl.includes('loca
 
 test.describe('Applications Page', () => {
   test.beforeEach(async ({ page, signIn }) => {
-    await resetStubs()
-    await auth.stubSignIn()
-    await managingPrisonerAppsApi.stubGetGroupsAndTypes()
+    if (isWiremock) {
+      await resetStubs()
+      await auth.stubSignIn()
+      await managingPrisonerAppsApi.stubGetGroupsAndTypes()
+    }
     await signIn()
     if (isWiremock) {
       await page.goto('/')
