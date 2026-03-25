@@ -68,7 +68,38 @@ jobs:
       - name: Start WireMock
         run: docker compose -f docker-compose-test.yml up -d wiremock
 
+      - name: Wait for WireMock
+        run: |
+          for i in {1..30}; do
+            if curl -fsS http://localhost:9091/__admin/mappings >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "WireMock admin API is unavailable"
+          docker compose -f docker-compose-test.yml logs wiremock || true
+          exit 1
+
+      - name: Seed WireMock health stubs
+        run: |
+          for path in \
+            /auth/health/ping \
+            /verification/health/ping \
+            /prison/health/ping \
+            /managingPrisonerApps/health/ping \
+            /personalRelationships/health/ping \
+            /documentApi/health/ping \
+            /manage-users/health/ping
+          do
+            curl -fsS -X POST http://localhost:9091/__admin/mappings \
+              -H 'Content-Type: application/json' \
+              -d "{\"request\":{\"method\":\"GET\",\"urlPath\":\"${path}\"},\"response\":{\"status\":200}}" \
+              >/dev/null
+          done
+
       - name: Start app
+        env:
+          HMPPS_MANAGE_USERS_API_URL: http://localhost:9091/manage-users
         run: |
           npm run start-feature > /tmp/start-feature.log 2>&1 &
           echo $! > /tmp/start-feature.pid
