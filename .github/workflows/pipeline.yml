@@ -64,15 +64,18 @@ jobs:
 
       - name: Validate DEV test credentials
         env:
+          PW_BASE_URL: ${{ secrets.MANAGE_APPS_BASE_URL }}
           MANAGE_APPS_USERNAME: ${{ secrets.MANAGE_APPS_USERNAME }}
           MANAGE_APPS_PASSWORD: ${{ secrets.MANAGE_APPS_PASSWORD }}
         run: |
+          test -n "$PW_BASE_URL"
           test -n "$MANAGE_APPS_USERNAME"
           test -n "$MANAGE_APPS_PASSWORD"
 
       - name: Run Playwright DEV tests
         env:
           CI: true
+          PW_BASE_URL: ${{ secrets.MANAGE_APPS_BASE_URL }}
           MANAGE_APPS_USERNAME: ${{ secrets.MANAGE_APPS_USERNAME }}
           MANAGE_APPS_PASSWORD: ${{ secrets.MANAGE_APPS_PASSWORD }}
         run: npm run pw-test:dev

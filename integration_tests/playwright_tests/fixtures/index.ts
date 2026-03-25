@@ -2,6 +2,29 @@ import { type Page as PlaywrightPage, test as base } from '@playwright/test'
 import auth from '../../mockApis/auth'
 import { resetStubs } from '../../mockApis/wiremock'
 
+const clearBrowserState = async (page: PlaywrightPage, browserName: string) => {
+  if (!page.isClosed()) {
+    await page
+      .evaluate(() => {
+        window.localStorage.clear()
+        window.sessionStorage.clear()
+      })
+      .catch(() => undefined)
+  }
+
+  const context = page.context()
+  await context.clearCookies()
+  await context.clearPermissions()
+
+  if (browserName === 'chromium' && !page.isClosed()) {
+    const client = await context.newCDPSession(page)
+    await client.send('Network.enable')
+    await client.send('Network.clearBrowserCache')
+    await client.send('Network.clearBrowserCookies')
+    await client.detach()
+  }
+}
+
 const getSignInUrlWithRetry = async (
   waitForTimeout: (timeout: number) => Promise<void>,
   attempts = 30,
@@ -130,6 +153,10 @@ export const test = base.extend<Fixtures>({
       await page.getByRole('button', { name: 'Continue' }).click()
     })
   },
+})
+
+test.afterEach(async ({ page, browserName }) => {
+  await clearBrowserState(page, browserName)
 })
 
 export { expect } from '@playwright/test'
