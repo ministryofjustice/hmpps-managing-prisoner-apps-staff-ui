@@ -31,7 +31,16 @@ const getSignInUrl = (): Promise<string> =>
     urlPath: '/auth/oauth/authorize',
   }).then(data => {
     const { requests } = data.body
-    const stateValue = requests[requests.length - 1].queryParams.state.values[0]
+
+    const matchingRequest = [...requests]
+      .reverse()
+      .find(request => request?.queryParams?.state?.values?.[0])
+
+    if (!matchingRequest) {
+      throw new Error('No auth authorize request with state parameter found')
+    }
+
+    const stateValue = matchingRequest.queryParams.state.values[0]
     return `/sign-in/callback?code=codexxxx&state=${stateValue}`
   })
 
@@ -61,7 +70,21 @@ const redirect = () =>
   stubFor({
     request: {
       method: 'GET',
-      urlPattern: '/auth/oauth/authorize\\?response_type=code&redirect_uri=.+?&state=.+?&client_id=clientid',
+      urlPath: '/auth/oauth/authorize',
+      queryParameters: {
+        response_type: {
+          equalTo: 'code',
+        },
+        redirect_uri: {
+          matches: '.+',
+        },
+        state: {
+          matches: '.+',
+        },
+        client_id: {
+          equalTo: 'clientid',
+        },
+      },
     },
     response: {
       status: 200,
@@ -132,6 +155,6 @@ export default {
   stubAuthPing: ping,
   stubAuthToken: token,
   stubAuthManageDetails: manageDetails,
-  stubSignIn: (userToken = { roles: ['ROLE_PRISON'] }): Promise<[Response, Response, Response, Response, Response]> =>
+  stubSignIn: (userToken: UserToken = { roles: ['ROLE_PRISON'] }): Promise<[Response, Response, Response, Response, Response]> =>
     Promise.all([favicon(), redirect(), signOut(), token(userToken), tokenVerification.stubVerifyToken()]),
 }

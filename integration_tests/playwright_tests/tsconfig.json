@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["ES2020", "dom"],
+    "types": ["@playwright/test", "node"],
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true
+  },
+  "include": ["./**/*.ts", "../mockApis/**/*.ts", "../../server/testData/**/*.ts", "../../server/@types/**/*.ts"]
+}
