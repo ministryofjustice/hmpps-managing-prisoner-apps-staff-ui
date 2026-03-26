@@ -41,12 +41,104 @@ jobs:
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_unit_tests.yml@v2 # WORKFLOW_VERSION
     needs: [node_build]
     secrets: inherit
-  # generic node integration tests using wiremock - feel free to override with local tests if required
-  node_integration_tests:
-    name: node integration tests
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_integration_tests.yml@v2 # WORKFLOW_VERSION
+  playwright_mock_tests:
+    name: Playwright mock tests
+    runs-on: ubuntu-latest
     needs: [node_build]
-    secrets: inherit
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build app
+        run: npm run build
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Start WireMock
+        run: docker compose -f docker-compose-test.yml up -d wiremock
+
+      - name: Wait for WireMock
+        run: |
+          for i in {1..30}; do
+            if curl -fsS http://localhost:9091/__admin/mappings >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "WireMock admin API is unavailable"
+          docker compose -f docker-compose-test.yml logs wiremock || true
+          exit 1
+
+      - name: Seed WireMock health stubs
+        run: |
+          for path in \
+            /auth/health/ping \
+            /verification/health/ping \
+            /prison/health/ping \
+            /managingPrisonerApps/health/ping \
+            /personalRelationships/health/ping \
+            /documentApi/health/ping \
+            /manage-users/health/ping
+          do
+            curl -fsS -X POST http://localhost:9091/__admin/mappings \
+              -H 'Content-Type: application/json' \
+              -d "{\"request\":{\"method\":\"GET\",\"urlPath\":\"${path}\"},\"response\":{\"status\":200}}" \
+              >/dev/null
+          done
+
+      - name: Start app
+        env:
+          HMPPS_MANAGE_USERS_API_URL: http://localhost:9091/manage-users
+        run: |
+          npm run start-feature > /tmp/start-feature.log 2>&1 &
+          echo $! > /tmp/start-feature.pid
+
+      - name: Wait for app
+        run: |
+          for i in {1..60}; do
+            if curl -fsS http://localhost:3007/ping >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "App failed to become healthy"
+          cat /tmp/start-feature.log || true
+          exit 1
+
+      - name: Run Playwright mock tests
+        env:
+          CI: true
+        run: npm run pw-test:mock
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-mock-report
+          path: integration_tests/playwright_tests/reports
+
+      - name: Print app logs on failure
+        if: failure()
+        run: cat /tmp/start-feature.log || true
+
+      - name: Stop app and WireMock
+        if: always()
+        run: |
+          if [ -f /tmp/start-feature.pid ]; then
+            kill "$(cat /tmp/start-feature.pid)" || true
+          fi
+          docker compose -f docker-compose-test.yml down
   helm_lint:
     strategy:
       matrix:
@@ -61,7 +153,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v2 # WORKFLOW_VERSION
     needs:
-      - node_integration_tests
+      - playwright_mock_tests
       - node_unit_tests
     with:
       docker_registry: 'ghcr.io'
