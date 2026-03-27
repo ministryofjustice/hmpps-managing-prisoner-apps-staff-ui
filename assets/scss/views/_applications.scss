@@ -160,7 +160,7 @@
 
 .hmpps-cropper-photo-container__controls__half-width {
   border: 0;
-  width: 109px !important;
+  width: 157px !important;
 }
 
 .hmpps-cropper-photo-container__controls__full-width {
@@ -172,8 +172,8 @@
   margin-bottom: 0;
 }
 
-$hmpps-cropper-width: 221px;
-$hmpps-cropper-height: 276px;
+$hmpps-cropper-width: 320px;
+$hmpps-cropper-height: 320px;
 
 .hmpps-cropper-photo-container {
   border: 1px solid $govuk-border-colour;

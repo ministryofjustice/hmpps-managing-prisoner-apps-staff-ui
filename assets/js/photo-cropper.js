@@ -3,13 +3,10 @@ function initPhotoCropper() {
   let croppingInit = false
   let constrainImage = false
 
-  // This is the dimensions of the canvas
-  const FINAL_WIDTH = 480
-  const FINAL_HEIGHT = 600
+  const OUTPUT_LONG_EDGE = 1400
 
-  const MAX_WIDTH = 221
-  const MAX_HEIGHT = 276
-  const RATIO = MAX_WIDTH / MAX_HEIGHT
+  const MAX_WIDTH = 320
+  const MAX_HEIGHT = 320
 
   const uploadedPhoto = document.getElementById('photo-preview')
   const fileName =
@@ -84,8 +81,15 @@ function initPhotoCropper() {
 
   function setFormPhotoToCroppedResult() {
     const selector = document.querySelector('cropper-selection')
-    // The width and height the image gets scaled to in the API, this prevents the image becoming pixellated
-    selector.$toCanvas({ width: FINAL_WIDTH, height: FINAL_HEIGHT }).then(canvas => {
+    const { width: selectionWidth, height: selectionHeight } = selector.getBoundingClientRect()
+    const normalisedWidth = Math.max(selectionWidth, 1)
+    const normalisedHeight = Math.max(selectionHeight, 1)
+    const scaleFactor = OUTPUT_LONG_EDGE / Math.max(normalisedWidth, normalisedHeight)
+    const outputWidth = Math.max(Math.round(normalisedWidth * scaleFactor), 1)
+    const outputHeight = Math.max(Math.round(normalisedHeight * scaleFactor), 1)
+
+    // Preserve selected crop orientation while exporting a higher-resolution image.
+    selector.$toCanvas({ width: outputWidth, height: outputHeight }).then(canvas => {
       canvas.toBlob(blob => {
         const file = new File([blob], fileName, {
           type: fileType,
@@ -143,22 +147,14 @@ function initPhotoCropper() {
     const cropperCanvas = document.querySelector('cropper-canvas')
     const cropperCanvasRect = cropperCanvas.getBoundingClientRect()
 
-    // Check that setting the width doesnt overflow the height being constrained to the image
     const maxWidth = Math.min(cropperImageRect.width, cropperCanvasRect.width)
-    const heightWithMaxWidth = maxWidth / RATIO
+    const maxHeight = Math.min(cropperImageRect.height, cropperCanvasRect.height)
     const selectionX = cropperImageRect.left - cropperCanvasRect.left
     const selectionY = cropperImageRect.top - cropperCanvasRect.top
-    if (heightWithMaxWidth < MAX_HEIGHT) {
-      // Scale the width so that it can be dragged without being locked
-      selection.$change(selectionX, selectionY, maxWidth * 0.9, heightWithMaxWidth * 0.9).$center()
-    } else {
-      // Set the height in the cases the width overflows the height
-      const maxHeight = Math.min(cropperImageRect.height, cropperCanvasRect.height)
-      const widthWithMaxHeight = maxHeight * RATIO
+    const selectionWidth = Math.min(maxWidth, MAX_WIDTH) * 0.95
+    const selectionHeight = Math.min(maxHeight, MAX_HEIGHT) * 0.95
 
-      // Scale the height so that it can be dragged without being locked
-      selection.$change(selectionX, selectionY, widthWithMaxHeight * 0.9, maxHeight * 0.9).$center()
-    }
+    selection.$change(selectionX, selectionY, selectionWidth, selectionHeight).$center()
 
     // Reenable constraining
     constrainImage = true
