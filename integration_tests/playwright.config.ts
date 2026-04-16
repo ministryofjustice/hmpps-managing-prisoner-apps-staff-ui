@@ -6,13 +6,13 @@ export default defineConfig({
   testDir: './playwright_tests/e2e',
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
+  retries: process.env.CI ? 1 : 1,
   workers: 1,
   reporter: [['html', { outputFolder: './playwright_tests/reports' }], ['list']],
   use: {
     baseURL: targetBaseUrl,
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
+    trace: 'on',
+    screenshot: 'on',
   },
   projects: [
     {
