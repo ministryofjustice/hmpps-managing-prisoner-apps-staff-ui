@@ -5,8 +5,11 @@
     "lib": ["es5", "dom", "es2015.promise"],
     "types": ["@playwright/test"],
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["**/*.ts"],
-  "exclude": ["Cypress (deprecated)/**"]
+  "include": ["**/*.ts"]
 }

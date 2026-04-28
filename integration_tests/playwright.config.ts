@@ -11,8 +11,8 @@ export default defineConfig({
   reporter: [['html', { outputFolder: './playwright_tests/reports' }], ['list']],
   use: {
     baseURL: targetBaseUrl,
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
+    trace: 'on',
+    screenshot: 'on',
   },
   projects: [
     {
