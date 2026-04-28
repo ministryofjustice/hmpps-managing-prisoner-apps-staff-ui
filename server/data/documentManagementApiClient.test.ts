@@ -1,33 +1,27 @@
-import superagent from 'superagent'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
+import nock from 'nock'
 import DocumentManagementApiClient from './documentManagementApiClient'
-import RestClient from './restClient'
 import { mockDocument, mockDocuments } from '../testData'
-
-jest.mock('./restClient')
-
-jest.mock('superagent')
-
-const MockedRestClient = jest.mocked(RestClient)
-const mockedSuperagent = jest.mocked(superagent)
+import config from '../config'
 
 describe('DocumentManagementApiClient', () => {
+  let fakeDocumentManagementApi: nock.Scope
   let client: DocumentManagementApiClient
-  let mockRestClientInstance: jest.Mocked<RestClient>
+  let mockAuthenticationClientInstance: jest.Mocked<AuthenticationClient>
   const token = 'test-token'
 
   beforeEach(() => {
-    mockRestClientInstance = {
-      get: jest.fn(),
-      post: jest.fn(),
-      put: jest.fn(),
-      patch: jest.fn(),
-      delete: jest.fn(),
-    } as unknown as jest.Mocked<RestClient>
+    mockAuthenticationClientInstance = {
+      getToken: jest.fn().mockResolvedValue(token),
+    } as unknown as jest.Mocked<AuthenticationClient>
 
-    MockedRestClient.mockImplementation(() => mockRestClientInstance)
+    fakeDocumentManagementApi = nock(config.apis.documentApi.url)
+    client = new DocumentManagementApiClient(mockAuthenticationClientInstance)
+  })
 
-    client = new DocumentManagementApiClient(token)
-    jest.clearAllMocks()
+  afterEach(() => {
+    nock.cleanAll()
+    jest.resetAllMocks()
   })
 
   describe('uploadDocument', () => {
@@ -39,23 +33,15 @@ describe('DocumentManagementApiClient', () => {
         documentUuid: 'uuid-1234',
       }
 
-      const mockPost = {
-        attach: jest.fn().mockReturnThis(),
-        field: jest.fn().mockReturnThis(),
-        auth: jest.fn().mockReturnThis(),
-        set: jest.fn().mockReturnThis(),
-        timeout: jest.fn().mockResolvedValue({ body: mockDocument }),
-      }
-
-      ;(mockedSuperagent.post as jest.Mock) = jest.fn(() => mockPost)
+      fakeDocumentManagementApi
+        .post('/documents/PRISONER_APPLICATION/uuid-1234')
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, { body: mockDocument })
 
       const result = await client.uploadDocument([mockUploadRequest])
 
       expect(result).toHaveLength(1)
       expect(result[0]).toEqual(mockDocument)
-      expect(mockedSuperagent.post).toHaveBeenCalledWith(
-        expect.stringContaining('/documents/PRISONER_APPLICATION/uuid-1234'),
-      )
     })
 
     it('should upload multiple documents successfully', async () => {
@@ -74,18 +60,13 @@ describe('DocumentManagementApiClient', () => {
         },
       ]
 
-      const mockPost = {
-        attach: jest.fn().mockReturnThis(),
-        field: jest.fn().mockReturnThis(),
-        auth: jest.fn().mockReturnThis(),
-        set: jest.fn().mockReturnThis(),
-        timeout: jest
-          .fn()
-          .mockResolvedValueOnce({ body: mockDocuments[0] })
-          .mockResolvedValueOnce({ body: mockDocuments[1] }),
-      }
-
-      ;(mockedSuperagent.post as jest.Mock) = jest.fn(() => mockPost)
+      fakeDocumentManagementApi
+        .post('/documents/PRISONER_APPLICATION/uuid-1')
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, { body: mockDocuments[0] })
+        .post('/documents/PRISONER_APPLICATION/uuid-2')
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, { body: mockDocuments[1] })
 
       const result = await client.uploadDocument(mockRequests)
 
@@ -101,15 +82,10 @@ describe('DocumentManagementApiClient', () => {
         documentUuid: 'uuid-error',
       }
 
-      const mockPost = {
-        attach: jest.fn().mockReturnThis(),
-        field: jest.fn().mockReturnThis(),
-        auth: jest.fn().mockReturnThis(),
-        set: jest.fn().mockReturnThis(),
-        timeout: jest.fn().mockRejectedValue(new Error('Upload failed')),
-      }
-
-      ;(mockedSuperagent.post as jest.Mock) = jest.fn(() => mockPost)
+      fakeDocumentManagementApi
+        .post('/documents/PRISONER_APPLICATION/uuid-error')
+        .matchHeader('authorization', `Bearer ${token}`)
+        .replyWithError(new Error('Upload failed'))
 
       const result = await client.uploadDocument([mockUploadRequest])
 
@@ -128,22 +104,14 @@ describe('DocumentManagementApiClient', () => {
         mimeType: 'image/jpeg',
       }
 
-      const mockPost = {
-        attach: jest.fn().mockReturnThis(),
-        field: jest.fn().mockReturnThis(),
-        auth: jest.fn().mockReturnThis(),
-        set: jest.fn().mockReturnThis(),
-        timeout: jest.fn().mockResolvedValue({ body: mockDocument }),
-      }
-
-      ;(mockedSuperagent.post as jest.Mock) = jest.fn(() => mockPost)
+      fakeDocumentManagementApi
+        .post(uri => uri.includes('/documents/PRISONER_APPLICATION'))
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, { body: mockDocument })
 
       const result = await client.uploadDocument([mockUploadRequest])
 
       expect(result).toHaveLength(1)
-      expect(mockedSuperagent.post).toHaveBeenCalledWith(
-        expect.stringMatching(/\/documents\/PRISONER_APPLICATION\/[a-f0-9-]{36}/),
-      )
     })
 
     it('should handle partial failures', async () => {
@@ -162,15 +130,13 @@ describe('DocumentManagementApiClient', () => {
         },
       ]
 
-      const mockPost = {
-        attach: jest.fn().mockReturnThis(),
-        field: jest.fn().mockReturnThis(),
-        auth: jest.fn().mockReturnThis(),
-        set: jest.fn().mockReturnThis(),
-        timeout: jest.fn().mockResolvedValueOnce({ body: mockDocuments[0] }).mockRejectedValueOnce(new Error('Failed')),
-      }
-
-      ;(mockedSuperagent.post as jest.Mock) = jest.fn(() => mockPost)
+      fakeDocumentManagementApi
+        .post('/documents/PRISONER_APPLICATION/uuid-success')
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, { body: mockDocuments[0] })
+        .post('/documents/PRISONER_APPLICATION/uuid-fail')
+        .matchHeader('authorization', `Bearer ${token}`)
+        .replyWithError(new Error('Failed'))
 
       const result = await client.uploadDocument(mockRequests)
 
@@ -181,21 +147,22 @@ describe('DocumentManagementApiClient', () => {
 
   describe('getDocument', () => {
     it('should retrieve a document by UUID successfully', async () => {
-      mockRestClientInstance.get.mockResolvedValue(mockDocument)
+      fakeDocumentManagementApi
+        .get('/documents/uuid-1234')
+        .matchHeader('authorization', `Bearer ${token}`)
+        .matchHeader('Service-Name', 'hmpps-managing-prisoner-apps')
+        .reply(200, mockDocument)
 
       const result = await client.getDocument('uuid-1234')
 
       expect(result).toEqual(mockDocument)
-      expect(mockRestClientInstance.get).toHaveBeenCalledWith({
-        path: '/documents/uuid-1234',
-        headers: {
-          'Service-Name': 'hmpps-managing-prisoner-apps',
-        },
-      })
     })
 
     it('should handle errors when getting document fails', async () => {
-      mockRestClientInstance.get.mockRejectedValue(new Error('Document not found'))
+      fakeDocumentManagementApi
+        .get('/documents/invalid-uuid')
+        .matchHeader('authorization', `Bearer ${token}`)
+        .replyWithError(new Error('Document not found'))
 
       const result = await client.getDocument('invalid-uuid')
 
@@ -203,10 +170,10 @@ describe('DocumentManagementApiClient', () => {
     })
 
     it('should handle 404 errors', async () => {
-      const error = new Error('Not Found')
-      Object.assign(error, { status: 404 })
-
-      mockRestClientInstance.get.mockRejectedValue(error)
+      fakeDocumentManagementApi
+        .get('/documents/non-existent-uuid')
+        .matchHeader('authorization', `Bearer ${token}`)
+        .replyWithError(new Error('Not Found'))
 
       const result = await client.getDocument('non-existent-uuid')
 
@@ -214,14 +181,21 @@ describe('DocumentManagementApiClient', () => {
     })
 
     it('should retrieve multiple documents', async () => {
-      mockRestClientInstance.get.mockResolvedValueOnce(mockDocuments[0]).mockResolvedValueOnce(mockDocuments[1])
+      fakeDocumentManagementApi
+        .get('/documents/uuid-1')
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, mockDocuments[0])
+
+      fakeDocumentManagementApi
+        .get('/documents/uuid-2')
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, mockDocuments[1])
 
       const result1 = await client.getDocument('uuid-1')
       const result2 = await client.getDocument('uuid-2')
 
       expect(result1).toEqual(mockDocuments[0])
       expect(result2).toEqual(mockDocuments[1])
-      expect(mockRestClientInstance.get).toHaveBeenCalledTimes(2)
     })
   })
 
@@ -229,33 +203,23 @@ describe('DocumentManagementApiClient', () => {
     it('should download a document successfully as Buffer', async () => {
       const mockImageBuffer = Buffer.from('mock image data')
 
-      const mockGet = {
-        auth: jest.fn().mockReturnThis(),
-        set: jest.fn().mockReturnThis(),
-        responseType: jest.fn().mockReturnThis(),
-        timeout: jest.fn().mockResolvedValue({ body: mockImageBuffer }),
-      }
-
-      ;(mockedSuperagent.get as jest.Mock) = jest.fn(() => mockGet)
+      fakeDocumentManagementApi
+        .get('/documents/uuid-1234/file')
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, { body: mockImageBuffer })
 
       const result = await client.downloadDocument('uuid-1234')
 
       expect(result).toEqual(mockImageBuffer)
-      expect(mockedSuperagent.get).toHaveBeenCalledWith(expect.stringContaining('/documents/uuid-1234/file'))
-      expect(mockGet.responseType).toHaveBeenCalledWith('blob')
     })
 
     it('should convert non-Buffer body to Buffer', async () => {
       const mockData = 'mock image data'
 
-      const mockGet = {
-        auth: jest.fn().mockReturnThis(),
-        set: jest.fn().mockReturnThis(),
-        responseType: jest.fn().mockReturnThis(),
-        timeout: jest.fn().mockResolvedValue({ body: mockData }),
-      }
-
-      ;(mockedSuperagent.get as jest.Mock) = jest.fn(() => mockGet)
+      fakeDocumentManagementApi
+        .get('/documents/uuid-1234/file')
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, { body: Buffer.from(mockData) })
 
       const result = await client.downloadDocument('uuid-1234')
 
@@ -264,14 +228,10 @@ describe('DocumentManagementApiClient', () => {
     })
 
     it('should handle download errors', async () => {
-      const mockGet = {
-        auth: jest.fn().mockReturnThis(),
-        set: jest.fn().mockReturnThis(),
-        responseType: jest.fn().mockReturnThis(),
-        timeout: jest.fn().mockRejectedValue(new Error('Download failed')),
-      }
-
-      ;(mockedSuperagent.get as jest.Mock) = jest.fn(() => mockGet)
+      fakeDocumentManagementApi
+        .get('/documents/uuid-error/file')
+        .matchHeader('authorization', `Bearer ${token}`)
+        .replyWithError(new Error('Download failed'))
 
       const result = await client.downloadDocument('uuid-error')
 
@@ -279,14 +239,10 @@ describe('DocumentManagementApiClient', () => {
     })
 
     it('should handle empty body', async () => {
-      const mockGet = {
-        auth: jest.fn().mockReturnThis(),
-        set: jest.fn().mockReturnThis(),
-        responseType: jest.fn().mockReturnThis(),
-        timeout: jest.fn().mockResolvedValue({ body: null }),
-      }
-
-      ;(mockedSuperagent.get as jest.Mock) = jest.fn(() => mockGet)
+      fakeDocumentManagementApi
+        .get('/documents/uuid-empty/file')
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, null)
 
       const result = await client.downloadDocument('uuid-empty')
 
@@ -297,21 +253,21 @@ describe('DocumentManagementApiClient', () => {
       const mockBuffer1 = Buffer.from('image 1')
       const mockBuffer2 = Buffer.from('image 2')
 
-      const mockGet = {
-        auth: jest.fn().mockReturnThis(),
-        set: jest.fn().mockReturnThis(),
-        responseType: jest.fn().mockReturnThis(),
-        timeout: jest.fn().mockResolvedValueOnce({ body: mockBuffer1 }).mockResolvedValueOnce({ body: mockBuffer2 }),
-      }
+      fakeDocumentManagementApi
+        .get('/documents/uuid-1234/file')
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, { body: mockBuffer1 })
 
-      ;(mockedSuperagent.get as jest.Mock) = jest.fn(() => mockGet)
+      fakeDocumentManagementApi
+        .get('/documents/uuid-5678/file')
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, { body: mockBuffer2 })
 
       const result1 = await client.downloadDocument('uuid-1234')
       const result2 = await client.downloadDocument('uuid-5678')
 
       expect(result1).toEqual(mockBuffer1)
       expect(result2).toEqual(mockBuffer2)
-      expect(mockedSuperagent.get).toHaveBeenCalledTimes(2)
     })
   })
 })

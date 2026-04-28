@@ -39,6 +39,7 @@ export default function setUpWebSecurity(): Router {
             'https://*.google-analytics.com',
             'https://*.analytics.google.com',
           ],
+          ...(config.production ? {} : { upgradeInsecureRequests: null }),
         },
       },
       crossOriginEmbedderPolicy: true,

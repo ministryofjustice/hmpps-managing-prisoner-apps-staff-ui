@@ -41,7 +41,7 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpAuthentication())
   app.use(authorisationMiddleware(['ROLE_PRISON']))
   app.use(setUpCsrf())
-  app.use(setUpCurrentUser())
+  app.use(setUpCurrentUser(services.prisonService))
 
   app.get(
     '*',

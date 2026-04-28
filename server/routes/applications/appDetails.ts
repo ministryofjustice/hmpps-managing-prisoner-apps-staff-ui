@@ -8,8 +8,6 @@ import { EXCLUDED_LOG_METHOD_APP_TYPES } from '../../constants/excludedApplicati
 
 import { getAppType } from '../../helpers/application/getAppType'
 
-import asyncMiddleware from '../../middleware/asyncMiddleware'
-
 import config from '../../config'
 
 import AuditService, { Page } from '../../services/auditService'
@@ -38,115 +36,108 @@ export default function appDetailsRouter({
 }): Router {
   const router = Router()
 
-  router.get(
-    URLS.LOG_APPLICATION_DETAILS,
-    asyncMiddleware(async (req: Request, res: Response) => {
-      const { user } = res.locals
-      const { applicationData, isLoggingForSamePrisoner } = req.session
+  router.get(URLS.LOG_APPLICATION_DETAILS, async (req: Request, res: Response) => {
+    const { user } = res.locals
+    const { applicationData, isLoggingForSamePrisoner } = req.session
 
-      if (!applicationData?.department) {
-        return res.redirect(URLS.LOG_DEPARTMENT)
-      }
+    if (!applicationData?.department) {
+      return res.redirect(URLS.LOG_DEPARTMENT)
+    }
 
-      const groups = await managingPrisonerAppsService.getGroupsAndTypes(user)
+    const groups = await managingPrisonerAppsService.getGroupsAndTypes(user)
 
-      const selectedGroup = groups.find(group => group.id.toString() === applicationData.group?.value)
-      if (!selectedGroup) {
-        return res.redirect(URLS.LOG_GROUP)
-      }
+    const selectedGroup = groups.find(group => group.id.toString() === applicationData.group?.value)
+    if (!selectedGroup) {
+      return res.redirect(URLS.LOG_GROUP)
+    }
 
-      const selectedAppType = selectedGroup.appTypes.find(type => type.id.toString() === applicationData.type?.value)
+    const selectedAppType = selectedGroup.appTypes.find(type => type.id.toString() === applicationData.type?.value)
 
-      if (!selectedAppType) {
-        return res.redirect(URLS.LOG_APPLICATION_TYPE)
-      }
+    if (!selectedAppType) {
+      return res.redirect(URLS.LOG_APPLICATION_TYPE)
+    }
 
-      const isGeneric = selectedAppType.genericType || selectedAppType.genericForm
+    const isGeneric = selectedAppType.genericType || selectedAppType.genericForm
 
-      const logDetails = getAppTypeLogDetailsData(selectedAppType.id, applicationData.additionalData || {}, isGeneric)
+    const logDetails = getAppTypeLogDetailsData(selectedAppType.id, applicationData.additionalData || {}, isGeneric)
 
-      if (!logDetails) {
-        return res.redirect(URLS.LOG_APPLICATION_TYPE)
-      }
+    if (!logDetails) {
+      return res.redirect(URLS.LOG_APPLICATION_TYPE)
+    }
 
-      const templateFields = await getApplicationDetails(
-        logDetails,
-        personalRelationshipsService,
-        undefined,
-        applicationData.earlyDaysCentre,
-      )
+    const templateFields = await getApplicationDetails(
+      logDetails,
+      personalRelationshipsService,
+      undefined,
+      applicationData.earlyDaysCentre,
+    )
 
-      await auditService.logPageView(Page.LOG_DETAILS_PAGE, {
-        who: user.username,
-        correlationId: req.id,
-      })
+    await auditService.logPageView(Page.LOG_DETAILS_PAGE, {
+      who: user.username,
+      correlationId: req.id,
+    })
 
-      let backLink = URLS.LOG_DEPARTMENT
+    let backLink = URLS.LOG_DEPARTMENT
 
-      const excludedAppTypeIds = Object.values(EXCLUDED_LOG_METHOD_APP_TYPES)
-      const isExcluded = excludedAppTypeIds.includes(selectedAppType.id.toString())
-      const isEnabledEstablishment =
-        'activeCaseLoadId' in user && isLogMethodEnabledEstablishment(user.activeCaseLoadId)
+    const excludedAppTypeIds = Object.values(EXCLUDED_LOG_METHOD_APP_TYPES)
+    const isExcluded = excludedAppTypeIds.includes(selectedAppType.id.toString())
+    const isEnabledEstablishment = 'activeCaseLoadId' in user && isLogMethodEnabledEstablishment(user.activeCaseLoadId)
 
-      if (
-        config.featureFlags.logMethodPageEnabled &&
-        isEnabledEstablishment &&
-        !isExcluded &&
-        applicationData?.loggingMethod
-      ) {
-        backLink = URLS.LOG_METHOD
-      }
+    if (
+      config.featureFlags.logMethodPageEnabled &&
+      isEnabledEstablishment &&
+      !isExcluded &&
+      applicationData?.loggingMethod
+    ) {
+      backLink = URLS.LOG_METHOD
+    }
 
-      return res.render(PATHS.LOG_APPLICATION.APPLICATION_DETAILS, {
-        ...templateFields,
-        applicationType: applicationData.type,
-        title: 'Log details',
-        isLoggingForSamePrisoner,
-        isGeneric,
-        prisonerName: isLoggingForSamePrisoner ? applicationData.prisonerName : null,
-        backLink,
-      })
-    }),
-  )
+    return res.render(PATHS.LOG_APPLICATION.APPLICATION_DETAILS, {
+      ...templateFields,
+      applicationType: applicationData.type,
+      title: 'Log details',
+      isLoggingForSamePrisoner,
+      isGeneric,
+      prisonerName: isLoggingForSamePrisoner ? applicationData.prisonerName : null,
+      backLink,
+    })
+  })
 
-  router.post(
-    URLS.LOG_APPLICATION_DETAILS,
-    asyncMiddleware(async (req, res) => {
-      const { user } = res.locals
-      const { applicationData } = req.session
+  router.post(URLS.LOG_APPLICATION_DETAILS, async (req, res) => {
+    const { user } = res.locals
+    const { applicationData } = req.session
 
-      const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.value)
+    const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.value)
 
-      return handleApplicationDetails(req, res, {
-        getAppType: () => applicationType,
-        getTemplateData: async () => {
-          const groupCode =
-            applicationType.id === 1
-              ? PERSONAL_RELATIONSHIPS_GROUP_CODES.OFFICIAL_RELATIONSHIP
-              : PERSONAL_RELATIONSHIPS_GROUP_CODES.SOCIAL_RELATIONSHIP
+    return handleApplicationDetails(req, res, {
+      getAppType: () => applicationType,
+      getTemplateData: async () => {
+        const groupCode =
+          applicationType.id === 1
+            ? PERSONAL_RELATIONSHIPS_GROUP_CODES.OFFICIAL_RELATIONSHIP
+            : PERSONAL_RELATIONSHIPS_GROUP_CODES.SOCIAL_RELATIONSHIP
 
-          const formattedRelationshipList = await getFormattedRelationshipDropdown(
-            personalRelationshipsService,
-            undefined,
-            groupCode,
-          )
+        const formattedRelationshipList = await getFormattedRelationshipDropdown(
+          personalRelationshipsService,
+          undefined,
+          groupCode,
+        )
 
-          const formattedCountryList = getFormattedCountries(countries, req.body.country)
+        const formattedCountryList = getFormattedCountries(countries, req.body.country)
 
-          return {
-            applicationType: applicationData.type,
-            formattedRelationshipList,
-            countries: formattedCountryList,
-            isGeneric: applicationType.genericType || applicationType.genericForm,
-          }
-        },
-        isUpdate: false,
-        renderPath: PATHS.LOG_APPLICATION.APPLICATION_DETAILS,
-        successRedirect: () => URLS.LOG_CONFIRM_DETAILS,
-        osPlacesAddressService,
-      })
-    }),
-  )
+        return {
+          applicationType: applicationData.type,
+          formattedRelationshipList,
+          countries: formattedCountryList,
+          isGeneric: applicationType.genericType || applicationType.genericForm,
+        }
+      },
+      isUpdate: false,
+      renderPath: PATHS.LOG_APPLICATION.APPLICATION_DETAILS,
+      successRedirect: () => URLS.LOG_CONFIRM_DETAILS,
+      osPlacesAddressService,
+    })
+  })
 
   return router
 }

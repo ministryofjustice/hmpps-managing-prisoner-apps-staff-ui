@@ -1,8 +1,6 @@
 import { OsPlacesAddressService } from '@ministryofjustice/hmpps-connect-dps-shared-items'
 import { Request, Response, Router } from 'express'
 
-import asyncMiddleware from '../../middleware/asyncMiddleware'
-
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PersonalRelationshipsService from '../../services/personalRelationshipsService'
@@ -48,17 +46,14 @@ export default function applicationsRoutes({
 }): Router {
   const router = Router()
 
-  router.get(
-    '/',
-    asyncMiddleware(async (req: Request, res: Response) => {
-      await auditService.logPageView(Page.APPLICATIONS_PAGE, {
-        who: res.locals.user.username,
-        correlationId: req.id,
-      })
+  router.get('/', async (req: Request, res: Response) => {
+    await auditService.logPageView(Page.APPLICATIONS_PAGE, {
+      who: res.locals.user.username,
+      correlationId: req.id,
+    })
 
-      res.render('pages/applications', { title: 'Applications' })
-    }),
-  )
+    res.render('pages/applications', { title: 'Applications' })
+  })
 
   router.use(viewDocumentRouter({ documentManagementService }))
 
@@ -96,25 +91,22 @@ export default function applicationsRoutes({
   router.use(additionalPhotoDetailsRouter({ auditService }))
   router.use(removePhotoRouter({ auditService }))
   router.use(cancelAppRouter({ auditService }))
-  router.get(
-    '/api/addresses/find/:query',
-    asyncMiddleware(async (req: Request, res: Response) => {
-      try {
-        const { query } = req.params
-        if (!query) {
-          res.status(400).json({ status: 400, error: 'Query parameter is required' })
-          return
-        }
-
-        const results = await osPlacesAddressService.getAddressesMatchingQuery(query)
-
-        res.json({ status: 200, results })
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-        res.status(500).json({ status: 500, error: errorMessage })
+  router.get('/api/addresses/find/:query', async (req: Request, res: Response) => {
+    try {
+      const { query } = req.params
+      if (!query) {
+        res.status(400).json({ status: 400, error: 'Query parameter is required' })
+        return
       }
-    }),
-  )
+
+      const results = await osPlacesAddressService.getAddressesMatchingQuery(query as string)
+
+      res.json({ status: 200, results })
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      res.status(500).json({ status: 500, error: errorMessage })
+    }
+  })
 
   return router
 }

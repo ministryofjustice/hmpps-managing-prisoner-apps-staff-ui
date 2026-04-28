@@ -1,19 +1,37 @@
-export type PageElement = Cypress.Chainable<JQuery>
+import { type Page as PlaywrightPage, expect } from '@playwright/test'
+
+export type PageElement = ReturnType<PlaywrightPage['locator']>
+
+const accountMenuTriggerSelector = '.cdps-header__link-wrapper:has([data-qa="connect-dps-common-header-user-name"])'
 
 export default abstract class Page {
-  static verifyOnPage<T>(constructor: new () => T): T {
-    return new constructor()
+  protected constructor(
+    protected readonly page: PlaywrightPage,
+    private readonly title: string,
+  ) {}
+
+  static async verifyOnPage<T extends Page>(
+    PageClass: new (page: PlaywrightPage) => T,
+    page: PlaywrightPage,
+  ): Promise<T> {
+    const instance = new PageClass(page)
+    await instance.checkOnPage()
+    return instance
   }
 
-  protected constructor(private readonly title: string) {
-    this.checkOnPage()
+  async checkOnPage(): Promise<void> {
+    await expect(this.page.locator('h1')).toContainText(this.title)
   }
 
-  checkOnPage(): void {
-    cy.get('h1').contains(this.title)
+  accountMenuTrigger(): PageElement {
+    return this.page.locator(accountMenuTriggerSelector)
   }
 
-  signOut = (): PageElement => cy.get('[data-qa=signOut]')
+  signOut(): PageElement {
+    return this.page.locator('[data-qa="signOut"], a[href="/sign-out"]')
+  }
 
-  manageDetails = (): PageElement => cy.get('[data-qa=manageDetails]')
+  manageDetails(): PageElement {
+    return this.page.locator('[data-qa="manageDetails"], a[href*="/auth/account-details"], a:has-text("Your account")')
+  }
 }

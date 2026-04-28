@@ -8,23 +8,23 @@ import PrisonService from './prisonService'
 import PersonalRelationshipsService from './personalRelationshipsService'
 
 export const services = () => {
-  const { applicationInfo, hmppsAuthClient, osPlacesApiClient } = dataAccess()
-
-  const auditService = new AuditService()
-  const managingPrisonerAppsService = new ManagingPrisonerAppsService(hmppsAuthClient)
-  const documentManagementService = new DocumentManagementService(hmppsAuthClient)
-  const prisonService = new PrisonService(hmppsAuthClient)
-  const personalRelationshipsService = new PersonalRelationshipsService(hmppsAuthClient)
-  const osPlacesAddressService = new OsPlacesAddressService(logger, osPlacesApiClient)
-
+  const {
+    applicationInfo,
+    hmppsAuditClient,
+    documentManagementApiClient,
+    managingPrisonerAppsApiClient,
+    personalRelationshipsApiClient,
+    prisonApiClient,
+    osPlacesApiClient,
+  } = dataAccess()
   return {
     applicationInfo,
-    auditService,
-    documentManagementService,
-    prisonService,
-    managingPrisonerAppsService,
-    personalRelationshipsService,
-    osPlacesAddressService,
+    auditService: new AuditService(hmppsAuditClient),
+    documentManagementService: new DocumentManagementService(documentManagementApiClient),
+    prisonService: new PrisonService(prisonApiClient),
+    managingPrisonerAppsService: new ManagingPrisonerAppsService(managingPrisonerAppsApiClient),
+    personalRelationshipsService: new PersonalRelationshipsService(personalRelationshipsApiClient),
+    osPlacesAddressService: new OsPlacesAddressService(logger, osPlacesApiClient),
   }
 }
 

@@ -12,6 +12,7 @@ export default {
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        // @ts-expect-error - mock response
         jsonBody: relationships[groupCode] || [],
       },
     })
