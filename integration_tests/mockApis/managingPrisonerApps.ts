@@ -7,11 +7,10 @@ import {
   commentsResponse,
   appSearchResponse,
   buildAppsSearchResponse,
+  appHistoryResponse,
+  departments,
+  groups,
 } from '../../server/testData'
-
-import { appHistoryResponse } from '../../server/testData/applications/appHistory'
-import { departments } from '../../server/testData/groups/departments'
-import { groups } from '../../server/testData/groups/groups'
 
 import { stubFor } from './wiremock'
 
@@ -67,7 +66,7 @@ export default {
     return stubFor({
       request: {
         method: 'GET',
-        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/responses/${app.requests[0].responseId}?createdBy=true`,
+        urlPathPattern: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/responses/.*`,
       },
       response: {
         status: 200,
@@ -127,7 +126,7 @@ export default {
     return stubFor({
       request: {
         method: 'GET',
-        url: `/managingPrisonerApps/v1/applications/${app.requestedBy.username}/apps/${app.id}/history`,
+        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/history`,
       },
       response: {
         status: 200,

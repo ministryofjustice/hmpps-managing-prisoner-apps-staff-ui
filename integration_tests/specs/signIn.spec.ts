@@ -1,80 +1,84 @@
-import { expect, test } from '@playwright/test'
-import hmppsAuth from '../mockApis/hmppsAuth'
+import { test } from '../fixtures'
+import Page from '../pages/page'
+import IndexPage from '../pages'
+import AuthSignInPage from '../pages/authSignIn'
+import AuthManageDetailsPage from '../pages/authManageDetails'
+import auth from '../mockApis/auth'
+import tokenVerification from '../mockApis/tokenVerification'
+import { resetStubs } from '../mockApis/wiremock'
 
-import { login, resetStubs } from '../testUtils'
-import HomePage from '../pages/homePage'
+const targetBaseUrl = process.env.PW_BASE_URL || process.env.DPS_PRISONER_URL || 'http://localhost:3007'
+const isWiremock = process.env.PW_ENV === 'mock' || targetBaseUrl.includes('localhost')
 
-test.describe('SignIn', () => {
-  test.beforeEach(async () => {})
-
-  test.afterEach(async () => {
-    await resetStubs()
+test.describe('Sign In', () => {
+  test.beforeEach(async () => {
+    if (isWiremock) {
+      await resetStubs()
+      await auth.stubSignIn()
+    }
   })
 
   test('Unauthenticated user directed to auth', async ({ page }) => {
-    await hmppsAuth.stubSignInPage()
     await page.goto('/')
-
-    await expect(page.getByRole('heading')).toHaveText('Sign in')
+    await Page.verifyOnPage(AuthSignInPage, page)
   })
 
   test('Unauthenticated user navigating to sign in page directed to auth', async ({ page }) => {
-    await hmppsAuth.stubSignInPage()
-    await page.goto('/sign-in')
-
-    await expect(page.getByRole('heading')).toHaveText('Sign in')
+    await page.goto('auth/sign-in')
+    await Page.verifyOnPage(AuthSignInPage, page)
   })
 
-  test('User name visible in header', async ({ page }) => {
-    await login(page, { name: 'A TestUser' })
-
-    const homePage = await HomePage.verifyOnPage(page)
-
-    await expect(homePage.usersName).toHaveText('A. Testuser')
+  test('User name visible in header', async ({ page, signIn }) => {
+    await signIn()
+    const indexPage = await Page.verifyOnPage(IndexPage, page)
+    if (isWiremock) {
+      await indexPage.assertHeaderUserNameContains('J. Smith')
+    } else {
+      await indexPage.assertHeaderUserNamePopulated()
+    }
   })
 
-  test('Phase banner visible in header', async ({ page }) => {
-    await login(page)
-
-    const homePage = await HomePage.verifyOnPage(page)
-
-    await expect(homePage.phaseBanner).toHaveText('dev')
+  test('User can sign out', async ({ page, signIn }) => {
+    await signIn()
+    const indexPage = await Page.verifyOnPage(IndexPage, page)
+    await indexPage.clickSignOut()
+    await Page.verifyOnPage(AuthSignInPage, page)
   })
 
-  test('User can sign out', async ({ page }) => {
-    await login(page)
-
-    const homePage = await HomePage.verifyOnPage(page)
-    await homePage.signOut()
-
-    await expect(page.getByRole('heading')).toHaveText('Sign in')
+  test('User can manage their details', async ({ page, signIn }) => {
+    test.skip(isWiremock, 'Manage details flow is only available in DEV')
+    await signIn()
+    const indexPage = await Page.verifyOnPage(IndexPage, page)
+    await indexPage.openManageDetailsInSameTab()
+    await Page.verifyOnPage(AuthManageDetailsPage, page)
   })
 
-  test('User can manage their details', async ({ page }) => {
-    await login(page, { name: 'A TestUser' })
+  test('Token verification failure takes user to sign in page', async ({ page, signIn }) => {
+    test.skip(!isWiremock, 'Token verification stubs are only available in WireMock/mock environment')
+    await signIn()
+    await Page.verifyOnPage(IndexPage, page)
+    await tokenVerification.stubVerifyToken(false)
 
-    await hmppsAuth.stubManageDetailsPage()
-
-    const homePage = await HomePage.verifyOnPage(page)
-    await homePage.clickManageUserDetails()
-
-    await expect(page.getByRole('heading')).toHaveText('Your account details')
+    await page.goto('/')
+    await Page.verifyOnPage(AuthSignInPage, page)
   })
 
-  test('Token verification failure takes user to sign in page', async ({ page }) => {
-    await login(page, { active: false })
+  test('Token verification failure clears user session', async ({ page, signIn }) => {
+    test.skip(!isWiremock, 'Token verification stubs are only available in WireMock/mock environment')
+    await signIn()
+    const indexPage = await Page.verifyOnPage(IndexPage, page)
+    await tokenVerification.stubVerifyToken(false)
 
-    await expect(page.getByRole('heading')).toHaveText('Sign in')
-  })
+    await page.goto('/')
+    await Page.verifyOnPage(AuthSignInPage, page)
 
-  test('Token verification failure clears user session', async ({ page }) => {
-    await login(page, { name: 'A TestUser', active: false })
+    await tokenVerification.stubVerifyToken(true)
+    await auth.stubSignIn({
+      name: 'bobby brown',
+      roles: ['ROLE_PRISON'],
+    })
+    await signIn()
 
-    await expect(page.getByRole('heading')).toHaveText('Sign in')
-
-    await login(page, { name: 'Some OtherTestUser', active: true })
-
-    const homePage = await HomePage.verifyOnPage(page)
-    await expect(homePage.usersName).toHaveText('S. Othertestuser')
+    await indexPage.assertHeaderUserNameContains('B. Brown')
   })
 })
