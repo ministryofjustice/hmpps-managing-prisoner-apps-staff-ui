@@ -31,7 +31,7 @@ export default function setUpCurrentUser(prisonService: PrisonService) {
 
       if (res.locals.user.authSource === 'nomis') {
         const prisonUser = res.locals.user as PrisonUser
-        prisonUser.staffId = parseInt(userId, 10) || undefined
+        prisonUser.staffId = userId !== undefined ? parseInt(userId, 10) : undefined
 
         try {
           let caseLoads: CaseLoad[] = []
