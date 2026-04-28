@@ -1,23 +1,15 @@
 import { jwtDecode } from 'jwt-decode'
 import express from 'express'
+import CaseLoad from '@ministryofjustice/hmpps-connect-dps-components/dist/types/CaseLoad'
 import { convertToTitleCase } from '../utils/utils'
 import logger from '../../logger'
 import { PrisonUser } from '../interfaces/hmppsUser'
-import RestClient from '../data/restClient'
-import config from '../config'
+import PrisonService from '../services/prisonService'
 
-interface CaseLoad {
-  caseLoadId: string
-  description: string
-  type: string
-  caseloadFunction: string
-  currentlyActive: boolean
-}
-
-export default function setUpCurrentUser() {
+export default function setUpCurrentUser(prisonService: PrisonService) {
   const router = express.Router()
 
-  router.use(async (req, res, next) => {
+  router.use((_req, res, next) => {
     try {
       const {
         name,
@@ -39,13 +31,12 @@ export default function setUpCurrentUser() {
 
       if (res.locals.user.authSource === 'nomis') {
         const prisonUser = res.locals.user as PrisonUser
-
         prisonUser.staffId = parseInt(userId, 10) || undefined
 
         try {
-          const restClient = new RestClient('Prison API', config.apis.prison, res.locals.user.token)
-          const caseLoads = await restClient.get<CaseLoad[]>({
-            path: '/api/users/me/caseLoads',
+          let caseLoads: CaseLoad[] = []
+          prisonService.getCurrentUserCaseloads(prisonUser.staffId.toString()).then(result => {
+            caseLoads = result
           })
 
           const activeCaseLoad = caseLoads.find(caseLoad => caseLoad.currentlyActive)

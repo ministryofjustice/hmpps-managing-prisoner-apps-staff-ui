@@ -7,8 +7,6 @@ import { APPLICATION_STATUS } from '../../constants/applicationStatus'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
-import asyncMiddleware from '../../middleware/asyncMiddleware'
-
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
@@ -33,94 +31,88 @@ export default function actionAppRouter({
       ...locals,
     })
 
-  router.get(
-    '/applications/:prisonerId/:applicationId/reply',
-    asyncMiddleware(async (req: Request, res: Response) => {
-      const { prisonerId, applicationId } = req.params
-      const { user } = res.locals
+  router.get('/applications/:prisonerId/:applicationId/reply', async (req: Request, res: Response) => {
+    const { prisonerId, applicationId } = req.params
+    const { user } = res.locals
 
-      const { application, applicationType } = await getValidApplicationOrRedirect(
-        req,
-        res,
-        auditService,
-        managingPrisonerAppsService,
-        Page.ACTION_AND_REPLY_PAGE,
+    const { application, applicationType } = await getValidApplicationOrRedirect(
+      req,
+      res,
+      auditService,
+      managingPrisonerAppsService,
+      Page.ACTION_AND_REPLY_PAGE,
+    )
+
+    const isAppPending = application.status === APPLICATION_STATUS.PENDING
+    const [request] = application.requests ?? []
+
+    let formattedResponse
+
+    if (!isAppPending && request?.responseId) {
+      const { decision, createdDate, reason } = await managingPrisonerAppsService.getResponse(
+        `${prisonerId}`,
+        `${applicationId}`,
+        request.responseId,
+        user,
       )
 
-      const isAppPending = application.status === APPLICATION_STATUS.PENDING
-      const [request] = application.requests ?? []
-
-      let formattedResponse
-
-      if (!isAppPending && request?.responseId) {
-        const { decision, createdDate, reason } = await managingPrisonerAppsService.getResponse(
-          prisonerId,
-          applicationId,
-          request.responseId,
-          user,
-        )
-
-        formattedResponse = {
-          decision: convertToTitleCase(decision),
-          actionedDate: format(createdDate, 'd MMMM yyyy'),
-          reason: reason?.trim() || 'None',
-          cellLocation: application.requestedBy.cellLocation,
-        }
+      formattedResponse = {
+        decision: convertToTitleCase(decision),
+        actionedDate: format(createdDate, 'd MMMM yyyy'),
+        reason: reason?.trim() || 'None',
+        cellLocation: application.requestedBy.cellLocation,
       }
+    }
 
+    return renderActionAndReplyPage(res, {
+      application,
+      applicationType,
+      isAppPending,
+      response: formattedResponse,
+      appLoggedDate: format(new Date(application.createdDate), 'd MMMM yyyy'),
+      todayDate: format(new Date(), 'd MMMM yyyy'),
+      prisonerName: convertToTitleCase(`${application.requestedBy.lastName}, ${application.requestedBy.firstName}`),
+    })
+  })
+
+  router.post('/applications/:prisonerId/:applicationId/reply', async (req: Request, res: Response) => {
+    const { prisonerId, applicationId } = req.params
+    const { decision, reason } = req.body
+    const { user } = res.locals
+
+    const application = await managingPrisonerAppsService.getPrisonerApp(`${prisonerId}`, `${applicationId}`, user)
+    if (!application) return res.redirect(URLS.APPLICATIONS)
+
+    const applicationType = await getAppType(
+      managingPrisonerAppsService,
+      user,
+      application.applicationType.id.toString(),
+    )
+    const errors = validateActionAndReply(decision, reason)
+    const isAppPending = application.status === APPLICATION_STATUS.PENDING
+    const [request] = application.requests ?? []
+
+    if (Object.keys(errors).length > 0) {
       return renderActionAndReplyPage(res, {
         application,
         applicationType,
         isAppPending,
-        response: formattedResponse,
-        appLoggedDate: format(new Date(application.createdDate), 'd MMMM yyyy'),
-        todayDate: format(new Date(), 'd MMMM yyyy'),
-        prisonerName: convertToTitleCase(`${application.requestedBy.lastName}, ${application.requestedBy.firstName}`),
+        selectedAction: decision,
+        textareaValue: reason,
+        errors,
       })
-    }),
-  )
+    }
 
-  router.post(
-    '/applications/:prisonerId/:applicationId/reply',
-    asyncMiddleware(async (req: Request, res: Response) => {
-      const { prisonerId, applicationId } = req.params
-      const { decision, reason } = req.body
-      const { user } = res.locals
+    const payload: AppResponsePayload = {
+      reason,
+      decision,
+      appliesTo: [request.id],
+    }
 
-      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
-      if (!application) return res.redirect(URLS.APPLICATIONS)
+    await managingPrisonerAppsService.addResponse(`${prisonerId}`, `${applicationId}`, payload, user)
 
-      const applicationType = await getAppType(
-        managingPrisonerAppsService,
-        user,
-        application.applicationType.id.toString(),
-      )
-      const errors = validateActionAndReply(decision, reason)
-      const isAppPending = application.status === APPLICATION_STATUS.PENDING
-      const [request] = application.requests ?? []
-
-      if (Object.keys(errors).length > 0) {
-        return renderActionAndReplyPage(res, {
-          application,
-          applicationType,
-          isAppPending,
-          selectedAction: decision,
-          textareaValue: reason,
-          errors,
-        })
-      }
-
-      const payload: AppResponsePayload = {
-        reason,
-        decision,
-        appliesTo: [request.id],
-      }
-
-      await managingPrisonerAppsService.addResponse(prisonerId, applicationId, payload, user)
-
-      return res.redirect(`/applications/${prisonerId}/${applicationId}/reply`)
-    }),
-  )
+    return res.redirect(`/applications/${prisonerId}/${applicationId}/reply`)
+  })
 
   return router
 }

@@ -1,12 +1,13 @@
-/* eslint-disable no-param-reassign */
 import express, { Router } from 'express'
 
 import { monitoringMiddleware, endpointHealthComponent } from '@ministryofjustice/hmpps-monitoring'
+import { AgentConfig } from '@ministryofjustice/hmpps-rest-client'
 import type { ApplicationInfo } from '../applicationInfo'
 import logger from '../../logger'
-import config, { AgentConfig } from '../config'
+import config from '../config'
 import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
 
+/* eslint-disable  no-param-reassign */
 export default function setUpHealthChecks(
   applicationInfo: ApplicationInfo,
   managingPrisonerAppsService: ManagingPrisonerAppsService,
@@ -23,7 +24,6 @@ export default function setUpHealthChecks(
   })
 
   router.get('/health', middleware.health)
-
   router.get(
     '/info',
     async (req, res, next) => {

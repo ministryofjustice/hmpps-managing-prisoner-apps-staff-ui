@@ -7,9 +7,9 @@ Template github repo used for new Typescript based projects.
 
 # Instructions
 
-If this is a HMPPS project then the project will be created as part of bootstrapping -
-see https://github.com/ministryofjustice/hmpps-project-bootstrap. You are able to specify a template application using
-the `github_template_repo` attribute to clone without the need to manually do this yourself within GitHub.
+If this is a HMPPS project then the creation of new services is automated and cloning/forking this repository is not required.
+
+Documentation to create new services is located [here](https://tech-docs.hmpps.service.justice.gov.uk/creating-new-services/).
 
 This project is community managed by the mojdt `#typescript` slack channel.
 Please raise any questions or queries there. Contributions welcome!
@@ -18,8 +18,6 @@ Our security policy is located [here](https://github.com/ministryofjustice/hmpps
 
 More information about the template project including features can be
 found [here](https://dsdmoj.atlassian.net/wiki/spaces/NDSS/pages/3488677932/Typescript+template+project).
-
-Documentation to create new service is located [here](https://tech-docs.hmpps.service.justice.gov.uk/applicationplatform/newservice-GHA/).
 
 ## Creating a Cloud Platform namespace
 
@@ -34,69 +32,9 @@ remove all kotlin references. Submit a PR to the Cloud Platform team in #ask-clo
 the Cloud Platform team can be found in
 the [Cloud Platform User Guide](https://user-guide.cloud-platform.service.justice.gov.uk/#cloud-platform-user-guide)
 
-## Renaming from HMPPS Template Typescript - github Actions
+## Customising the new project
 
-Once the new repository is deployed. Navigate to the repository in github, and select the `Actions` tab.
-Click the link to `Enable Actions on this repository`.
-
-Find the Action workflow named: `rename-project-create-pr` and click `Run workflow`. This workflow will
-execute the `rename-project.bash` and create Pull Request for you to review. Review the PR and merge.
-
-Note: ideally this workflow would run automatically however due to a recent change github Actions are not
-enabled by default on newly created repos. There is no way to enable Actions other then to click the button in the UI.
-If this situation changes we will update this project so that the workflow is triggered during the bootstrap project.
-Further reading: <https://github.community/t/workflow-isnt-enabled-in-repos-generated-from-template/136421>
-
-The script takes six arguments:
-
-### New project name
-
-This should start with `hmpps-` e.g. `hmpps-prison-visits` so that it can be easily distinguished in github from
-other departments projects. Try to avoid using abbreviations so that others can understand easily what your project is.
-
-### Slack channel for release notifications
-
-By default, release notifications are only enabled for production. The github pipeline configuration can be amended to send
-release notifications for deployments to other environments if required. Note that if the configuration is amended,
-the slack channel should then be amended to your own team's channel as `hmpps-releases` (previously called `dps-releases`) is strictly for production release
-notifications. If the slack channel is set to something other than `hmpps-releases`, production release notifications
-will still automatically go to `hmpps-releases` as well. This is configured by by setting a github actions environment variable called `RELEASE_NOTIFICATIONS_SLACK_CHANNEL_ID`.
-
-### Slack channel for pipeline security notifications
-
-Ths channel should be specific to your team and is for daily / weekly security scanning job results. It is your team's
-responsibility to keep up-to-date with security issues and update your application so that these jobs pass. You will
-only be notified if the jobs fail. The scan results can always be found in github actions and results are sent to the github security tab. This is
-configured by setting github actions environment variable called `SECURITY_ALERTS_SLACK_CHANNEL_ID`.
-
-### Non production kubernetes alerts
-
-By default Prometheus alerts are created in the application namespaces to monitor your application e.g. if your
-application is crash looping, there are a significant number of errors from the ingress. Since Prometheus runs in
-cloud platform AlertManager needs to be setup first with your channel. Please see
-[Create your own custom alerts](https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html)
-in the Cloud Platform user guide. Once that is setup then the `custom severity label` can be used for
-`alertSeverity` in the `helm_deploy/values-*.yaml` configuration.
-
-Normally it is worth setting up two separate labels and therefore two separate slack channels - one for your production
-alerts and one for your non-production alerts. Using the same channel can mean that production alerts are sometimes
-lost within non-production issues.
-
-### Production kubernetes alerts
-
-This is the severity label for production, determined by the `custom severity label`. See the above
-#non-production-kubernetes-alerts for more information. This is configured in `helm_deploy/values-prod.yaml`.
-
-### Product ID
-
-This is so that we can link a component to a product and thus provide team and product information in the Developer
-Portal. Refer to the developer portal at https://developer-portal.hmpps.service.justice.gov.uk/products to find your
-product id. This is configured in `helm_deploy/<project_name>/values.yaml`.
-
-## Manually branding from template app
-
-Run the `rename-project.bash` without any arguments. This will prompt for the six required parameters and create a PR.
-The script requires a recent version of `bash` to be installed, as well as GNU `sed` in the path.
+As part of the automation to create the new service, various parts of the codebase will be updated to reflect it's specific name.
 
 ## Oauth2 Credentials
 
@@ -188,10 +126,28 @@ To request specific users and roles then raise a PR
 to [update the seed data](https://github.com/ministryofjustice/hmpps-auth/blob/main/src/main/resources/db/dev/data/auth/V900_3__users.sql)
 for the in-memory DB used by Auth
 
+### Installing dependencies
+
+By default no pre or post install scripts will be run during `npm install`.
+Instead a list of configured install scripts will be run via the [npm script allowlist](https://github.com/ministryofjustice/hmpps-typescript-lib/tree/main/packages/npm-script-allowlist) tool.
+
+Instead of running `npm install`, run `npm run setup` - this will run an `npm ci` to install any dependencies and then run any configured install scripts.
+
+### Making changes
+
+The [hmpps precommit hooks library](https://github.com/ministryofjustice/hmpps-typescript-lib/tree/main/packages/precommit-hooks) will ensure that [prek](https://prek.j178.dev/cli/) is installed and initialised against the repo as part of `npm run setup`.
+
+This will run a set of precommit hooks before every commit as configured in `.pre-commit-config.yaml`.
+This will scan for potential secrets in the staged files and fail the commit if any are detected.
+
+There's some guidance for dealing with false positives in the [precommit hooks docs](https://github.com/ministryofjustice/hmpps-typescript-lib/tree/main/packages/precommit-hooks#dealing-with-false-positives).
+
+The secret scanner hook can also be configured as described [here](https://github.com/ministryofjustice/devsecops-hooks?tab=readme-ov-file#-configuration).
+
 ### Run linter
 
-* `npm run lint` runs `eslint`.
-* `npm run typecheck` runs the TypeScript compiler `tsc`.
+- `npm run lint` runs `eslint`.
+- `npm run typecheck` runs the TypeScript compiler `tsc`.
 
 ### Run unit tests
 
@@ -207,13 +163,39 @@ Then run the server in test mode by:
 
 `npm run start-feature` (or `npm run start-feature:dev` to run with auto-restart on changes)
 
+After first install ensure playwright is initialised:
+
+`npm run int-test-init:ci`
+
 And then either, run tests in headless mode with:
 
 `npm run int-test`
 
-Or run tests with the cypress UI:
+Or run tests with the UI:
 
 `npm run int-test-ui`
+
+## Keeping your app up-to-date
+
+While there are multiple ways to keep your project up-to-date this [method](https://mojdt.slack.com/archives/C69NWE339/p1694009011413449) doesn't require you to keep cherry picking the changes, however if that works for you there is no reason to stop.
+
+In your service, add the template as a remote:
+
+`git remote add template https://github.com/ministryofjustice/hmpps-template-typescript`
+
+Create a branch and switch to it, eg:
+
+`git checkout -b template-changes-2309`
+
+Fetch all remotes:
+
+`git fetch --all`
+
+Merge the changes from the template into your service source:
+
+`git merge template/main --allow-unrelated-histories`
+
+You'll need to manually handle the merge of the changes, but if you do it early, carefully, and regularly, it won't be too much of a hassle.
 
 ## Change log
 

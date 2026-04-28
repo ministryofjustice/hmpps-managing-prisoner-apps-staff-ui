@@ -1,29 +1,52 @@
 /* eslint-disable import/first */
+/*
+ * Do appinsights first as it does some magic instrumentation work, i.e. it affects other 'require's
+ * In particular, applicationinsights automatically collects bunyan logs
+ */
+import { AuthenticationClient, InMemoryTokenStore, RedisTokenStore } from '@ministryofjustice/hmpps-auth-clients'
 import { OsPlacesApiClient } from '@ministryofjustice/hmpps-connect-dps-shared-items'
+import { initialiseAppInsights, buildAppInsightsClient } from '../utils/azureAppInsights'
 import applicationInfoSupplier from '../applicationInfo'
-import { buildAppInsightsClient, initialiseAppInsights } from '../utils/azureAppInsights'
 
 const applicationInfo = applicationInfoSupplier()
 initialiseAppInsights()
 buildAppInsightsClient(applicationInfo)
 
-import config from '../config'
-import logger from '../../logger'
-import HmppsAuthClient from './hmppsAuthClient'
 import { createRedisClient } from './redisClient'
-import InMemoryTokenStore from './tokenStore/inMemoryTokenStore'
-import RedisTokenStore from './tokenStore/redisTokenStore'
+import config from '../config'
+import HmppsAuditClient from './hmppsAuditClient'
+import logger from '../../logger'
+import DocumentManagementApiClient from './documentManagementApiClient'
+import ManagingPrisonerAppsApiClient from './managingPrisonerAppsApiClient'
+import PersonalRelationshipsApiClient from './personalRelationshipsApiClient'
+import PrisonApiClient from './prisonApiClient'
 
-export type RestClientBuilder<T> = (token: string) => T
-
-export const dataAccess = () => ({
-  applicationInfo,
-  hmppsAuthClient: new HmppsAuthClient(
+export const dataAccess = () => {
+  const hmppsAuthClient = new AuthenticationClient(
+    config.apis.hmppsAuth,
+    logger,
     config.redis.enabled ? new RedisTokenStore(createRedisClient()) : new InMemoryTokenStore(),
-  ),
-  osPlacesApiClient: new OsPlacesApiClient(logger, config.apis.osPlacesApi),
-})
+  )
+
+  return {
+    applicationInfo,
+    hmppsAuthClient,
+    hmppsAuditClient: new HmppsAuditClient(config.sqs.audit),
+    documentManagementApiClient: new DocumentManagementApiClient(hmppsAuthClient),
+    managingPrisonerAppsApiClient: new ManagingPrisonerAppsApiClient(hmppsAuthClient),
+    personalRelationshipsApiClient: new PersonalRelationshipsApiClient(hmppsAuthClient),
+    prisonApiClient: new PrisonApiClient(hmppsAuthClient),
+    osPlacesApiClient: new OsPlacesApiClient(logger, config.apis.osPlacesApi),
+  }
+}
 
 export type DataAccess = ReturnType<typeof dataAccess>
 
-export { HmppsAuthClient }
+export {
+  AuthenticationClient,
+  HmppsAuditClient,
+  DocumentManagementApiClient,
+  ManagingPrisonerAppsApiClient,
+  PersonalRelationshipsApiClient,
+  PrisonApiClient,
+}

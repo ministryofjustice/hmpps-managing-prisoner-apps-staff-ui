@@ -1,8 +1,8 @@
 import { randomUUID } from 'crypto'
-import superagent from 'superagent'
+import { asSystem, RestClient } from '@ministryofjustice/hmpps-rest-client'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import logger from '../../logger'
-import config, { ApiConfig } from '../config'
-import RestClient from './restClient'
+import config from '../config'
 import { Document, DocumentType } from '../@types/documentManagementApi'
 
 export interface UploadDocumentRequest {
@@ -21,26 +21,13 @@ export interface DocumentHeaders {
 const DOCUMENT_TYPE: DocumentType = 'PRISONER_APPLICATION'
 const SERVICE_NAME = 'hmpps-managing-prisoner-apps'
 
-export default class DocumentManagementApiClient {
-  private restClient: RestClient
-
-  private apiConfig: ApiConfig
-
-  private token: string
-
-  constructor(token: string) {
-    this.restClient = new RestClient('documentManagementApiClient', config.apis.documentApi as ApiConfig, token)
-    this.apiConfig = config.apis.documentApi as ApiConfig
-    this.token = token
-  }
-
-  private getToken(): string {
-    return this.token
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+export default class DocumentManagementApiClient extends RestClient {
+  constructor(authenticationClient: AuthenticationClient) {
+    super('documentManagementApiClient', config.apis.documentApi, logger, authenticationClient)
   }
 
   async uploadDocument(requests: UploadDocumentRequest[], headers?: DocumentHeaders): Promise<Document[]> {
-    const token = this.getToken()
-
     if (!requests || requests.length === 0) {
       logger.info('No documents to upload')
       return []
@@ -50,28 +37,31 @@ export default class DocumentManagementApiClient {
 
     const uploadPromises = requests.map(async request => {
       const documentUuid = request.documentUuid ?? randomUUID()
-
+      const requestHeaders: Record<string, string> = {
+        'Service-Name': SERVICE_NAME,
+        'Content-Type': request.mimeType,
+      }
+      if (headers?.username) {
+        requestHeaders['User-Name'] = headers.username
+      }
+      if (headers?.activeCaseLoadId) {
+        requestHeaders['Active-Case-Load-Id'] = headers.activeCaseLoadId
+      }
       try {
-        let uploadRequest = superagent
-          .post(`${this.apiConfig.url}/documents/${DOCUMENT_TYPE}/${documentUuid}`)
-          .attach('file', request.file, {
-            filename: request.filename,
-            contentType: request.mimeType,
-          })
-          .field('metadata', JSON.stringify(request.metadata || {}))
-          .auth(token, { type: 'bearer' })
-          .set('Service-Name', SERVICE_NAME)
-          .timeout(this.apiConfig.timeout)
-
-        if (headers?.username) {
-          uploadRequest = uploadRequest.set('Username', headers.username)
-        }
-
-        if (headers?.activeCaseLoadId) {
-          uploadRequest = uploadRequest.set('Active-Case-Load-Id', headers.activeCaseLoadId)
-        }
-
-        const result = await uploadRequest
+        const result = await this.post<any>(
+          {
+            path: `/documents/${DOCUMENT_TYPE}/${documentUuid}`,
+            headers: requestHeaders,
+            multipartData: { metadata: JSON.stringify(request.metadata || {}) },
+            files: {
+              file: {
+                buffer: request.file,
+                originalname: request.filename,
+              },
+            },
+          },
+          asSystem(),
+        )
 
         logger.info(`Successfully uploaded document ${documentUuid} (${request.filename})`)
         return result.body as Document
@@ -83,32 +73,33 @@ export default class DocumentManagementApiClient {
 
     const results = await Promise.allSettled(uploadPromises)
 
-    const successfullUploads = results
+    const successfulUploads = results
       .filter((r): r is PromiseFulfilledResult<Document> => r.status === 'fulfilled' && r.value !== null)
       .map(r => r.value)
 
-    logger.info(`Successfully uploaded ${successfullUploads.length}/${requests.length} document(s)`)
-    return successfullUploads
+    logger.info(`Successfully uploaded ${successfulUploads.length}/${requests.length} document(s)`)
+    return successfulUploads
   }
 
   async getDocument(documentUuid: string, headers?: DocumentHeaders): Promise<Document | null> {
+    const requestHeaders: Record<string, string> = {
+      'Service-Name': SERVICE_NAME,
+    }
+    if (headers?.username) {
+      requestHeaders['User-Name'] = headers.username
+    }
+    if (headers?.activeCaseLoadId) {
+      requestHeaders['Active-Case-Load-Id'] = headers.activeCaseLoadId
+    }
+
     try {
-      const requestHeaders: Record<string, string> = {
-        'Service-Name': SERVICE_NAME,
-      }
-
-      if (headers?.username) {
-        requestHeaders.Username = headers.username
-      }
-
-      if (headers?.activeCaseLoadId) {
-        requestHeaders['Active-Case-Load-Id'] = headers.activeCaseLoadId
-      }
-
-      return await this.restClient.get({
-        path: `/documents/${documentUuid}`,
-        headers: requestHeaders,
-      })
+      return await this.get(
+        {
+          path: `/documents/${documentUuid}`,
+          headers: requestHeaders,
+        },
+        asSystem(),
+      )
     } catch (error) {
       logger.error(`Error fetching document ${documentUuid}:`, error)
       return null
@@ -116,27 +107,19 @@ export default class DocumentManagementApiClient {
   }
 
   async downloadDocument(documentUuid: string, headers?: DocumentHeaders): Promise<Buffer | null> {
-    const token = this.getToken()
-
-    const url = `${this.apiConfig.url}/documents/${documentUuid}/file`
+    const url = `/documents/${documentUuid}/file`
+    const requestHeaders: Record<string, string> = {
+      'Service-Name': SERVICE_NAME,
+    }
+    if (headers?.username) {
+      requestHeaders['User-Name'] = headers.username
+    }
+    if (headers?.activeCaseLoadId) {
+      requestHeaders['Active-Case-Load-Id'] = headers.activeCaseLoadId
+    }
 
     try {
-      let downloadRequest = superagent
-        .get(url)
-        .auth(token, { type: 'bearer' })
-        .set('Service-Name', SERVICE_NAME)
-        .responseType('blob')
-        .timeout(this.apiConfig.timeout)
-
-      if (headers?.username) {
-        downloadRequest = downloadRequest.set('Username', headers.username)
-      }
-
-      if (headers?.activeCaseLoadId) {
-        downloadRequest = downloadRequest.set('Active-Case-Load-Id', headers.activeCaseLoadId)
-      }
-
-      const result = await downloadRequest
+      const result = await this.get<any>({ path: url }, asSystem())
       if (Buffer.isBuffer(result.body)) {
         logger.info(`Successfully downloaded document ${documentUuid}, size: ${result.body.length} bytes`)
         return result.body

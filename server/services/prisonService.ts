@@ -1,12 +1,13 @@
-import { HmppsAuthClient } from '../data'
-import PrisonApiClient from '../data/prisonClient'
-import { BaseUser } from '../interfaces/hmppsUser'
+import PrisonApiClient from '../data/prisonApiClient'
 
 export default class PrisonService {
-  constructor(private readonly hmppsAuthClient: HmppsAuthClient) {}
+  constructor(private readonly prisonApiClient: PrisonApiClient) {}
 
-  async getPrisonerByPrisonNumber(prisonNumber: string, user: BaseUser) {
-    const token = await this.hmppsAuthClient.getSystemClientToken(user.username)
-    return new PrisonApiClient(token).getPrisonerByPrisonNumber(prisonNumber)
+  async getPrisonerByPrisonNumber(prisonNumber: string) {
+    return this.prisonApiClient.getPrisonerByPrisonNumber(prisonNumber)
+  }
+
+  async getCurrentUserCaseloads(username: string) {
+    return this.prisonApiClient.getCurrentUserCaseloads(username)
   }
 }

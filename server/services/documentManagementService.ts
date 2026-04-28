@@ -1,12 +1,11 @@
 import { randomUUID } from 'crypto'
 import { ApplicationData } from 'express-session'
 import logger from '../../logger'
-import { HmppsAuthClient } from '../data'
 import DocumentManagementApiClient from '../data/documentManagementApiClient'
 import { Document } from '../@types/documentManagementApi'
 
 export default class DocumentManagementService {
-  constructor(private readonly hmppsAuthClient: HmppsAuthClient) {}
+  constructor(private readonly documentManagementApiClient: DocumentManagementApiClient) {}
 
   async uploadDocument(
     applicationData: ApplicationData,
@@ -15,9 +14,6 @@ export default class DocumentManagementService {
       activeCaseLoadId?: string
     },
   ): Promise<Document[]> {
-    const token = await this.hmppsAuthClient.getSystemClientToken(metadata.username)
-    const documentManagementApiClient = new DocumentManagementApiClient(token)
-
     const { photos } = applicationData
 
     if (!photos || Object.keys(photos).length === 0) {
@@ -46,19 +42,17 @@ export default class DocumentManagementService {
 
     logger.info(`Uploading ${uploadRequests.length} photos`)
 
-    const uploadedDocuments = await documentManagementApiClient.uploadDocument(uploadRequests, {
+    const uploadedDocuments = await this.documentManagementApiClient.uploadDocument(uploadRequests, {
       username: metadata.username,
       activeCaseLoadId: metadata.activeCaseLoadId,
     })
+
     return uploadedDocuments || []
   }
 
   async getDocument(documentUuid: string, username: string, activeCaseLoadId?: string): Promise<Document> {
     try {
-      const token = await this.hmppsAuthClient.getSystemClientToken(username)
-      const documentManagementApiClient = new DocumentManagementApiClient(token)
-
-      const document = await documentManagementApiClient.getDocument(documentUuid, { username, activeCaseLoadId })
+      const document = await this.documentManagementApiClient.getDocument(documentUuid, { username, activeCaseLoadId })
       logger.info(`Successfully fetched document ${documentUuid}`)
 
       return document
@@ -70,10 +64,7 @@ export default class DocumentManagementService {
 
   async downloadDocument(documentUuid: string, username: string, activeCaseLoadId?: string): Promise<Buffer | null> {
     try {
-      const token = await this.hmppsAuthClient.getSystemClientToken(username)
-      const documentManagementApiClient = new DocumentManagementApiClient(token)
-
-      const fileBuffer = await documentManagementApiClient.downloadDocument(documentUuid, {
+      const fileBuffer = await this.documentManagementApiClient.downloadDocument(documentUuid, {
         username,
         activeCaseLoadId,
       })
