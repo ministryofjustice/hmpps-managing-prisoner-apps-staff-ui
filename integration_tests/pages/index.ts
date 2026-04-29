@@ -58,16 +58,20 @@ export default class IndexPage extends AbstractPage {
   }
 
   async clickSignOut(): Promise<void> {
+    if (await this.signoutLink.isVisible()) {
+      await this.signOut()
+      return
+    }
+
     const headerUserName = this.headerUserName()
-    const isVisible = await headerUserName.isVisible()
-    if (isVisible) {
-      const accountMenuTrigger = this.accountMenuTrigger()
-      const accountMenuVisible = (await accountMenuTrigger).isVisible().catch(() => false)
-      if (accountMenuVisible) {
-        await (await accountMenuTrigger).click()
-      } else {
-        await headerUserName.click()
-      }
+    const headerUserNameVisible = await headerUserName.isVisible()
+    const accountMenuTrigger = this.accountMenuTrigger()
+    const accountMenuVisible = (await accountMenuTrigger).isVisible().catch(() => false)
+
+    if (headerUserNameVisible && accountMenuVisible) {
+      await (await accountMenuTrigger).click()
+    } else if (headerUserNameVisible) {
+      await headerUserName.click()
     }
     await this.signOut()
   }
