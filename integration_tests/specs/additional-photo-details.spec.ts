@@ -10,7 +10,7 @@ import AdditionalPhotoDetailsPage from '../pages/additionalPhotoDetails'
 const targetBaseUrl = process.env.PW_BASE_URL || process.env.DPS_PRISONER_URL || 'http://localhost:3007'
 const isWiremock = process.env.PW_ENV === 'mock' || targetBaseUrl.includes('localhost')
 
-const testImagePath = path.join(__dirname, '../../fixtures/test-image.jpg')
+const testImagePath = path.join(__dirname, '../fixtures/test-image.jpg')
 
 test.describe('Additional Photo Details Page', () => {
   test.beforeEach(
