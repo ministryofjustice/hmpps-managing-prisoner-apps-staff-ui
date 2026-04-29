@@ -26,7 +26,7 @@ describe('Prison API Client', () => {
   it('should return a response from the api', async () => {
     fakePrisonApi.get('/api/offenders/prisoner-id').matchHeader('authorization', `Bearer ${token}`).reply(200, prisoner)
 
-    const output = await client.getPrisonerByPrisonNumber('prisoner-id')
+    const output = await client.getPrisonerByPrisonNumber('username', 'prisoner-id')
     expect(output).toEqual(prisoner)
   })
 })

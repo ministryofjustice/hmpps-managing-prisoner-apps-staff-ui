@@ -10,13 +10,13 @@ export default class PrisonApiClient extends RestClient {
     super('prisonApiClient', config.apis.prison, logger, authenticationClient)
   }
 
-  async getPrisonerByPrisonNumber(prisonerNumber: string): Promise<InmateDetail | null> {
+  async getPrisonerByPrisonNumber(username: string, prisonerNumber: string): Promise<InmateDetail | null> {
     try {
       return await this.get(
         {
           path: `/api/offenders/${prisonerNumber}`,
         },
-        asSystem(),
+        asSystem(username),
       )
     } catch (error) {
       logger.error(`Error fetching prisoner`, error)

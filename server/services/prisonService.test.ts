@@ -19,10 +19,10 @@ describe('Prison Service', () => {
     it('should call the client and fetch the prisoner application', async () => {
       mockClient.getPrisonerByPrisonNumber.mockResolvedValue(prisoner)
 
-      const result = await service.getPrisonerByPrisonNumber('prisoner-id')
+      const result = await service.getPrisonerByPrisonNumber('username', 'prisoner-id')
 
       expect(result).toEqual(prisoner)
-      expect(mockClient.getPrisonerByPrisonNumber).toHaveBeenCalledWith('prisoner-id')
+      expect(mockClient.getPrisonerByPrisonNumber).toHaveBeenCalledWith('username', 'prisoner-id')
     })
   })
 })

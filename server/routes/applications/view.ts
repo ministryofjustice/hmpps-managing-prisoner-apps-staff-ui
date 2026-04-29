@@ -51,7 +51,9 @@ export default function viewAppsRouter({
       await managingPrisonerAppsService.getApps(payload, user)
 
     const prisonerDetails = await Promise.all(
-      apps.map(app => (app.requestedBy ? prisonService.getPrisonerByPrisonNumber(app.requestedBy) : null)),
+      apps.map(app =>
+        app.requestedBy ? prisonService.getPrisonerByPrisonNumber(user.username, app.requestedBy) : null,
+      ),
     )
     const error = validatePrisonerFilter(filters, prisonerDetails)
 
