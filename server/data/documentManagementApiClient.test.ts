@@ -85,7 +85,7 @@ describe('DocumentManagementApiClient', () => {
       fakeDocumentManagementApi
         .post('/documents/PRISONER_APPLICATION/uuid-error')
         .matchHeader('authorization', `Bearer ${token}`)
-        .replyWithError(new Error('Upload failed'))
+        .replyWithError('Upload failed')
 
       const result = await client.uploadDocument([mockUploadRequest])
 
@@ -136,7 +136,7 @@ describe('DocumentManagementApiClient', () => {
         .reply(200, { body: mockDocuments[0] })
         .post('/documents/PRISONER_APPLICATION/uuid-fail')
         .matchHeader('authorization', `Bearer ${token}`)
-        .replyWithError(new Error('Failed'))
+        .replyWithError('Failed')
 
       const result = await client.uploadDocument(mockRequests)
 
@@ -162,7 +162,7 @@ describe('DocumentManagementApiClient', () => {
       fakeDocumentManagementApi
         .get('/documents/invalid-uuid')
         .matchHeader('authorization', `Bearer ${token}`)
-        .replyWithError(new Error('Document not found'))
+        .replyWithError('Document not found')
 
       const result = await client.getDocument('invalid-uuid')
 
@@ -173,7 +173,7 @@ describe('DocumentManagementApiClient', () => {
       fakeDocumentManagementApi
         .get('/documents/non-existent-uuid')
         .matchHeader('authorization', `Bearer ${token}`)
-        .replyWithError(new Error('Not Found'))
+        .replyWithError('Not Found')
 
       const result = await client.getDocument('non-existent-uuid')
 
@@ -231,7 +231,7 @@ describe('DocumentManagementApiClient', () => {
       fakeDocumentManagementApi
         .get('/documents/uuid-error/file')
         .matchHeader('authorization', `Bearer ${token}`)
-        .replyWithError(new Error('Download failed'))
+        .replyWithError('Download failed')
 
       const result = await client.downloadDocument('uuid-error')
 

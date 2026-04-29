@@ -9,7 +9,7 @@ import PrisonService from '../services/prisonService'
 export default function setUpCurrentUser(prisonService: PrisonService) {
   const router = express.Router()
 
-  router.use((_req, res, next) => {
+  router.use(async (_req, res, next) => {
     try {
       const {
         name,
@@ -34,10 +34,7 @@ export default function setUpCurrentUser(prisonService: PrisonService) {
         prisonUser.staffId = userId !== undefined ? parseInt(userId, 10) : undefined
 
         try {
-          let caseLoads: CaseLoad[] = []
-          prisonService.getCurrentUserCaseloads(prisonUser.staffId.toString()).then(result => {
-            caseLoads = result
-          })
+          const caseLoads: CaseLoad[] = await prisonService.getCurrentUserCaseloads(prisonUser.username)
 
           const activeCaseLoad = caseLoads.find(caseLoad => caseLoad.currentlyActive)
 

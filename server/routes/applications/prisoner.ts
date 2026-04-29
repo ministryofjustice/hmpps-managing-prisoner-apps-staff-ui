@@ -46,7 +46,10 @@ export default function prisonerRouter({
       return
     }
 
-    const prisoner = await prisonService.getPrisonerByPrisonNumber(req.params.prisonNumber as string)
+    const prisoner = await prisonService.getPrisonerByPrisonNumber(
+      res.locals.user.username,
+      req.params.prisonNumber as string,
+    )
 
     if (!prisoner) {
       res.status(404).json({ error: 'Prisoner not found' })
@@ -74,7 +77,7 @@ export default function prisonerRouter({
     }
 
     if (Object.keys(errors).length === 0) {
-      const prisoner = await prisonService.getPrisonerByPrisonNumber(prisonNumber)
+      const prisoner = await prisonService.getPrisonerByPrisonNumber(res.locals.user.username, prisonNumber)
 
       if (!prisoner) {
         errors.prisonNumber = { text: 'Enter a valid prison number' }

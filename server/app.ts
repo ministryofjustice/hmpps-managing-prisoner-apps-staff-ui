@@ -44,7 +44,7 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpCurrentUser(services.prisonService))
 
   app.get(
-    '*',
+    '*splat',
     dpsComponents.getPageComponents({
       dpsUrl: config.dpsHome,
       logger,
