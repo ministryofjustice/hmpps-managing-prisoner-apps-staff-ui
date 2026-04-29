@@ -107,7 +107,7 @@ describe('DocumentManagementApiClient', () => {
       }
 
       fakeDocumentManagementApi
-        .post(uri => uri.includes('/documents/PRISONER_APPLICATION'))
+        .post(/^\/documents\/PRISONER_APPLICATION\/[a-f0-9-]{36}/)
         .matchHeader('authorization', `Bearer ${token}`)
         .reply(200, { body: mockDocument })
 
