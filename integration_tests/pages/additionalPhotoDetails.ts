@@ -1,8 +1,8 @@
-import { type Page as PlaywrightPage, expect } from '@playwright/test'
-import Page, { type PageElement } from './page'
+import { expect, Page } from '@playwright/test'
+import AbstractPage, { PageElement } from './abstractPage'
 
-export default class AdditionalPhotoDetailsPage extends Page {
-  constructor(page: PlaywrightPage) {
+export default class AdditionalPhotoDetailsPage extends AbstractPage {
+  constructor(page: Page) {
     super(page, 'Enter additional details')
   }
 

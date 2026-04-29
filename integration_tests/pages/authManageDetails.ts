@@ -1,8 +1,8 @@
-import { type Page as PlaywrightPage } from '@playwright/test'
-import Page from './page'
+import { Page } from '@playwright/test'
+import AbstractPage from './abstractPage'
 
-export default class AuthManageDetailsPage extends Page {
-  constructor(page: PlaywrightPage) {
+export default class AuthManageDetailsPage extends AbstractPage {
+  constructor(page: Page) {
     super(page, 'Your account details')
   }
 }

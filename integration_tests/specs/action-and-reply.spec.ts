@@ -2,7 +2,6 @@ import { test, expect } from '../fixtures'
 import { APPLICATION_STATUS } from '../../server/constants/applicationStatus'
 import { app, appTypes } from '../../server/testData'
 import ActionAndReplyPage from '../pages/actionAndReply'
-import Page from '../pages/page'
 import auth from '../mockApis/auth'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
 import prisonApi from '../mockApis/prison'
@@ -31,17 +30,18 @@ Object.values(appTypes).forEach(({ id, name }) => {
     })
 
     test('should display the correct page title', async ({ page }) => {
-      const actionAndReplyPage = await Page.verifyOnPage(ActionAndReplyPage, page)
+      const actionAndReplyPage = new ActionAndReplyPage(page)
+      await actionAndReplyPage.checkOnPage()
       await actionAndReplyPage.assertBrowserTitleContains('Action and reply')
     })
 
     test('should display the correct app type name', async ({ page }) => {
-      const actionAndReplyPage = await Page.verifyOnPage(ActionAndReplyPage, page)
+      const actionAndReplyPage = new ActionAndReplyPage(page)
       await expect(actionAndReplyPage.caption()).toContainText(name)
     })
 
     test('should display the correct form elements', async ({ page }) => {
-      const actionAndReplyPage = await Page.verifyOnPage(ActionAndReplyPage, page)
+      const actionAndReplyPage = new ActionAndReplyPage(page)
       await expect(actionAndReplyPage.actionRadios()).toBeVisible()
       await expect(actionAndReplyPage.reasonInput()).toBeVisible()
       await expect(actionAndReplyPage.saveButton()).toBeVisible()
@@ -49,7 +49,7 @@ Object.values(appTypes).forEach(({ id, name }) => {
     })
 
     test('should validate action and reason before submission', async ({ page }) => {
-      const actionAndReplyPage = await Page.verifyOnPage(ActionAndReplyPage, page)
+      const actionAndReplyPage = new ActionAndReplyPage(page)
       await actionAndReplyPage.saveButton().click()
       await expect(actionAndReplyPage.errorSummary()).toContainText('Select an action')
 
@@ -64,7 +64,7 @@ Object.values(appTypes).forEach(({ id, name }) => {
         await managingPrisonerAppsApi.stubAddAppResponse({ app: pendingApplication, decision: 'APPROVED' })
       }
 
-      const actionAndReplyPage = await Page.verifyOnPage(ActionAndReplyPage, page)
+      const actionAndReplyPage = new ActionAndReplyPage(page)
       await actionAndReplyPage.selectAction('APPROVED').check()
       await actionAndReplyPage.saveButton().click()
       await expect(page).toHaveURL(
@@ -81,7 +81,7 @@ Object.values(appTypes).forEach(({ id, name }) => {
         })
       }
 
-      const actionAndReplyPage = await Page.verifyOnPage(ActionAndReplyPage, page)
+      const actionAndReplyPage = new ActionAndReplyPage(page)
       await actionAndReplyPage.selectAction('DECLINED').check()
       await actionAndReplyPage.reasonInput().fill('Application does not meet the required criteria')
       await actionAndReplyPage.saveButton().click()
@@ -107,24 +107,24 @@ Object.values(appTypes).forEach(({ id, name }) => {
     })
 
     test('should display the correct page title', async ({ page }) => {
-      const actionAndReplyPage = await Page.verifyOnPage(ActionAndReplyPage, page)
+      const actionAndReplyPage = new ActionAndReplyPage(page)
       await actionAndReplyPage.assertBrowserTitleContains('Action and reply')
     })
 
     test('should display the correct app type name', async ({ page }) => {
-      const actionAndReplyPage = await Page.verifyOnPage(ActionAndReplyPage, page)
+      const actionAndReplyPage = new ActionAndReplyPage(page)
       await expect(actionAndReplyPage.caption()).toContainText(name)
     })
 
     test('should display the correct summary list', async ({ page }) => {
-      const actionAndReplyPage = await Page.verifyOnPage(ActionAndReplyPage, page)
+      const actionAndReplyPage = new ActionAndReplyPage(page)
       await expect(actionAndReplyPage.summaryList()).toBeVisible()
       await expect(actionAndReplyPage.summaryListKeys()).toContainText(['Action', 'Reason', 'Date', 'Location'])
       await expect(actionAndReplyPage.summaryListValues().first()).toBeVisible()
     })
 
     test('should trigger window print when Print reply button is clicked', async ({ page }) => {
-      const actionAndReplyPage = await Page.verifyOnPage(ActionAndReplyPage, page)
+      const actionAndReplyPage = new ActionAndReplyPage(page)
       await expect(actionAndReplyPage.printButton()).toBeVisible()
 
       await page.evaluate(() => {

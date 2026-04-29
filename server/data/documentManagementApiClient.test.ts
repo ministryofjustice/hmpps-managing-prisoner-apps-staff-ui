@@ -87,7 +87,7 @@ describe('DocumentManagementApiClient', () => {
       fakeDocumentManagementApi
         .post('/documents/PRISONER_APPLICATION/uuid-error')
         .matchHeader('authorization', `Bearer ${token}`)
-        .replyWithError('Upload failed')
+        .reply(400, new Error('Upload failed'))
 
       const result = await client.uploadDocument([mockUploadRequest])
 

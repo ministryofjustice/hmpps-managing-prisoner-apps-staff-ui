@@ -1,8 +1,8 @@
-import { type Page as PlaywrightPage, test as base } from '@playwright/test'
+import { Page, test as base } from '@playwright/test'
 import auth from '../mockApis/auth'
 import { resetStubs } from '../mockApis/wiremock'
 
-const clearBrowserState = async (page: PlaywrightPage, browserName: string) => {
+const clearBrowserState = async (page: Page, browserName: string) => {
   if (!page.isClosed()) {
     await page
       .evaluate(() => {
@@ -51,7 +51,7 @@ type Fixtures = {
 const targetBaseUrl = process.env.PW_BASE_URL || process.env.DPS_PRISONER_URL || ''
 const isLocalhost = !targetBaseUrl || targetBaseUrl.includes('localhost')
 
-const signInWithDevCredentials = async (page: PlaywrightPage) => {
+const signInWithDevCredentials = async (page: Page) => {
   const username = process.env.MANAGE_APPS_USERNAME
   const password = process.env.MANAGE_APPS_PASSWORD
 
@@ -64,7 +64,7 @@ const signInWithDevCredentials = async (page: PlaywrightPage) => {
   await page.getByRole('button', { name: 'Sign in' }).click()
 }
 
-const openApplicationsFromDpsHome = async (page: PlaywrightPage) => {
+const openApplicationsFromDpsHome = async (page: Page) => {
   const dpsHomeHeading = page.getByRole('heading', { name: 'Welcome to Digital Prison Services' })
   const onDpsHome = await dpsHomeHeading.isVisible().catch(() => false)
 
