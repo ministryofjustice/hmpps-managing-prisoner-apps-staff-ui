@@ -1,11 +1,10 @@
-import { type Page as PlaywrightPage } from '@playwright/test'
+import { Page } from '@playwright/test'
 import { test, expect } from '../fixtures'
 import auth from '../mockApis/auth'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
 import prisonApi from '../mockApis/prison'
 import personalRelationshipsApi from '../mockApis/personalRelationships'
 import { resetStubs } from '../mockApis/wiremock'
-import Page from '../pages/page'
 import ApplicationDetailsPage from '../pages/applicationDetailsPage'
 
 const targetBaseUrl = process.env.PW_BASE_URL || process.env.DPS_PRISONER_URL || 'http://localhost:3007'
@@ -21,7 +20,7 @@ type NavigationFixtures = {
 }
 
 async function startApplication(
-  pw: PlaywrightPage,
+  page: Page,
   fixtures: NavigationFixtures,
   appName: string,
   appId: number,
@@ -38,18 +37,18 @@ async function startApplication(
   }
 
   await fixtures.signIn()
-  await pw.goto('/log/prisoner-details')
-  await pw.waitForLoadState('networkidle')
+  await page.goto('/log/prisoner-details')
+  await page.waitForLoadState('networkidle')
   await fixtures.enterPrisonerDetails()
   await fixtures.selectGroup('Pin Phone Contact Apps')
   await fixtures.selectApplicationType(appName)
   await fixtures.selectDepartment('Business Hub')
 
   // Handle optional logging method step
-  const currentUrl = pw.url()
+  const currentUrl = page.url()
   if (
     currentUrl.includes('/log/method') ||
-    (await pw
+    (await page
       .locator('input[name="loggingMethod"]')
       .isVisible()
       .catch(() => false))
@@ -57,8 +56,8 @@ async function startApplication(
     await fixtures.selectLoggingMethod('manual')
   }
 
-  await expect(pw).toHaveURL(/\/log\/application-details/, { timeout: 10000 })
-  return Page.verifyOnPage(ApplicationDetailsPage, pw)
+  await expect(page).toHaveURL(/\/log\/application-details/, { timeout: 10000 })
+  return new ApplicationDetailsPage(page)
 }
 
 // --- Generic app type (Make a general PIN phone enquiry) ---

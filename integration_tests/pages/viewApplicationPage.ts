@@ -1,8 +1,8 @@
-import { type Page as PlaywrightPage } from '@playwright/test'
-import Page, { type PageElement } from './page'
+import { Page } from '@playwright/test'
+import AbstractPage, { PageElement } from './abstractPage'
 
-export default class ViewApplicationPage extends Page {
-  constructor(page: PlaywrightPage) {
+export default class ViewApplicationPage extends AbstractPage {
+  constructor(page: Page) {
     // Extract the application type name from the h1
     super(page, '')
   }

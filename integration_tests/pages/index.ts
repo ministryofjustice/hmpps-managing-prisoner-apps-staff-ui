@@ -1,8 +1,8 @@
-import { type Page as PlaywrightPage, expect } from '@playwright/test'
-import Page, { type PageElement } from './page'
+import { expect, Page } from '@playwright/test'
+import AbstractPage, { PageElement } from './abstractPage'
 
-export default class IndexPage extends Page {
-  constructor(page: PlaywrightPage) {
+export default class IndexPage extends AbstractPage {
+  constructor(page: Page) {
     super(page, 'Applications')
   }
 
@@ -62,14 +62,14 @@ export default class IndexPage extends Page {
     const isVisible = await headerUserName.isVisible()
     if (isVisible) {
       const accountMenuTrigger = this.accountMenuTrigger()
-      const accountMenuVisible = await accountMenuTrigger.isVisible().catch(() => false)
+      const accountMenuVisible = (await accountMenuTrigger).isVisible().catch(() => false)
       if (accountMenuVisible) {
-        await accountMenuTrigger.click()
+        await (await accountMenuTrigger).click()
       } else {
         await headerUserName.click()
       }
     }
-    await this.signOut().click()
+    await this.signOut()
   }
 
   async openManageDetailsInSameTab(): Promise<void> {
@@ -79,7 +79,7 @@ export default class IndexPage extends Page {
       await headerUserName.click()
     }
 
-    const manageDetails = this.manageDetails().first()
+    const manageDetails = this.manageUserDetails.first()
     const href = await manageDetails.getAttribute('href')
     if (href?.startsWith('http')) {
       await this.page.goto(href)

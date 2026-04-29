@@ -4,7 +4,6 @@ import auth from '../mockApis/auth'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
 import prisonApi from '../mockApis/prison'
 import { resetStubs } from '../mockApis/wiremock'
-import Page from '../pages/page'
 import AdditionalPhotoDetailsPage from '../pages/additionalPhotoDetails'
 
 const targetBaseUrl = process.env.PW_BASE_URL || process.env.DPS_PRISONER_URL || 'http://localhost:3007'
@@ -60,7 +59,7 @@ test.describe('Additional Photo Details Page', () => {
   )
 
   test('should display correct page content', async ({ page }) => {
-    const additionalPhotoDetailsPage = await Page.verifyOnPage(AdditionalPhotoDetailsPage, page)
+    const additionalPhotoDetailsPage = new AdditionalPhotoDetailsPage(page)
     await expect(additionalPhotoDetailsPage.heading()).toContainText('Enter additional details')
     await expect(additionalPhotoDetailsPage.caption()).toContainText('Make a general PIN phone enquiry')
     await expect(additionalPhotoDetailsPage.detailsLabel()).toContainText(

@@ -1,7 +1,6 @@
 import { test, expect } from '../fixtures'
 import { app } from '../../server/testData'
 import ApplicationHistoryPage from '../pages/applicationHistoryPage'
-import Page from '../pages/page'
 import auth from '../mockApis/auth'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
 import prisonApi from '../mockApis/prison'
@@ -28,12 +27,12 @@ test.describe('Application History Page', () => {
   })
 
   test('should display the page title', async ({ page }) => {
-    const historyPage = await Page.verifyOnPage(ApplicationHistoryPage, page)
+    const historyPage = new ApplicationHistoryPage(page)
     await expect(historyPage.pageTitle()).toContainText('History')
   })
 
   test('should display the History section', async ({ page }) => {
-    const historyPage = await Page.verifyOnPage(ApplicationHistoryPage, page)
+    const historyPage = new ApplicationHistoryPage(page)
     await expect(historyPage.historyTab()).toBeVisible()
     await expect(historyPage.historyTab()).toContainText('History')
     await expect(historyPage.historyTab()).toHaveAttribute(
@@ -43,12 +42,12 @@ test.describe('Application History Page', () => {
   })
 
   test('should display the application type name in the caption', async ({ page }) => {
-    const historyPage = await Page.verifyOnPage(ApplicationHistoryPage, page)
+    const historyPage = new ApplicationHistoryPage(page)
     await expect(historyPage.pageCaption()).toContainText('Add a social PIN phone contact')
   })
 
   test('should display the history page content', async ({ page }) => {
-    const historyPage = await Page.verifyOnPage(ApplicationHistoryPage, page)
+    const historyPage = new ApplicationHistoryPage(page)
     await expect(historyPage.historyContent()).toBeVisible()
   })
 })

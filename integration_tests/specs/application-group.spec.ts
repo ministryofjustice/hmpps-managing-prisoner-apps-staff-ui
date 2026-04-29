@@ -3,7 +3,6 @@ import auth from '../mockApis/auth'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
 import prisonApi from '../mockApis/prison'
 import { resetStubs } from '../mockApis/wiremock'
-import Page from '../pages/page'
 import ApplicationGroupPage from '../pages/applicationGroup'
 
 const targetBaseUrl = process.env.PW_BASE_URL || process.env.DPS_PRISONER_URL || 'http://localhost:3007'
@@ -31,29 +30,29 @@ test.describe('Application Group Page', () => {
   })
 
   test('should display the correct page title', async ({ page }) => {
-    const applicationGroupPage = await Page.verifyOnPage(ApplicationGroupPage, page)
+    const applicationGroupPage = new ApplicationGroupPage(page)
     await applicationGroupPage.assertBrowserTitleContains('Select application group')
   })
 
   test('should display the back link', async ({ page }) => {
-    const applicationGroupPage = await Page.verifyOnPage(ApplicationGroupPage, page)
+    const applicationGroupPage = new ApplicationGroupPage(page)
     await expect(applicationGroupPage.backLink()).toBeVisible()
     await expect(applicationGroupPage.backLink()).toHaveText('Back')
   })
 
   test('should display radio buttons for application groups', async ({ page }) => {
-    const applicationGroupPage = await Page.verifyOnPage(ApplicationGroupPage, page)
+    const applicationGroupPage = new ApplicationGroupPage(page)
     await expect(applicationGroupPage.radioButtons().first()).toBeVisible()
     await expect(applicationGroupPage.radioButtons()).toHaveCount(1)
   })
 
   test('should display Pin Phone Contact Apps group option', async ({ page }) => {
-    const applicationGroupPage = await Page.verifyOnPage(ApplicationGroupPage, page)
+    const applicationGroupPage = new ApplicationGroupPage(page)
     await expect(applicationGroupPage.pinPhoneContactAppsLabel()).toBeVisible()
   })
 
   test('should show validation error when no group selected', async ({ page }) => {
-    const applicationGroupPage = await Page.verifyOnPage(ApplicationGroupPage, page)
+    const applicationGroupPage = new ApplicationGroupPage(page)
     await applicationGroupPage.submitButton().click()
 
     await expect(applicationGroupPage.errorSummary()).toContainText('Choose one application group')
@@ -61,7 +60,7 @@ test.describe('Application Group Page', () => {
   })
 
   test('should successfully select a group and redirect to application type', async ({ page, selectGroup }) => {
-    await Page.verifyOnPage(ApplicationGroupPage, page)
+    await new ApplicationGroupPage(page).checkOnPage()
     await selectGroup('Pin Phone Contact Apps')
 
     await expect(page).toHaveURL(/\/log\/application-type$/)

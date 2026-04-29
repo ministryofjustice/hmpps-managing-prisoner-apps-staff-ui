@@ -1,4 +1,8 @@
-import { type Locator, type Page } from '@playwright/test'
+import { expect, type Locator, type Page } from '@playwright/test'
+
+export type PageElement = ReturnType<Page['locator']>
+
+const accountMenuTriggerSelector = '.cdps-header__link-wrapper:has([data-qa="connect-dps-common-header-user-name"])'
 
 export default class AbstractPage {
   readonly page: Page
@@ -15,12 +19,23 @@ export default class AbstractPage {
   /** link to manage user details */
   readonly manageUserDetails: Locator
 
-  protected constructor(page: Page) {
+  readonly title: string
+
+  protected constructor(page: Page, title: string) {
     this.page = page
+    this.title = title
     this.phaseBanner = page.getByTestId('header-phase-banner')
     this.usersName = page.getByTestId('header-user-name')
     this.signoutLink = page.getByText('Sign out')
     this.manageUserDetails = page.getByTestId('manageDetails')
+  }
+
+  async checkOnPage(): Promise<void> {
+    await expect(this.page.locator('h1')).toContainText(this.title)
+  }
+
+  async accountMenuTrigger() {
+    return this.page.locator(accountMenuTriggerSelector)
   }
 
   async signOut() {

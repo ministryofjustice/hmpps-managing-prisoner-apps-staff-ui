@@ -5,7 +5,7 @@ export default class HomePage extends AbstractPage {
   readonly header: Locator
 
   private constructor(page: Page) {
-    super(page)
+    super(page, '')
     this.header = page.locator('h1', { hasText: 'This site is under construction...' })
   }
 
