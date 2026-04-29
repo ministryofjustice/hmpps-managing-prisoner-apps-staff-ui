@@ -64,6 +64,8 @@ describe('DocumentManagementApiClient', () => {
         .post('/documents/PRISONER_APPLICATION/uuid-1')
         .matchHeader('authorization', `Bearer ${token}`)
         .reply(200, { body: mockDocuments[0] })
+
+      fakeDocumentManagementApi
         .post('/documents/PRISONER_APPLICATION/uuid-2')
         .matchHeader('authorization', `Bearer ${token}`)
         .reply(200, { body: mockDocuments[1] })
@@ -134,9 +136,11 @@ describe('DocumentManagementApiClient', () => {
         .post('/documents/PRISONER_APPLICATION/uuid-success')
         .matchHeader('authorization', `Bearer ${token}`)
         .reply(200, { body: mockDocuments[0] })
+
+      fakeDocumentManagementApi
         .post('/documents/PRISONER_APPLICATION/uuid-fail')
         .matchHeader('authorization', `Bearer ${token}`)
-        .replyWithError('Failed')
+        .reply(400, new Error('Failed'))
 
       const result = await client.uploadDocument(mockRequests)
 
@@ -162,7 +166,7 @@ describe('DocumentManagementApiClient', () => {
       fakeDocumentManagementApi
         .get('/documents/invalid-uuid')
         .matchHeader('authorization', `Bearer ${token}`)
-        .replyWithError('Document not found')
+        .reply(404, new Error('Document not found'))
 
       const result = await client.getDocument('invalid-uuid')
 
@@ -173,7 +177,7 @@ describe('DocumentManagementApiClient', () => {
       fakeDocumentManagementApi
         .get('/documents/non-existent-uuid')
         .matchHeader('authorization', `Bearer ${token}`)
-        .replyWithError('Not Found')
+        .reply(404, new Error('Not Found'))
 
       const result = await client.getDocument('non-existent-uuid')
 
@@ -231,7 +235,7 @@ describe('DocumentManagementApiClient', () => {
       fakeDocumentManagementApi
         .get('/documents/uuid-error/file')
         .matchHeader('authorization', `Bearer ${token}`)
-        .replyWithError('Download failed')
+        .reply(400, new Error('Download failed'))
 
       const result = await client.downloadDocument('uuid-error')
 
