@@ -36,7 +36,7 @@ describe('DocumentManagementApiClient', () => {
       fakeDocumentManagementApi
         .post('/documents/PRISONER_APPLICATION/uuid-1234')
         .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, { body: mockDocument })
+        .reply(200, mockDocument)
 
       const result = await client.uploadDocument([mockUploadRequest])
 
@@ -63,12 +63,12 @@ describe('DocumentManagementApiClient', () => {
       fakeDocumentManagementApi
         .post('/documents/PRISONER_APPLICATION/uuid-1')
         .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, { body: mockDocuments[0] })
+        .reply(200, mockDocuments[0])
 
       fakeDocumentManagementApi
         .post('/documents/PRISONER_APPLICATION/uuid-2')
         .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, { body: mockDocuments[1] })
+        .reply(200, mockDocuments[1])
 
       const result = await client.uploadDocument(mockRequests)
 
@@ -109,7 +109,7 @@ describe('DocumentManagementApiClient', () => {
       fakeDocumentManagementApi
         .post(/^\/documents\/PRISONER_APPLICATION\/[a-f0-9-]{36}/)
         .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, { body: mockDocument })
+        .reply(200, mockDocument)
 
       const result = await client.uploadDocument([mockUploadRequest])
 
@@ -135,7 +135,7 @@ describe('DocumentManagementApiClient', () => {
       fakeDocumentManagementApi
         .post('/documents/PRISONER_APPLICATION/uuid-success')
         .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, { body: mockDocuments[0] })
+        .reply(200, mockDocuments[0])
 
       fakeDocumentManagementApi
         .post('/documents/PRISONER_APPLICATION/uuid-fail')
@@ -210,7 +210,7 @@ describe('DocumentManagementApiClient', () => {
       fakeDocumentManagementApi
         .get('/documents/uuid-1234/file')
         .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, { body: mockImageBuffer })
+        .reply(200, mockImageBuffer)
 
       const result = await client.downloadDocument('uuid-1234')
 
@@ -223,7 +223,7 @@ describe('DocumentManagementApiClient', () => {
       fakeDocumentManagementApi
         .get('/documents/uuid-1234/file')
         .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, { body: Buffer.from(mockData) })
+        .reply(200, Buffer.from(mockData))
 
       const result = await client.downloadDocument('uuid-1234')
 
@@ -246,11 +246,11 @@ describe('DocumentManagementApiClient', () => {
       fakeDocumentManagementApi
         .get('/documents/uuid-empty/file')
         .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, null)
+        .reply(200)
 
       const result = await client.downloadDocument('uuid-empty')
 
-      expect(result).toBeNull()
+      expect(result).toEqual(Buffer.from(''))
     })
 
     it('should download multiple documents', async () => {
@@ -260,12 +260,12 @@ describe('DocumentManagementApiClient', () => {
       fakeDocumentManagementApi
         .get('/documents/uuid-1234/file')
         .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, { body: mockBuffer1 })
+        .reply(200, mockBuffer1)
 
       fakeDocumentManagementApi
         .get('/documents/uuid-5678/file')
         .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, { body: mockBuffer2 })
+        .reply(200, mockBuffer2)
 
       const result1 = await client.downloadDocument('uuid-1234')
       const result2 = await client.downloadDocument('uuid-5678')
