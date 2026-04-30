@@ -52,7 +52,7 @@ export default class DocumentManagementApiClient extends RestClient {
           {
             path: `/documents/${DOCUMENT_TYPE}/${documentUuid}`,
             headers: requestHeaders,
-            multipartData: { metadata: JSON.stringify(request.metadata || {}) },
+            multipartData: { metadata: JSON.stringify(request.metadata || {}), contentType: request.mimeType },
             files: {
               file: {
                 buffer: request.file,
@@ -64,7 +64,7 @@ export default class DocumentManagementApiClient extends RestClient {
         )
 
         logger.info(`Successfully uploaded document ${documentUuid} (${request.filename})`)
-        return result.body as Document
+        return result as Document
       } catch (error) {
         logger.error(`Error uploading document ${request.filename}:`, error)
         return null
@@ -119,14 +119,14 @@ export default class DocumentManagementApiClient extends RestClient {
     }
 
     try {
-      const result = await this.get<any>({ path: url }, asSystem())
-      if (Buffer.isBuffer(result.body)) {
-        logger.info(`Successfully downloaded document ${documentUuid}, size: ${result.body.length} bytes`)
-        return result.body
+      const result = await this.get<any>({ path: url, headers: requestHeaders, responseType: 'blob' }, asSystem())
+      if (Buffer.isBuffer(result)) {
+        logger.info(`Successfully downloaded document ${documentUuid}, size: ${result.length} bytes`)
+        return result
       }
 
-      if (result.body) {
-        const buffer = Buffer.from(result.body)
+      if (result) {
+        const buffer = Buffer.from(result)
         logger.info(`Successfully downloaded document ${documentUuid}, size: ${buffer.length} bytes`)
         return buffer
       }
