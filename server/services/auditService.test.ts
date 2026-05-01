@@ -1,14 +1,20 @@
-import { auditService as auditClient } from '@ministryofjustice/hmpps-audit-client'
 import AuditService, { Page } from './auditService'
+import HmppsAuditClient from '../data/hmppsAuditClient'
 
-const clientSpy = jest.spyOn(auditClient, 'sendAuditMessage')
+jest.mock('../data/hmppsAuditClient')
 
 describe('Audit service', () => {
+  let hmppsAuditClient: jest.Mocked<HmppsAuditClient>
   let auditService: AuditService
 
   beforeEach(() => {
-    clientSpy.mockResolvedValue()
-    auditService = new AuditService()
+    hmppsAuditClient = new HmppsAuditClient({
+      queueUrl: '',
+      region: '',
+      serviceName: '',
+      enabled: true,
+    }) as jest.Mocked<HmppsAuditClient>
+    auditService = new AuditService(hmppsAuditClient)
   })
 
   describe('logAuditEvent', () => {
@@ -22,14 +28,13 @@ describe('Audit service', () => {
         details: { extraDetails: 'example' },
       })
 
-      expect(clientSpy).toHaveBeenCalledWith({
-        action: 'AUDIT_EVENT',
+      expect(hmppsAuditClient.sendMessage).toHaveBeenCalledWith({
+        what: 'AUDIT_EVENT',
         who: 'user1',
         subjectId: 'subject123',
         subjectType: 'exampleType',
         correlationId: 'request123',
-        service: 'hmpps-managing-prisoner-apps',
-        details: JSON.stringify({ extraDetails: 'example' }),
+        details: { extraDetails: 'example' },
       })
     })
   })
@@ -44,14 +49,13 @@ describe('Audit service', () => {
         details: { extraDetails: 'example' },
       })
 
-      expect(clientSpy).toHaveBeenCalledWith({
-        action: 'PAGE_VIEW_EXAMPLE_PAGE',
+      expect(hmppsAuditClient.sendMessage).toHaveBeenCalledWith({
+        what: 'PAGE_VIEW_EXAMPLE_PAGE',
         who: 'user1',
         subjectId: 'subject123',
         subjectType: 'exampleType',
         correlationId: 'request123',
-        service: 'hmpps-managing-prisoner-apps',
-        details: JSON.stringify({ extraDetails: 'example' }),
+        details: { extraDetails: 'example' },
       })
     })
   })

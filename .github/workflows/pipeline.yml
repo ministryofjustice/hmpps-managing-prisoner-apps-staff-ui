@@ -22,9 +22,11 @@ permissions:
   packages: write
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-# This will cancel all running build/test/release pipelines that are not on the main branch
-# If this pipeline is on the main branch, it will wait until existing runs complete
+  # Only cancel in progress when on a branch - use SHA on main to ensure uniqueness.
+  # This will allow multiple pipelines to run at the same time on main.
+  # Note that two pipelines running within a few minutes of each other will cause issues with helm deploying to
+  # a namespace, as the second one will not be able to get a lock as a deploy will be in progress.
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.sha || github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
@@ -41,104 +43,12 @@ jobs:
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_unit_tests.yml@v2 # WORKFLOW_VERSION
     needs: [node_build]
     secrets: inherit
-  playwright_mock_tests:
-    name: Playwright mock tests
-    runs-on: ubuntu-latest
+  # generic node integration tests using wiremock - feel free to override with local tests if required
+  node_integration_tests:
+    name: node integration tests
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_integration_tests.yml@v2 # WORKFLOW_VERSION
     needs: [node_build]
-    timeout-minutes: 20
-    steps:
-      - name: Checkout
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
-
-      - name: Setup Node
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.nvmrc'
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build app
-        run: npm run build
-
-      - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
-
-      - name: Start WireMock
-        run: docker compose -f docker-compose-test.yml up -d wiremock
-
-      - name: Wait for WireMock
-        run: |
-          for i in {1..30}; do
-            if curl -fsS http://localhost:9091/__admin/mappings >/dev/null; then
-              exit 0
-            fi
-            sleep 2
-          done
-          echo "WireMock admin API is unavailable"
-          docker compose -f docker-compose-test.yml logs wiremock || true
-          exit 1
-
-      - name: Seed WireMock health stubs
-        run: |
-          for path in \
-            /auth/health/ping \
-            /verification/health/ping \
-            /prison/health/ping \
-            /managingPrisonerApps/health/ping \
-            /personalRelationships/health/ping \
-            /documentApi/health/ping \
-            /manage-users/health/ping
-          do
-            curl -fsS -X POST http://localhost:9091/__admin/mappings \
-              -H 'Content-Type: application/json' \
-              -d "{\"request\":{\"method\":\"GET\",\"urlPath\":\"${path}\"},\"response\":{\"status\":200}}" \
-              >/dev/null
-          done
-
-      - name: Start app
-        env:
-          HMPPS_MANAGE_USERS_API_URL: http://localhost:9091/manage-users
-        run: |
-          npm run start-feature > /tmp/start-feature.log 2>&1 &
-          echo $! > /tmp/start-feature.pid
-
-      - name: Wait for app
-        run: |
-          for i in {1..60}; do
-            if curl -fsS http://localhost:3007/ping >/dev/null; then
-              exit 0
-            fi
-            sleep 2
-          done
-          echo "App failed to become healthy"
-          cat /tmp/start-feature.log || true
-          exit 1
-
-      - name: Run Playwright mock tests
-        env:
-          CI: true
-        run: npm run pw-test:mock
-
-      - name: Upload Playwright report
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: playwright-mock-report
-          path: integration_tests/playwright_tests/reports
-
-      - name: Print app logs on failure
-        if: failure()
-        run: cat /tmp/start-feature.log || true
-
-      - name: Stop app and WireMock
-        if: always()
-        run: |
-          if [ -f /tmp/start-feature.pid ]; then
-            kill "$(cat /tmp/start-feature.pid)" || true
-          fi
-          docker compose -f docker-compose-test.yml down
+    secrets: inherit
   helm_lint:
     strategy:
       matrix:
@@ -150,16 +60,15 @@ jobs:
       environment: ${{ matrix.environments }}
   build:
     name: Build docker image from hmpps-github-actions
-    if: github.ref == 'refs/heads/main'
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v2 # WORKFLOW_VERSION
     needs:
-      - playwright_mock_tests
+      - node_integration_tests
       - node_unit_tests
     with:
       docker_registry: 'ghcr.io'
       registry_org: 'ministryofjustice'
       additional_docker_tag: ${{ inputs.additional_docker_tag }}
-      push: ${{ inputs.push || true }}
+      push: ${{ inputs.push || inputs.push == null }}
       docker_multiplatform: false
   deploy_dev:
     name: Deploy to the development environment
@@ -171,8 +80,10 @@ jobs:
     with:
       environment: 'dev'
       app_version: '${{ needs.build.outputs.app_version }}'
+      slack_notification: 'false' # if 'true', it needs a valid NONPROD_RELEASES_SLACK_CHANNEL variable to be set
   deploy_staging:
     name: Deploy to the staging environment
+    if: github.ref == 'refs/heads/main'
     needs:
       - build
       - deploy_dev
@@ -181,8 +92,10 @@ jobs:
     with:
       environment: 'staging'
       app_version: '${{ needs.build.outputs.app_version }}'
+      slack_notification: 'false' # if 'true', it needs a valid NONPROD_RELEASES_SLACK_CHANNEL variable to be set
   deploy_preprod:
     name: Deploy to pre-production environment
+    if: github.ref == 'refs/heads/main'
     needs:
       - build
       - deploy_staging
@@ -191,6 +104,7 @@ jobs:
     with:
       environment: 'preprod'
       app_version: '${{ needs.build.outputs.app_version }}'
+      slack_notification: 'false' # if 'true', it needs a valid NONPROD_RELEASES_SLACK_CHANNEL variable to be set
   deploy_prod:
     name: Deploy to production environment
     if: github.ref == 'refs/heads/main'

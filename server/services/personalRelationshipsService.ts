@@ -1,12 +1,10 @@
-import { HmppsAuthClient } from '../data'
-import PersonalRelationshipsApiClient from '../data/personalRelationshipsClient'
+import PersonalRelationshipsApiClient from '../data/personalRelationshipsApiClient'
 
 export default class PersonalRelationshipsService {
-  constructor(private readonly hmppsAuthClient: HmppsAuthClient) {}
+  constructor(private readonly personalRelationshipsApiClient: PersonalRelationshipsApiClient) {}
 
   async getRelationships(groupCode: string) {
-    const token = await this.hmppsAuthClient.getSystemClientToken()
-    const relationships = await new PersonalRelationshipsApiClient(token).getRelationships(groupCode)
+    const relationships = await this.personalRelationshipsApiClient.getRelationships(groupCode)
     return relationships ?? []
   }
 }

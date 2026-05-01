@@ -6,8 +6,6 @@ import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 import { PHOTO_KEYS } from '../../constants/photos'
 
-import asyncMiddleware from '../../middleware/asyncMiddleware'
-
 import AuditService, { Page } from '../../services/auditService'
 
 import { updateSessionData } from '../../utils/http/session'
@@ -23,42 +21,39 @@ const { csrfSynchronisedProtection } = csrfSync({
 export default function photoCaptureRouter({ auditService }: { auditService: AuditService }): Router {
   const router = Router()
 
-  router.get(
-    URLS.LOG_PHOTO_CAPTURE,
-    asyncMiddleware(async (req: Request, res: Response) => {
-      const { user } = res.locals
-      const { applicationData } = req.session
-      const { retake, image } = req.query
+  router.get(URLS.LOG_PHOTO_CAPTURE, async (req: Request, res: Response) => {
+    const { user } = res.locals
+    const { applicationData } = req.session
+    const { retake, image } = req.query
 
-      if (!applicationData?.loggingMethod) {
-        return res.redirect(URLS.LOG_METHOD)
-      }
+    if (!applicationData?.loggingMethod) {
+      return res.redirect(URLS.LOG_METHOD)
+    }
 
-      handlePhotoQueryParams(req, retake as string, image as string)
+    handlePhotoQueryParams(req, retake as string, image as string)
 
-      const currentPhoto = req.session.applicationData?.currentPhoto || PHOTO_KEYS.PHOTO_1
+    const currentPhoto = req.session.applicationData?.currentPhoto || PHOTO_KEYS.PHOTO_1
 
-      await auditService.logPageView(Page.LOG_PHOTO_CAPTURE_PAGE, {
-        who: user.username,
-        correlationId: req.id,
-      })
+    await auditService.logPageView(Page.LOG_PHOTO_CAPTURE_PAGE, {
+      who: user.username,
+      correlationId: req.id,
+    })
 
-      return res.render(PATHS.LOG_APPLICATION.PHOTO_CAPTURE, {
-        title: 'Take a photo of the application',
-        applicationType: applicationData.type.name,
-        LOG_PHOTO_CAPTURE: URLS.LOG_PHOTO_CAPTURE,
-        backLink: getBackLink(req),
-        currentPhoto,
-        photoLabel: getPhotoLabel(currentPhoto),
-      })
-    }),
-  )
+    return res.render(PATHS.LOG_APPLICATION.PHOTO_CAPTURE, {
+      title: 'Take a photo of the application',
+      applicationType: applicationData.type.name,
+      LOG_PHOTO_CAPTURE: URLS.LOG_PHOTO_CAPTURE,
+      backLink: getBackLink(req),
+      currentPhoto,
+      photoLabel: getPhotoLabel(currentPhoto),
+    })
+  })
 
   router.post(
     URLS.LOG_PHOTO_CAPTURE,
     upload.single('file'),
     csrfSynchronisedProtection,
-    asyncMiddleware(async (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
       const { applicationData } = req.session
       const { file } = req
 
@@ -72,32 +67,29 @@ export default function photoCaptureRouter({ auditService }: { auditService: Aud
       updateSessionData(req, { photos, currentPhoto })
 
       return res.redirect(URLS.LOG_CONFIRM_PHOTO_CAPTURE)
-    }),
+    },
   )
 
-  router.get(
-    `${URLS.LOG_VIEW_PHOTO}/:photoKey`,
-    asyncMiddleware(async (req: Request, res: Response) => {
-      const { applicationData } = req.session
-      const photoKey = req.params.photoKey as 'photo1' | 'photo2'
+  router.get(`${URLS.LOG_VIEW_PHOTO}/:photoKey`, async (req: Request, res: Response) => {
+    const { applicationData } = req.session
+    const photoKey = req.params.photoKey as 'photo1' | 'photo2'
 
-      const photo = applicationData?.photos?.[photoKey]
+    const photo = applicationData?.photos?.[photoKey]
 
-      if (!photo) {
-        res.status(404).render('pages/error', {
-          message: 'Photo not found',
-          status: 404,
-        })
-        return
-      }
+    if (!photo) {
+      res.status(404).render('pages/error', {
+        message: 'Photo not found',
+        status: 404,
+      })
+      return
+    }
 
-      res.setHeader('Content-Type', photo.mimetype)
-      res.setHeader('Content-Disposition', `inline; filename="${photo.filename}"`)
+    res.setHeader('Content-Type', photo.mimetype)
+    res.setHeader('Content-Disposition', `inline; filename="${photo.filename}"`)
 
-      const buffer = Buffer.from(photo.buffer as string, 'base64')
-      res.send(buffer)
-    }),
-  )
+    const buffer = Buffer.from(photo.buffer as string, 'base64')
+    res.send(buffer)
+  })
 
   return router
 }

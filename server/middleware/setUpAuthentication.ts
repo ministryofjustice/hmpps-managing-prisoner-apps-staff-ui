@@ -2,10 +2,11 @@ import passport from 'passport'
 import flash from 'connect-flash'
 import { Router } from 'express'
 import { Strategy } from 'passport-oauth2'
+import { VerificationClient, AuthenticatedRequest } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
-import tokenVerifier from '../data/tokenVerification'
 import { HmppsUser } from '../interfaces/hmppsUser'
-import generateOauthClientToken from '../authentication/clientCredentials'
+import generateOauthClientToken from '../utils/clientCredentials'
+import logger from '../../logger'
 
 passport.serializeUser((user, done) => {
   // Not used but required for Passport
@@ -28,7 +29,7 @@ passport.use(
       state: true,
       customHeaders: { Authorization: generateOauthClientToken() },
     },
-    (token, refreshToken, params, profile, done) => {
+    (token, _refreshToken, params, _profile, done) => {
       return done(null, { token, username: params.user_name, authSource: params.auth_source })
     },
   ),
@@ -36,12 +37,13 @@ passport.use(
 
 export default function setupAuthentication() {
   const router = Router()
+  const tokenVerificationClient = new VerificationClient(config.apis.tokenVerification, logger)
 
   router.use(passport.initialize())
   router.use(passport.session())
   router.use(flash())
 
-  router.get('/autherror', (req, res) => {
+  router.get('/autherror', (_req, res) => {
     res.status(401)
     return res.render('autherror')
   })
@@ -68,12 +70,12 @@ export default function setupAuthentication() {
     } else res.redirect(authSignOutUrl)
   })
 
-  router.use('/account-details', (req, res) => {
+  router.use('/account-details', (_req, res) => {
     res.redirect(`${authUrl}/account-details?${authParameters}`)
   })
 
   router.use(async (req, res, next) => {
-    if (req.isAuthenticated() && (await tokenVerifier(req))) {
+    if (req.isAuthenticated() && (await tokenVerificationClient.verifyToken(req as unknown as AuthenticatedRequest))) {
       return next()
     }
     req.session.returnTo = req.originalUrl

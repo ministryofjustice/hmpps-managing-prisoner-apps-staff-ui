@@ -1,17 +1,36 @@
-import Page from './page'
+import { expect, Page } from '@playwright/test'
+import AbstractPage, { PageElement } from './abstractPage'
 
-export default class AdditionalPhotoDetailsPage extends Page {
-  constructor() {
-    super('Enter additional details')
+export default class AdditionalPhotoDetailsPage extends AbstractPage {
+  constructor(page: Page) {
+    super(page, 'Enter additional details')
   }
 
-  heading = () => cy.get('h1.govuk-heading-xl')
+  async assertBrowserTitleContains(text: string): Promise<void> {
+    await expect(this.page).toHaveTitle(new RegExp(text))
+  }
 
-  caption = () => cy.get('.govuk-caption-xl')
+  heading(): PageElement {
+    return this.page.locator('h1.govuk-heading-xl')
+  }
 
-  detailsLabel = () => cy.get('label').contains('Add additional details about this application (optional)')
+  caption(): PageElement {
+    return this.page.locator('.govuk-caption-xl')
+  }
 
-  textArea = () => cy.get('#additionalDetails')
+  detailsLabel(): PageElement {
+    return this.page.locator('label').filter({ hasText: 'Add additional details about this application (optional)' })
+  }
 
-  continueButton = () => cy.get('button').contains('Continue')
+  textArea(): PageElement {
+    return this.page.locator('#additionalDetails')
+  }
+
+  continueButton(): PageElement {
+    return this.page.getByRole('button', { name: 'Continue' })
+  }
+
+  errorSummary(): PageElement {
+    return this.page.locator('.govuk-error-summary')
+  }
 }

@@ -2,10 +2,11 @@ import type { Express } from 'express'
 import request from 'supertest'
 import { appWithAllRoutes, user } from './testutils/appSetup'
 import AuditService, { Page } from '../services/auditService'
+import HmppsAuditClient from '../data/hmppsAuditClient'
 
 jest.mock('../services/auditService')
 
-const auditService = new AuditService() as jest.Mocked<AuditService>
+const auditService = new AuditService({} as HmppsAuditClient) as jest.Mocked<AuditService>
 
 let app: Express
 
@@ -29,6 +30,7 @@ describe('GET /', () => {
     return request(app)
       .get('/')
       .expect('Content-Type', /html/)
+      .expect(200)
       .expect(res => {
         expect(auditService.logPageView).toHaveBeenCalledWith(Page.APPLICATIONS_PAGE, {
           who: user.username,

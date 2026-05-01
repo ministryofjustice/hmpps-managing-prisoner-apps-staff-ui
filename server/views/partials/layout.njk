@@ -11,14 +11,14 @@
     gtag('config', '{{ ga4SiteId }}');
   </script>
 
-  <link href="{{ '/assets/css/app.css' | assetMap }}" rel="stylesheet" />
+  <link href="{{ '/assets/css/index.css' | assetMap }}" rel="stylesheet" />
 
   {% for js in feComponents.jsIncludes %}
-      <script src="{{ js }}" nonce="{{ cspNonce }}"></script>
+    <script src="{{ js }}" nonce="{{ cspNonce }}"></script>
   {% endfor %}
 
   {% for css in feComponents.cssIncludes %}
-      <link href="{{ css }}" nonce="{{ cspNonce }}" rel="stylesheet" />
+    <link href="{{ css }}" nonce="{{ cspNonce }}" rel="stylesheet" />
   {% endfor %}
 {% endblock %}
 
@@ -34,11 +34,14 @@
   {% endif %}
 {% endblock %}
 
-{% block main %}
-  <main class="govuk-main-wrapper" id="main-content" role="main">
-    {% block beforeContent %}{% endblock %}
-    {% block content %}{% endblock %}
-  </main>
+{% set containerClasses = "" %}
+{% block container %}
+  {% block main %}
+    <main class="govuk-main-wrapper" id="main-content" role="main">
+      {% block beforeContent %}{% endblock %}
+      {% block content %}{% endblock %}
+    </main>
+  {% endblock %}
 {% endblock %}
 
 {% block footer %}
@@ -50,6 +53,6 @@
 {% endblock %}
 
 {% block bodyEnd %}
-  <script type="module" src="{{ '/assets/js/app.js' | assetMap }}"></script>
+  <script type="module" src="{{ '/assets/js/index.js' | assetMap }}"></script>
   {% block scripts %}{% endblock %}
 {% endblock %}
