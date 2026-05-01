@@ -2,8 +2,6 @@ import { Request, Response, Router } from 'express'
 
 import { PATHS } from '../../constants/paths'
 
-import asyncMiddleware from '../../middleware/asyncMiddleware'
-
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
@@ -18,41 +16,38 @@ export default function historyRouter({
   managingPrisonerAppsService: ManagingPrisonerAppsService
 }): Router {
   const router = Router()
-  router.get(
-    '/applications/:prisonerId/:applicationId/history',
-    asyncMiddleware(async (req: Request, res: Response) => {
-      const { prisonerId, applicationId } = req.params
-      const { user } = res.locals
+  router.get('/applications/:prisonerId/:applicationId/history', async (req: Request, res: Response) => {
+    const { prisonerId, applicationId } = req.params
+    const { user } = res.locals
 
-      const { application, applicationType } = await getValidApplicationOrRedirect(
-        req,
-        res,
-        auditService,
-        managingPrisonerAppsService,
-        Page.APPLICATION_HISTORY_PAGE,
-      )
+    const { application, applicationType } = await getValidApplicationOrRedirect(
+      req,
+      res,
+      auditService,
+      managingPrisonerAppsService,
+      Page.APPLICATION_HISTORY_PAGE,
+    )
 
-      const history = (await managingPrisonerAppsService.getHistory(prisonerId, applicationId, user)) || []
+    const history = (await managingPrisonerAppsService.getHistory(`${prisonerId}`, `${applicationId}`, user)) || []
 
-      const comments = await managingPrisonerAppsService.getComments(prisonerId, applicationId, user)
-      const commentItems = comments?.contents || []
+    const comments = await managingPrisonerAppsService.getComments(`${prisonerId}`, `${applicationId}`, user)
+    const commentItems = comments?.contents || []
 
-      const responseItems = history.filter(historyItem => historyItem.entityType === 'RESPONSE')
-      const responses = await Promise.all(
-        responseItems.map(historyItem =>
-          managingPrisonerAppsService.getResponse(prisonerId, applicationId, historyItem.entityId, user),
-        ),
-      )
+    const responseItems = history.filter(historyItem => historyItem.entityType === 'RESPONSE')
+    const responses = await Promise.all(
+      responseItems.map(historyItem =>
+        managingPrisonerAppsService.getResponse(`${prisonerId}`, `${applicationId}`, historyItem.entityId, user),
+      ),
+    )
 
-      const formattedHistory = formatApplicationHistory(history, commentItems, responses)
+    const formattedHistory = formatApplicationHistory(history, commentItems, responses)
 
-      return res.render(PATHS.APPLICATIONS.HISTORY, {
-        application,
-        history: formattedHistory,
-        title: applicationType.name,
-      })
-    }),
-  )
+    return res.render(PATHS.APPLICATIONS.HISTORY, {
+      application,
+      history: formattedHistory,
+      title: applicationType.name,
+    })
+  })
 
   return router
 }

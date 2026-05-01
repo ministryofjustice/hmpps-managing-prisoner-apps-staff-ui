@@ -16,7 +16,11 @@ export default async function getValidApplicationOrRedirect(
   const { prisonerId, applicationId } = req.params
   const { user } = res.locals
 
-  const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
+  const application = await managingPrisonerAppsService.getPrisonerApp(
+    prisonerId.toString(),
+    applicationId.toString(),
+    user,
+  )
   if (!application) {
     res.redirect('/applications')
     return null

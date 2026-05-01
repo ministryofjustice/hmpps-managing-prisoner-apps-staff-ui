@@ -1,13 +1,28 @@
-import Page from './page'
+import { expect, Page } from '@playwright/test'
+import AbstractPage, { PageElement } from './abstractPage'
 
-export default class ApplicationHistoryPage extends Page {
-  constructor() {
-    super('History')
+export default class ApplicationHistoryPage extends AbstractPage {
+  constructor(page: Page) {
+    super(page, 'History')
   }
 
-  pageTitle = () => cy.get('h1')
+  async assertBrowserTitleContains(text: string): Promise<void> {
+    await expect(this.page).toHaveTitle(new RegExp(text))
+  }
 
-  historyTab = () => cy.contains('.moj-sub-navigation__link', 'History')
+  pageTitle(): PageElement {
+    return this.page.locator('h1')
+  }
 
-  pageCaption = () => cy.get('.govuk-caption-xl')
+  historyTab(): PageElement {
+    return this.page.locator('.moj-sub-navigation__link:has-text("History")')
+  }
+
+  pageCaption(): PageElement {
+    return this.page.locator('.govuk-caption-xl')
+  }
+
+  historyContent(): PageElement {
+    return this.page.getByText('History of this application')
+  }
 }

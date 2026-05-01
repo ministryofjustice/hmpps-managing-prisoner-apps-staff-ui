@@ -1,25 +1,56 @@
-import Page from './page'
+import { expect, Page } from '@playwright/test'
+import AbstractPage, { PageElement } from './abstractPage'
 
-export default class ActionAndReplyPage extends Page {
-  constructor() {
-    super('Action and reply')
+export default class ActionAndReplyPage extends AbstractPage {
+  constructor(page: Page) {
+    super(page, 'Action and reply')
   }
 
-  pageTitle = () => cy.title()
+  async checkOnPage(): Promise<void> {
+    await expect(this.page.locator('h1.govuk-heading-xl')).toContainText('Action and reply')
+  }
 
-  actionRadios = () => cy.get('.govuk-radios')
+  async assertBrowserTitleContains(text: string): Promise<void> {
+    await expect(this.page).toHaveTitle(new RegExp(text))
+  }
 
-  selectAction = (action: 'APPROVED' | 'DECLINED') => cy.get(`input[name="decision"][value="${action}"]`).check()
+  caption(): PageElement {
+    return this.page.locator('.govuk-caption-xl')
+  }
 
-  reasonInput = () => cy.get('#action-and-reply-reason')
+  actionRadios(): PageElement {
+    return this.page.locator('.govuk-radios')
+  }
 
-  saveButton = () => cy.get('.govuk-button.govuk-button--primary')
+  selectAction(action: 'APPROVED' | 'DECLINED'): PageElement {
+    return this.page.locator(`input[name="decision"][value="${action}"]`)
+  }
 
-  errorSummary = () => cy.get('.govuk-error-summary')
+  reasonInput(): PageElement {
+    return this.page.locator('#action-and-reply-reason')
+  }
 
-  errorMessage = () => cy.get('.govuk-error-message')
+  saveButton(): PageElement {
+    return this.page.locator('.govuk-button.govuk-button--primary')
+  }
 
-  summaryList = () => cy.get('.govuk-summary-list')
+  errorSummary(): PageElement {
+    return this.page.locator('.govuk-error-summary')
+  }
 
-  printButton = () => cy.get('#print-button')
+  summaryList(): PageElement {
+    return this.page.locator('.govuk-summary-list').first()
+  }
+
+  summaryListKeys(): PageElement {
+    return this.summaryList().locator('.govuk-summary-list__key')
+  }
+
+  summaryListValues(): PageElement {
+    return this.summaryList().locator('.govuk-summary-list__value')
+  }
+
+  printButton(): PageElement {
+    return this.page.locator('#print-button')
+  }
 }

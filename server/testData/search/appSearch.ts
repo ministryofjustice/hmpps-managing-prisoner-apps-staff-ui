@@ -179,7 +179,7 @@ export const appSearchPayload: ApplicationSearchPayload = {
   page: 1,
   size: 10,
   status: ['PENDING'],
-  applicationTypes: null,
-  requestedBy: null,
-  assignedGroups: null,
+  applicationTypes: undefined,
+  requestedBy: undefined,
+  assignedGroups: undefined,
 }

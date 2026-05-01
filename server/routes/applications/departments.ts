@@ -4,8 +4,6 @@ import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 import { EXCLUDED_LOG_METHOD_APP_TYPES } from '../../constants/excludedApplicationTypes'
 
-import asyncMiddleware from '../../middleware/asyncMiddleware'
-
 import config from '../../config'
 
 import AuditService, { Page } from '../../services/auditService'
@@ -33,78 +31,71 @@ export default function departmentsRouter({
       checked: selectedValue === dept.name,
     }))
 
-  router.get(
-    URLS.LOG_DEPARTMENT,
-    asyncMiddleware(async (req: Request, res: Response) => {
-      const { user } = res.locals
-      const { applicationData, isLoggingForSamePrisoner } = req.session
+  router.get(URLS.LOG_DEPARTMENT, async (req: Request, res: Response) => {
+    const { user } = res.locals
+    const { applicationData, isLoggingForSamePrisoner } = req.session
 
-      if (!applicationData?.type) {
-        return res.redirect(URLS.LOG_APPLICATION_TYPE)
-      }
+    if (!applicationData?.type) {
+      return res.redirect(URLS.LOG_APPLICATION_TYPE)
+    }
 
-      const selectedDepartment = applicationData?.department || null
-      const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.value)
-      if (!departments) {
-        return res.redirect(URLS.LOG_APPLICATION_TYPE)
-      }
+    const selectedDepartment = applicationData?.department || null
+    const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.value)
+    if (!departments) {
+      return res.redirect(URLS.LOG_APPLICATION_TYPE)
+    }
 
-      await auditService.logPageView(Page.LOG_DEPARTMENT_PAGE, {
-        who: user.username,
-        correlationId: req.id,
-      })
+    await auditService.logPageView(Page.LOG_DEPARTMENT_PAGE, {
+      who: user.username,
+      correlationId: req.id,
+    })
 
+    return res.render(PATHS.LOG_APPLICATION.SELECT_DEPARTMENT, {
+      title: 'Select department',
+      errorMessage: null,
+      applicationType: applicationData.type.name,
+      departmentOptions: buildDepartmentOptions(departments, selectedDepartment),
+      isLoggingForSamePrisoner,
+      prisonerName: isLoggingForSamePrisoner ? req.session.applicationData.prisonerName : null,
+    })
+  })
+
+  router.post(URLS.LOG_DEPARTMENT, async (req: Request, res: Response) => {
+    const { user } = res.locals
+    const { applicationData } = req.session
+
+    if (!applicationData?.type) {
+      return res.redirect(URLS.LOG_APPLICATION_TYPE)
+    }
+    const selectedDepartment = req.body.department
+    const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.value)
+    const selectedDepartmentId = departments.find(dept => dept.name === selectedDepartment)?.id
+
+    if (!selectedDepartment) {
       return res.render(PATHS.LOG_APPLICATION.SELECT_DEPARTMENT, {
         title: 'Select department',
-        errorMessage: null,
+        departmentOptions: buildDepartmentOptions(departments, null),
+        errorMessage: ERROR_MESSAGE,
         applicationType: applicationData.type.name,
-        departmentOptions: buildDepartmentOptions(departments, selectedDepartment),
-        isLoggingForSamePrisoner,
-        prisonerName: isLoggingForSamePrisoner ? req.session.applicationData.prisonerName : null,
+        errorSummary: [{ text: ERROR_MESSAGE, href: '#department' }],
       })
-    }),
-  )
+    }
 
-  router.post(
-    URLS.LOG_DEPARTMENT,
-    asyncMiddleware(async (req: Request, res: Response) => {
-      const { user } = res.locals
-      const { applicationData } = req.session
+    updateSessionData(req, { department: selectedDepartment, departmentId: selectedDepartmentId })
 
-      if (!applicationData?.type) {
-        return res.redirect(URLS.LOG_APPLICATION_TYPE)
-      }
-      const selectedDepartment = req.body.department
-      const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.value)
-      const selectedDepartmentId = departments.find(dept => dept.name === selectedDepartment)?.id
+    const isEnabledEstablishment = 'activeCaseLoadId' in user && isLogMethodEnabledEstablishment(user.activeCaseLoadId)
+    const isAppTypeExcluded = Object.values(EXCLUDED_LOG_METHOD_APP_TYPES).includes(applicationData.type.value)
 
-      if (!selectedDepartment) {
-        return res.render(PATHS.LOG_APPLICATION.SELECT_DEPARTMENT, {
-          title: 'Select department',
-          departmentOptions: buildDepartmentOptions(departments, null),
-          errorMessage: ERROR_MESSAGE,
-          applicationType: applicationData.type.name,
-          errorSummary: [{ text: ERROR_MESSAGE, href: '#department' }],
-        })
-      }
+    if (!isEnabledEstablishment || !config.featureFlags.logMethodPageEnabled || isAppTypeExcluded) {
+      return res.redirect(URLS.LOG_APPLICATION_DETAILS)
+    }
 
-      updateSessionData(req, { department: selectedDepartment, departmentId: selectedDepartmentId })
+    if (applicationData?.loggingMethod) {
+      return res.redirect(URLS.LOG_CONFIRM_DETAILS)
+    }
 
-      const isEnabledEstablishment =
-        'activeCaseLoadId' in user && isLogMethodEnabledEstablishment(user.activeCaseLoadId)
-      const isAppTypeExcluded = Object.values(EXCLUDED_LOG_METHOD_APP_TYPES).includes(applicationData.type.value)
-
-      if (!isEnabledEstablishment || !config.featureFlags.logMethodPageEnabled || isAppTypeExcluded) {
-        return res.redirect(URLS.LOG_APPLICATION_DETAILS)
-      }
-
-      if (applicationData?.loggingMethod) {
-        return res.redirect(URLS.LOG_CONFIRM_DETAILS)
-      }
-
-      return res.redirect(URLS.LOG_METHOD)
-    }),
-  )
+    return res.redirect(URLS.LOG_METHOD)
+  })
 
   return router
 }

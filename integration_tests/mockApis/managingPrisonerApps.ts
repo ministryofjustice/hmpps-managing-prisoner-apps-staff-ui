@@ -7,11 +7,10 @@ import {
   commentsResponse,
   appSearchResponse,
   buildAppsSearchResponse,
+  appHistoryResponse,
+  departments,
+  groups,
 } from '../../server/testData'
-
-import { appHistoryResponse } from '../../server/testData/applications/appHistory'
-import { departments } from '../../server/testData/groups/departments'
-import { groups } from '../../server/testData/groups/groups'
 
 import { stubFor } from './wiremock'
 

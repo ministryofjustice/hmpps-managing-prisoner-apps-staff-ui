@@ -1,21 +1,36 @@
-import Page from './page'
+import { expect, Page } from '@playwright/test'
+import AbstractPage, { PageElement } from './abstractPage'
 
-export default class ApplicationGroupPage extends Page {
-  constructor() {
-    super('Select application group')
+export default class ApplicationGroupPage extends AbstractPage {
+  constructor(page: Page) {
+    super(page, 'Select application group')
   }
 
-  pageTitle = () => cy.title()
+  backLink(): PageElement {
+    return this.page.locator('.govuk-back-link')
+  }
 
-  backLink = () => cy.get('.govuk-back-link')
+  radioButtons(): PageElement {
+    return this.page.locator('input[type="radio"][name="group"]')
+  }
 
-  radioButton = () => cy.get('input[type="radio"][name="group"]')
+  pinPhoneContactAppsLabel(): PageElement {
+    return this.page.getByText('Pin Phone Contact Apps')
+  }
 
-  applicationGroupLabel = () => cy.contains('label', 'Pin Phone Contact Apps')
+  submitButton(): PageElement {
+    return this.page.getByRole('button', { name: 'Continue' })
+  }
 
-  submitButton = () => cy.get('button[type="submit"]')
+  errorSummary(): PageElement {
+    return this.page.locator('.govuk-error-summary')
+  }
 
-  errorSummary = () => cy.get('.govuk-error-summary')
+  errorMessage(): PageElement {
+    return this.page.locator('.govuk-error-message')
+  }
 
-  errorMessage = () => cy.get('.govuk-error-message')
+  async assertBrowserTitleContains(text: string): Promise<void> {
+    await expect(this.page).toHaveTitle(new RegExp(text))
+  }
 }

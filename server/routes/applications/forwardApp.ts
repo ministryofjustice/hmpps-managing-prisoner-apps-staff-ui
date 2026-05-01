@@ -3,8 +3,6 @@ import { Request, Response, Router } from 'express'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
-import asyncMiddleware from '../../middleware/asyncMiddleware'
-
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
@@ -23,82 +21,76 @@ export default function forwardAppRouter({
 }): Router {
   const router = Router()
 
-  router.get(
-    `${URLS.APPLICATIONS}/:prisonerId/:applicationId/forward`,
-    asyncMiddleware(async (req: Request, res: Response) => {
-      const { user } = res.locals
+  router.get(`${URLS.APPLICATIONS}/:prisonerId/:applicationId/forward`, async (req: Request, res: Response) => {
+    const { user } = res.locals
 
-      const { application, applicationType } = await getValidApplicationOrRedirect(
-        req,
-        res,
-        auditService,
-        managingPrisonerAppsService,
-        Page.FORWARD_APPLICATION_PAGE,
-      )
+    const { application, applicationType } = await getValidApplicationOrRedirect(
+      req,
+      res,
+      auditService,
+      managingPrisonerAppsService,
+      Page.FORWARD_APPLICATION_PAGE,
+    )
 
-      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
+    const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
 
-      const filteredDepartments = (departments ?? [])
-        .filter(dept => dept.id !== application.assignedGroup.id)
-        .map(dept => ({
-          value: dept.id,
-          text: dept.name,
-        }))
+    const filteredDepartments = (departments ?? [])
+      .filter(dept => dept.id !== application.assignedGroup.id)
+      .map(dept => ({
+        value: dept.id,
+        text: dept.name,
+      }))
 
+    return res.render(PATHS.APPLICATIONS.FORWARD, {
+      application,
+      applicationType,
+      departments: filteredDepartments,
+      textareaValue: '',
+      title: PAGE_TITLE,
+      errors: null,
+    })
+  })
+
+  router.post(`${URLS.APPLICATIONS}/:prisonerId/:applicationId/forward`, async (req: Request, res: Response) => {
+    const { prisonerId, applicationId } = req.params
+    const { forwardTo, forwardingReason } = req.body
+    const { user } = res.locals
+
+    const application = await managingPrisonerAppsService.getPrisonerApp(`${prisonerId}`, `${applicationId}`, user)
+    if (!application) return res.redirect(URLS.APPLICATIONS)
+
+    const applicationType = await getAppType(
+      managingPrisonerAppsService,
+      user,
+      application.applicationType.id.toString(),
+    )
+    const errors = validateForwardingApplication(forwardTo, forwardingReason)
+
+    const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
+
+    const filteredDepartments = (departments ?? [])
+      .filter(dept => dept.id !== application.assignedGroup.id)
+      .map(dept => ({
+        value: dept.id,
+        text: dept.name,
+      }))
+
+    if (Object.keys(errors).length > 0) {
       return res.render(PATHS.APPLICATIONS.FORWARD, {
         application,
         applicationType,
         departments: filteredDepartments,
-        textareaValue: '',
+        forwardTo,
+        textareaValue: forwardingReason,
         title: PAGE_TITLE,
-        errors: null,
+        errors,
       })
-    }),
-  )
+    }
 
-  router.post(
-    `${URLS.APPLICATIONS}/:prisonerId/:applicationId/forward`,
-    asyncMiddleware(async (req: Request, res: Response) => {
-      const { prisonerId, applicationId } = req.params
-      const { forwardTo, forwardingReason } = req.body
-      const { user } = res.locals
+    await managingPrisonerAppsService.forwardApp(`${applicationId}`, forwardTo, user, forwardingReason)
 
-      const application = await managingPrisonerAppsService.getPrisonerApp(prisonerId, applicationId, user)
-      if (!application) return res.redirect(URLS.APPLICATIONS)
-
-      const applicationType = await getAppType(
-        managingPrisonerAppsService,
-        user,
-        application.applicationType.id.toString(),
-      )
-      const errors = validateForwardingApplication(forwardTo, forwardingReason)
-
-      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
-
-      const filteredDepartments = (departments ?? [])
-        .filter(dept => dept.id !== application.assignedGroup.id)
-        .map(dept => ({
-          value: dept.id,
-          text: dept.name,
-        }))
-
-      if (Object.keys(errors).length > 0) {
-        return res.render(PATHS.APPLICATIONS.FORWARD, {
-          application,
-          applicationType,
-          departments: filteredDepartments,
-          forwardTo,
-          textareaValue: forwardingReason,
-          title: PAGE_TITLE,
-          errors,
-        })
-      }
-
-      await managingPrisonerAppsService.forwardApp(applicationId, forwardTo, user, forwardingReason)
-
-      return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}`)
-    }),
-  )
+    return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}`)
+  })
 
   return router
 }

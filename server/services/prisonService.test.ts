@@ -1,36 +1,28 @@
-import HmppsAuthClient from '../data/hmppsAuthClient'
-import { prisoner, user } from '../testData'
+import type { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
+import { prisoner } from '../testData'
 import PrisonService from './prisonService'
+import PrisonApiClient from '../data/prisonApiClient'
 
-const getPrisonerByPrisonNumber = jest.fn()
-
-jest.mock('../data/hmppsAuthClient')
-jest.mock('../data/prisonClient', () => {
-  return jest.fn().mockImplementation(() => {
-    return { getPrisonerByPrisonNumber }
-  })
-})
+jest.mock('../data/prisonApiClient')
 
 describe('Prison Service', () => {
+  const mockClient = new PrisonApiClient({} as AuthenticationClient) as jest.Mocked<PrisonApiClient>
   let service: PrisonService
 
   beforeEach(() => {
-    const hmppsAuthClient = new HmppsAuthClient(null) as jest.Mocked<HmppsAuthClient>
-    hmppsAuthClient.getSystemClientToken.mockResolvedValue(user.token)
-
-    service = new PrisonService(hmppsAuthClient)
+    service = new PrisonService(mockClient)
   })
 
   afterEach(() => jest.clearAllMocks())
 
   describe('getPrisonerByPrisonNumber', () => {
     it('should call the client and fetch the prisoner application', async () => {
-      getPrisonerByPrisonNumber.mockReturnValue(prisoner)
+      mockClient.getPrisonerByPrisonNumber.mockResolvedValue(prisoner)
 
-      const result = await service.getPrisonerByPrisonNumber('prisoner-id', user)
+      const result = await service.getPrisonerByPrisonNumber('username', 'prisoner-id')
 
       expect(result).toEqual(prisoner)
-      expect(getPrisonerByPrisonNumber).toHaveBeenCalledWith('prisoner-id')
+      expect(mockClient.getPrisonerByPrisonNumber).toHaveBeenCalledWith('username', 'prisoner-id')
     })
   })
 })
