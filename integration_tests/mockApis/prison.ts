@@ -16,8 +16,9 @@ export default {
       },
     })
   },
-  stubGetCaseLoads: (activeCaseLoadId = 'HMI'): SuperAgentRequest => {
+  stubGetCaseLoads: (activeCaseLoadId = 'HMI', priority = 5): SuperAgentRequest => {
     return stubFor({
+      priority,
       request: {
         method: 'GET',
         url: '/prison/api/users/me/caseLoads',
