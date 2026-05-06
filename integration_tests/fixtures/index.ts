@@ -1,5 +1,6 @@
 import { Page, test as base } from '@playwright/test'
 import auth from '../mockApis/auth'
+import prisonApi from '../mockApis/prison'
 import { resetStubs } from '../mockApis/wiremock'
 
 const clearBrowserState = async (page: Page, browserName: string) => {
@@ -90,6 +91,10 @@ const openApplicationsFromDpsHome = async (page: Page) => {
 export const test = base.extend<Fixtures>({
   signIn: async ({ page }, use) => {
     await use(async () => {
+      if (isLocalhost) {
+        // Fallback stub so tests that forget caseLoads still sign in; test-specific stubs can override.
+        await prisonApi.stubGetCaseLoads('HMI', 100)
+      }
       await page.goto('/')
       if (isLocalhost) {
         const signInUrl = await getSignInUrlWithRetry(timeout => page.waitForTimeout(timeout))
@@ -107,6 +112,8 @@ export const test = base.extend<Fixtures>({
       if (isLocalhost) {
         await resetStubs()
         await auth.stubSignIn()
+        // Keep this as a low-priority default to avoid missing-stub failures.
+        await prisonApi.stubGetCaseLoads('HMI', 100)
       }
       await page.goto('/')
       if (isLocalhost) {

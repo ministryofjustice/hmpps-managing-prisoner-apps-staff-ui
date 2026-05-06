@@ -12,7 +12,7 @@ export default {
     return stubFor({
       request: {
         method: 'GET',
-        urlPattern: `/document-api/documents/${documentUuid}`,
+        urlPattern: `/documentApi/documents/${documentUuid}`,
       },
       response: {
         status: 200,
@@ -32,7 +32,7 @@ export default {
     return stubFor({
       request: {
         method: 'GET',
-        urlPattern: `/document-api/documents/${documentUuid}/file`,
+        urlPattern: `/documentApi/documents/${documentUuid}/file`,
       },
       response: {
         status: 200,
@@ -49,7 +49,7 @@ export default {
     return stubFor({
       request: {
         method: 'GET',
-        urlPattern: '/document-api/documents.*',
+        urlPattern: '/documentApi/documents.*',
       },
       response: {
         status: 200,
