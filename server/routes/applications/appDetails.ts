@@ -113,7 +113,7 @@ export default function appDetailsRouter({
       getAppType: () => applicationType,
       getTemplateData: async () => {
         const groupCode =
-          applicationType.id === 1
+          applicationType.id === 2
             ? PERSONAL_RELATIONSHIPS_GROUP_CODES.OFFICIAL_RELATIONSHIP
             : PERSONAL_RELATIONSHIPS_GROUP_CODES.SOCIAL_RELATIONSHIP
 
