@@ -14,7 +14,15 @@ const testImagePath = path.join(__dirname, '../fixtures/test-image.jpg')
 
 test.describe('Confirm Photo Capture Page', () => {
   test.beforeEach(
-    async ({ page, signIn, enterPrisonerDetails, selectGroup, selectApplicationType, selectDepartment, selectLoggingMethod }) => {
+    async ({
+      page,
+      signIn,
+      enterPrisonerDetails,
+      selectGroup,
+      selectApplicationType,
+      selectDepartment,
+      selectLoggingMethod,
+    }) => {
       if (isWiremock) {
         await resetStubs()
         await auth.stubSignIn()

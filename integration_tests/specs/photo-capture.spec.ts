@@ -10,7 +10,15 @@ const isWiremock = process.env.PW_ENV === 'mock' || targetBaseUrl.includes('loca
 
 test.describe('Photo Capture Page', () => {
   test.beforeEach(
-    async ({ page, signIn, enterPrisonerDetails, selectGroup, selectApplicationType, selectDepartment, selectLoggingMethod }) => {
+    async ({
+      page,
+      signIn,
+      enterPrisonerDetails,
+      selectGroup,
+      selectApplicationType,
+      selectDepartment,
+      selectLoggingMethod,
+    }) => {
       if (isWiremock) {
         await resetStubs()
         await auth.stubSignIn()
@@ -58,7 +66,9 @@ test.describe('Photo Capture Page', () => {
     const photoCapturePage = new PhotoCapturePage(page)
     const errorPanel = photoCapturePage.webcamErrorPanel()
     await expect(errorPanel).toContainText('Your computer cannot access the webcam')
-    await expect(errorPanel).toContainText('open your browser\u2019s settings and look for camera permissions to allow the request')
+    await expect(errorPanel).toContainText(
+      'open your browser\u2019s settings and look for camera permissions to allow the request',
+    )
     await expect(errorPanel).toContainText('check the webcam is connected to the computer you\u2019re using')
     await expect(errorPanel).toContainText('If you cannot resolve the issue')
     await expect(errorPanel).toContainText('Call the helpdesk')

@@ -15,7 +15,15 @@ const testImagePath = path.join(__dirname, '../fixtures/test-image.jpg')
 
 test.describe('Check details page - webcam flow', () => {
   test.beforeEach(
-    async ({ page, signIn, enterPrisonerDetails, selectGroup, selectApplicationType, selectDepartment, selectLoggingMethod }) => {
+    async ({
+      page,
+      signIn,
+      enterPrisonerDetails,
+      selectGroup,
+      selectApplicationType,
+      selectDepartment,
+      selectLoggingMethod,
+    }) => {
       if (isWiremock) {
         await resetStubs()
         await auth.stubSignIn()
@@ -74,14 +82,20 @@ test.describe('Check details page - webcam flow', () => {
       'href',
       '/log/photo-capture?retake=photo1',
     )
-    await expect(row.getByRole('link', { name: 'Remove image 1' })).toHaveAttribute('href', '/log/remove-photo?photo=photo1')
+    await expect(row.getByRole('link', { name: 'Remove image 1' })).toHaveAttribute(
+      'href',
+      '/log/remove-photo?photo=photo1',
+    )
   })
 
   test('should show Image 2 (optional) with upload link', async ({ page }) => {
     const confirmDetailsPage = new ConfirmDetailsPhotoPage(page)
     const row = confirmDetailsPage.rowByLabel('Image 2 (optional)')
     await expect(row).toContainText('Not uploaded')
-    await expect(row.getByRole('link', { name: 'Upload image 2' })).toHaveAttribute('href', '/log/photo-capture?image=2')
+    await expect(row.getByRole('link', { name: 'Upload image 2' })).toHaveAttribute(
+      'href',
+      '/log/photo-capture?image=2',
+    )
   })
 
   test('should show additional details with change link', async ({ page }) => {
