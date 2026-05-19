@@ -3,12 +3,11 @@
 {%- from "govuk/components/character-count/macro.njk" import govukCharacterCount -%}
 {%- from "govuk/components/error-summary/macro.njk" import govukErrorSummary -%}
 {%- from "govuk/components/textarea/macro.njk" import govukTextarea -%}
-
+{%- from "moj/components/messages/macro.njk" import mojMessages -%}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% extends "../../../partials/layout.njk" %}
-
 {% set pageTitle = applicationName + " - " + title %}
 {% set mainClasses = "app-container govuk-body applications-landing-page" %}
-
 {% block beforeContent %}
   <div class="govuk-body govuk-width-container">
     {{ govukBreadcrumbs({
@@ -29,40 +28,66 @@
     }) }}
   </div>
 {% endblock %}
-
 {% block content %}
   <div class="govuk-body govuk-width-container">
     {% if errors %}
       {% set errorMessage = [] %}
-
       {% if errors.Comments %}
-        {% set errorMessage = { text: errors.Comments.text }  %}
-      {% endif %}  
-
+        {% set errorMessage = { text: errors.Comments.text } %}
+      {% endif %}
       {% set errorList = [] %}
-
       {% if errors.Comments %}
         {% set errorList = errorList.concat([{ text: errors.Comments.text, href: "#comment" }]) %}
       {% endif %}
-
       {{ govukErrorSummary({
         titleText: "There is a problem",
         errorList: errorList
       }) }}
     {% endif %}
-
-    <span class="govuk-caption-xl">{{ applicationType.name }}</span>
-    <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
-
+    {% if not featureFlags.messagingEnabled %}
+      <span class="govuk-caption-xl">{{ applicationType.name }}</span>
+    {% endif %}
+    {% if featureFlags.messagingEnabled %}
+      <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ applicationType.name }}</h1>
+    {% else %}
+      <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
+    {% endif %}
     {% set activeTab = 'comments' %}
     {% include "../partials/sub-navigation.njk" %}
-
-      <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        {% if featureFlags.messagingEnabled %}
+          <h2 class="govuk-heading-m">Messages and replies</h2>
+          {% set messageItems = [] %}
+          {% if comments and comments.length > 0 %}
+            {% for comment in comments %}
+              {% if comment.message %}
+                {% set messageItems = messageItems.concat([
+                    {
+                      text: comment.message,
+                      type: "sent",
+                      timestamp: comment.timestamp,
+                      sender: comment.staffName
+                    }
+                  ]) %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15 12c0 1.654-1.346 3-3 3s-3-1.346-3-3 1.346-3 3-3 3 1.346 3 3zm9-.449s-4.252 8.449-11.985 8.449c-7.18 0-12.015-8.449-12.015-8.449s4.446-7.551 12.015-7.551c7.694 0 11.985 7.551 11.985 7.551zm-7 .449c0-2.757-2.243-5-5-5s-5 2.243-5 5 2.243 5 5 5 5-2.243 5-5z"/></svg>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+          <div class="govuk-!-margin-bottom-4">
+            {% if messageItems.length > 0 %}
+              {{ mojMessages({
+                  items: messageItems
+                }) }}
+            {% else %}
+              <div>
+                <div class="app-message--content">No messages yet</div>
+              </div>
+            {% endif %}
+          </div>
+        {% else %}
           <h2 class="govuk-heading-m">Comments about this application</h2>
           <p class="govuk-body">Only staff will see these comments</p>
-
           <div class="app-messages govuk-!-margin-bottom-4">
             {% if comments and comments.length > 0 %}
               {% for comment in comments %}
@@ -79,30 +104,57 @@
               </div>
             {% endif %}
           </div>
-
-          <form method="POST" id="application-comments-form">
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-
-            {{ govukCharacterCount({
+        {% endif %}
+        <form method="POST" id="application-comments-form">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}"/> {{ govukCharacterCount({
               name: "comment",
               id: "comment",
               maxlength: 1000,
               threshold: 75,
               value: comment,
               label: {
-                text: "Add a comment",
+                text: "Send message" if featureFlags.messagingEnabled else "Add a comment",
                 classes: "govuk-label--s govuk-!-margin-bottom-4",
                 isPageHeading: true
               },
               errorMessage: errorMessage
             }) }}
 
-            {{ govukButton({
-              text: "Continue",
+          {% if featureFlags.messagingEnabled %}
+            {{ govukRadios({
+                name: "visibility",
+                fieldset: {
+                  legend: {
+                    text: "Who will see this message?",
+                    isPageHeading: true,
+                    classes: "govuk-fieldset__legend--s"
+                  }
+                },
+                hint: {
+                  text: "This message will be shown to:"
+                },
+                items: [
+                {
+                  value: "staff-only",
+                  text: "Staff only"
+                },
+                {
+                  value: "prisoner-and-staff",
+                  text: "Prisoner and staff",
+                  hint: {
+                    text: "This will be seen by the prisoner"
+                    }
+                  }
+                ]
+            }) }}
+          {% endif %}
+
+          {{ govukButton({
+              text: "Send" if featureFlags.messagingEnabled else "Continue",
               classes: "govuk-button--primary"
             }) }}
-          </form>
-        </div>
+        </form>
       </div>
+    </div>
   </div>
 {% endblock %}

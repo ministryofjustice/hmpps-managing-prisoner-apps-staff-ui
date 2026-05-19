@@ -45,7 +45,7 @@ export default class ViewApplicationPage extends AbstractPage {
   }
 
   commentsTab(): PageElement {
-    return this.page.locator('.moj-sub-navigation__link:has-text("Comments")')
+    return this.page.locator('.moj-sub-navigation__link[href$="/comments"]')
   }
 
   actionAndReplyTab(): PageElement {
