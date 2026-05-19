@@ -45,7 +45,8 @@ export default class ViewApplicationPage extends AbstractPage {
   }
 
   commentsTab(): PageElement {
-    return this.page.locator('.moj-sub-navigation__link:has-text("Comments")')
+    const tabText = process.env.MESSAGING_ENABLED === 'true' ? 'Messages' : 'Comments'
+    return this.page.locator(`.moj-sub-navigation__link:has-text("${tabText}")`)
   }
 
   actionAndReplyTab(): PageElement {
