@@ -2,35 +2,36 @@
 
 <div class="govuk-!-display-none-print">
   {% set items = [{
-  text: 'Application',
-  href: "/applications/" + application.requestedBy.username + "/" + application.id,
-  active: activeTab == 'application'
-}] %}
+    text: 'Application',
+    href: "/applications/" + application.requestedBy.username + "/" + application.id,
+    active: activeTab == 'application'
+  }] %}
   {% if featureFlags.messagingEnabled %}
     {% set items = items.concat([{
-    text: 'Messages',
-    href: "/applications/" + application.requestedBy.username + "/" + application.id + "/comments",
-    active: activeTab == 'comments'
-  }]) %}
+      text: 'Messages',
+      href: "/applications/" + application.requestedBy.username + "/" + application.id + "/comments",
+      active: activeTab == 'comments'
+    }]) %}
   {% else %}
     {% set items = items.concat([{
-    text: 'Comments',
-    href: "/applications/" + application.requestedBy.username + "/" + application.id + "/comments",
-    active: activeTab == 'comments'
-  }]) %}
+      text: 'Comments',
+      href: "/applications/" + application.requestedBy.username + "/" + application.id + "/comments",
+      active: activeTab == 'comments'
+    }]) %}
   {% endif %}
+
   {% set items = items.concat([{
-  text: 'Action and reply',
-  href: "/applications/" + application.requestedBy.username + "/" + application.id + "/reply",
-  active: activeTab == 'reply'
-}, {
-  text: 'History',
-  href: "/applications/" + application.requestedBy.username + "/" + application.id + "/history",
-  active: activeTab == 'history'
-}]) %}
+    text: 'Action and reply',
+    href: "/applications/" + application.requestedBy.username + "/" + application.id + "/reply",
+    active: activeTab == 'reply'
+  }, {
+    text: 'History',
+    href: "/applications/" + application.requestedBy.username + "/" + application.id + "/history",
+    active: activeTab == 'history'
+  }]) %}
 
   {{ mojSubNavigation({
-  label: 'Sub navigation',
-  items: items
-}) }}
+    label: 'Sub navigation',
+    items: items
+  }) }}
 </div>
