@@ -7,6 +7,9 @@ import { initialiseName } from './utils'
 import config from '../config'
 import logger from '../../logger'
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const mojFilters = require('@ministryofjustice/frontend/moj/filters/all')
+
 export default function nunjucksSetup(app: express.Express): void {
   app.set('view engine', 'njk')
 
@@ -41,8 +44,13 @@ export default function nunjucksSetup(app: express.Express): void {
   )
 
   njkEnv.addGlobal('ga4SiteId', config.analytics.ga4SiteId)
+  njkEnv.addGlobal('featureFlags', config.featureFlags)
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addFilter('assetMap', (url: string) => assetManifest[url] || url)
+
+  Object.entries(mojFilters()).forEach(([name, filter]) => {
+    njkEnv.addFilter(name, filter as (...args: unknown[]) => unknown)
+  })
 
   njkEnv.addFilter('toPagination', ({ page, totalPages }, query) => {
     const urlForPage = (n: number): string => {
