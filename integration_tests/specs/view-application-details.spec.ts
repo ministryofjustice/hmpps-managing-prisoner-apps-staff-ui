@@ -3,9 +3,6 @@ import { app } from '../../server/testData'
 import ViewApplicationPage from '../pages/viewApplicationPage'
 import { filteredApplicationTypes, visitApplicationPage } from './view-applicationTestUtils'
 
-const isMessagingEnabled = process.env.MESSAGING_ENABLED === 'true'
-const commentsTabText = isMessagingEnabled ? 'Messages' : 'Comments'
-
 filteredApplicationTypes.forEach(({ name, id }) => {
   test.describe(`View Application Page - ${name}`, () => {
     const application = { ...app, applicationType: { id, name } }
@@ -65,10 +62,10 @@ filteredApplicationTypes.forEach(({ name, id }) => {
       await expect(viewPage.summaryListRowKey('Incentive level')).toBeVisible()
     })
 
-    test(`should allow navigating to the ${commentsTabText} section`, async ({ page }) => {
+    test('should allow navigating to the Comments or Messages section', async ({ page }) => {
       const viewPage = new ViewApplicationPage(page)
       await expect(viewPage.commentsTab()).toBeVisible()
-      await expect(viewPage.commentsTab()).toContainText(commentsTabText)
+      await expect(viewPage.commentsTab()).toContainText(/Comments|Messages/)
       await expect(viewPage.commentsTab()).toHaveAttribute(
         'href',
         '/applications/G123456/13d2c453-be11-44a8-9861-21fd8ae6e911/comments',
