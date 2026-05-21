@@ -3,6 +3,7 @@ import { Request, Response, Router } from 'express'
 
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
+import { MessageVisibility } from '../../constants/messageVisibility'
 
 import config from '../../config'
 import AuditService, { Page } from '../../services/auditService'
@@ -104,8 +105,8 @@ export default function commentsRouter({
     // Messages tab reads the user's selection; anything other than 'prisoner-and-staff' is STAFF_ONLY.
     const visibility =
       config.featureFlags.messagingEnabled && req.body.visibility === 'prisoner-and-staff'
-        ? 'STAFF_AND_PRISONER'
-        : 'STAFF_ONLY'
+        ? MessageVisibility.STAFF_AND_PRISONER
+        : MessageVisibility.STAFF_ONLY
 
     await managingPrisonerAppsService.addComment(
       `${prisonerId}`,

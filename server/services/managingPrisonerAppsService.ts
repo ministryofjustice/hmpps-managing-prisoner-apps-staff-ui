@@ -1,5 +1,6 @@
 import { ApplicationData } from 'express-session'
 import { ApplicationSearchPayload, AppResponsePayload } from '../@types/managingAppsApi'
+import { MessageVisibility } from '../constants/messageVisibility'
 import ManagingPrisonerAppsApiClient from '../data/managingPrisonerAppsApiClient'
 import { BaseUser } from '../interfaces/hmppsUser'
 
@@ -33,7 +34,7 @@ export default class ManagingPrisonerAppsService {
   async addComment(
     prisonerId: string,
     applicationId: string,
-    payload: { message: string; visibility: 'STAFF_AND_PRISONER' | 'STAFF_ONLY' },
+    payload: { message: string; visibility: MessageVisibility },
     user: BaseUser,
   ) {
     return this.managingPrisonerAppsApiClient.addComment(user.username, prisonerId, applicationId, payload)

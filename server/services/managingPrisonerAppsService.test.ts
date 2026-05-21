@@ -1,5 +1,6 @@
 import type { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { APPLICATION_STATUS } from '../constants/applicationStatus'
+import { MessageVisibility } from '../constants/messageVisibility'
 import { app, appSearchPayload, user } from '../testData'
 import ManagingPrisonerAppsService from './managingPrisonerAppsService'
 import ManagingPrisonerAppsApiClient from '../data/managingPrisonerAppsApiClient'
@@ -60,7 +61,7 @@ describe('ManagingPrisonerAppsService', () => {
     it('should add a comment to an application', async () => {
       const payload = {
         message: 'Test comment',
-        visibility: 'STAFF_ONLY' as const,
+        visibility: MessageVisibility.STAFF_ONLY,
       }
 
       const result = await service.addComment('prisoner-id', 'application-id', payload, user)
