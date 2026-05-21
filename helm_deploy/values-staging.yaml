@@ -27,7 +27,6 @@ generic-service:
     GA4_SITE_ID: 'G-HE5P4PEE48'
 
   allowlist:
-    appsec-testers: 195.68.59.74
     groups:
       - internal
       - prisons
