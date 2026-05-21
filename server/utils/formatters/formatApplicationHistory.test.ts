@@ -48,6 +48,8 @@ describe(formatApplicationHistory.name, () => {
       appId: '',
       prisonerNumber: '',
       createdDate: '',
+      visibility: 'STAFF_ONLY',
+      createdByType: 'STAFF',
     }
 
     const result = formatApplicationHistory(appHistoryResponse, [comment], [])

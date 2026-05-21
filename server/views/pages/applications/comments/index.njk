@@ -3,8 +3,8 @@
 {%- from "govuk/components/character-count/macro.njk" import govukCharacterCount -%}
 {%- from "govuk/components/error-summary/macro.njk" import govukErrorSummary -%}
 {%- from "govuk/components/textarea/macro.njk" import govukTextarea -%}
-{%- from "moj/components/messages/macro.njk" import mojMessages -%}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
+{%- from "components/appMessages/macro.njk" import appMessages -%}
 {% extends "../../../partials/layout.njk" %}
 {% set pageTitle = applicationName + " - " + title %}
 {% set mainClasses = "app-container govuk-body applications-landing-page" %}
@@ -58,32 +58,8 @@
       <div class="govuk-grid-column-two-thirds">
         {% if featureFlags.messagingEnabled %}
           <h2 class="govuk-heading-m">Messages and replies</h2>
-          {% set messageItems = [] %}
-          {% if comments and comments.length > 0 %}
-            {% for comment in comments %}
-              {% if comment.message %}
-                {% set messageItems = messageItems.concat([
-                    {
-                      text: comment.message,
-                      type: "sent",
-                      timestamp: comment.timestamp,
-                      sender: comment.staffName
-                    }
-                  ]) %}
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15 12c0 1.654-1.346 3-3 3s-3-1.346-3-3 1.346-3 3-3 3 1.346 3 3zm9-.449s-4.252 8.449-11.985 8.449c-7.18 0-12.015-8.449-12.015-8.449s4.446-7.551 12.015-7.551c7.694 0 11.985 7.551 11.985 7.551zm-7 .449c0-2.757-2.243-5-5-5s-5 2.243-5 5 2.243 5 5 5 5-2.243 5-5z"/></svg>
-              {% endif %}
-            {% endfor %}
-          {% endif %}
           <div class="govuk-!-margin-bottom-4">
-            {% if messageItems.length > 0 %}
-              {{ mojMessages({
-                  items: messageItems
-                }) }}
-            {% else %}
-              <div>
-                <div class="app-message--content">No messages yet</div>
-              </div>
-            {% endif %}
+            {{ appMessages({ items: comments }) }}
           </div>
         {% else %}
           <h2 class="govuk-heading-m">Comments about this application</h2>
@@ -93,7 +69,7 @@
               {% for comment in comments %}
                 {% if comment.message %}
                   <div class="app-message">
-                    <div class="app-message--metadata">Comment by {{ comment.staffName }} | {{ comment.date }} at {{ comment.time }}</div>
+                    <div class="app-message--metadata">Comment by {{ comment.createdByName }} | {{ comment.date }} at {{ comment.time }}</div>
                     <div class="app-message--content">{{ comment.message }}</div>
                   </div>
                 {% endif %}
