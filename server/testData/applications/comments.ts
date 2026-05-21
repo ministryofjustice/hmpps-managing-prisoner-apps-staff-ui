@@ -16,6 +16,8 @@ export const comment: Comment = {
       name: 'ESTABLISHMENT_NAME_1',
     },
   },
+  visibility: 'STAFF_ONLY',
+  createdByType: 'STAFF',
 }
 
 export const commentsResponse: CommentsResponse = {

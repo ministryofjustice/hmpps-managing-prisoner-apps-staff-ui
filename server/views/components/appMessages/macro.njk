@@ -1,0 +1,49 @@
+{% macro appMessages(params) %}
+
+  {% if params.items and params.items.length > 0 %}
+    <div class="moj-messages-container">
+      <div class="moj-message-list">
+        {% set previousDate = "" %}
+
+        {% for item in params.items %}
+          {% set currentDate = item.timestamp | mojDate("date") %}
+          {% set bubbleTone = "prisoner" if item.createdByType == "PRISONER" else ("staff-only" if item.visibility == "STAFF_ONLY" else "prisoner-and-staff") %}
+          {% set messageType = "received" if bubbleTone == "prisoner" else "sent" %}
+
+          {% if previousDate != currentDate %}
+            <time class="moj-message-list__date" datetime="{{ currentDate }}">{{ currentDate }}</time>
+          {% endif %}
+
+          <div class="moj-message-item moj-message-item--{{ messageType }}{% if bubbleTone == 'staff-only' %} app-message-item--staff-only{% endif %}{% if bubbleTone == 'prisoner-and-staff' %} app-message-item--prisoner-and-staff{% endif %}">
+            <div class="moj-message-item__text moj-message-item__text--{{ messageType }}">
+              {{ item.message }}
+            </div>
+
+            <div class="moj-message-item__meta">
+              <span class="moj-message-item__meta--sender">{{ item.createdByName }}</span>
+              at
+              <time class="moj-message-item__meta--timestamp" datetime="{{ item.timestamp | mojDate('time') }}">
+                {{ item.timestamp | mojDate("time") }}
+              </time>
+            </div>
+          </div>
+
+          {% if bubbleTone != "prisoner" %}
+            <div class="app-message-visibility app-message-visibility--{{ bubbleTone }}">
+              <svg class="app-message-visibility__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M15 12c0 1.654-1.346 3-3 3s-3-1.346-3-3 1.346-3 3-3 3 1.346 3 3zm9-.449s-4.252 8.449-11.985 8.449c-7.18 0-12.015-8.449-12.015-8.449s4.446-7.551 12.015-7.551c7.694 0 11.985 7.551 11.985 7.551zm-7 .449c0-2.757-2.243-5-5-5s-5 2.243-5 5 2.243 5 5 5 5-2.243 5-5z"></path>
+              </svg>
+              <span>{{ "Staff and prisoner" if item.visibility == "STAFF_AND_PRISONER" else "Staff only" }}</span>
+            </div>
+          {% endif %}
+
+          {% set previousDate = currentDate %}
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    <div>
+      <div class="app-message--content">{{ params.emptyText if params.emptyText else "No messages yet" }}</div>
+    </div>
+  {% endif %}
+{% endmacro %}

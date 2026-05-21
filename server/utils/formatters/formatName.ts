@@ -1,3 +1,5 @@
+import { convertToTitleCase } from '../utils'
+
 enum NameFormatStyle {
   firstMiddleLast,
   lastCommaFirstMiddle,
@@ -5,7 +7,6 @@ enum NameFormatStyle {
   firstLast,
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export const formatName = (
   firstName: string,
   middleNames: string,
@@ -26,4 +27,28 @@ export const formatName = (
     .map(s => s.toLowerCase())
     .join(' ')
     .replace(/(^\w)|([\s'-]+\w)/g, letter => letter.toUpperCase())
+}
+
+export const formatMessagesCreatedByName = (fullName: string, createdByType: 'PRISONER' | 'STAFF'): string => {
+  if (createdByType !== 'PRISONER') {
+    return fullName
+  }
+
+  const formattedName = fullName
+    .trim()
+    .split(/\s+/)
+    .map(part => {
+      const match = part.match(/^([^A-Za-z]*)([A-Za-z'-]+)([^A-Za-z]*)$/)
+
+      if (!match) {
+        return part
+      }
+
+      const [, prefix, coreName, suffix] = match
+      return `${prefix}${convertToTitleCase(coreName)}${suffix}`
+    })
+    .filter(Boolean)
+    .join(' ')
+
+  return formattedName
 }

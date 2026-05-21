@@ -280,3 +280,54 @@ $hmpps-cropper-height: 320px;
 .govuk-summary-list__actions {
   vertical-align: top;
 }
+
+/* STAFF_ONLY staff messages => red */
+.moj-message-item--sent.app-message-item--staff-only {
+  background-color: #d4351c;
+  color: #ffffff;
+}
+
+/* STAFF_AND_PRISONER staff messages => blue */
+.moj-message-item--sent.app-message-item--prisoner-and-staff {
+  background-color: $govuk-brand-colour;
+  color: #ffffff;
+}
+
+.moj-message-item--sent.app-message-item--staff-only::after {
+  border-left-color: #d4351c;
+}
+
+.moj-message-item--sent.app-message-item--prisoner-and-staff::after {
+  border-left-color: $govuk-brand-colour;
+}
+
+/* Visibility row — sits outside and below each bubble */
+.app-message-visibility {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  clear: both;
+  padding-top: 0;
+  padding-bottom: 0;
+  color: #0b0c0c;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.app-message-visibility--prisoner-and-staff,
+.app-message-visibility--staff-only {
+  justify-content: flex-end;
+  padding-right: govuk-spacing(2);
+}
+
+.app-message-visibility--prisoner {
+  justify-content: flex-start;
+  padding-left: govuk-spacing(2);
+}
+
+.app-message-visibility__icon {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  flex: 0 0 auto;
+}

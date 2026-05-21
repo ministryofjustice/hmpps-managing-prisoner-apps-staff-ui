@@ -16,6 +16,7 @@ import {
   PrisonerSearchResult,
   ViewAppsListResponse,
 } from '../@types/managingAppsApi'
+import { MessageVisibility } from '../constants/messageVisibility'
 import config from '../config'
 
 export default class ManagingPrisonerAppsApiClient extends RestClient {
@@ -148,7 +149,7 @@ export default class ManagingPrisonerAppsApiClient extends RestClient {
     username: string,
     prisonerId: string,
     appId: string,
-    payload: { message: string; targetUsers: { id: string }[] },
+    payload: { message: string; visibility: MessageVisibility },
   ): Promise<Comment | null> {
     try {
       return await this.post(
