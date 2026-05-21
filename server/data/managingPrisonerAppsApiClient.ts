@@ -148,7 +148,7 @@ export default class ManagingPrisonerAppsApiClient extends RestClient {
     username: string,
     prisonerId: string,
     appId: string,
-    payload: { message: string; targetUsers: { id: string }[] },
+    payload: { message: string; visibility: 'STAFF_AND_PRISONER' | 'STAFF_ONLY' },
   ): Promise<Comment | null> {
     try {
       return await this.post(

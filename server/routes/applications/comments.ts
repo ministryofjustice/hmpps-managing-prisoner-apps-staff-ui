@@ -4,12 +4,14 @@ import { Request, Response, Router } from 'express'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
+import config from '../../config'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 
 import { getAppType } from '../../helpers/application/getAppType'
+import { formatMessagesCreatedByName } from '../../utils/formatters/formatName'
 import { validateTextField } from '../validate/validateTextField'
 
 export default function commentsRouter({
@@ -36,20 +38,22 @@ export default function commentsRouter({
     const comments = await managingPrisonerAppsService.getComments(`${prisonerId}`, application.id, user)
 
     const formattedComments =
-      comments?.contents?.map(({ message, createdBy, createdDate }) => {
+      comments?.contents?.map(({ message, createdBy, createdDate, visibility, createdByType }) => {
         return {
           message,
-          staffName: `${createdBy.fullName}`,
+          createdByName: formatMessagesCreatedByName(createdBy.fullName, createdByType),
+          timestamp: createdDate,
           date: format(createdDate, 'd MMMM yyyy'),
           time: format(createdDate, 'HH:mm'),
+          visibility,
+          createdByType,
         }
       }) ?? []
-
     return res.render(PATHS.APPLICATIONS.COMMENTS, {
       application,
       applicationType,
       comments: formattedComments,
-      title: 'Comments',
+      title: config.featureFlags.messagingEnabled ? 'Messages' : 'Comments',
     })
   })
 
@@ -74,12 +78,15 @@ export default function commentsRouter({
         application.applicationType.id.toString(),
       )
       const formattedComments =
-        comments?.contents?.map(({ message, createdBy, createdDate }) => {
+        comments?.contents?.map(({ message, createdBy, createdDate, visibility, createdByType }) => {
           return {
             message,
-            staffName: `${createdBy.fullName}`,
+            createdByName: formatMessagesCreatedByName(createdBy.fullName, createdByType),
+            timestamp: createdDate,
             date: format(createdDate, 'd MMMM yyyy'),
             time: format(createdDate, 'HH:mm'),
+            visibility,
+            createdByType,
           }
         }) ?? []
 
@@ -89,14 +96,21 @@ export default function commentsRouter({
         comment,
         comments: formattedComments,
         errors,
-        title: 'Comments',
+        title: config.featureFlags.messagingEnabled ? 'Messages' : 'Comments',
       })
     }
+
+    // Comments tab existing, has no visibility selector, so defaults to STAFF_ONLY.
+    // Messages tab reads the user's selection; anything other than 'prisoner-and-staff' is STAFF_ONLY.
+    const visibility =
+      config.featureFlags.messagingEnabled && req.body.visibility === 'prisoner-and-staff'
+        ? 'STAFF_AND_PRISONER'
+        : 'STAFF_ONLY'
 
     await managingPrisonerAppsService.addComment(
       `${prisonerId}`,
       `${applicationId}`,
-      { message: comment, targetUsers: [] },
+      { message: comment, visibility },
       user,
     )
 

@@ -60,7 +60,7 @@ describe('ManagingPrisonerAppsService', () => {
     it('should add a comment to an application', async () => {
       const payload = {
         message: 'Test comment',
-        targetUsers: [{ id: 'target-user-id' }],
+        visibility: 'STAFF_ONLY' as const,
       }
 
       const result = await service.addComment('prisoner-id', 'application-id', payload, user)
