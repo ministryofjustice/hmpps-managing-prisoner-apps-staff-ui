@@ -5,11 +5,13 @@ import * as addressAutosuggest from '@ministryofjustice/hmpps-connect-dps-shared
 import * as connectDps from '@ministryofjustice/hmpps-connect-dps-shared-items/dist/assets/js/all'
 import 'cropperjs'
 import initPhotoCropper from './photo-cropper'
+import { getModalDialogInstance, initModalDialogs } from './modal-dialog'
 
 govukFrontend.initAll()
 mojFrontend.initAll()
 addressAutosuggest.init()
 connectDps.initAll()
+initModalDialogs()
 
 document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
   const findPrisonerButton = document.getElementById('prisoner-number-lookup')
@@ -69,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function initPrisonerLookup() {
 
         prisonerNameDisplay.innerHTML = `
           <strong>Prisoner name: ${data.prisonerName}</strong><br>
-          ${data.activeAlertCount} alert${data.activeAlertCount === 1 ? '' : 's'} 
+          ${data.activeAlertCount} alert${data.activeAlertCount === 1 ? '' : 's'}
           (<a href="${alertsLink}" target="_blank" rel="noopener noreferrer">View</a>)
         `
       } else {
@@ -196,4 +198,52 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('photo-cropper-container')) {
     initPhotoCropper()
   }
+})
+
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const prisonerAndStaffRadio = document.querySelector('input[name="visibility"][value="prisoner-and-staff"]')
+    const triggerButton = document.getElementById('visibility-modal-trigger')
+    const confirmButton = document.getElementById('visibility-modal-confirm')
+    const cancelButton = document.getElementById('visibility-modal-cancel')
+    const commentsForm = document.getElementById('application-comments-form')
+    const modalElement = document.querySelector('.govuk-modal-dialogue[data-trigger="#visibility-modal-trigger"]')
+
+    if (!prisonerAndStaffRadio || !triggerButton || !modalElement || !confirmButton || !cancelButton) {
+      return
+    }
+
+    // Get the modal instance created by initModalDialogs()
+    const modalInstance = getModalDialogInstance(modalElement)
+
+    if (!modalInstance) {
+      return
+    }
+
+    // When "Prisoner and staff" radio is selected, trigger the modal
+    prisonerAndStaffRadio.addEventListener('change', () => {
+      if (prisonerAndStaffRadio.checked) {
+        triggerButton.click()
+      }
+    })
+
+    // Yes button — close modal then submit the form
+    confirmButton.addEventListener('click', event => {
+      event.preventDefault()
+      if (commentsForm) {
+        commentsForm.submit()
+      }
+    })
+
+    // No, go back — deselect all visibility radios and close modal
+    cancelButton.addEventListener('click', event => {
+      event.preventDefault()
+      const allRadios = document.querySelectorAll('input[name="visibility"]')
+      allRadios.forEach(radio => {
+        // eslint-disable-next-line no-param-reassign
+        radio.checked = false
+      })
+      modalInstance.close()
+    })
+  }, 0)
 })

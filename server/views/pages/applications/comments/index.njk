@@ -29,7 +29,8 @@
   </div>
 {% endblock %}
 {% block content %}
-  <div class="govuk-body govuk-width-container">
+  <div class="govuk-modal-dialogue-inert-container">
+    <div class="govuk-body govuk-width-container">
     {% if errors %}
       {% set errorMessage = [] %}
       {% if errors.Comments %}
@@ -132,5 +133,27 @@
         </form>
       </div>
     </div>
+  </div>
+
+  {% if featureFlags.messagingEnabled %}
+    <button type="button" id="visibility-modal-trigger" class="govuk-visually-hidden"></button>
+    <div class="govuk-modal-dialogue" data-trigger="#visibility-modal-trigger" data-inert-container=".govuk-modal-dialogue-inert-container">
+      <div class="govuk-modal-dialogue__wrapper">
+        <dialog class="govuk-modal-dialogue__box" aria-labelledby="visibility-modal-title" aria-modal="true" role="dialog" tabindex="-1">
+          <div class="govuk-modal-dialogue__header">
+            <button type="button" class="govuk-button govuk-modal-dialogue__close" aria-label="Close dialog" data-element="govuk-modal-dialogue-close">x</button>
+          </div>
+          <div class="govuk-modal-dialogue__content">
+            <h2 class="govuk-modal-dialogue__heading govuk-heading-l" id="visibility-modal-title">Should this message be seen by the prisoner?</h2>
+            <div class="govuk-button-group">
+              <button type="button" class="govuk-button" id="visibility-modal-confirm">Yes</button>
+              <button type="button" class="govuk-link app-link-button" id="visibility-modal-cancel">No, go back</button>
+            </div>
+          </div>
+        </dialog>
+      </div>
+      <div class="govuk-modal-dialogue__backdrop"></div>
+    </div>
+  {% endif %}
   </div>
 {% endblock %}
