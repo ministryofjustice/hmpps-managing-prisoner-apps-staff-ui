@@ -331,3 +331,19 @@ $hmpps-cropper-height: 320px;
   fill: currentColor;
   flex: 0 0 auto;
 }
+
+.app-link-button {
+  display: inline;
+  padding: 0;
+  border: none;
+  background: none;
+  color: $govuk-link-colour;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+  text-decoration: underline;
+
+  &:hover {
+    color: $govuk-link-hover-colour;
+  }
+}
