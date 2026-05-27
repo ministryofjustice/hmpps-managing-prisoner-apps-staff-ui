@@ -50,7 +50,13 @@ const navigateToDepartmentPage = async ({
 }
 
 test.describe('Department Page', () => {
-  test('should display the page title', async ({ page, signIn, enterPrisonerDetails, selectGroup, selectApplicationType }) => {
+  test('should display the page title', async ({
+    page,
+    signIn,
+    enterPrisonerDetails,
+    selectGroup,
+    selectApplicationType,
+  }) => {
     await navigateToDepartmentPage({
       page,
       signIn,
@@ -66,7 +72,13 @@ test.describe('Department Page', () => {
     await departmentPage.checkOnPage()
   })
 
-  test('should display the back link', async ({ page, signIn, enterPrisonerDetails, selectGroup, selectApplicationType }) => {
+  test('should display the back link', async ({
+    page,
+    signIn,
+    enterPrisonerDetails,
+    selectGroup,
+    selectApplicationType,
+  }) => {
     await navigateToDepartmentPage({
       page,
       signIn,
@@ -104,14 +116,22 @@ test.describe('Department Page', () => {
 
     await expect(departmentPage.radioButtons()).toHaveCount(departments.length)
 
-    for (const [idx, dept] of departments.entries()) {
-      const row = departmentPage.radioButtons().nth(idx)
-      await expect(row.locator('label.govuk-label.govuk-radios__label')).toHaveText(dept.name)
-      await expect(row.locator('input.govuk-radios__input')).toHaveAttribute('value', dept.name)
-    }
+    await Promise.all(
+      departments.map(async (dept, idx) => {
+        const row = departmentPage.radioButtons().nth(idx)
+        await expect(row.locator('label.govuk-label.govuk-radios__label')).toHaveText(dept.name)
+        await expect(row.locator('input.govuk-radios__input')).toHaveAttribute('value', dept.name)
+      }),
+    )
   })
 
-  test('should display the continue button', async ({ page, signIn, enterPrisonerDetails, selectGroup, selectApplicationType }) => {
+  test('should display the continue button', async ({
+    page,
+    signIn,
+    enterPrisonerDetails,
+    selectGroup,
+    selectApplicationType,
+  }) => {
     await navigateToDepartmentPage({
       page,
       signIn,
