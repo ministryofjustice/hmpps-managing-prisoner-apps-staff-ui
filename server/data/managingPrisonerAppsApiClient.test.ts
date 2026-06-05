@@ -62,7 +62,9 @@ describe('ManagingPrisonerAppsApiClient', () => {
       .matchHeader('authorization', `Bearer ${user.token}`)
       .reply(200, undefined)
 
-    const output = await client.forwardApp(user.username, 'app-id', 'group-id', MessageVisibility.STAFF_ONLY)
+    const output = await client.forwardApp(user.username, 'app-id', 'group-id', {
+      visibility: MessageVisibility.STAFF_ONLY,
+    })
     expect(output).toBeUndefined()
   })
 
@@ -72,13 +74,10 @@ describe('ManagingPrisonerAppsApiClient', () => {
       .matchHeader('authorization', `Bearer ${user.token}`)
       .reply(200, undefined)
 
-    const output = await client.forwardApp(
-      user.username,
-      'app-id',
-      'group-id',
-      MessageVisibility.STAFF_ONLY,
-      'Test message',
-    )
+    const output = await client.forwardApp(user.username, 'app-id', 'group-id', {
+      message: 'Test message',
+      visibility: MessageVisibility.STAFF_ONLY,
+    })
     expect(output).toBeUndefined()
   })
 

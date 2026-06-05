@@ -56,13 +56,14 @@ export default class ManagingPrisonerAppsApiClient extends RestClient {
     username: string,
     applicationId: string,
     groupId: string,
-    visibility: MessageVisibility = MessageVisibility.STAFF_ONLY,
-    message?: string,
+    options: { message?: string; visibility: MessageVisibility } = {
+      visibility: MessageVisibility.STAFF_ONLY,
+    },
   ): Promise<void> {
     try {
       const payload = {
-        message: message?.trim() || '',
-        visibility,
+        message: options.message?.trim() || '',
+        visibility: options.visibility,
       }
 
       await this.post(
