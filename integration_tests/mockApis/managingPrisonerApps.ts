@@ -238,4 +238,16 @@ export default {
       },
     })
   },
+  stubForwardApp: ({ applicationId }: { applicationId: string }): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'POST',
+        urlPathPattern: `/managingPrisonerApps/v1/apps/${applicationId}/forward/groups/.*`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      },
+    })
+  },
 }

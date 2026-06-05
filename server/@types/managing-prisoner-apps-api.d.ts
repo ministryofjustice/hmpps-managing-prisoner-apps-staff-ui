@@ -746,7 +746,7 @@ export interface components {
         [key: string]: unknown
       }[]
     }
-    AppResponsePrisonerObjectObject: {
+    AppResponsePrisonerDtoObjectObject: {
       /** Format: uuid */
       id?: string | null
       reference?: string | null
@@ -798,7 +798,7 @@ export interface components {
       /** Format: date-time */
       createdDate: string
       assignedGroup: unknown
-      /** Format: int32 */
+      /** Format: int64 */
       comments: number
     }
     AppResponseListDto: {
@@ -1320,7 +1320,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['AppResponsePrisonerObjectObject']
+          'application/json': components['schemas']['AppResponsePrisonerDtoObjectObject']
         }
       }
       /** @description Unauthorized to access this endpoint */
@@ -1786,7 +1786,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          '*/*': components['schemas']['AppResponsePrisonerObjectObject']
+          '*/*': components['schemas']['AppResponsePrisonerDtoObjectObject']
         }
       }
       /** @description Unauthorized to access this endpoint */
