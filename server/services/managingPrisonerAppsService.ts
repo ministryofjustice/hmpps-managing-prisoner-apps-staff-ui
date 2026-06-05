@@ -19,10 +19,12 @@ export default class ManagingPrisonerAppsService {
     applicationId: string,
     groupId: string,
     user: BaseUser,
-    message?: string,
-    visibility: MessageVisibility = MessageVisibility.STAFF_ONLY,
+    options?: { message?: string; visibility?: MessageVisibility },
   ) {
-    return this.managingPrisonerAppsApiClient.forwardApp(user.username, applicationId, groupId, visibility, message)
+    return this.managingPrisonerAppsApiClient.forwardApp(user.username, applicationId, groupId, {
+      message: options?.message,
+      visibility: options?.visibility ?? MessageVisibility.STAFF_ONLY,
+    })
   }
 
   async submitPrisonerApp(applicationData: ApplicationData, user: BaseUser) {

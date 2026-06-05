@@ -87,7 +87,7 @@ export default function forwardAppRouter({
       })
     }
 
-    await managingPrisonerAppsService.forwardApp(`${applicationId}`, forwardTo, user, forwardingReason)
+    await managingPrisonerAppsService.forwardApp(`${applicationId}`, forwardTo, user, { message: forwardingReason })
 
     return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}`)
   })
