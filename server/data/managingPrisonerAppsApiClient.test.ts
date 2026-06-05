@@ -12,6 +12,7 @@ import {
   submitPrisonerAppDataWithPhotos,
   user,
 } from '../testData'
+import { MessageVisibility } from '../constants/messageVisibility'
 import ManagingPrisonerAppsApiClient from './managingPrisonerAppsApiClient'
 
 jest.mock('../../logger')
@@ -55,13 +56,29 @@ describe('ManagingPrisonerAppsApiClient', () => {
     expect(output).toEqual(app)
   })
 
-  it('should forward an application to another department', async () => {
+  it('should forward an application to another department without message', async () => {
     fakeManagingPrisonerAppApi
-      .post('/v1/apps/app-id/forward/groups/group-id', { message: '' })
+      .post('/v1/apps/app-id/forward/groups/group-id', { message: '', visibility: 'STAFF_ONLY' })
       .matchHeader('authorization', `Bearer ${user.token}`)
       .reply(200, undefined)
 
-    const output = await client.forwardApp(user.username, 'app-id', 'group-id')
+    const output = await client.forwardApp(user.username, 'app-id', 'group-id', MessageVisibility.STAFF_ONLY)
+    expect(output).toBeUndefined()
+  })
+
+  it('should forward an application to another department with message', async () => {
+    fakeManagingPrisonerAppApi
+      .post('/v1/apps/app-id/forward/groups/group-id', { message: 'Test message', visibility: 'STAFF_ONLY' })
+      .matchHeader('authorization', `Bearer ${user.token}`)
+      .reply(200, undefined)
+
+    const output = await client.forwardApp(
+      user.username,
+      'app-id',
+      'group-id',
+      MessageVisibility.STAFF_ONLY,
+      'Test message',
+    )
     expect(output).toBeUndefined()
   })
 

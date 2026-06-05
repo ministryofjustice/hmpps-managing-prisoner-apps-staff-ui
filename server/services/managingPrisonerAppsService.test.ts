@@ -41,10 +41,16 @@ describe('ManagingPrisonerAppsService', () => {
 
   describe('forwardApp', () => {
     it('should forward an application to the specified group', async () => {
-      const result = await service.forwardApp('application-id', 'group-id', user, '')
+      const result = await service.forwardApp('application-id', 'group-id', user, '', MessageVisibility.STAFF_ONLY)
 
       expect(result).toBeUndefined()
-      expect(mockClient.forwardApp).toHaveBeenCalledWith(user.username, 'application-id', 'group-id', '')
+      expect(mockClient.forwardApp).toHaveBeenCalledWith(
+        user.username,
+        'application-id',
+        'group-id',
+        MessageVisibility.STAFF_ONLY,
+        '',
+      )
     })
   })
 
