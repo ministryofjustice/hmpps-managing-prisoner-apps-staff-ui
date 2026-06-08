@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test'
 
+const defaultBaseUrl = 'http://localhost:3007'
+const baseURL = process.env.PW_BASE_URL || defaultBaseUrl
+
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -41,7 +44,7 @@ export default defineConfig({
     video: 'on',
     ...devices['Desktop Chrome'],
     testIdAttribute: 'data-qa',
-    baseURL: 'http://localhost:3007',
+    baseURL,
   },
 
   /* Configure projects */
