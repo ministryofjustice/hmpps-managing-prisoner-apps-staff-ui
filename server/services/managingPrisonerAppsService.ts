@@ -15,8 +15,16 @@ export default class ManagingPrisonerAppsService {
     return this.managingPrisonerAppsApiClient.getPrisonerApp(user.username, prisonerId, applicationId)
   }
 
-  async forwardApp(applicationId: string, groupId: string, user: BaseUser, message?: string) {
-    return this.managingPrisonerAppsApiClient.forwardApp(user.username, applicationId, groupId, message)
+  async forwardApp(
+    applicationId: string,
+    groupId: string,
+    user: BaseUser,
+    options?: { message?: string; visibility?: MessageVisibility },
+  ) {
+    return this.managingPrisonerAppsApiClient.forwardApp(user.username, applicationId, groupId, {
+      message: options?.message,
+      visibility: options?.visibility ?? MessageVisibility.STAFF_ONLY,
+    })
   }
 
   async submitPrisonerApp(applicationData: ApplicationData, user: BaseUser) {

@@ -52,10 +52,18 @@ export default class ManagingPrisonerAppsApiClient extends RestClient {
     }
   }
 
-  async forwardApp(username: string, applicationId: string, groupId: string, message?: string): Promise<void> {
+  async forwardApp(
+    username: string,
+    applicationId: string,
+    groupId: string,
+    options: { message?: string; visibility: MessageVisibility } = {
+      visibility: MessageVisibility.STAFF_ONLY,
+    },
+  ): Promise<void> {
     try {
       const payload = {
-        message: message?.trim() || '',
+        message: options.message?.trim() || '',
+        visibility: options.visibility,
       }
 
       await this.post(
