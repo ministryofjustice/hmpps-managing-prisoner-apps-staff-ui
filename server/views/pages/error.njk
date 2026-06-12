@@ -5,6 +5,7 @@
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block content %}
+{% set action = action or { text: "Go back to home page", href: "/" } %}
 
   <div class="govuk-body govuk-width-container govuk-!-padding-top-5 govuk-!-padding-bottom-5">
     <p class="govuk-heading-l">
@@ -12,8 +13,8 @@
     </p>
 
     {{ govukButton({
-      text: "Go back to home page",
-      href: "/"
+      text: action.text,
+      href: action.href
     }) }}
 
     {% if stack %}
