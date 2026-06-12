@@ -169,13 +169,45 @@ After first install ensure playwright is initialised:
 
 `npm run int-test-init:ci`
 
-And then either, run tests in headless mode with:
+To run against local mock services (WireMock + local app), use:
 
-`npm run int-test`
+`npm run pw-test:mock`
 
-Or run tests with the UI:
+Or run with the Playwright UI:
 
-`npm run int-test-ui`
+`npm run pw-test-ui:mock`
+
+To run against DEV, use:
+
+`npm run pw-test:dev`
+
+Or run against DEV with Playwright UI:
+
+`npm run pw-test-ui:dev`
+
+The default DEV URL used by these scripts is:
+
+`https://managing-prisoner-apps-staff-dev.hmpps.service.justice.gov.uk`
+
+You can override it when needed:
+
+`PW_BASE_URL=https://managing-prisoner-apps-staff-dev.hmpps.service.justice.gov.uk npm run pw-test:dev`
+
+Dev runs require valid dev credentials in `.env`:
+
+- `PW_DEV_USERNAME`
+- `PW_DEV_PASSWORD`
+
+Backward-compatible variables are also supported:
+
+- `MANAGE_APPS_USERNAME`
+- `MANAGE_APPS_PASSWORD`
+
+These values are entered into the HMPPS sign-in inputs:
+
+- `#username`
+- `#password`
+
 
 ## Keeping your app up-to-date
 
