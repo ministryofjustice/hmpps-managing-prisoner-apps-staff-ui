@@ -9,6 +9,7 @@ import { appInsightsMiddleware } from './utils/azureAppInsights'
 import authorisationMiddleware from './middleware/authorisationMiddleware'
 
 import setUpAuthentication from './middleware/setUpAuthentication'
+import checkActiveAgencyAccess from './middleware/checkActiveAgencyAccess'
 import setUpCsrf from './middleware/setUpCsrf'
 import setUpCurrentUser from './middleware/setUpCurrentUser'
 import setUpHealthChecks from './middleware/setUpHealthChecks'
@@ -42,6 +43,7 @@ export default function createApp(services: Services): express.Application {
   app.use(authorisationMiddleware(['ROLE_PRISON']))
   app.use(setUpCsrf())
   app.use(setUpCurrentUser(services.prisonService))
+  app.use(checkActiveAgencyAccess(services.managingPrisonerAppsService))
 
   app.get(
     '*splat',

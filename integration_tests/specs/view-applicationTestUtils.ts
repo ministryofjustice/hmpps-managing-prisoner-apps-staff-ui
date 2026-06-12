@@ -2,6 +2,7 @@ import { Page } from '@playwright/test'
 import auth from '../mockApis/auth'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
 import documentManagement from '../mockApis/documentManagement'
+import personalRelationships from '../mockApis/personalRelationships'
 import prisonApi from '../mockApis/prison'
 import { resetStubs } from '../mockApis/wiremock'
 import { app, appWithPhotos } from '../../server/testData'
@@ -39,6 +40,9 @@ export async function visitApplicationPage({
     await resetStubs()
     await auth.stubSignIn()
     await prisonApi.stubGetCaseLoads()
+    await prisonApi.stubGetPrisonerByPrisonerNumber('A1234AA')
+    await personalRelationships.stubGetRelationships('OFFICIAL_RELATIONSHIP')
+    await personalRelationships.stubGetRelationships('SOCIAL_RELATIONSHIP')
     await managingPrisonerAppsApi.stubGetGroupsAndTypes()
     await managingPrisonerAppsApi.stubGetPrisonerApp({ app: application })
     await Promise.all(
