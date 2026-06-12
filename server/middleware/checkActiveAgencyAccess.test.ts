@@ -11,13 +11,17 @@ describe('checkActiveAgencyAccess', () => {
     getActiveAgencies: jest.fn(),
   } as unknown as jest.Mocked<ManagingPrisonerAppsService>
 
-  function createRes(activeCaseLoadId?: string): Response {
+  function createRes(activeCaseLoadId?: string, includeUser = true): Response {
     return {
       locals: {
-        user: {
-          username: 'USER1',
-          activeCaseLoadId,
-        },
+        ...(includeUser
+          ? {
+              user: {
+                username: 'USER1',
+                activeCaseLoadId,
+              },
+            }
+          : {}),
       },
       status: jest.fn().mockReturnThis(),
       render: jest.fn(),
@@ -58,6 +62,24 @@ describe('checkActiveAgencyAccess', () => {
     await middleware(req, res, next)
 
     expect(next).not.toHaveBeenCalled()
+    expect(res.status).toHaveBeenCalledWith(403)
+    expect(res.render).toHaveBeenCalledWith('pages/error', {
+      message: 'Something went wrong. The error has been logged. Please try again',
+      action: {
+        text: 'Select a different service',
+        href: config.apis.hmppsAuth.externalUrl,
+      },
+    })
+  })
+
+  it('renders standard error page when user is missing', async () => {
+    const res = createRes(undefined, false)
+
+    const middleware = checkActiveAgencyAccess(managingPrisonerAppsService)
+    await middleware(req, res, next)
+
+    expect(next).not.toHaveBeenCalled()
+    expect(managingPrisonerAppsService.getActiveAgencies).not.toHaveBeenCalled()
     expect(res.status).toHaveBeenCalledWith(403)
     expect(res.render).toHaveBeenCalledWith('pages/error', {
       message: 'Something went wrong. The error has been logged. Please try again',

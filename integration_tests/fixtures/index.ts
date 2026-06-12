@@ -1,5 +1,6 @@
 import { Page, test as base } from '@playwright/test'
 import auth from '../mockApis/auth'
+import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
 import prisonApi from '../mockApis/prison'
 import { resetStubs } from '../mockApis/wiremock'
 
@@ -94,6 +95,7 @@ export const test = base.extend<Fixtures>({
       if (isLocalhost) {
         // Fallback stub so tests that forget caseLoads still sign in; test-specific stubs can override.
         await prisonApi.stubGetCaseLoads('HMI', 100)
+        await managingPrisonerAppsApi.stubGetActiveAgencies(undefined, 100)
       }
       await page.goto('/')
       if (isLocalhost) {
@@ -114,6 +116,7 @@ export const test = base.extend<Fixtures>({
         await auth.stubSignIn()
         // Keep this as a low-priority default to avoid missing-stub failures.
         await prisonApi.stubGetCaseLoads('HMI', 100)
+        await managingPrisonerAppsApi.stubGetActiveAgencies(undefined, 100)
       }
       await page.goto('/')
       if (isLocalhost) {

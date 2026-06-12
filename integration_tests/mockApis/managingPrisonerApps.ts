@@ -135,8 +135,12 @@ export default {
       },
     })
   },
-  stubGetActiveAgencies: (): SuperAgentRequest => {
+  stubGetActiveAgencies: (
+    activeAgencies = ['HMI', 'PEI', 'HEI', 'BLI', 'MDI', 'CKI', 'LEI'],
+    priority = 5,
+  ): SuperAgentRequest => {
     return stubFor({
+      priority,
       request: {
         method: 'GET',
         url: '/managingPrisonerApps/v1/establishments',
@@ -144,7 +148,7 @@ export default {
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: ['HEI', 'BLI'],
+        jsonBody: activeAgencies,
       },
     })
   },
