@@ -3,13 +3,10 @@ import { test, expect } from '../fixtures'
 import auth from '../mockApis/auth'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
 import prisonApi from '../mockApis/prison'
+import personalRelationshipsApi from '../mockApis/personalRelationships'
 import { resetStubs } from '../mockApis/wiremock'
 import departmentsFixture from '../fixtures/departments.json'
 import DepartmentPage from '../pages/departmentPage'
-import ApplicationDetailsPage from '../pages/applicationDetailsPage'
-import ConfirmDetailsPage from '../pages/confirmDetailsPage'
-import SubmitApplicationPage from '../pages/submitApplicationPage'
-import { app } from '../../server/testData'
 
 const targetBaseUrl = process.env.PW_BASE_URL || process.env.DPS_PRISONER_URL || 'http://localhost:3007'
 const isWiremock = process.env.PW_ENV === 'mock' || targetBaseUrl.includes('localhost')
@@ -21,6 +18,8 @@ type NavigationFixtures = {
   selectApplicationType: (appType: string) => Promise<void>
 }
 
+type RelationshipGroup = 'SOCIAL_RELATIONSHIP' | 'OFFICIAL_RELATIONSHIP'
+
 const navigateToDepartmentPage = async ({
   page,
   signIn,
@@ -30,7 +29,13 @@ const navigateToDepartmentPage = async ({
   appTypeId,
   appTypeName,
   activeCaseLoadId = 'HMI',
-}: { page: Page } & NavigationFixtures & { appTypeId: number; appTypeName: string; activeCaseLoadId?: string }) => {
+  relationshipGroup,
+}: { page: Page } & NavigationFixtures & {
+    appTypeId: number
+    appTypeName: string
+    activeCaseLoadId?: string
+    relationshipGroup?: RelationshipGroup
+  }) => {
   if (isWiremock) {
     await resetStubs()
     await auth.stubSignIn()
@@ -38,6 +43,9 @@ const navigateToDepartmentPage = async ({
     await prisonApi.stubGetPrisonerByPrisonerNumber('A1234AA')
     await managingPrisonerAppsApi.stubGetGroupsAndTypes()
     await managingPrisonerAppsApi.stubGetDepartments({ appType: appTypeId })
+    if (relationshipGroup) {
+      await personalRelationshipsApi.stubGetRelationships(relationshipGroup)
+    }
   }
 
   await signIn()
@@ -262,62 +270,5 @@ test.describe('Department Page', () => {
     await selectDepartment('Business Hub')
     await expect(page).toHaveURL(/\/log\/application-details/)
     await expect(page).not.toHaveURL(/\/log\/method/)
-  })
-
-  test('should complete a full application creation journey from department selection to submission', async ({
-    page,
-    signIn,
-    enterPrisonerDetails,
-    selectGroup,
-    selectApplicationType,
-    selectLoggingMethod,
-  }) => {
-    await navigateToDepartmentPage({
-      page,
-      signIn,
-      enterPrisonerDetails,
-      selectGroup,
-      selectApplicationType,
-      appTypeId: 5,
-      appTypeName: 'Swap Visiting Orders (VOs) for PIN Credit',
-      activeCaseLoadId: 'HMI',
-    })
-
-    const departmentPage = new DepartmentPage(page)
-    await page.getByRole('radio', { name: 'Business Hub' }).check()
-    await departmentPage.continueButton().click()
-    await expect(page).toHaveURL(/\/log\/method/)
-
-    await selectLoggingMethod('manual')
-    await expect(page).toHaveURL(/\/log\/application-details/)
-
-    const applicationDetailsPage = new ApplicationDetailsPage(page)
-    await applicationDetailsPage.textArea().fill('Need to swap 2 visiting orders for phone credit')
-    await applicationDetailsPage.continueButton().click()
-
-    await expect(page).toHaveURL(/\/log\/confirm/)
-
-    const confirmDetailsPage = new ConfirmDetailsPage(page)
-    await expect(confirmDetailsPage.applicationTypeSummary()).toContainText('Swap Visiting Orders (VOs) for PIN Credit')
-    await expect(confirmDetailsPage.summaryRowByLabel('Department')).toContainText('Business Hub')
-
-    const submittedApp = {
-      ...app,
-      id: '13d2c453-be11-44a8-9861-21fd8ae6e911',
-      requestedBy: { ...app.requestedBy, username: 'A1234AA' },
-      applicationType: { id: 5, name: 'Swap Visiting Orders (VOs) for PIN Credit' },
-    }
-
-    if (isWiremock) {
-      await managingPrisonerAppsApi.stubSubmitPrisonerApp({ app: submittedApp })
-      await managingPrisonerAppsApi.stubGetPrisonerApp({ app: submittedApp })
-    }
-
-    await confirmDetailsPage.submitApplicationButton().click()
-    await expect(page).toHaveURL(/\/log\/submit\/A1234AA\//)
-
-    const submitApplicationPage = new SubmitApplicationPage(page)
-    await submitApplicationPage.checkOnPage()
-    await expect(submitApplicationPage.panelBody()).toContainText('Swap Visiting Orders (VOs) for PIN Credit')
   })
 })

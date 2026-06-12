@@ -15,7 +15,7 @@ export default class AuthSignInPage extends AbstractPage {
   }
 
   signInButton(): PageElement {
-    return this.page.getByRole('button', { name: 'Sign in' })
+    return this.page.locator('#submit')
   }
 
   async signInWith(username: string, password: string): Promise<void> {

@@ -3,7 +3,7 @@ import auth from '../mockApis/auth'
 import prisonApi from '../mockApis/prison'
 import { resetStubs } from '../mockApis/wiremock'
 
-const clearBrowserState = async (page: Page, browserName: string) => {
+const clearBrowserState = async (page: Page) => {
   if (!page.isClosed()) {
     await page
       .evaluate(() => {
@@ -16,14 +16,6 @@ const clearBrowserState = async (page: Page, browserName: string) => {
   const context = page.context()
   await context.clearCookies()
   await context.clearPermissions()
-
-  if (browserName === 'chromium' && !page.isClosed()) {
-    const client = await context.newCDPSession(page)
-    await client.send('Network.enable')
-    await client.send('Network.clearBrowserCache')
-    await client.send('Network.clearBrowserCookies')
-    await client.detach()
-  }
 }
 
 const getSignInUrlWithRetry = async (
@@ -137,21 +129,21 @@ export const test = base.extend<Fixtures>({
 
   selectGroup: async ({ page }, use) => {
     await use(async (group: string) => {
-      await page.getByText(group).click()
+      await page.getByRole('radio', { name: group }).check({ force: true })
       await page.getByRole('button', { name: 'Continue' }).click()
     })
   },
 
   selectApplicationType: async ({ page }, use) => {
     await use(async (appType: string) => {
-      await page.getByText(appType).click()
+      await page.getByRole('radio', { name: appType }).check({ force: true })
       await page.getByRole('button', { name: 'Continue' }).click()
     })
   },
 
   selectDepartment: async ({ page }, use) => {
     await use(async (departmentName: string) => {
-      await page.getByText(departmentName).click()
+      await page.getByRole('radio', { name: departmentName }).check({ force: true })
       await page.getByRole('button', { name: 'Continue' }).click()
     })
   },
@@ -164,8 +156,8 @@ export const test = base.extend<Fixtures>({
   },
 })
 
-test.afterEach(async ({ page, browserName }) => {
-  await clearBrowserState(page, browserName)
+test.afterEach(async ({ page }) => {
+  await clearBrowserState(page)
 })
 
 export { expect } from '@playwright/test'

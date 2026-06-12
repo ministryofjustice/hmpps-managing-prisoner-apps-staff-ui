@@ -9,6 +9,9 @@ interface UserToken {
   roles?: string[]
 }
 
+const AUTH_AUTHORIZE_PATHS = ['/oauth/authorize', '/auth/oauth/authorize', '/launchpadauth/v1/oauth2/authorize']
+const AUTH_TOKEN_PATHS = ['/oauth/token', '/auth/oauth/token', '/launchpadauth/v1/oauth2/token']
+
 const createToken = (userToken: UserToken) => {
   // authorities in the session are always prefixed by ROLE.
   const authorities = userToken.roles?.map(role => (role.startsWith('ROLE_') ? role : `ROLE_${role}`)) || []
@@ -25,22 +28,26 @@ const createToken = (userToken: UserToken) => {
   return jwt.sign(payload, 'secret', { expiresIn: '1h' })
 }
 
-const getSignInUrl = (): Promise<string> =>
-  getMatchingRequests({
-    method: 'GET',
-    urlPath: '/auth/oauth/authorize',
-  }).then(data => {
-    const { requests } = data.body
+const getSignInUrl = async (): Promise<string> => {
+  const requestBatches = await Promise.all(
+    AUTH_AUTHORIZE_PATHS.map(path =>
+      getMatchingRequests({
+        method: 'GET',
+        urlPath: path,
+      }),
+    ),
+  )
 
-    const matchingRequest = [...requests].reverse().find(request => request?.queryParams?.state?.values?.[0])
+  const requests = requestBatches.flatMap(batch => batch.body.requests || [])
+  const matchingRequest = [...requests].reverse().find(request => request?.queryParams?.state?.values?.[0])
 
-    if (!matchingRequest) {
-      throw new Error('No auth authorize request with state parameter found')
-    }
+  if (!matchingRequest) {
+    throw new Error('No auth authorize request with state parameter found')
+  }
 
-    const stateValue = matchingRequest.queryParams.state.values[0]
-    return `/sign-in/callback?code=codexxxx&state=${stateValue}`
-  })
+  const stateValue = matchingRequest.queryParams.state.values[0]
+  return `/sign-in/callback?code=codexxxx&state=${stateValue}`
+}
 
 const favicon = () =>
   stubFor({
@@ -65,34 +72,38 @@ const ping = () =>
   })
 
 const redirect = () =>
-  stubFor({
-    request: {
-      method: 'GET',
-      urlPath: '/auth/oauth/authorize',
-      queryParameters: {
-        response_type: {
-          equalTo: 'code',
+  Promise.all(
+    AUTH_AUTHORIZE_PATHS.map(urlPath =>
+      stubFor({
+        request: {
+          method: 'GET',
+          urlPath,
+          queryParameters: {
+            response_type: {
+              equalTo: 'code',
+            },
+            redirect_uri: {
+              matches: '.+',
+            },
+            state: {
+              matches: '.+',
+            },
+            client_id: {
+              equalTo: 'clientid',
+            },
+          },
         },
-        redirect_uri: {
-          matches: '.+',
+        response: {
+          status: 200,
+          headers: {
+            'Content-Type': 'text/html',
+            Location: 'http://localhost:3007/sign-in/callback?code=codexxxx&state=stateyyyy',
+          },
+          body: '<html><body>Sign in page<h1>Sign in</h1></body></html>',
         },
-        state: {
-          matches: '.+',
-        },
-        client_id: {
-          equalTo: 'clientid',
-        },
-      },
-    },
-    response: {
-      status: 200,
-      headers: {
-        'Content-Type': 'text/html',
-        Location: 'http://localhost:3007/sign-in/callback?code=codexxxx&state=stateyyyy',
-      },
-      body: '<html><body>Sign in page<h1>Sign in</h1></body></html>',
-    },
-  })
+      }),
+    ),
+  )
 
 const signOut = () =>
   stubFor({
@@ -125,36 +136,42 @@ const manageDetails = () =>
   })
 
 const token = (userToken: UserToken) =>
-  stubFor({
-    request: {
-      method: 'POST',
-      urlPattern: '/auth/oauth/token',
-    },
-    response: {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-        Location: 'http://localhost:3007/sign-in/callback?code=codexxxx&state=stateyyyy',
-      },
-      jsonBody: {
-        access_token: createToken(userToken),
-        token_type: 'bearer',
-        user_name: 'USER1',
-        auth_source: 'nomis',
-        expires_in: 599,
-        scope: 'read',
-        internalUser: true,
-      },
-    },
-  })
+  Promise.all(
+    AUTH_TOKEN_PATHS.map(urlPattern =>
+      stubFor({
+        request: {
+          method: 'POST',
+          urlPattern,
+        },
+        response: {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            Location: 'http://localhost:3007/sign-in/callback?code=codexxxx&state=stateyyyy',
+          },
+          jsonBody: {
+            access_token: createToken(userToken),
+            token_type: 'bearer',
+            user_name: 'USER1',
+            auth_source: 'nomis',
+            expires_in: 599,
+            scope: 'read',
+            internalUser: true,
+          },
+        },
+      }),
+    ),
+  )
 
 export default {
   getSignInUrl,
   stubAuthPing: ping,
   stubAuthToken: token,
   stubAuthManageDetails: manageDetails,
-  stubSignIn: (
-    userToken: UserToken = { roles: ['ROLE_PRISON'] },
-  ): Promise<[Response, Response, Response, Response, Response]> =>
-    Promise.all([favicon(), redirect(), signOut(), token(userToken), tokenVerification.stubVerifyToken()]),
+  stubSignIn: (userToken: UserToken = { roles: ['ROLE_PRISON'] }): Promise<Response[]> =>
+    Promise.all([favicon(), signOut(), tokenVerification.stubVerifyToken()]).then(async baseResponses => {
+      const redirectResponses = await redirect()
+      const tokenResponses = await token(userToken)
+      return [...baseResponses, ...redirectResponses, ...tokenResponses]
+    }),
 }
