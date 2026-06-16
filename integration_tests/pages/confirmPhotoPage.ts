@@ -39,6 +39,10 @@ export default class ConfirmPhotoPage extends AbstractPage {
   }
 
   async saveAndContinue(): Promise<void> {
+    await this.page.waitForFunction(() => {
+      const input = document.getElementById('js-cropped-image-input') as HTMLInputElement | null
+      return Boolean(input?.files?.length)
+    })
     await this.saveAndContinueButton().click()
   }
 }
