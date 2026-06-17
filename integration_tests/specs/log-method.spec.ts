@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test'
 import { test, expect } from '../fixtures'
 import auth from '../mockApis/auth'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
@@ -15,7 +16,7 @@ const navigateToMethodPage = async ({
   selectApplicationType,
   selectDepartment,
 }: {
-  page: { goto: (url: string) => Promise<void> }
+  page: Page
   signIn: () => Promise<void>
   enterPrisonerDetails: () => Promise<void>
   selectGroup: (group: string) => Promise<void>
@@ -33,25 +34,27 @@ const navigateToMethodPage = async ({
 }
 
 test.describe('Logging Method Page', () => {
-  test.beforeEach(async ({ page, signIn, enterPrisonerDetails, selectGroup, selectApplicationType, selectDepartment }) => {
-    if (isWiremock) {
-      await resetStubs()
-      await auth.stubSignIn()
-      await prisonApi.stubGetCaseLoads('HMI')
-      await prisonApi.stubGetPrisonerByPrisonerNumber('A1234AA')
-      await managingPrisonerAppsApi.stubGetGroupsAndTypes()
-      await managingPrisonerAppsApi.stubGetDepartments({ appType: 7 })
-    }
+  test.beforeEach(
+    async ({ page, signIn, enterPrisonerDetails, selectGroup, selectApplicationType, selectDepartment }) => {
+      if (isWiremock) {
+        await resetStubs()
+        await auth.stubSignIn()
+        await prisonApi.stubGetCaseLoads('HMI')
+        await prisonApi.stubGetPrisonerByPrisonerNumber('A1234AA')
+        await managingPrisonerAppsApi.stubGetGroupsAndTypes()
+        await managingPrisonerAppsApi.stubGetDepartments({ appType: 7 })
+      }
 
-    await navigateToMethodPage({
-      page,
-      signIn,
-      enterPrisonerDetails,
-      selectGroup,
-      selectApplicationType,
-      selectDepartment,
-    })
-  })
+      await navigateToMethodPage({
+        page,
+        signIn,
+        enterPrisonerDetails,
+        selectGroup,
+        selectApplicationType,
+        selectDepartment,
+      })
+    },
+  )
 
   test('should display the correct page title', async ({ page }) => {
     await expect(page).toHaveTitle(/Select method to log this application/)
@@ -79,7 +82,9 @@ test.describe('Logging Method Page', () => {
   test('should show validation error when no method selected', async ({ page }) => {
     await page.getByRole('button', { name: 'Continue' }).click()
 
-    await expect(page.locator('.govuk-error-summary')).toContainText('You need to select a method to log the application')
+    await expect(page.locator('.govuk-error-summary')).toContainText(
+      'You need to select a method to log the application',
+    )
     await expect(page.locator('.govuk-error-message')).toContainText('Select one')
   })
 
