@@ -1,5 +1,10 @@
 import { test, expect } from '../fixtures'
-import { appSearchResponse, getAppsByType, getAppsSortedByOldest, app as appDetailTemplate } from '../../server/testData'
+import {
+  appSearchResponse,
+  getAppsByType,
+  getAppsSortedByOldest,
+  app as appDetailTemplate,
+} from '../../server/testData'
 import auth from '../mockApis/auth'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
 import prisonApi from '../mockApis/prison'
