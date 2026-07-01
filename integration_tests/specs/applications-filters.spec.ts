@@ -70,7 +70,10 @@ test.describe('Applications List - Filter Functionality', () => {
     const application = {
       ...appDetailTemplate,
       id: selectedApp.id,
-      requestedBy: { username: selectedApp.requestedBy },
+      requestedBy: {
+        ...appDetailTemplate.requestedBy,
+        username: selectedApp.requestedBy,
+      },
     }
 
     if (isWiremock) {
