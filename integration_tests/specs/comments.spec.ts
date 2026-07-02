@@ -27,20 +27,20 @@ test.describe('Comments Page', () => {
   test('should display the correct page title', async ({ page }) => {
     const commentsPage = new CommentsPage(page)
     const title = await commentsPage.pageTitle()
-    expect(title).toMatch(/Comments|Messages/)
+    expect(title).toMatch(/Messages/)
   })
 
-  test('should highlight the comments tab as active in sub-navigation', async ({ page }) => {
+  test('should highlight the messages tab as active in sub-navigation', async ({ page }) => {
     const commentsPage = new CommentsPage(page)
     await expect(commentsPage.subNavigation()).toBeVisible()
-    await expect(commentsPage.activeTab()).toContainText(/Comments|Messages/)
+    await expect(commentsPage.activeTab()).toContainText(/Messages/)
   })
 
-  test('should display the comment form', async ({ page }) => {
+  test('should display the message form', async ({ page }) => {
     const commentsPage = new CommentsPage(page)
-    await expect(commentsPage.commentLabel()).toContainText(/Add a comment|Send message/)
+    await expect(commentsPage.commentLabel()).toContainText(/Send message/)
     await expect(commentsPage.commentBox()).toBeVisible()
-    await expect(commentsPage.submitButton()).toContainText(/Continue|Send/)
+    await expect(commentsPage.submitButton()).toContainText(/Send/)
   })
 
   test('should display the comments section', async ({ page }) => {
