@@ -5,7 +5,6 @@ import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 import { MessageVisibility } from '../../constants/messageVisibility'
 
-import config from '../../config'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
@@ -54,7 +53,7 @@ export default function commentsRouter({
       application,
       applicationType,
       comments: formattedComments,
-      title: config.featureFlags.messagingEnabled ? 'Messages' : 'Comments',
+      title: 'Messages',
     })
   })
 
@@ -97,16 +96,12 @@ export default function commentsRouter({
         comment,
         comments: formattedComments,
         errors,
-        title: config.featureFlags.messagingEnabled ? 'Messages' : 'Comments',
+        title: 'Messages',
       })
     }
-
-    // Comments tab existing, has no visibility selector, so defaults to STAFF_ONLY.
     // Messages tab reads the user's selection; anything other than 'prisoner-and-staff' is STAFF_ONLY.
     const visibility =
-      config.featureFlags.messagingEnabled && req.body.visibility === 'prisoner-and-staff'
-        ? MessageVisibility.STAFF_AND_PRISONER
-        : MessageVisibility.STAFF_ONLY
+      req.body.visibility === 'prisoner-and-staff' ? MessageVisibility.STAFF_AND_PRISONER : MessageVisibility.STAFF_ONLY
 
     await managingPrisonerAppsService.addComment(
       `${prisonerId}`,

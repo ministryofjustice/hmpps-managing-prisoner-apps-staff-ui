@@ -43,6 +43,6 @@ export default class CommentsPage extends AbstractPage {
   }
 
   commentsSectionHeading(): PageElement {
-    return this.page.getByRole('heading', { name: /Comments about this application|Messages and replies/ })
+    return this.page.getByRole('heading', { name: 'Messages and replies' })
   }
 }
