@@ -21,7 +21,6 @@ generic-service:
     DOCUMENT_API_URL: 'https://document-api-dev.hmpps.service.justice.gov.uk'
     OS_PLACES_API_URL: 'https://api.os.uk/search/places/v1'
     LOG_METHOD_PAGE_ENABLED: 'true'
-    MESSAGING_ENABLED: 'false'
     ENVIRONMENT_NAME: STAGING
     AUDIT_ENABLED: 'false'
     GA4_SITE_ID: 'G-HE5P4PEE48'

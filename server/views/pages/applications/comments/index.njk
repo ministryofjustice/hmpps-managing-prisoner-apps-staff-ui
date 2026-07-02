@@ -31,86 +31,56 @@
 {% block content %}
   <div class="govuk-modal-dialogue-inert-container">
     <div class="govuk-body govuk-width-container">
-    {% if errors %}
-      {% set errorMessage = [] %}
-      {% if errors.Comments %}
-        {% set errorMessage = { text: errors.Comments.text } %}
+      {% if errors %}
+        {% set errorMessage = [] %}
+        {% if errors.Comments %}
+          {% set errorMessage = { text: errors.Comments.text } %}
+        {% endif %}
+        {% set errorList = [] %}
+        {% if errors.Comments %}
+          {% set errorList = errorList.concat([{ text: errors.Comments.text, href: "#comment" }]) %}
+        {% endif %}
+        {{ govukErrorSummary({
+          titleText: "There is a problem",
+          errorList: errorList
+        }) }}
       {% endif %}
-      {% set errorList = [] %}
-      {% if errors.Comments %}
-        {% set errorList = errorList.concat([{ text: errors.Comments.text, href: "#comment" }]) %}
-      {% endif %}
-      {{ govukErrorSummary({
-        titleText: "There is a problem",
-        errorList: errorList
-      }) }}
-    {% endif %}
-    {% if not featureFlags.messagingEnabled %}
-      <span class="govuk-caption-xl">{{ applicationType.name }}</span>
-    {% endif %}
-    {% if featureFlags.messagingEnabled %}
       <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ applicationType.name }}</h1>
-    {% else %}
-      <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
-    {% endif %}
-    {% set activeTab = 'comments' %}
-    {% include "../partials/sub-navigation.njk" %}
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-two-thirds">
-        {% if featureFlags.messagingEnabled %}
+      {% set activeTab = 'comments' %}
+      {% include "../partials/sub-navigation.njk" %}
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
           <h2 class="govuk-heading-m">Messages and replies</h2>
           <div class="govuk-!-margin-bottom-4">
             {{ appMessages({ items: comments }) }}
           </div>
-        {% else %}
-          <h2 class="govuk-heading-m">Comments about this application</h2>
-          <p class="govuk-body">Only staff will see these comments</p>
-          <div class="app-messages govuk-!-margin-bottom-4">
-            {% if comments and comments.length > 0 %}
-              {% for comment in comments %}
-                {% if comment.message %}
-                  <div class="app-message">
-                    <div class="app-message--metadata">Comment by {{ comment.createdByName }} | {{ comment.date }} at {{ comment.time }}</div>
-                    <div class="app-message--content">{{ comment.message }}</div>
-                  </div>
-                {% endif %}
-              {% endfor %}
-            {% else %}
-              <div class="app-message">
-                <div class="app-message--content">No comments yet</div>
-              </div>
-            {% endif %}
-          </div>
-        {% endif %}
-        <form method="POST" id="application-comments-form">
-          <input type="hidden" name="_csrf" value="{{ csrfToken }}"/> {{ govukCharacterCount({
+          <form method="POST" id="application-comments-form">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}"/> {{ govukCharacterCount({
               name: "comment",
               id: "comment",
               maxlength: 1000,
               threshold: 75,
               value: comment,
               label: {
-                text: "Send message" if featureFlags.messagingEnabled else "Add a comment",
+                text: "Send message",
                 classes: "govuk-label--s govuk-!-margin-bottom-4",
                 isPageHeading: true
               },
               errorMessage: errorMessage
             }) }}
-
-          {% if featureFlags.messagingEnabled %}
             {{ govukRadios({
-                name: "visibility",
-                fieldset: {
-                  legend: {
-                    text: "Who will see this message?",
-                    isPageHeading: true,
-                    classes: "govuk-fieldset__legend--s"
-                  }
-                },
-                hint: {
-                  text: "This message will be shown to:"
-                },
-                items: [
+              name: "visibility",
+              fieldset: {
+                legend: {
+                  text: "Who will see this message?",
+                  isPageHeading: true,
+                  classes: "govuk-fieldset__legend--s"
+                }
+              },
+              hint: {
+                text: "This message will be shown to:"
+              },
+              items: [
                 {
                   value: "staff-only",
                   text: "Staff only"
@@ -120,31 +90,40 @@
                   text: "Prisoner and staff",
                   hint: {
                     text: "This will be seen by the prisoner"
-                    }
                   }
-                ]
+                }
+              ]
             }) }}
-          {% endif %}
-
-          {{ govukButton({
-              text: "Send" if featureFlags.messagingEnabled else "Continue",
+            {{ govukButton({
+              text: "Send",
               classes: "govuk-button--primary"
             }) }}
-        </form>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
-
-  {% if featureFlags.messagingEnabled %}
     <button type="button" id="visibility-modal-trigger" class="govuk-visually-hidden"></button>
-    <div class="govuk-modal-dialogue" data-trigger="#visibility-modal-trigger" data-inert-container=".govuk-modal-dialogue-inert-container">
+    <div
+      class="govuk-modal-dialogue"
+      data-trigger="#visibility-modal-trigger"
+      data-inert-container=".govuk-modal-dialogue-inert-container">
       <div class="govuk-modal-dialogue__wrapper">
-        <dialog class="govuk-modal-dialogue__box" aria-labelledby="visibility-modal-title" aria-modal="true" role="dialog" tabindex="-1">
+        <dialog
+          class="govuk-modal-dialogue__box"
+          aria-labelledby="visibility-modal-title"
+          aria-modal="true"
+          role="dialog"
+          tabindex="-1">
           <div class="govuk-modal-dialogue__header">
-            <button type="button" class="govuk-button govuk-modal-dialogue__close" aria-label="Close dialog" data-element="govuk-modal-dialogue-close">x</button>
+            <button
+              type="button"
+              class="govuk-button govuk-modal-dialogue__close"
+              aria-label="Close dialog"
+              data-element="govuk-modal-dialogue-close">x</button>
           </div>
           <div class="govuk-modal-dialogue__content">
-            <h2 class="govuk-modal-dialogue__heading govuk-heading-l" id="visibility-modal-title">Should this message be seen by the prisoner?</h2>
+            <h2 class="govuk-modal-dialogue__heading govuk-heading-l" id="visibility-modal-title">Should this message be seen by the
+              prisoner?</h2>
             <div class="govuk-button-group">
               <button type="button" class="govuk-button" id="visibility-modal-confirm">Yes</button>
               <button type="button" class="govuk-link app-link-button" id="visibility-modal-cancel">No, go back</button>
@@ -154,6 +133,5 @@
       </div>
       <div class="govuk-modal-dialogue__backdrop"></div>
     </div>
-  {% endif %}
   </div>
 {% endblock %}
