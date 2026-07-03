@@ -39,7 +39,7 @@ test.describe('Applications List - Filter Functionality', () => {
     await expect(headers.nth(1)).toContainText('Application type')
     await expect(headers.nth(2)).toContainText('From')
     await expect(headers.nth(3)).toContainText('Department')
-    await expect(headers.nth(4)).toContainText('Comments')
+    await expect(headers.nth(4)).toContainText('Messages')
   })
 
   test('should display default filter values with Pending and Newest', async ({ page }) => {

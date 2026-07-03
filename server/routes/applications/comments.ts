@@ -14,6 +14,8 @@ import { getAppType } from '../../helpers/application/getAppType'
 import { formatMessagesCreatedByName } from '../../utils/formatters/formatName'
 import { validateTextField } from '../validate/validateTextField'
 
+const ERROR_MESSAGE = 'Select if this message is for staff only, or for prisoner and staff'
+
 export default function commentsRouter({
   auditService,
   managingPrisonerAppsService,
@@ -59,10 +61,14 @@ export default function commentsRouter({
 
   router.post('/applications/:prisonerId/:applicationId/comments', async (req: Request, res: Response) => {
     const { prisonerId, applicationId } = req.params
-    const { comment } = req.body
+    const { comment, visibility } = req.body
     const { user } = res.locals
 
-    const errors = validateTextField({ fieldValue: comment, fieldName: 'Comments', isRequired: true })
+    const errors = validateTextField({ fieldValue: comment, fieldName: 'Messages', isRequired: true })
+
+    if (!visibility) {
+      errors.messageVisibility = { text: ERROR_MESSAGE }
+    }
 
     if (Object.keys(errors).length > 0) {
       const application = await managingPrisonerAppsService.getPrisonerApp(`${prisonerId}`, `${applicationId}`, user)
@@ -78,14 +84,14 @@ export default function commentsRouter({
         application.applicationType.id.toString(),
       )
       const formattedComments =
-        comments?.contents?.map(({ message, createdBy, createdDate, visibility, createdByType }) => {
+        comments?.contents?.map(({ message, createdBy, createdDate, visibility: messageVisibility, createdByType }) => {
           return {
             message,
             createdByName: formatMessagesCreatedByName(createdBy.fullName, createdByType),
             timestamp: createdDate,
             date: format(createdDate, 'd MMMM yyyy'),
             time: format(createdDate, 'HH:mm'),
-            visibility,
+            visibility: messageVisibility,
             createdByType,
           }
         }) ?? []
@@ -94,19 +100,20 @@ export default function commentsRouter({
         application,
         applicationType,
         comment,
+        visibility,
         comments: formattedComments,
         errors,
         title: 'Messages',
       })
     }
     // Messages tab reads the user's selection; anything other than 'prisoner-and-staff' is STAFF_ONLY.
-    const visibility =
-      req.body.visibility === 'prisoner-and-staff' ? MessageVisibility.STAFF_AND_PRISONER : MessageVisibility.STAFF_ONLY
+    const messageVisibility =
+      visibility === 'prisoner-and-staff' ? MessageVisibility.STAFF_AND_PRISONER : MessageVisibility.STAFF_ONLY
 
     await managingPrisonerAppsService.addComment(
       `${prisonerId}`,
       `${applicationId}`,
-      { message: comment, visibility },
+      { message: comment, visibility: messageVisibility },
       user,
     )
 
