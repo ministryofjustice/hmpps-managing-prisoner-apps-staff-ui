@@ -32,13 +32,21 @@
   <div class="govuk-modal-dialogue-inert-container">
     <div class="govuk-body govuk-width-container">
       {% if errors %}
-        {% set errorMessage = [] %}
-        {% if errors.Comments %}
-          {% set errorMessage = { text: errors.Comments.text } %}
+        {% set textFieldError = errors.Messages if errors.Messages else undefined %}
+        {% set messageFieldError = [] %}
+        {% if textFieldError %}
+          {% set messageFieldError = { text: textFieldError.text } %}
+        {% endif %}
+        {% set visibilityErrorMessage = [] %}
+        {% if errors.messageVisibility %}
+          {% set visibilityErrorMessage = { text: errors.messageVisibility.text } %}
         {% endif %}
         {% set errorList = [] %}
-        {% if errors.Comments %}
-          {% set errorList = errorList.concat([{ text: errors.Comments.text, href: "#comment" }]) %}
+        {% if textFieldError %}
+          {% set errorList = errorList.concat([{ text: textFieldError.text, href: "#comment" }]) %}
+        {% endif %}
+        {% if errors.messageVisibility %}
+          {% set errorList = errorList.concat([{ text: errors.messageVisibility.text, href: "#visibility" }]) %}
         {% endif %}
         {{ govukErrorSummary({
           titleText: "There is a problem",
@@ -66,10 +74,11 @@
                 classes: "govuk-label--s govuk-!-margin-bottom-4",
                 isPageHeading: true
               },
-              errorMessage: errorMessage
+              errorMessage: messageFieldError
             }) }}
             {{ govukRadios({
               name: "visibility",
+              errorMessage: visibilityErrorMessage if errors.messageVisibility else undefined,
               fieldset: {
                 legend: {
                   text: "Who will see this message?",
@@ -83,11 +92,13 @@
               items: [
                 {
                   value: "staff-only",
-                  text: "Staff only"
+                  text: "Staff only",
+                  checked: visibility === "staff-only"
                 },
                 {
                   value: "prisoner-and-staff",
                   text: "Prisoner and staff",
+                  checked: visibility === "prisoner-and-staff",
                   hint: {
                     text: "This will be seen by the prisoner in the Launchpad prisons only"
                   }

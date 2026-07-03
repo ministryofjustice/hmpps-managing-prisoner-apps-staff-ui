@@ -25,10 +25,10 @@ describe('validateTextFieldLength', () => {
 
   it('should return an error with a dynamic field name', () => {
     const longText = 'A'.repeat(1001)
-    const errors = validateTextField({ fieldValue: longText, fieldName: 'Comments' })
+    const errors = validateTextField({ fieldValue: longText, fieldName: 'Messages' })
 
     expect(errors).toEqual({
-      Comments: { text: 'Comments must be 1000 characters or less' },
+      Messages: { text: 'Messages must be 1000 characters or less' },
     })
   })
 })

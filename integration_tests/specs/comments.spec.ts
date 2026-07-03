@@ -56,10 +56,11 @@ test.describe('Comments Page', () => {
 
     const commentsPage = new CommentsPage(page)
     await commentsPage.commentBox().fill('This is my first comment')
+    await page.getByRole('radio', { name: 'Staff only' }).check()
     await commentsPage.submitButton().click()
 
     await expect(page).toHaveURL(`/applications/${app.requestedBy.username}/${app.id}/comments`)
-    await expect(page.getByText('This is my first comment')).toBeVisible()
+    await expect(page.locator('.moj-message-item__text--sent', { hasText: 'This is my first comment' })).toBeVisible()
     await expect(page.getByText('Staff Name')).toBeVisible()
     await expect(page.getByText('9 April 2025')).toBeVisible()
   })
@@ -68,7 +69,13 @@ test.describe('Comments Page', () => {
     const commentsPage = new CommentsPage(page)
     await commentsPage.submitButton().click()
 
-    await expect(commentsPage.errorSummary()).toContainText('Add a comment')
-    await expect(commentsPage.errorMessage()).toContainText('Add a comment')
+    await expect(commentsPage.errorSummary()).toContainText('Add a message')
+    await expect(commentsPage.errorSummary()).toContainText(
+      'Select if this message is for staff only, or for prisoner and staff',
+    )
+    await expect(commentsPage.errorMessage()).toContainText('Add a message')
+    await expect(commentsPage.visibilityErrorMessage()).toContainText(
+      'Select if this message is for staff only, or for prisoner and staff',
+    )
   })
 })
