@@ -31,7 +31,11 @@ export default class CommentsPage extends AbstractPage {
   }
 
   errorMessage(): PageElement {
-    return this.page.locator('.govuk-error-message')
+    return this.page.locator('#comment-error')
+  }
+
+  visibilityErrorMessage(): PageElement {
+    return this.page.locator('#visibility-error')
   }
 
   submitButton(): PageElement {

@@ -9,7 +9,7 @@ export const validateTextField = ({ fieldValue, fieldName, isRequired = false }:
   const errors: Record<string, { text: string }> = {}
 
   const errorMessages: Record<string, string> = {
-    Comments: 'Add a comment',
+    Messages: 'Add a message',
     Reason: 'Add a reason',
     Details: 'Add details',
   }
