@@ -1,5 +1,6 @@
 import { test, expect } from '../fixtures'
 import { app } from '../../server/testData'
+import { APPLICATION_STATUS } from '../../server/constants/applicationStatus'
 import CommentsPage from '../pages/commentsPage'
 import auth from '../mockApis/auth'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
@@ -78,4 +79,36 @@ test.describe('Comments Page', () => {
       'Select if this message is for staff only, or for prisoner and staff',
     )
   })
+})
+
+test.describe('Comments Page - closed application', () => {
+  const closedStatuses = [APPLICATION_STATUS.APPROVED, APPLICATION_STATUS.DECLINED]
+
+  for (const status of closedStatuses) {
+    test.describe(`when the application is ${status}`, () => {
+      const closedApp = { ...app, status }
+
+      test.beforeEach(async ({ page, signIn }) => {
+        if (isWiremock) {
+          await resetStubs()
+          await auth.stubSignIn()
+          await prisonApi.stubGetCaseLoads()
+          await managingPrisonerAppsApi.stubGetPrisonerApp({ app: closedApp })
+          await managingPrisonerAppsApi.stubGetComments({ app: closedApp })
+          await managingPrisonerAppsApi.stubGetGroupsAndTypes()
+        }
+
+        await signIn()
+        await page.goto(`/applications/${closedApp.requestedBy.username}/${closedApp.id}/comments`)
+      })
+
+      test('should not display the send message form', async ({ page }) => {
+        const commentsPage = new CommentsPage(page)
+        await expect(commentsPage.commentsSectionHeading()).toBeVisible()
+        await expect(commentsPage.commentForm()).toHaveCount(0)
+        await expect(commentsPage.commentBox()).toHaveCount(0)
+        await expect(commentsPage.submitButton()).toHaveCount(0)
+      })
+    })
+  }
 })
