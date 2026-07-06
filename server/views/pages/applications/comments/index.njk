@@ -33,11 +33,11 @@
     <div class="govuk-body govuk-width-container">
       {% if errors %}
         {% set textFieldError = errors.Messages if errors.Messages else undefined %}
-        {% set messageFieldError = [] %}
+        {% set messageFieldError = undefined %}
         {% if textFieldError %}
           {% set messageFieldError = { text: textFieldError.text } %}
         {% endif %}
-        {% set visibilityErrorMessage = [] %}
+        {% set visibilityErrorMessage = undefined %}
         {% if errors.messageVisibility %}
           {% set visibilityErrorMessage = { text: errors.messageVisibility.text } %}
         {% endif %}
