@@ -52,6 +52,7 @@ export default function commentsRouter({
           createdByType,
         }
       }) ?? []
+
     return res.render(PATHS.APPLICATIONS.COMMENTS, {
       application,
       applicationType,
@@ -72,7 +73,6 @@ export default function commentsRouter({
       return res.redirect(URLS.APPLICATIONS)
     }
 
-    // A closed (approved or declined) application can no longer receive messages.
     if (application.status !== APPLICATION_STATUS.PENDING) {
       return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/comments`)
     }
@@ -115,7 +115,7 @@ export default function commentsRouter({
         isClosed: false,
       })
     }
-    // Messages tab reads the user's selection; anything other than 'prisoner-and-staff' is STAFF_ONLY.
+
     const messageVisibility =
       visibility === 'prisoner-and-staff' ? MessageVisibility.STAFF_AND_PRISONER : MessageVisibility.STAFF_ONLY
 
