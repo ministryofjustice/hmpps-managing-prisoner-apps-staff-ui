@@ -4,6 +4,7 @@ import { Request, Response, Router } from 'express'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 import { MessageVisibility } from '../../constants/messageVisibility'
+import { APPLICATION_STATUS } from '../../constants/applicationStatus'
 
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
@@ -51,11 +52,13 @@ export default function commentsRouter({
           createdByType,
         }
       }) ?? []
+
     return res.render(PATHS.APPLICATIONS.COMMENTS, {
       application,
       applicationType,
       comments: formattedComments,
       title: 'Messages',
+      isClosed: application.status !== APPLICATION_STATUS.PENDING,
     })
   })
 
@@ -64,6 +67,16 @@ export default function commentsRouter({
     const { comment, visibility } = req.body
     const { user } = res.locals
 
+    const application = await managingPrisonerAppsService.getPrisonerApp(`${prisonerId}`, `${applicationId}`, user)
+
+    if (!application) {
+      return res.redirect(URLS.APPLICATIONS)
+    }
+
+    if (application.status !== APPLICATION_STATUS.PENDING) {
+      return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/comments`)
+    }
+
     const errors = validateTextField({ fieldValue: comment, fieldName: 'Messages', isRequired: true })
 
     if (!visibility) {
@@ -71,12 +84,7 @@ export default function commentsRouter({
     }
 
     if (Object.keys(errors).length > 0) {
-      const application = await managingPrisonerAppsService.getPrisonerApp(`${prisonerId}`, `${applicationId}`, user)
       const comments = await managingPrisonerAppsService.getComments(`${prisonerId}`, application.id, user)
-
-      if (!application) {
-        return res.redirect(URLS.APPLICATIONS)
-      }
 
       const applicationType = await getAppType(
         managingPrisonerAppsService,
@@ -104,9 +112,10 @@ export default function commentsRouter({
         comments: formattedComments,
         errors,
         title: 'Messages',
+        isClosed: false,
       })
     }
-    // Messages tab reads the user's selection; anything other than 'prisoner-and-staff' is STAFF_ONLY.
+
     const messageVisibility =
       visibility === 'prisoner-and-staff' ? MessageVisibility.STAFF_AND_PRISONER : MessageVisibility.STAFF_ONLY
 

@@ -42,6 +42,10 @@ export default class CommentsPage extends AbstractPage {
     return this.page.locator('button.govuk-button--primary')
   }
 
+  commentForm(): PageElement {
+    return this.page.locator('#application-comments-form')
+  }
+
   comments(): PageElement {
     return this.page.locator('.app-messages, .app-message')
   }

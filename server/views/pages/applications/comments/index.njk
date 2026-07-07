@@ -62,54 +62,56 @@
           <div class="govuk-!-margin-bottom-4">
             {{ appMessages({ items: comments }) }}
           </div>
-          <form method="POST" id="application-comments-form">
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}"/> {{ govukCharacterCount({
-              name: "comment",
-              id: "comment",
-              maxlength: 1000,
-              threshold: 75,
-              value: comment,
-              label: {
-                text: "Send message",
-                classes: "govuk-label--s govuk-!-margin-bottom-4",
-                isPageHeading: true
-              },
-              errorMessage: messageFieldError
-            }) }}
-            {{ govukRadios({
-              name: "visibility",
-              errorMessage: visibilityErrorMessage if errors.messageVisibility else undefined,
-              fieldset: {
-                legend: {
-                  text: "Who will see this message?",
-                  isPageHeading: true,
-                  classes: "govuk-fieldset__legend--s"
-                }
-              },
-              hint: {
-                text: "This message will be shown to:"
-              },
-              items: [
-                {
-                  value: "staff-only",
-                  text: "Staff only",
-                  checked: visibility === "staff-only"
+          {% if not isClosed %}
+            <form method="POST" id="application-comments-form">
+              <input type="hidden" name="_csrf" value="{{ csrfToken }}"/> {{ govukCharacterCount({
+                name: "comment",
+                id: "comment",
+                maxlength: 1000,
+                threshold: 75,
+                value: comment,
+                label: {
+                  text: "Send message",
+                  classes: "govuk-label--s govuk-!-margin-bottom-4",
+                  isPageHeading: true
                 },
-                {
-                  value: "prisoner-and-staff",
-                  text: "Prisoner and staff",
-                  checked: visibility === "prisoner-and-staff",
-                  hint: {
-                    text: "This will be seen by the prisoner in the Launchpad prisons only"
+                errorMessage: messageFieldError
+              }) }}
+              {{ govukRadios({
+                name: "visibility",
+                errorMessage: visibilityErrorMessage if errors.messageVisibility else undefined,
+                fieldset: {
+                  legend: {
+                    text: "Who will see this message?",
+                    isPageHeading: true,
+                    classes: "govuk-fieldset__legend--s"
                   }
-                }
-              ]
-            }) }}
-            {{ govukButton({
-              text: "Send",
-              classes: "govuk-button--primary"
-            }) }}
-          </form>
+                },
+                hint: {
+                  text: "This message will be shown to:"
+                },
+                items: [
+                  {
+                    value: "staff-only",
+                    text: "Staff only",
+                    checked: visibility === "staff-only"
+                  },
+                  {
+                    value: "prisoner-and-staff",
+                    text: "Prisoner and staff",
+                    checked: visibility === "prisoner-and-staff",
+                    hint: {
+                      text: "This will be seen by the prisoner in the Launchpad prisons only"
+                    }
+                  }
+                ]
+              }) }}
+              {{ govukButton({
+                text: "Send",
+                classes: "govuk-button--primary"
+              }) }}
+            </form>
+          {% endif %}
         </div>
       </div>
     </div>
