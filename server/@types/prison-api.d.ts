@@ -25934,18 +25934,8 @@ export interface operations {
          * @description participationRoles
          * @example ASSIAL
          */
-        participationRoles:
-          | 'ACTINV'
-          | 'ASSIAL'
-          | 'FIGHT'
-          | 'IMPED'
-          | 'PERP'
-          | 'SUSASS'
-          | 'SUSINV'
-          | 'VICT'
-          | 'AI'
-          | 'PAS'
-          | 'AO'
+        participationRoles: // eslint-disable-next-line prettier/prettier
+          'ACTINV' | 'ASSIAL' | 'FIGHT' | 'IMPED' | 'PERP' | 'SUSASS' | 'SUSINV' | 'VICT' | 'AI' | 'PAS' | 'AO'
       }
       header?: never
       path: {
