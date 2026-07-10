@@ -25935,7 +25935,17 @@ export interface operations {
          * @example ASSIAL
          */
         participationRoles:
-          'ACTINV' | 'ASSIAL' | 'FIGHT' | 'IMPED' | 'PERP' | 'SUSASS' | 'SUSINV' | 'VICT' | 'AI' | 'PAS' | 'AO'
+          | 'ACTINV'
+          | 'ASSIAL'
+          | 'FIGHT'
+          | 'IMPED'
+          | 'PERP'
+          | 'SUSASS'
+          | 'SUSINV'
+          | 'VICT'
+          | 'AI'
+          | 'PAS'
+          | 'AO'
       }
       header?: never
       path: {
@@ -26216,7 +26226,14 @@ export interface operations {
         alertCodes?: string
         /** @description Comma separated list of one or more Alert fields */
         sort?:
-          'alertId' | 'bookingId' | 'alertType' | 'alertCode' | 'comment' | 'dateCreated' | 'dateExpires' | 'active'
+          | 'alertId'
+          | 'bookingId'
+          | 'alertType'
+          | 'alertCode'
+          | 'comment'
+          | 'dateCreated'
+          | 'dateExpires'
+          | 'active'
         /**
          * @description Sort order
          * @example DESC
@@ -26376,7 +26393,14 @@ export interface operations {
         alertCodes?: string
         /** @description Comma separated list of one or more Alert fields */
         sort?:
-          'alertId' | 'bookingId' | 'alertType' | 'alertCode' | 'comment' | 'dateCreated' | 'dateExpires' | 'active'
+          | 'alertId'
+          | 'bookingId'
+          | 'alertType'
+          | 'alertCode'
+          | 'comment'
+          | 'dateCreated'
+          | 'dateExpires'
+          | 'active'
         /**
          * @description Sort order
          * @example DESC
