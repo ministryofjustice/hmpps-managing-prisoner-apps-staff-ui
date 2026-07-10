@@ -59,6 +59,26 @@ Object.values(appTypes).forEach(({ id, name }) => {
       await expect(actionAndReplyPage.errorSummary()).toContainText('Add a reason')
     })
 
+    test('should allow navigating to Messages from Action and reply', async ({ page }) => {
+      if (isWiremock) {
+        await managingPrisonerAppsApi.stubGetComments({ app: pendingApplication })
+      }
+
+      const messagesTab = page.locator('.moj-sub-navigation__link:has-text("Messages")')
+      await expect(messagesTab).toHaveAttribute(
+        'href',
+        `/applications/${pendingApplication.requestedBy.username}/${pendingApplication.id}/comments`,
+      )
+
+      await messagesTab.click()
+
+      await expect(page).toHaveURL(
+        new RegExp(`/applications/${pendingApplication.requestedBy.username}/${pendingApplication.id}/comments`),
+      )
+      await expect(page.getByRole('heading', { name: 'Messages and replies' })).toBeVisible()
+      await expect(page.locator('.moj-sub-navigation__item a[aria-current="page"]')).toContainText('Messages')
+    })
+
     test('should successfully submit with APPROVED decision', async ({ page }) => {
       if (isWiremock) {
         await managingPrisonerAppsApi.stubAddAppResponse({ app: pendingApplication, decision: 'APPROVED' })
