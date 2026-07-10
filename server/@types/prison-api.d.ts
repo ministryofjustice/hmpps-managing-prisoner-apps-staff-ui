@@ -26226,7 +26226,14 @@ export interface operations {
         alertCodes?: string
         /** @description Comma separated list of one or more Alert fields */
         sort?:
-          'alertId' | 'bookingId' | 'alertType' | 'alertCode' | 'comment' | 'dateCreated' | 'dateExpires' | 'active'
+          | 'alertId'
+          | 'bookingId'
+          | 'alertType'
+          | 'alertCode'
+          | 'comment'
+          | 'dateCreated'
+          | 'dateExpires'
+          | 'active'
         /**
          * @description Sort order
          * @example DESC
