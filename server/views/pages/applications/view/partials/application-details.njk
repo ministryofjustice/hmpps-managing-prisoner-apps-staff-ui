@@ -11,7 +11,7 @@
   key: { text: "Department" },
   value: { text: application.assignedGroup.name },
   actions: {
-    items: [] if isClosed else [{
+    items: [] if isClosed or not isForwardable else [{
       href: "/applications/" + application.requestedBy.username + "/" + application.id + "/forward",
       text: "Forward",
       visuallyHiddenText: "department"

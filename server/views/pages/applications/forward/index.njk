@@ -13,7 +13,7 @@
   <div class="govuk-body govuk-width-container">
     {{ govukBackLink({
       text: "Back",
-      href: "/applications/"+ application.requestedBy.username + "/" + application.id 
+      href: "/applications/"+ application.requestedBy.username + "/" + application.id
     }) }}
 
     <div class="govuk-grid-row">
@@ -69,7 +69,7 @@
               isPageHeading: true
             },
             hint: {
-              text: "This is added to the comments section for other staff to see"
+              text: "This is added to the messages section for other staff to see"
             },
             errorMessage: errors.forwardingReason
           }) }}
@@ -83,4 +83,3 @@
     </div>
   </div>
 {% endblock %}
-  
