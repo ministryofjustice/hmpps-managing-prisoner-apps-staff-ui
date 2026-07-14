@@ -149,7 +149,7 @@ export default function viewAppsRouter({
         (application?.requests?.[0] as Partial<{ organisation?: string; company?: string }>)?.company?.trim() ||
         '',
       isGeneric: applicationType.genericType || applicationType.genericForm,
-      canForward: departments?.length > 1,
+      isForwardable: departments?.length > 1,
       documents,
     })
   })
