@@ -164,7 +164,15 @@ export default {
       },
     })
   },
-  stubGetDepartments: ({ appType }: { appType: number }): SuperAgentRequest => {
+  stubGetDepartments: ({
+    appType,
+    departmentCount,
+  }: {
+    appType: number
+    departmentCount?: number
+  }): SuperAgentRequest => {
+    const responseDepartments = departmentCount ? departments.slice(0, departmentCount) : departments
+
     return stubFor({
       request: {
         method: 'GET',
@@ -173,7 +181,7 @@ export default {
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: departments,
+        jsonBody: responseDepartments,
       },
     })
   },

@@ -30,11 +30,13 @@ export async function visitApplicationPage({
   signIn,
   application,
   documentUuids = [],
+  departmentCount,
 }: {
   page: Page
   signIn: () => Promise<void>
   application: typeof app
   documentUuids?: string[]
+  departmentCount?: number
 }) {
   if (isWiremock) {
     await resetStubs()
@@ -44,6 +46,10 @@ export async function visitApplicationPage({
     await personalRelationships.stubGetRelationships('OFFICIAL_RELATIONSHIP')
     await personalRelationships.stubGetRelationships('SOCIAL_RELATIONSHIP')
     await managingPrisonerAppsApi.stubGetGroupsAndTypes()
+    await managingPrisonerAppsApi.stubGetDepartments({
+      appType: application.applicationType.id,
+      departmentCount,
+    })
     await managingPrisonerAppsApi.stubGetPrisonerApp({ app: application })
     await Promise.all(
       documentUuids.flatMap(uuid => [

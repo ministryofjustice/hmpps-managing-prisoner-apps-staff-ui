@@ -113,6 +113,7 @@ export default function viewAppsRouter({
   })
 
   router.get(`${URLS.APPLICATIONS}/:prisonerId/:applicationId`, async (req: Request, res: Response) => {
+    const { user } = res.locals
     const { application, applicationType, documents } = await getValidApplicationOrRedirect(
       req,
       res,
@@ -125,6 +126,8 @@ export default function viewAppsRouter({
     logger.info(`Application ${application.id} has ${application.files?.length || 0} files`)
     logger.info(`Fetched ${documents?.length || 0} documents`)
     logger.info(`Documents:`, JSON.stringify(documents, null, 2))
+
+    const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
 
     return res.render(PATHS.APPLICATIONS.VIEW, {
       title: applicationType.name,
@@ -146,6 +149,7 @@ export default function viewAppsRouter({
         (application?.requests?.[0] as Partial<{ organisation?: string; company?: string }>)?.company?.trim() ||
         '',
       isGeneric: applicationType.genericType || applicationType.genericForm,
+      isForwardable: departments?.length > 1,
       documents,
     })
   })
