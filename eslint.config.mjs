@@ -1,5 +1,9 @@
 import hmppsConfig from '@ministryofjustice/eslint-config-hmpps'
 
 export default hmppsConfig({
-  extraIgnorePaths: ['integration_tests/Cypress (deprecated)/**', 'integration_tests/playwright_tests/reports/**'],
+  extraIgnorePaths: [
+    'integration_tests/Cypress (deprecated)/**',
+    'integration_tests/playwright_tests/reports/**',
+    'server/@types/prison-api.d.ts',
+  ],
 })
