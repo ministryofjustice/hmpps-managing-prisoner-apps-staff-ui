@@ -56,14 +56,6 @@ export const appSearchResponse: ViewAppsListResponse = {
         establishment: {
           id: 'TEST_ESTABLISHMENT_FIRST',
           name: 'ESTABLISHMENT_NAME_1',
-          appTypes: [
-            'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
-            'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT',
-            'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
-            'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS',
-            'PIN_PHONE_REMOVE_CONTACT',
-            'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP',
-          ],
           defaultDepartments: false,
           blacklistedAppGroups: [],
           blacklistedAppTypes: [],
@@ -89,14 +81,6 @@ export const appSearchResponse: ViewAppsListResponse = {
         establishment: {
           id: 'TEST_ESTABLISHMENT_FIRST',
           name: 'ESTABLISHMENT_NAME_1',
-          appTypes: [
-            'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
-            'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT',
-            'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
-            'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS',
-            'PIN_PHONE_REMOVE_CONTACT',
-            'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP',
-          ],
           defaultDepartments: false,
           blacklistedAppGroups: [],
           blacklistedAppTypes: [],
@@ -122,14 +106,6 @@ export const appSearchResponse: ViewAppsListResponse = {
         establishment: {
           id: 'TEST_ESTABLISHMENT_FIRST',
           name: 'ESTABLISHMENT_NAME_1',
-          appTypes: [
-            'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT',
-            'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT',
-            'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS',
-            'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS',
-            'PIN_PHONE_REMOVE_CONTACT',
-            'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP',
-          ],
           defaultDepartments: false,
           blacklistedAppGroups: [],
           blacklistedAppTypes: [],
