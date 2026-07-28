@@ -3,7 +3,6 @@ import { components } from './managing-prisoner-apps-api'
 export type ApplicationDto = components['schemas']['AppResponseDtoObjectObject']
 export type ApplicationSearchPayload = components['schemas']['AppsSearchQueryDto']
 export type AppResponsePayload = components['schemas']['AppDecisionRequestDto']
-export type AppTypeResponse = components['schemas']['ApplicationTypeResponse']
 export type AssignedGroup = components['schemas']['AssignedGroupDto']
 export type CommentDto = components['schemas']['CommentResponseDtoObject']
 export type Department = components['schemas']['AssignedGroupDto']
@@ -97,4 +96,10 @@ export interface Group {
   id: number
   name: string
   appTypes: ApplicationType[]
+}
+
+export interface AppTypeResponse {
+  key: string
+  value: string
+  name: string
 }

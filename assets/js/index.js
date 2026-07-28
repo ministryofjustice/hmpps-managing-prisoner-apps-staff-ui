@@ -110,20 +110,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const closed = document.getElementById('status-2')
   const approved = document.getElementById('status-closed')
   const declined = document.getElementById('status-closed-2')
+  const rejected = document.getElementById('status-closed-3')
 
-  if (!closed || !approved || !declined) {
+  if (!closed || !approved || !declined || !rejected) {
     return
   }
 
   closed.addEventListener('change', () => {
     if (closed.checked) {
-      if (!approved.checked && !declined.checked) {
+      if (!approved.checked && !declined.checked && !rejected.checked) {
         approved.checked = true
         declined.checked = true
+        rejected.checked = true
       }
     } else {
       approved.checked = false
       declined.checked = false
+      rejected.checked = false
     }
   })
 
@@ -131,10 +134,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!closed.checked) {
       approved.checked = false
       declined.checked = false
+      rejected.checked = false
     }
-    if (closed.checked && !approved.checked && !declined.checked) {
+    if (closed.checked && !approved.checked && !declined.checked && !rejected.checked) {
       approved.checked = true
       declined.checked = true
+      rejected.checked = true
     }
   })
 })
