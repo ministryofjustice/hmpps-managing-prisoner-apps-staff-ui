@@ -63,7 +63,7 @@ export const checkSelectedFilters = (selectedFilters: SelectedFilters, selectedF
   return Boolean(prisonerId || groups.length > 0 || types.length > 0 || priority.length > 0)
 }
 
-export type AllowedStatus = 'APPROVED' | 'DECLINED' | 'PENDING'
+export type AllowedStatus = 'APPROVED' | 'DECLINED' | 'REJECTED' | 'PENDING'
 export type UiStatus = AllowedStatus | 'CLOSED'
 
 export interface ParsedFilters {
@@ -98,17 +98,17 @@ export function parseApplicationFilters(req: Request): ParsedFilters {
 
   let status: AllowedStatus[] = statusArray
     .map(s => s.toString().toUpperCase())
-    .filter((s): s is AllowedStatus => ['APPROVED', 'DECLINED', 'PENDING'].includes(s))
+    .filter((s): s is AllowedStatus => ['APPROVED', 'DECLINED', 'REJECTED', 'PENDING'].includes(s))
 
   if (clearFilters) {
-    status = ['PENDING', 'APPROVED', 'DECLINED']
+    status = ['PENDING', 'APPROVED', 'DECLINED', 'REJECTED']
     delete req.session.listFilters
   } else if (status.length === 0) {
     status = ['PENDING']
   }
 
   const selectedStatusValues: UiStatus[] = clearFilters ? [] : [...status]
-  if (!clearFilters && (status.includes('APPROVED') || status.includes('DECLINED'))) {
+  if (!clearFilters && (status.includes('APPROVED') || status.includes('DECLINED') || status.includes('REJECTED'))) {
     selectedStatusValues.push('CLOSED')
   }
 
@@ -180,6 +180,8 @@ export function buildSelectedTags(
             text = 'Closed (Approved)'
           } else if (s === 'DECLINED') {
             text = 'Closed (Declined)'
+          } else if (s === 'REJECTED') {
+            text = 'Closed (Rejected)'
           } else {
             text = s.charAt(0) + s.slice(1).toLowerCase()
           }
