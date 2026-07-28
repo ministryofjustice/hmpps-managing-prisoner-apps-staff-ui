@@ -16,7 +16,10 @@ export const formatApplicationHistory = (history: History[], comments: Comment[]
 
     const responseMessage =
       historyItem.entityType === APPLICATION_HISTORY_ENTITY_TYPES.RESPONSE
-        ? responses.find(item => item?.id === historyItem.entityId)?.reason || null
+        ? (() => {
+            const response = responses.find(item => item?.id === historyItem.entityId)
+            return response?.reason?.trim() || response?.rejectionReason?.trim() || null
+          })()
         : null
 
     return {

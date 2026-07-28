@@ -4,7 +4,7 @@ describe('validateActionAndReply', () => {
   it('should return an error if no action is selected', () => {
     const errors = validateActionAndReply('', 'Some reason')
 
-    expect(errors.selectAction).toEqual({ text: 'Select an action' })
+    expect(errors.selectAction).toEqual({ text: 'Choose an action to close this application' })
   })
 
   it('should return an error if the actionReplyReason is longer than 1000 characters', () => {
@@ -36,5 +36,23 @@ describe('validateActionAndReply', () => {
     const errors = validateActionAndReply('DECLINED', undefined)
 
     expect(errors.actionReplyReason).toEqual({ text: 'Add a reason' })
+  })
+
+  it('should return an error if action is "REJECTED" and rejectedReason is empty', () => {
+    const errors = validateActionAndReply('REJECTED', 'Some reason', '')
+
+    expect(errors.rejectedReason).toEqual({ text: 'Choose the reason for this rejected application' })
+  })
+
+  it('should return an error if action is "REJECTED" and rejectedReason is not provided', () => {
+    const errors = validateActionAndReply('REJECTED', 'Some reason')
+
+    expect(errors.rejectedReason).toEqual({ text: 'Choose the reason for this rejected application' })
+  })
+
+  it('should not return an error if action is "REJECTED" and rejectedReason is provided', () => {
+    const errors = validateActionAndReply('REJECTED', 'Some reason', 'Prisoner used the wrong app')
+
+    expect(errors.rejectedReason).toBeUndefined()
   })
 })

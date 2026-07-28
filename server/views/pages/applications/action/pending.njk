@@ -1,15 +1,41 @@
 <h2 class="govuk-heading-m">Action this application</h2>
 <p class="govuk-body">This action and its reason might be seen by the prisoner.</p>
-    
+
 <form method="POST" id="action-and-reply-form">
   <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-    
+  {% set rejectedReasonItems = [
+    {
+      value: "Prisoner used the wrong app",
+      text: "Prisoner used the wrong app",
+      checked: selectedRejectedReason == "Prisoner used the wrong app"
+    },
+    {
+      value: "Prisoner has already sent this app",
+      text: "Prisoner has already sent this app",
+      checked: selectedRejectedReason == "Prisoner has already sent this app"
+    },
+    {
+      value: "Prisoner sent an abusive app",
+      text: "Prisoner sent an abusive app",
+      checked: selectedRejectedReason == "Prisoner sent an abusive app"
+    }
+  ] %}
+
+  {% set rejectedReasonHtml %}
+    {{ govukRadios({
+      idPrefix: "rejectedReason",
+      name: "rejectedReason",
+      items: rejectedReasonItems,
+      errorMessage: errors.rejectedReason
+    }) }}
+  {% endset %}
+
   {{ govukRadios({
     name: "decision",
-    value: selectAction,
+    value: selectedAction,
     fieldset: {
       legend: {
-        text: "Select an action",
+        text: "Choose an action to close this application",
         isPageHeading: false,
         classes: "govuk-fieldset__legend--s"
       }
@@ -24,11 +50,22 @@
         value: "DECLINED",
         text: "Declined",
         checked: selectedAction == "DECLINED"
+      },
+      {
+        value: "REJECTED",
+        text: "Rejected",
+        checked: selectedAction == "REJECTED",
+        hint: {
+          text: "Use this for wrong, duplicate and abusive apps"
+        },
+        conditional: {
+          html: rejectedReasonHtml
+        }
       }
     ],
     errorMessage: errors.selectAction
   }) }}
-        
+
   {% set characterCountConfig = {
     name: "reason",
     id: "action-and-reply-reason",
@@ -58,11 +95,12 @@
     } %}
   {% endif %}
 
-  {{ govukCharacterCount(characterCountConfig) }}
+  <div id="reason-container" {% if selectedAction == "REJECTED" %}style="display: none;"{% endif %}>
+    {{ govukCharacterCount(characterCountConfig) }}
+  </div>
 
   {{ govukButton({
     text: "Save",
     classes: "govuk-button--primary"
   }) }}
 </form>
- 
