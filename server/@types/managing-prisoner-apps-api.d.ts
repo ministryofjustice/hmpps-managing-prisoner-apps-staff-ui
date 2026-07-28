@@ -524,26 +524,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/v1/establishments/apps/types': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /**
-     * Get app types of establishment.
-     * @description This api endpoint is for getting app types by logged user active case load. Requires role ROLE_MANAGING_PRISONER_APPS, ROLE_PRISON
-     */
-    get: operations['getAppTypesByEstablishment']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/subject-access-request': {
     parameters: {
       query?: never
@@ -556,6 +536,42 @@ export interface paths {
      * @description Requires role SAR_DATA_ACCESS or additional role as specified by hmpps.sar.additionalAccessRole configuration.
      */
     get: operations['getSarContentByReference']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/subject-access-request/template': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['getServiceTemplate']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/sar/attachments/{documentId}/file': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get attachment file for SAR
+     * @description Retrieves an attachment file from the Document API. Requires ROLE_SAR_DATA_ACCESS or ROLE_DOCUMENT_READER
+     */
+    get: operations['getAttachmentFile']
     put?: never
     post?: never
     delete?: never
@@ -623,7 +639,6 @@ export interface components {
       /** Format: date-time */
       lastModifiedDate?: string | null
       lastModifiedBy?: string | null
-      comments?: string[] | null
       requests: {
         [key: string]: unknown
       }[]
@@ -631,9 +646,8 @@ export interface components {
       requestedByFirstName: string
       requestedByLastName: string
       /** @enum {string} */
-      status: 'PENDING' | 'APPROVED' | 'DECLINED'
+      status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'REJECTED'
       establishmentId: string
-      responses?: string[] | null
       firstNightCenter: boolean
       files: components['schemas']['FileResponseDto'][]
     }
@@ -699,8 +713,9 @@ export interface components {
     }
     AppDecisionRequestDto: {
       reason: string
+      rejectionReason?: string | null
       /** @enum {string} */
-      decision: 'APPROVED' | 'DECLINED'
+      decision: 'APPROVED' | 'DECLINED' | 'REJECTED'
       appliesTo: string[]
     }
     AppDecisionResponseDtoObject: {
@@ -710,8 +725,9 @@ export interface components {
       /** Format: uuid */
       appId: string
       reason: string
+      rejectionReason?: string | null
       /** @enum {string} */
-      decision: 'APPROVED' | 'DECLINED'
+      decision: 'APPROVED' | 'DECLINED' | 'REJECTED'
       /** Format: date-time */
       createdDate: string
       createdBy: unknown
@@ -769,7 +785,7 @@ export interface components {
       requestedByFirstName: string
       requestedByLastName: string
       /** @enum {string} */
-      status: 'PENDING' | 'APPROVED' | 'DECLINED'
+      status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'REJECTED'
       establishmentId: string
       reason?: string | null
     }
@@ -778,7 +794,7 @@ export interface components {
       page: number
       /** Format: int64 */
       size: number
-      status: ('PENDING' | 'APPROVED' | 'DECLINED')[]
+      status: ('PENDING' | 'APPROVED' | 'DECLINED' | 'REJECTED')[]
       applicationTypes?: number[] | null
       requestedBy?: string | null
       assignedGroups?: string[] | null
@@ -862,7 +878,7 @@ export interface components {
       /** Format: date-time */
       lastUpdatedDate: string
       /** @enum {string} */
-      status: 'PENDING' | 'APPROVED' | 'DECLINED'
+      status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'REJECTED'
     }
     PrisonerAppsPage: {
       /** Format: int32 */
@@ -899,22 +915,9 @@ export interface components {
     EstablishmentDto: {
       id: string
       name: string
-      appTypes: (
-        | 'PIN_PHONE_EMERGENCY_CREDIT_TOP_UP'
-        | 'PIN_PHONE_ADD_NEW_SOCIAL_CONTACT'
-        | 'PIN_PHONE_ADD_NEW_OFFICIAL_CONTACT'
-        | 'PIN_PHONE_REMOVE_CONTACT'
-        | 'PIN_PHONE_CREDIT_SWAP_VISITING_ORDERS'
-        | 'PIN_PHONE_SUPPLY_LIST_OF_CONTACTS'
-      )[]
       defaultDepartments: boolean
       blacklistedAppGroups: number[]
       blacklistedAppTypes: number[]
-    }
-    AppTypeResponse: {
-      key: string
-      value: string
-      name: string
     }
     Attachment: {
       /**
@@ -932,7 +935,7 @@ export interface components {
        * Format: int32
        * @description The size of the attachment file in bytes
        */
-      filesize: number
+      filesize?: number | null
       /** @description The filename of attachment file */
       filename: string
       /** @description The additional headers to use when calling the url for fetching this attachment */
@@ -2126,44 +2129,6 @@ export interface operations {
       }
     }
   }
-  getAppTypesByEstablishment: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Establishment add successfully */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AppTypeResponse'][]
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden to access this endpoint */
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
   getSarContentByReference: {
     parameters: {
       query?: {
@@ -2234,6 +2199,103 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getServiceTemplate: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Request successfully processed - return template file content */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'plain/text': string
+        }
+      }
+      /** @description The client does not have authorisation to make this request */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unexpected error occurred */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getAttachmentFile: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        /** @description The document ID to retrieve */
+        documentId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description File content returned */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/octet-stream': unknown
+        }
+      }
+      /** @description Unauthorised - valid token required */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/octet-stream': string
+        }
+      }
+      /** @description Forbidden - SAR_DATA_ACCESS required */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/octet-stream': string
+        }
+      }
+      /** @description Document not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/octet-stream': string
         }
       }
     }
