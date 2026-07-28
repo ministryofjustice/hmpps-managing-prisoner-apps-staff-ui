@@ -108,10 +108,7 @@ export function parseApplicationFilters(req: Request): ParsedFilters {
   }
 
   const selectedStatusValues: UiStatus[] = clearFilters ? [] : [...status]
-  if (
-    !clearFilters &&
-    (status.includes('APPROVED') || status.includes('DECLINED') || status.includes('REJECTED'))
-  ) {
+  if (!clearFilters && (status.includes('APPROVED') || status.includes('DECLINED') || status.includes('REJECTED'))) {
     selectedStatusValues.push('CLOSED')
   }
 
