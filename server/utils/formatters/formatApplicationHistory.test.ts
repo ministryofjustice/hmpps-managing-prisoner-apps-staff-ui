@@ -89,6 +89,24 @@ describe(formatApplicationHistory.name, () => {
     expect(formattedResponseItem!.commentMessage).toBeNull()
   })
 
+  it('uses rejectionReason for responseMessage when reason is blank', () => {
+    ;(format as jest.Mock).mockReturnValue('formatted')
+
+    const responseHistoryItem = getHistoryItem('RESPONSE')
+    const response = {
+      ...appDecisionResponse({ decision: 'DECLINED', reason: '' }),
+      decision: 'REJECTED' as const,
+      rejectionReason: 'Prisoner sent an abusive app',
+      id: responseHistoryItem.entityId,
+    }
+
+    const result = formatApplicationHistory(appHistoryResponse, [], [response])
+
+    const formattedResponseItem = result.find(r => r.id === responseHistoryItem.id)
+    expect(formattedResponseItem).toBeDefined()
+    expect(formattedResponseItem!.responseMessage).toBe('Prisoner sent an abusive app')
+  })
+
   it('sets responseMessage to null when response is not found', () => {
     ;(format as jest.Mock).mockReturnValue('formatted')
 

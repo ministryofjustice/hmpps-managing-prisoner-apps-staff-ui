@@ -77,7 +77,7 @@ export default function actionAppRouter({
 
   router.post('/applications/:prisonerId/:applicationId/reply', async (req: Request, res: Response) => {
     const { prisonerId, applicationId } = req.params
-    const { decision, reason } = req.body
+    const { decision, reason, rejectedReason } = req.body
     const { user } = res.locals
 
     const application = await managingPrisonerAppsService.getPrisonerApp(`${prisonerId}`, `${applicationId}`, user)
@@ -88,7 +88,7 @@ export default function actionAppRouter({
       user,
       application.applicationType.id.toString(),
     )
-    const errors = validateActionAndReply(decision, reason)
+    const errors = validateActionAndReply(decision, reason, rejectedReason)
     const isAppPending = application.status === APPLICATION_STATUS.PENDING
     const [request] = application.requests ?? []
 
@@ -98,13 +98,15 @@ export default function actionAppRouter({
         applicationType,
         isAppPending,
         selectedAction: decision,
+        selectedRejectedReason: rejectedReason,
         textareaValue: reason,
         errors,
       })
     }
 
     const payload: AppResponsePayload = {
-      reason,
+      reason: decision === 'REJECTED' ? rejectedReason : reason,
+      rejectionReason: decision === 'REJECTED' ? rejectedReason : null,
       decision,
       appliesTo: [request.id],
     }

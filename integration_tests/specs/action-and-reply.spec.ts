@@ -51,7 +51,7 @@ Object.values(appTypes).forEach(({ id, name }) => {
     test('should validate action and reason before submission', async ({ page }) => {
       const actionAndReplyPage = new ActionAndReplyPage(page)
       await actionAndReplyPage.saveButton().click()
-      await expect(actionAndReplyPage.errorSummary()).toContainText('Select an action')
+      await expect(actionAndReplyPage.errorSummary()).toContainText('Choose an action to close this application')
 
       await actionAndReplyPage.selectAction('DECLINED').check()
       await actionAndReplyPage.reasonInput().clear()

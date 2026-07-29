@@ -788,6 +788,7 @@ export interface components {
       status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'REJECTED'
       establishmentId: string
       reason?: string | null
+      rejectionReason?: string | null
     }
     AppsSearchQueryDto: {
       /** Format: int64 */

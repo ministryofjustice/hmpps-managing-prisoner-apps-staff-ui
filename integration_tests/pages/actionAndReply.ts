@@ -19,7 +19,7 @@ export default class ActionAndReplyPage extends AbstractPage {
   }
 
   actionRadios(): PageElement {
-    return this.page.locator('.govuk-radios')
+    return this.page.locator('.govuk-radios').first()
   }
 
   selectAction(action: 'APPROVED' | 'DECLINED'): PageElement {
