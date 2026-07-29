@@ -43,6 +43,10 @@
         {% set errorList = errorList.concat([{ text: errors.actionReplyReason.text, href: "#actionReplyReason" }]) %}
       {% endif %}
 
+      {% if errors.rejectedReason %}
+        {% set errorList = errorList.concat([{ text: errors.rejectedReason.text, href: "#rejectedReason" }]) %}
+      {% endif %}
+
       {{ govukErrorSummary({
         titleText: "There is a problem",
         errorList: errorList
@@ -63,7 +67,7 @@
         {% else %}
           {% include "./closed.njk" %}
         {% endif %}
-       </div> 
+       </div>
     </div>
   </div>
 {% endblock %}

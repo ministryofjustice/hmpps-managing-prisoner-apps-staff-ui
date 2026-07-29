@@ -206,6 +206,29 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 document.addEventListener('DOMContentLoaded', () => {
+  const actionForm = document.getElementById('action-and-reply-form')
+  const reasonContainer = document.getElementById('reason-container')
+
+  if (!actionForm || !reasonContainer) {
+    return
+  }
+
+  const toggleReasonVisibility = () => {
+    const checkedRadio = actionForm.querySelector('input[name="decision"]:checked')
+    reasonContainer.style.display = checkedRadio && checkedRadio.value === 'REJECTED' ? 'none' : 'block'
+  }
+
+  actionForm.addEventListener('change', event => {
+    const { target } = event
+    if (target instanceof HTMLInputElement && target.name === 'decision') {
+      toggleReasonVisibility()
+    }
+  })
+
+  toggleReasonVisibility()
+})
+
+document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     const prisonerAndStaffRadio = document.querySelector('input[name="visibility"][value="prisoner-and-staff"]')
     const triggerButton = document.getElementById('visibility-modal-trigger')
