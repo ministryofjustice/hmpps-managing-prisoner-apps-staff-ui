@@ -26,7 +26,14 @@
       idPrefix: "rejectedReason",
       name: "rejectedReason",
       items: rejectedReasonItems,
-      errorMessage: errors.rejectedReason
+      errorMessage: errors.rejectedReason,
+      fieldset: {
+        legend: {
+          text: "Reason for rejection",
+          classes: "govuk-fieldset__legend--s",
+          isPageHeading: false
+        }
+      }
     }) }}
   {% endset %}
 
