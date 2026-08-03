@@ -201,9 +201,7 @@ test.describe('Action and Reply Page - REJECTED decision', () => {
     await actionAndReplyPage.selectAction('REJECTED').check()
     await actionAndReplyPage.rejectedReasonRadio('Prisoner sent an abusive app').check()
     await actionAndReplyPage.saveButton().click()
-    await expect(page).toHaveURL(
-      new RegExp(`/applications/${pendingApp.requestedBy.username}/${pendingApp.id}/reply`),
-    )
+    await expect(page).toHaveURL(new RegExp(`/applications/${pendingApp.requestedBy.username}/${pendingApp.id}/reply`))
   })
 
   test('should successfully submit with REJECTED and "Prisoner used the wrong app"', async ({ page }) => {
@@ -217,9 +215,7 @@ test.describe('Action and Reply Page - REJECTED decision', () => {
     await actionAndReplyPage.selectAction('REJECTED').check()
     await actionAndReplyPage.rejectedReasonRadio('Prisoner used the wrong app').check()
     await actionAndReplyPage.saveButton().click()
-    await expect(page).toHaveURL(
-      new RegExp(`/applications/${pendingApp.requestedBy.username}/${pendingApp.id}/reply`),
-    )
+    await expect(page).toHaveURL(new RegExp(`/applications/${pendingApp.requestedBy.username}/${pendingApp.id}/reply`))
   })
 
   test('should successfully submit with REJECTED and "Prisoner has already sent this app"', async ({ page }) => {
@@ -233,9 +229,7 @@ test.describe('Action and Reply Page - REJECTED decision', () => {
     await actionAndReplyPage.selectAction('REJECTED').check()
     await actionAndReplyPage.rejectedReasonRadio('Prisoner has already sent this app').check()
     await actionAndReplyPage.saveButton().click()
-    await expect(page).toHaveURL(
-      new RegExp(`/applications/${pendingApp.requestedBy.username}/${pendingApp.id}/reply`),
-    )
+    await expect(page).toHaveURL(new RegExp(`/applications/${pendingApp.requestedBy.username}/${pendingApp.id}/reply`))
   })
 
   test('should show all three valid rejected reason options', async ({ page }) => {
@@ -275,7 +269,6 @@ test.describe('Action and Reply Page - closed application decision summary', () 
     await signIn()
     await page.goto(`/applications/${declinedApp.requestedBy.username}/${declinedApp.id}/reply`)
 
-    const actionAndReplyPage = new ActionAndReplyPage(page)
     const webSummary = page.locator('.govuk-summary-list').first()
     await expect(webSummary).toBeVisible()
     await expect(webSummary.locator('.govuk-summary-list__value').nth(0)).toContainText('Declined')
@@ -302,7 +295,6 @@ test.describe('Action and Reply Page - closed application decision summary', () 
     await signIn()
     await page.goto(`/applications/${rejectedApp.requestedBy.username}/${rejectedApp.id}/reply`)
 
-    const actionAndReplyPage = new ActionAndReplyPage(page)
     const webSummary = page.locator('.govuk-summary-list').first()
     await expect(webSummary).toBeVisible()
     await expect(webSummary.locator('.govuk-summary-list__value').nth(0)).toContainText('Rejected')
@@ -558,9 +550,7 @@ test.describe('Action and Reply Page - REJECTED complete journey', () => {
       await actionAndReplyPage.rejectedReasonRadio(rejectionReason).check()
       await actionAndReplyPage.saveButton().click()
 
-      await expect(page).toHaveURL(
-        new RegExp(`/applications/${app.requestedBy.username}/${app.id}/reply`),
-      )
+      await expect(page).toHaveURL(new RegExp(`/applications/${app.requestedBy.username}/${app.id}/reply`))
 
       const webSummary = page.locator('.govuk-summary-list').first()
       await expect(webSummary).toBeVisible()
