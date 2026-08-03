@@ -22,8 +22,16 @@ export default class ActionAndReplyPage extends AbstractPage {
     return this.page.locator('.govuk-radios').first()
   }
 
-  selectAction(action: 'APPROVED' | 'DECLINED'): PageElement {
+  selectAction(action: 'APPROVED' | 'DECLINED' | 'REJECTED'): PageElement {
     return this.page.locator(`input[name="decision"][value="${action}"]`)
+  }
+
+  rejectedReasonRadio(reason: string): PageElement {
+    return this.page.locator(`input[name="rejectedReason"][value="${reason}"]`)
+  }
+
+  rejectedReasonError(): PageElement {
+    return this.page.locator('#rejectedReason-error')
   }
 
   reasonInput(): PageElement {
