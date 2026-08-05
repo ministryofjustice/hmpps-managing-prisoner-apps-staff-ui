@@ -269,10 +269,10 @@ test.describe('Action and Reply Page - closed application decision summary', () 
     await signIn()
     await page.goto(`/applications/${declinedApp.requestedBy.username}/${declinedApp.id}/reply`)
 
-    const webSummary = page.locator('.govuk-summary-list').first()
-    await expect(webSummary).toBeVisible()
-    await expect(webSummary.locator('.govuk-summary-list__value').nth(0)).toContainText('Declined')
-    await expect(webSummary.locator('.govuk-summary-list__value').nth(1)).toContainText('Does not meet the criteria')
+    const declinedSummaryPage = new ActionAndReplyPage(page)
+    await expect(declinedSummaryPage.summaryList()).toBeVisible()
+    await expect(declinedSummaryPage.summaryDecisionValue()).toContainText('Declined')
+    await expect(declinedSummaryPage.summaryReasonValue()).toContainText('Does not meet the criteria')
   })
 
   test('should display REJECTED decision and rejection reason in summary list', async ({ page, signIn }) => {
@@ -295,10 +295,10 @@ test.describe('Action and Reply Page - closed application decision summary', () 
     await signIn()
     await page.goto(`/applications/${rejectedApp.requestedBy.username}/${rejectedApp.id}/reply`)
 
-    const webSummary = page.locator('.govuk-summary-list').first()
-    await expect(webSummary).toBeVisible()
-    await expect(webSummary.locator('.govuk-summary-list__value').nth(0)).toContainText('Rejected')
-    await expect(webSummary.locator('.govuk-summary-list__value').nth(1)).toContainText('Prisoner used the wrong app')
+    const rejectedSummaryPage = new ActionAndReplyPage(page)
+    await expect(rejectedSummaryPage.summaryList()).toBeVisible()
+    await expect(rejectedSummaryPage.summaryDecisionValue()).toContainText('Rejected')
+    await expect(rejectedSummaryPage.summaryReasonValue()).toContainText('Prisoner used the wrong app')
   })
 
   test('should display APPROVED decision in summary list', async ({ page, signIn }) => {
@@ -316,9 +316,9 @@ test.describe('Action and Reply Page - closed application decision summary', () 
     await signIn()
     await page.goto(`/applications/${approvedApp.requestedBy.username}/${approvedApp.id}/reply`)
 
-    const actionAndReplyPage = new ActionAndReplyPage(page)
-    await expect(actionAndReplyPage.summaryList()).toBeVisible()
-    await expect(actionAndReplyPage.summaryListValues().first()).toContainText('Approved')
+    const approvedSummaryPage = new ActionAndReplyPage(page)
+    await expect(approvedSummaryPage.summaryList()).toBeVisible()
+    await expect(approvedSummaryPage.summaryDecisionValue()).toContainText('Approved')
   })
 })
 
@@ -388,9 +388,8 @@ test.describe('Action and Reply Page - APPROVED complete journey', () => {
 
     await expect(page).toHaveURL(new RegExp(`/applications/${app.requestedBy.username}/${app.id}/reply`))
 
-    const webSummary = page.locator('.govuk-summary-list').first()
-    await expect(webSummary).toBeVisible()
-    await expect(webSummary.locator('.govuk-summary-list__value').nth(0)).toContainText('Approved')
+    await expect(actionAndReplyPage.summaryList()).toBeVisible()
+    await expect(actionAndReplyPage.summaryDecisionValue()).toContainText('Approved')
   })
 })
 
@@ -462,10 +461,9 @@ test.describe('Action and Reply Page - DECLINED complete journey', () => {
 
     await expect(page).toHaveURL(new RegExp(`/applications/${app.requestedBy.username}/${app.id}/reply`))
 
-    const webSummary = page.locator('.govuk-summary-list').first()
-    await expect(webSummary).toBeVisible()
-    await expect(webSummary.locator('.govuk-summary-list__value').nth(0)).toContainText('Declined')
-    await expect(webSummary.locator('.govuk-summary-list__value').nth(1)).toContainText(declineReason)
+    await expect(actionAndReplyPage.summaryList()).toBeVisible()
+    await expect(actionAndReplyPage.summaryDecisionValue()).toContainText('Declined')
+    await expect(actionAndReplyPage.summaryReasonValue()).toContainText(declineReason)
   })
 })
 
@@ -552,10 +550,9 @@ test.describe('Action and Reply Page - REJECTED complete journey', () => {
 
       await expect(page).toHaveURL(new RegExp(`/applications/${app.requestedBy.username}/${app.id}/reply`))
 
-      const webSummary = page.locator('.govuk-summary-list').first()
-      await expect(webSummary).toBeVisible()
-      await expect(webSummary.locator('.govuk-summary-list__value').nth(0)).toContainText('Rejected')
-      await expect(webSummary.locator('.govuk-summary-list__value').nth(1)).toContainText(rejectionReason)
+      await expect(actionAndReplyPage.summaryList()).toBeVisible()
+      await expect(actionAndReplyPage.summaryDecisionValue()).toContainText('Rejected')
+      await expect(actionAndReplyPage.summaryReasonValue()).toContainText(rejectionReason)
     })
   })
 })

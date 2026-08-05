@@ -50,6 +50,14 @@ export default class ActionAndReplyPage extends AbstractPage {
     return this.page.locator('.govuk-summary-list').first()
   }
 
+  summaryDecisionValue(): PageElement {
+    return this.summaryList().locator('.govuk-summary-list__value').nth(0)
+  }
+
+  summaryReasonValue(): PageElement {
+    return this.summaryList().locator('.govuk-summary-list__value').nth(1)
+  }
+
   summaryListKeys(): PageElement {
     return this.summaryList().locator('.govuk-summary-list__key')
   }
