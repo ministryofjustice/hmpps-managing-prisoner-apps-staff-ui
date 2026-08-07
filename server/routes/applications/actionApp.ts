@@ -79,7 +79,6 @@ export default function actionAppRouter({
     const { prisonerId, applicationId } = req.params
     const { decision, reason, rejectedReason } = req.body
     const { user } = res.locals
-
     const application = await managingPrisonerAppsService.getPrisonerApp(`${prisonerId}`, `${applicationId}`, user)
     if (!application) return res.redirect(URLS.APPLICATIONS)
 
@@ -106,7 +105,6 @@ export default function actionAppRouter({
 
     const payload: AppResponsePayload = {
       reason: decision === 'REJECTED' ? rejectedReason : reason,
-      rejectionReason: decision === 'REJECTED' ? rejectedReason : null,
       decision,
       appliesTo: [request.id],
     }

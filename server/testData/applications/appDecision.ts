@@ -5,7 +5,7 @@ export const appDecisionResponse = ({
   decision = 'APPROVED',
   reason = '',
 }: {
-  decision?: 'APPROVED' | 'DECLINED'
+  decision?: 'APPROVED' | 'DECLINED' | 'REJECTED'
   reason?: string
 }): AppDecisionResponse => ({
   id: 'be0e8ede-aeb4-432f-b115-a57c39d1579b',
