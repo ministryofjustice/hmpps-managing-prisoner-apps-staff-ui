@@ -105,6 +105,28 @@ test.describe('Application History Page message rendering', () => {
             },
             createdDate: '2026-07-10T10:02:00.000Z',
           },
+          {
+            id: 'history-item-app',
+            appId: app.id,
+            entityId: 'app-status-entity-id',
+            entityType: 'APP',
+            activityMessage: {
+              header: 'Application status changed',
+              body: 'Application status updated to approved',
+            },
+            createdDate: '2026-07-10T10:03:00.000Z',
+          },
+          {
+            id: 'history-item-file',
+            appId: app.id,
+            entityId: 'file-entity-id',
+            entityType: 'FILE',
+            activityMessage: {
+              header: 'File attached',
+              body: 'Photo document attached to application',
+            },
+            createdDate: '2026-07-10T10:04:00.000Z',
+          },
         ],
       },
     })
@@ -184,5 +206,23 @@ test.describe('Application History Page message rendering', () => {
     await expect(page.getByText('History comment is visible')).toBeVisible()
     await expect(page.getByText('Response reason is visible')).toBeVisible()
     await expect(page.getByText('Assigned to group')).toBeVisible()
+  })
+
+  test('should display activity message body for APP entity type', async ({ page }) => {
+    await expect(page.getByText('Application status updated to approved')).toBeVisible()
+    await expect(page.getByText('Application status changed')).toBeVisible()
+  })
+
+  test('should display activity message body for FILE entity type', async ({ page }) => {
+    await expect(page.getByText('Photo document attached to application')).toBeVisible()
+    await expect(page.getByText('File attached')).toBeVisible()
+  })
+
+  test('should display all history entity type headers', async ({ page }) => {
+    await expect(page.getByText('Assigned to central team')).toBeVisible()
+    await expect(page.getByText('Staff comment added')).toBeVisible()
+    await expect(page.getByText('Decision recorded')).toBeVisible()
+    await expect(page.getByText('Application status changed')).toBeVisible()
+    await expect(page.getByText('File attached')).toBeVisible()
   })
 })

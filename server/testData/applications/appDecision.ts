@@ -4,15 +4,18 @@ import { AppDecisionResponse } from '../../@types/managingAppsApi'
 export const appDecisionResponse = ({
   decision = 'APPROVED',
   reason = '',
+  rejectionReason = null,
 }: {
   decision?: 'APPROVED' | 'DECLINED' | 'REJECTED'
   reason?: string
+  rejectionReason?: string | null
 }): AppDecisionResponse => ({
   id: 'be0e8ede-aeb4-432f-b115-a57c39d1579b',
   prisonerId: 'G3682UE',
   appId: '991acfa4-39e9-4b08-b81c-cf5b95edd55e',
   decision,
   reason,
+  rejectionReason,
   createdDate: '2025-04-10T14:11:14.440791',
   createdBy: {
     username: 'TEST_GEN',

@@ -1,11 +1,11 @@
 import { test, expect } from '../fixtures'
 import { APPLICATION_STATUS } from '../../server/constants/applicationStatus'
-import { app, appTypes } from '../../server/testData'
+import { app, appDecisionResponse, appTypes } from '../../server/testData'
 import ActionAndReplyPage from '../pages/actionAndReply'
 import auth from '../mockApis/auth'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
 import prisonApi from '../mockApis/prison'
-import { resetStubs } from '../mockApis/wiremock'
+import { resetStubs, stubFor } from '../mockApis/wiremock'
 
 const targetBaseUrl = process.env.PW_BASE_URL || process.env.DPS_PRISONER_URL || 'http://localhost:3007'
 const isWiremock = process.env.PW_ENV === 'mock' || targetBaseUrl.includes('localhost')
@@ -159,6 +159,400 @@ Object.values(appTypes).forEach(({ id, name }) => {
         () => (window as unknown as { printCalledCount: number }).printCalledCount,
       )
       expect(printCalled).toBe(1)
+    })
+  })
+})
+
+const [firstAppType] = Object.values(appTypes)
+const pendingApp = { ...app, status: APPLICATION_STATUS.PENDING, applicationType: firstAppType }
+
+test.describe('Action and Reply Page - REJECTED decision', () => {
+  test.beforeEach(async ({ page, signIn }) => {
+    test.skip(!isWiremock, 'Requires WireMock stubs')
+
+    await resetStubs()
+    await auth.stubSignIn()
+    await prisonApi.stubGetCaseLoads()
+    await managingPrisonerAppsApi.stubGetPrisonerApp({ app: pendingApp })
+    await managingPrisonerAppsApi.stubGetGroupsAndTypes()
+    await managingPrisonerAppsApi.stubGetAppResponse({ app: pendingApp, decision: undefined })
+
+    await signIn()
+    await page.goto(`/applications/${pendingApp.requestedBy.username}/${pendingApp.id}/reply`)
+  })
+
+  test('should show validation error when REJECTED is selected without choosing a rejected reason', async ({
+    page,
+  }) => {
+    const actionAndReplyPage = new ActionAndReplyPage(page)
+    await actionAndReplyPage.selectAction('REJECTED').check()
+    await actionAndReplyPage.saveButton().click()
+    await expect(actionAndReplyPage.errorSummary()).toContainText('Choose the reason for this rejected application')
+  })
+
+  test('should successfully submit with REJECTED decision and a valid rejection reason', async ({ page }) => {
+    await managingPrisonerAppsApi.stubAddAppResponse({
+      app: pendingApp,
+      decision: 'REJECTED',
+      rejectionReason: 'Prisoner sent an abusive app',
+    })
+
+    const actionAndReplyPage = new ActionAndReplyPage(page)
+    await actionAndReplyPage.selectAction('REJECTED').check()
+    await actionAndReplyPage.rejectedReasonRadio('Prisoner sent an abusive app').check()
+    await actionAndReplyPage.saveButton().click()
+    await expect(page).toHaveURL(new RegExp(`/applications/${pendingApp.requestedBy.username}/${pendingApp.id}/reply`))
+  })
+
+  test('should successfully submit with REJECTED and "Prisoner used the wrong app"', async ({ page }) => {
+    await managingPrisonerAppsApi.stubAddAppResponse({
+      app: pendingApp,
+      decision: 'REJECTED',
+      rejectionReason: 'Prisoner used the wrong app',
+    })
+
+    const actionAndReplyPage = new ActionAndReplyPage(page)
+    await actionAndReplyPage.selectAction('REJECTED').check()
+    await actionAndReplyPage.rejectedReasonRadio('Prisoner used the wrong app').check()
+    await actionAndReplyPage.saveButton().click()
+    await expect(page).toHaveURL(new RegExp(`/applications/${pendingApp.requestedBy.username}/${pendingApp.id}/reply`))
+  })
+
+  test('should successfully submit with REJECTED and "Prisoner has already sent this app"', async ({ page }) => {
+    await managingPrisonerAppsApi.stubAddAppResponse({
+      app: pendingApp,
+      decision: 'REJECTED',
+      rejectionReason: 'Prisoner has already sent this app',
+    })
+
+    const actionAndReplyPage = new ActionAndReplyPage(page)
+    await actionAndReplyPage.selectAction('REJECTED').check()
+    await actionAndReplyPage.rejectedReasonRadio('Prisoner has already sent this app').check()
+    await actionAndReplyPage.saveButton().click()
+    await expect(page).toHaveURL(new RegExp(`/applications/${pendingApp.requestedBy.username}/${pendingApp.id}/reply`))
+  })
+
+  test('should show all three valid rejected reason options', async ({ page }) => {
+    const actionAndReplyPage = new ActionAndReplyPage(page)
+    await actionAndReplyPage.selectAction('REJECTED').check()
+    await expect(actionAndReplyPage.rejectedReasonRadio('Prisoner used the wrong app')).toBeVisible()
+    await expect(actionAndReplyPage.rejectedReasonRadio('Prisoner has already sent this app')).toBeVisible()
+    await expect(actionAndReplyPage.rejectedReasonRadio('Prisoner sent an abusive app')).toBeVisible()
+  })
+
+  test('should show validation error when DECLINED reason exceeds 1000 characters', async ({ page }) => {
+    const actionAndReplyPage = new ActionAndReplyPage(page)
+    await actionAndReplyPage.selectAction('DECLINED').check()
+    await actionAndReplyPage.reasonInput().fill('a'.repeat(1001))
+    await actionAndReplyPage.saveButton().click()
+    await expect(actionAndReplyPage.errorSummary()).toContainText('Reason must be 1000 characters or less')
+  })
+})
+
+test.describe('Action and Reply Page - closed application decision summary', () => {
+  test('should display DECLINED decision and reason in summary list', async ({ page, signIn }) => {
+    test.skip(!isWiremock, 'Requires WireMock stubs')
+
+    const declinedApp = { ...app, status: APPLICATION_STATUS.DECLINED, applicationType: firstAppType }
+
+    await resetStubs()
+    await auth.stubSignIn()
+    await prisonApi.stubGetCaseLoads()
+    await managingPrisonerAppsApi.stubGetPrisonerApp({ app: declinedApp })
+    await managingPrisonerAppsApi.stubGetGroupsAndTypes()
+    await managingPrisonerAppsApi.stubGetAppResponse({
+      app: declinedApp,
+      decision: 'DECLINED',
+      reason: 'Does not meet the criteria',
+    })
+
+    await signIn()
+    await page.goto(`/applications/${declinedApp.requestedBy.username}/${declinedApp.id}/reply`)
+
+    const declinedSummaryPage = new ActionAndReplyPage(page)
+    await expect(declinedSummaryPage.summaryList()).toBeVisible()
+    await expect(declinedSummaryPage.summaryDecisionValue()).toContainText('Declined')
+    await expect(declinedSummaryPage.summaryReasonValue()).toContainText('Does not meet the criteria')
+  })
+
+  test('should display REJECTED decision and rejection reason in summary list', async ({ page, signIn }) => {
+    test.skip(!isWiremock, 'Requires WireMock stubs')
+
+    const rejectedApp = { ...app, status: APPLICATION_STATUS.REJECTED, applicationType: firstAppType }
+
+    await resetStubs()
+    await auth.stubSignIn()
+    await prisonApi.stubGetCaseLoads()
+    await managingPrisonerAppsApi.stubGetPrisonerApp({ app: rejectedApp })
+    await managingPrisonerAppsApi.stubGetGroupsAndTypes()
+    await managingPrisonerAppsApi.stubGetAppResponse({
+      app: rejectedApp,
+      decision: 'REJECTED',
+      reason: 'Prisoner used the wrong app',
+      rejectionReason: 'Prisoner used the wrong app',
+    })
+
+    await signIn()
+    await page.goto(`/applications/${rejectedApp.requestedBy.username}/${rejectedApp.id}/reply`)
+
+    const rejectedSummaryPage = new ActionAndReplyPage(page)
+    await expect(rejectedSummaryPage.summaryList()).toBeVisible()
+    await expect(rejectedSummaryPage.summaryDecisionValue()).toContainText('Rejected')
+    await expect(rejectedSummaryPage.summaryReasonValue()).toContainText('Prisoner used the wrong app')
+  })
+
+  test('should display APPROVED decision in summary list', async ({ page, signIn }) => {
+    test.skip(!isWiremock, 'Requires WireMock stubs')
+
+    const approvedApp = { ...app, status: APPLICATION_STATUS.APPROVED, applicationType: firstAppType }
+
+    await resetStubs()
+    await auth.stubSignIn()
+    await prisonApi.stubGetCaseLoads()
+    await managingPrisonerAppsApi.stubGetPrisonerApp({ app: approvedApp })
+    await managingPrisonerAppsApi.stubGetGroupsAndTypes()
+    await managingPrisonerAppsApi.stubGetAppResponse({ app: approvedApp, decision: 'APPROVED' })
+
+    await signIn()
+    await page.goto(`/applications/${approvedApp.requestedBy.username}/${approvedApp.id}/reply`)
+
+    const approvedSummaryPage = new ActionAndReplyPage(page)
+    await expect(approvedSummaryPage.summaryList()).toBeVisible()
+    await expect(approvedSummaryPage.summaryDecisionValue()).toContainText('Approved')
+  })
+})
+
+test.describe('Action and Reply Page - APPROVED complete journey', () => {
+  test('should submit APPROVED decision and display summary', async ({ page, signIn }) => {
+    test.skip(!isWiremock, 'Requires WireMock stubs')
+
+    const scenarioName = 'approved-journey'
+    const approvedApp = { ...app, status: APPLICATION_STATUS.APPROVED, applicationType: firstAppType }
+
+    await resetStubs()
+    await auth.stubSignIn()
+    await prisonApi.stubGetCaseLoads()
+    await managingPrisonerAppsApi.stubGetGroupsAndTypes()
+
+    await stubFor({
+      scenarioName,
+      requiredScenarioState: 'Started',
+      request: {
+        method: 'GET',
+        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}?requestedBy=true&assignedGroup=true`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: pendingApp,
+      },
+    })
+
+    await stubFor({
+      scenarioName,
+      requiredScenarioState: 'Started',
+      newScenarioState: 'submitted',
+      request: {
+        method: 'POST',
+        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/responses`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: appDecisionResponse({ decision: 'APPROVED' }),
+      },
+    })
+
+    await stubFor({
+      scenarioName,
+      requiredScenarioState: 'submitted',
+      request: {
+        method: 'GET',
+        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}?requestedBy=true&assignedGroup=true`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: approvedApp,
+      },
+    })
+
+    await managingPrisonerAppsApi.stubGetAppResponse({ app: approvedApp, decision: 'APPROVED' })
+
+    await signIn()
+    await page.goto(`/applications/${app.requestedBy.username}/${app.id}/reply`)
+
+    const actionAndReplyPage = new ActionAndReplyPage(page)
+    await actionAndReplyPage.selectAction('APPROVED').check()
+    await actionAndReplyPage.saveButton().click()
+
+    await expect(page).toHaveURL(new RegExp(`/applications/${app.requestedBy.username}/${app.id}/reply`))
+
+    await expect(actionAndReplyPage.summaryList()).toBeVisible()
+    await expect(actionAndReplyPage.summaryDecisionValue()).toContainText('Approved')
+  })
+})
+
+test.describe('Action and Reply Page - DECLINED complete journey', () => {
+  test('should submit DECLINED decision with reason and display summary', async ({ page, signIn }) => {
+    test.skip(!isWiremock, 'Requires WireMock stubs')
+
+    const scenarioName = 'declined-journey'
+    const declineReason = 'Application does not meet the required criteria'
+    const declinedApp = { ...app, status: APPLICATION_STATUS.DECLINED, applicationType: firstAppType }
+
+    await resetStubs()
+    await auth.stubSignIn()
+    await prisonApi.stubGetCaseLoads()
+    await managingPrisonerAppsApi.stubGetGroupsAndTypes()
+
+    await stubFor({
+      scenarioName,
+      requiredScenarioState: 'Started',
+      request: {
+        method: 'GET',
+        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}?requestedBy=true&assignedGroup=true`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: pendingApp,
+      },
+    })
+
+    await stubFor({
+      scenarioName,
+      requiredScenarioState: 'Started',
+      newScenarioState: 'submitted',
+      request: {
+        method: 'POST',
+        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/responses`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: appDecisionResponse({ decision: 'DECLINED', reason: declineReason }),
+      },
+    })
+
+    await stubFor({
+      scenarioName,
+      requiredScenarioState: 'submitted',
+      request: {
+        method: 'GET',
+        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}?requestedBy=true&assignedGroup=true`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: declinedApp,
+      },
+    })
+
+    await managingPrisonerAppsApi.stubGetAppResponse({ app: declinedApp, decision: 'DECLINED', reason: declineReason })
+
+    await signIn()
+    await page.goto(`/applications/${app.requestedBy.username}/${app.id}/reply`)
+
+    const actionAndReplyPage = new ActionAndReplyPage(page)
+    await actionAndReplyPage.selectAction('DECLINED').check()
+    await actionAndReplyPage.reasonInput().fill(declineReason)
+    await actionAndReplyPage.saveButton().click()
+
+    await expect(page).toHaveURL(new RegExp(`/applications/${app.requestedBy.username}/${app.id}/reply`))
+
+    await expect(actionAndReplyPage.summaryList()).toBeVisible()
+    await expect(actionAndReplyPage.summaryDecisionValue()).toContainText('Declined')
+    await expect(actionAndReplyPage.summaryReasonValue()).toContainText(declineReason)
+  })
+})
+
+test.describe('Action and Reply Page - REJECTED complete journey', () => {
+  const rejectionReasons = [
+    'Prisoner used the wrong app',
+    'Prisoner has already sent this app',
+    'Prisoner sent an abusive app',
+  ]
+
+  rejectionReasons.forEach((rejectionReason, index) => {
+    test(`should submit REJECTED with "${rejectionReason}" and display in summary`, async ({ page, signIn }) => {
+      test.skip(!isWiremock, 'Requires WireMock stubs')
+
+      const scenarioName = `rejected-journey-${index}`
+      const rejectedApp = { ...app, status: APPLICATION_STATUS.REJECTED, applicationType: firstAppType }
+
+      await resetStubs()
+      await auth.stubSignIn()
+      await prisonApi.stubGetCaseLoads()
+      await managingPrisonerAppsApi.stubGetGroupsAndTypes()
+
+      // Initial GET returns the pending app
+      await stubFor({
+        scenarioName,
+        requiredScenarioState: 'Started',
+        request: {
+          method: 'GET',
+          url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}?requestedBy=true&assignedGroup=true`,
+        },
+        response: {
+          status: 200,
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+          jsonBody: pendingApp,
+        },
+      })
+
+      // POST transitions scenario to submitted state
+      await stubFor({
+        scenarioName,
+        requiredScenarioState: 'Started',
+        newScenarioState: 'submitted',
+        request: {
+          method: 'POST',
+          url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/responses`,
+        },
+        response: {
+          status: 200,
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+          jsonBody: appDecisionResponse({ decision: 'REJECTED', reason: rejectionReason, rejectionReason }),
+        },
+      })
+
+      // After POST redirect, GET returns the rejected (closed) app
+      await stubFor({
+        scenarioName,
+        requiredScenarioState: 'submitted',
+        request: {
+          method: 'GET',
+          url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}?requestedBy=true&assignedGroup=true`,
+        },
+        response: {
+          status: 200,
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+          jsonBody: rejectedApp,
+        },
+      })
+
+      // GET response details for the closed summary view
+      await managingPrisonerAppsApi.stubGetAppResponse({
+        app: rejectedApp,
+        decision: 'REJECTED',
+        reason: rejectionReason,
+        rejectionReason,
+      })
+
+      await signIn()
+      await page.goto(`/applications/${app.requestedBy.username}/${app.id}/reply`)
+
+      const actionAndReplyPage = new ActionAndReplyPage(page)
+      await actionAndReplyPage.selectAction('REJECTED').check()
+      await actionAndReplyPage.rejectedReasonRadio(rejectionReason).check()
+      await actionAndReplyPage.saveButton().click()
+
+      await expect(page).toHaveURL(new RegExp(`/applications/${app.requestedBy.username}/${app.id}/reply`))
+
+      await expect(actionAndReplyPage.summaryList()).toBeVisible()
+      await expect(actionAndReplyPage.summaryDecisionValue()).toContainText('Rejected')
+      await expect(actionAndReplyPage.summaryReasonValue()).toContainText(rejectionReason)
     })
   })
 })

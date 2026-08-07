@@ -58,10 +58,12 @@ export default {
     app,
     decision = 'APPROVED',
     reason = '',
+    rejectionReason = null,
   }: {
     app: App
-    decision?: 'APPROVED' | 'DECLINED'
+    decision?: 'APPROVED' | 'DECLINED' | 'REJECTED'
     reason?: string
+    rejectionReason?: string | null
   }): SuperAgentRequest => {
     return stubFor({
       request: {
@@ -71,7 +73,7 @@ export default {
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: appDecisionResponse({ decision, reason }),
+        jsonBody: appDecisionResponse({ decision, reason, rejectionReason }),
       },
     })
   },
@@ -79,10 +81,12 @@ export default {
     app,
     decision = 'APPROVED',
     reason = '',
+    rejectionReason = null,
   }: {
     app: App
-    decision?: 'APPROVED' | 'DECLINED'
+    decision?: 'APPROVED' | 'DECLINED' | 'REJECTED'
     reason?: string
+    rejectionReason?: string | null
   }): SuperAgentRequest => {
     return stubFor({
       request: {
@@ -92,7 +96,7 @@ export default {
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: appDecisionResponse({ decision, reason }),
+        jsonBody: appDecisionResponse({ decision, reason, rejectionReason }),
       },
     })
   },
