@@ -89,14 +89,12 @@ describe(formatApplicationHistory.name, () => {
     expect(formattedResponseItem!.commentMessage).toBeNull()
   })
 
-  it('uses rejectionReason for responseMessage when reason is blank', () => {
+  it('shows reason when decision is REJECTED', () => {
     ;(format as jest.Mock).mockReturnValue('formatted')
 
     const responseHistoryItem = getHistoryItem('RESPONSE')
     const response = {
-      ...appDecisionResponse({ decision: 'DECLINED', reason: '' }),
-      decision: 'REJECTED' as const,
-      rejectionReason: 'Prisoner sent an abusive app',
+      ...appDecisionResponse({ decision: 'REJECTED', reason: 'Prisoner sent an abusive app' }),
       id: responseHistoryItem.entityId,
     }
 
