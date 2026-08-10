@@ -54,6 +54,7 @@
         }) }}
       {% endif %}
       <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ applicationType.name }}</h1>
+      {% include "../partials/application-header.njk" %}
       {% set activeTab = 'comments' %}
       {% include "../partials/sub-navigation.njk" %}
       <div class="govuk-grid-row">

@@ -41,7 +41,7 @@ export default class ViewApplicationPage extends AbstractPage {
   }
 
   forwardApplication(): PageElement {
-    return this.page.locator('.govuk-summary-list__row:has-text("Department") a')
+    return this.page.getByRole('button', { name: 'Forward to another department' })
   }
 
   commentsTab(): PageElement {

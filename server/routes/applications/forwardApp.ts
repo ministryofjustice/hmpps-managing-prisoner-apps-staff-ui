@@ -87,9 +87,13 @@ export default function forwardAppRouter({
       })
     }
 
+    const forwardedDepartment = filteredDepartments.find(dept => dept.value === forwardTo)?.text
+
     await managingPrisonerAppsService.forwardApp(`${applicationId}`, forwardTo, user, { message: forwardingReason })
 
-    return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}`)
+    const forwardedToQuery = forwardedDepartment ? `?forwardedTo=${encodeURIComponent(forwardedDepartment)}` : ''
+
+    return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}${forwardedToQuery}`)
   })
 
   return router

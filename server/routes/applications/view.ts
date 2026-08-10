@@ -114,6 +114,7 @@ export default function viewAppsRouter({
 
   router.get(`${URLS.APPLICATIONS}/:prisonerId/:applicationId`, async (req: Request, res: Response) => {
     const { user } = res.locals
+    const forwardedTo = typeof req.query.forwardedTo === 'string' ? req.query.forwardedTo : undefined
     const { application, applicationType, documents } = await getValidApplicationOrRedirect(
       req,
       res,
@@ -150,6 +151,7 @@ export default function viewAppsRouter({
         '',
       isGeneric: applicationType.genericType || applicationType.genericForm,
       isForwardable: departments?.length > 1,
+      forwardedTo,
       documents,
     })
   })

@@ -1,12 +1,10 @@
 {%- from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs -%}
 {%- from "govuk/components/summary-list/macro.njk" import govukSummaryList -%}
+{%- from "moj/components/alert/macro.njk" import mojAlert -%}
 {% from "pages/applications/view/partials/app-type-summary-list-header.njk" import appTypeSummaryListHeader %}
-
 {% extends "../../../partials/layout.njk" %}
-
 {% set pageTitle = applicationName + " - " + title %}
 {% set mainClasses = "app-container govuk-body applications-landing-page" %}
-
 {% block beforeContent %}
   <div class="govuk-body govuk-width-container">
     {{ govukBreadcrumbs({
@@ -27,26 +25,34 @@
     }) }}
   </div>
 {% endblock %}
-
 {% block content %}
-<div class="govuk-body govuk-width-container">
-  <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
+  <div class="govuk-body govuk-width-container">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        {% if forwardedTo %}
+          {{ mojAlert({
+            variant: "success",
+            title: {
+              text: "Success"
+            },
+            text: "Application forwarded to " + forwardedTo
+          }) }}
+        {% endif %}
 
-  {% set activeTab = 'application' %}
-  {% include "../partials/sub-navigation.njk" %}
+        <h1 class="govuk-heading-xl govuk-!-margin-top-0">{{ title }}</h1>
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      {% include "./partials/application-details.njk" %}
-      {% include "./partials/prisoner-details.njk" %}
-      
-      {% if isGeneric %}
-        {% include "./partials/application-type-generic-details.njk" %}
-      {% else %}
-        {% include "./partials/" + applicationType + ".njk" %}
-      {% endif %}
+        {% include "../partials/application-header.njk" %}
+        {% set activeTab = 'application' %}
+        {% include "../partials/sub-navigation.njk" %}
+        {% include "./partials/application-details.njk" %}
+        {% include "./partials/prisoner-details.njk" %}
 
+        {% if isGeneric %}
+          {% include "./partials/application-type-generic-details.njk" %}
+        {% else %}
+          {% include "./partials/" + applicationType + ".njk" %}
+        {% endif %}
+      </div>
     </div>
   </div>
-</div>
 {% endblock %}

@@ -31,36 +31,30 @@
   <div class="govuk-body govuk-width-container">
     <span class="govuk-caption-xl">{{ title }}</span>
     <h1 class="govuk-heading-xl govuk-!-margin-top-0">History</h1>
-
+    {% include "../partials/application-header.njk" %}
     {% set activeTab = 'history' %}
     {% include "../partials/sub-navigation.njk" %}
-
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <h2 class="govuk-heading-m">History of this application</h2>
-
         {% for item in history %}
           <div class="app-message govuk-body">
             <div class="app-message--metadata">
-              {{ item.activityMessage.header }} | {{ item.date }} at {{ item.time }}
+              {{ item.activityMessage.header }} | {{ item.date }} at
+              {{ item.time }}
             </div>
-
             {% if item.activityMessage.body %}
               <div class="app-message--content">{{ item.activityMessage.body }}</div>
             {% endif %}
-
             {% if item.commentMessage %}
               <div class="app-message--content">{{ item.commentMessage }}</div>
             {% endif %}
-
             {% if item.responseMessage %}
               <div class="app-message--content">{{ item.responseMessage }}</div>
             {% endif %}
           </div>
         {% endfor %}
-        
       </div>
     </div>
-  </div>  
+  </div>
 {% endblock %}
-
