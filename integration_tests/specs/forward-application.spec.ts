@@ -73,11 +73,14 @@ test.describe('Forward Application Page', () => {
     const firstDept = departments.first()
     const deptValue = await firstDept.getAttribute('value')
 
+    const deptLabel = await page.locator(`label[for="${await firstDept.getAttribute('id')}"]`).innerText()
+
     await forwardPage.selectDepartment(deptValue)
     await forwardPage.enterForwardingReason('Test forwarding reason')
     await forwardPage.submit()
 
-    await expect(page).toHaveURL(`${targetBaseUrl}/applications/${app.requestedBy.username}/${app.id}`)
+    await expect(page).toHaveURL(new RegExp(`/applications/${app.requestedBy.username}/${app.id}`))
+    await expect(page.getByText(`Application forwarded to ${deptLabel.trim()}`)).toBeVisible()
   })
 
   test('should show validation error when forwarding reason exceeds 1000 characters', async ({ page }) => {
@@ -109,6 +112,6 @@ test.describe('Forward Application Page', () => {
     await forwardPage.selectDepartment(deptValue)
     await forwardPage.submit()
 
-    await expect(page).toHaveURL(`${targetBaseUrl}/applications/${app.requestedBy.username}/${app.id}`)
+    await expect(page).toHaveURL(new RegExp(`/applications/${app.requestedBy.username}/${app.id}`))
   })
 })

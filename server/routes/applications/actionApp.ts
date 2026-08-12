@@ -43,6 +43,8 @@ export default function actionAppRouter({
       Page.ACTION_AND_REPLY_PAGE,
     )
 
+    const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
+
     const isAppPending = application.status === APPLICATION_STATUS.PENDING
     const [request] = application.requests ?? []
 
@@ -69,6 +71,7 @@ export default function actionAppRouter({
       applicationType,
       isAppPending,
       response: formattedResponse,
+      isForwardable: departments?.length > 1,
       appLoggedDate: format(new Date(application.createdDate), 'd MMMM yyyy'),
       todayDate: format(new Date(), 'd MMMM yyyy'),
       prisonerName: convertToTitleCase(`${application.requestedBy.lastName}, ${application.requestedBy.firstName}`),
@@ -87,6 +90,7 @@ export default function actionAppRouter({
       user,
       application.applicationType.id.toString(),
     )
+    const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
     const errors = validateActionAndReply(decision, reason, rejectedReason)
     const isAppPending = application.status === APPLICATION_STATUS.PENDING
     const [request] = application.requests ?? []
@@ -99,6 +103,7 @@ export default function actionAppRouter({
         selectedAction: decision,
         selectedRejectedReason: rejectedReason,
         textareaValue: reason,
+        isForwardable: departments?.length > 1,
         errors,
       })
     }
