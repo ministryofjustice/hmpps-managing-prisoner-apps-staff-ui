@@ -1,13 +1,13 @@
 import { Request, Response, Router } from 'express'
 
 import { PATHS } from '../../constants/paths'
+import { isOpenStatus } from '../../constants/applicationStatus'
 
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
 import { formatApplicationHistory } from '../../utils/formatters/formatApplicationHistory'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
-import { isOpenStatus } from '../../constants/applicationStatus'
 
 export default function historyRouter({
   auditService,
@@ -17,6 +17,7 @@ export default function historyRouter({
   managingPrisonerAppsService: ManagingPrisonerAppsService
 }): Router {
   const router = Router()
+
   router.get('/applications/:prisonerId/:applicationId/history', async (req: Request, res: Response) => {
     const { prisonerId, applicationId } = req.params
     const { user } = res.locals

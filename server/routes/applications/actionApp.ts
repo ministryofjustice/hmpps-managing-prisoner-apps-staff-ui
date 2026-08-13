@@ -47,12 +47,12 @@ export default function actionAppRouter({
 
     const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
 
-    const isAppPending = isOpenStatus(application.status)
+    const isAppOpen = isOpenStatus(application.status)
     const [request] = application.requests ?? []
 
     let formattedResponse
 
-    if (!isAppPending && request?.responseId) {
+    if (!isAppOpen && request?.responseId) {
       const { decision, createdDate, reason } = await managingPrisonerAppsService.getResponse(
         `${prisonerId}`,
         `${applicationId}`,
@@ -71,8 +71,6 @@ export default function actionAppRouter({
     renderActionAndReplyPage(res, {
       application,
       applicationType,
-      isAppPending,
-      isClosed: !isAppPending,
       response: formattedResponse,
       isForwardable: departments?.length > 1,
       appLoggedDate: format(new Date(application.createdDate), 'd MMMM yyyy'),
@@ -95,15 +93,12 @@ export default function actionAppRouter({
     )
     const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
     const errors = validateActionAndReply(decision, reason, rejectedReason)
-    const isAppPending = isOpenStatus(application.status)
     const [request] = application.requests ?? []
 
     if (Object.keys(errors).length > 0) {
       return renderActionAndReplyPage(res, {
         application,
         applicationType,
-        isAppPending,
-        isClosed: !isAppPending,
         selectedAction: decision,
         selectedRejectedReason: rejectedReason,
         textareaValue: reason,
