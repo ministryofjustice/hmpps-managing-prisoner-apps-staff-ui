@@ -194,7 +194,7 @@ test.describe('Action and Reply Page - REJECTED decision', () => {
     await managingPrisonerAppsApi.stubAddAppResponse({
       app: pendingApp,
       decision: 'REJECTED',
-      rejectionReason: 'Prisoner sent an abusive app',
+      reason: 'Prisoner sent an abusive app',
     })
 
     const actionAndReplyPage = new ActionAndReplyPage(page)
@@ -208,7 +208,7 @@ test.describe('Action and Reply Page - REJECTED decision', () => {
     await managingPrisonerAppsApi.stubAddAppResponse({
       app: pendingApp,
       decision: 'REJECTED',
-      rejectionReason: 'Prisoner used the wrong app',
+      reason: 'Prisoner used the wrong app',
     })
 
     const actionAndReplyPage = new ActionAndReplyPage(page)
@@ -222,7 +222,7 @@ test.describe('Action and Reply Page - REJECTED decision', () => {
     await managingPrisonerAppsApi.stubAddAppResponse({
       app: pendingApp,
       decision: 'REJECTED',
-      rejectionReason: 'Prisoner has already sent this app',
+      reason: 'Prisoner has already sent this app',
     })
 
     const actionAndReplyPage = new ActionAndReplyPage(page)
@@ -289,7 +289,6 @@ test.describe('Action and Reply Page - closed application decision summary', () 
       app: rejectedApp,
       decision: 'REJECTED',
       reason: 'Prisoner used the wrong app',
-      rejectionReason: 'Prisoner used the wrong app',
     })
 
     await signIn()
@@ -513,7 +512,7 @@ test.describe('Action and Reply Page - REJECTED complete journey', () => {
         response: {
           status: 200,
           headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-          jsonBody: appDecisionResponse({ decision: 'REJECTED', reason: rejectionReason, rejectionReason }),
+          jsonBody: appDecisionResponse({ decision: 'REJECTED', reason: rejectionReason }),
         },
       })
 
@@ -537,7 +536,6 @@ test.describe('Action and Reply Page - REJECTED complete journey', () => {
         app: rejectedApp,
         decision: 'REJECTED',
         reason: rejectionReason,
-        rejectionReason,
       })
 
       await signIn()
