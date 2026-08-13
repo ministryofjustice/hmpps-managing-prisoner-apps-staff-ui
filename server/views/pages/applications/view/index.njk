@@ -1,12 +1,17 @@
 {%- from "govuk/components/summary-list/macro.njk" import govukSummaryList -%}
 {%- from "moj/components/alert/macro.njk" import mojAlert -%}
 {% from "pages/applications/view/partials/app-type-summary-list-header.njk" import appTypeSummaryListHeader %}
+
 {% extends "../../../partials/layout.njk" %}
+
 {% set pageTitle = applicationName + " - " + title %}
 {% set mainClasses = "app-container govuk-body applications-landing-page" %}
+{% set activeTab = 'application' %}
+
 {% block beforeContent %}
   {% include "../partials/breadcrumbs.njk" %}
 {% endblock %}
+
 {% block content %}
   <div class="govuk-body govuk-width-container">
     <div class="govuk-grid-row">
@@ -34,7 +39,6 @@
         <h1 class="govuk-heading-xl govuk-!-margin-top-0 govuk-!-margin-bottom-4">{{ title }}</h1>
 
         {% include "../partials/application-header.njk" %}
-        {% set activeTab = 'application' %}
         {% include "../partials/sub-navigation.njk" %}
         {% include "./partials/application-details.njk" %}
         {% include "./partials/prisoner-details.njk" %}
