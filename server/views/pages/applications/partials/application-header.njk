@@ -1,0 +1,31 @@
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{% if application and application.requestedBy and application.id %}
+  {{ govukTag({
+    text: application.status | lower | capitalize
+  }) }}
+  {% call govukInsetText() %}
+
+  <p class="govuk-!-font-weight-bold govuk-!-margin-bottom-2">Action this application</p>
+  {{ govukButton({
+      text: "Mark as in progress",
+      classes: "govuk-button--secondary govuk-!-margin-right-2"
+    }) }}
+
+  {% if isForwardable %}
+    {{ govukButton({
+        text: "Forward to another department",
+        href: "/applications/" + application.requestedBy.username + "/" + application.id + "/forward",
+        classes: "govuk-button--secondary govuk-!-margin-right-2"
+      }) }}
+  {% endif %}
+
+  {{ govukButton({
+      text: "Mark as closed",
+      href: "/applications/" + application.requestedBy.username + "/" + application.id + "/reply",
+      classes: "govuk-button--secondary"
+    }) }}
+  {% endcall %}
+{% endif %}

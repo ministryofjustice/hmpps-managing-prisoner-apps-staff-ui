@@ -94,22 +94,28 @@ filteredApplicationTypes.forEach(({ name, id }) => {
   })
 })
 
-test.describe('View Application Page - Forward link visibility', () => {
+test.describe('View Application Page - Forward button visibility', () => {
   const application = { ...app, applicationType: { id: 3, name: 'Add a social PIN phone contact' } }
 
-  test('should display the Forward link when more than one department is available', async ({ page, signIn }) => {
+  test('should display the Forward to another department button when more than one department is available', async ({
+    page,
+    signIn,
+  }) => {
     await visitApplicationPage({ page, signIn, application, departmentCount: 2 })
 
     const viewPage = new ViewApplicationPage(page)
     await expect(viewPage.forwardApplication()).toBeVisible()
-    await expect(viewPage.forwardApplication()).toContainText('Forward')
+    await expect(viewPage.forwardApplication()).toContainText('Forward to another department')
     await expect(viewPage.forwardApplication()).toHaveAttribute(
       'href',
       `/applications/${application.requestedBy.username}/${application.id}/forward`,
     )
   })
 
-  test('should not display the Forward link when only one department is available', async ({ page, signIn }) => {
+  test('should not display the Forward to another department button when only one department is available', async ({
+    page,
+    signIn,
+  }) => {
     await visitApplicationPage({ page, signIn, application, departmentCount: 1 })
 
     const viewPage = new ViewApplicationPage(page)

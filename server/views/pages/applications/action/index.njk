@@ -56,7 +56,7 @@
     <span class="govuk-caption-xl govuk-!-display-none-print">{{ applicationType.name }}</span>
 
     <h1 class="govuk-heading-xl govuk-!-margin-top-0 govuk-!-display-none-print">{{ title }}</h1>
-
+    {% include "../partials/application-header.njk" %}
     {% set activeTab = 'reply' %}
     {% include "../partials/sub-navigation.njk" %}
 
@@ -67,7 +67,7 @@
         {% else %}
           {% include "./closed.njk" %}
         {% endif %}
-       </div>
+      </div>
     </div>
   </div>
 {% endblock %}

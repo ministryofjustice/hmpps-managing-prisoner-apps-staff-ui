@@ -524,6 +524,26 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/v1/establishments/apps/groups': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get application groups and types by logged in user's establishment
+     * @description This api endpoint is for getting an application groups and types by establishment. Requires role ROLE_MANAGING_PRISONER_APPS
+     */
+    get: operations['getAppGroupsForEstablishment']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/subject-access-request': {
     parameters: {
       query?: never
@@ -713,7 +733,6 @@ export interface components {
     }
     AppDecisionRequestDto: {
       reason: string
-      rejectionReason?: string | null
       /** @enum {string} */
       decision: 'APPROVED' | 'DECLINED' | 'REJECTED'
       appliesTo: string[]
@@ -725,7 +744,6 @@ export interface components {
       /** Format: uuid */
       appId: string
       reason: string
-      rejectionReason?: string | null
       /** @enum {string} */
       decision: 'APPROVED' | 'DECLINED' | 'REJECTED'
       /** Format: date-time */
@@ -788,7 +806,6 @@ export interface components {
       status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'REJECTED'
       establishmentId: string
       reason?: string | null
-      rejectionReason?: string | null
     }
     AppsSearchQueryDto: {
       /** Format: int64 */
@@ -2108,6 +2125,44 @@ export interface operations {
         }
         content: {
           '*/*': components['schemas']['EstablishmentDto']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden to access this endpoint */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getAppGroupsForEstablishment: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Establishment add successfully */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ApplicationGroupResponse'][]
         }
       }
       /** @description Unauthorized to access this endpoint */

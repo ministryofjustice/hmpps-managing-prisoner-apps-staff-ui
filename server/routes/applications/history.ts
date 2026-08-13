@@ -28,6 +28,8 @@ export default function historyRouter({
       Page.APPLICATION_HISTORY_PAGE,
     )
 
+    const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
+
     const history = (await managingPrisonerAppsService.getHistory(`${prisonerId}`, `${applicationId}`, user)) || []
 
     const comments = await managingPrisonerAppsService.getComments(`${prisonerId}`, `${applicationId}`, user)
@@ -46,6 +48,7 @@ export default function historyRouter({
       application,
       history: formattedHistory,
       title: applicationType.name,
+      isForwardable: departments?.length > 1,
     })
   })
 

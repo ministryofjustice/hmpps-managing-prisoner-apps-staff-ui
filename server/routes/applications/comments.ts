@@ -38,6 +38,8 @@ export default function commentsRouter({
       Page.COMMENTS_PAGE,
     )
 
+    const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
+
     const comments = await managingPrisonerAppsService.getComments(`${prisonerId}`, application.id, user)
 
     const formattedComments =
@@ -59,6 +61,7 @@ export default function commentsRouter({
       comments: formattedComments,
       title: 'Messages',
       isClosed: application.status !== APPLICATION_STATUS.PENDING,
+      isForwardable: departments?.length > 1,
     })
   })
 
@@ -91,6 +94,7 @@ export default function commentsRouter({
         user,
         application.applicationType.id.toString(),
       )
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
       const formattedComments =
         comments?.contents?.map(({ message, createdBy, createdDate, visibility: messageVisibility, createdByType }) => {
           return {
@@ -113,6 +117,7 @@ export default function commentsRouter({
         errors,
         title: 'Messages',
         isClosed: false,
+        isForwardable: departments?.length > 1,
       })
     }
 
