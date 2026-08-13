@@ -3,9 +3,8 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 
 {% if application and application.requestedBy and application.id %}
-  {{ govukTag({
-    text: application.status | lower | capitalize
-  }) }}
+  {{ govukTag(application.status | statusTag) }}
+  {% if not isClosed %}
   {% call govukInsetText() %}
 
   <p class="govuk-!-font-weight-bold govuk-!-margin-bottom-2">Action this application</p>
@@ -28,4 +27,5 @@
       classes: "govuk-button--secondary"
     }) }}
   {% endcall %}
+  {% endif %}
 {% endif %}

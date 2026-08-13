@@ -7,6 +7,7 @@ import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsServ
 
 import { formatApplicationHistory } from '../../utils/formatters/formatApplicationHistory'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
+import { isOpenStatus } from '../../constants/applicationStatus'
 
 export default function historyRouter({
   auditService,
@@ -20,13 +21,15 @@ export default function historyRouter({
     const { prisonerId, applicationId } = req.params
     const { user } = res.locals
 
-    const { application, applicationType } = await getValidApplicationOrRedirect(
+    const validApplication = await getValidApplicationOrRedirect(
       req,
       res,
       auditService,
       managingPrisonerAppsService,
       Page.APPLICATION_HISTORY_PAGE,
     )
+    if (!validApplication) return
+    const { application, applicationType } = validApplication
 
     const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
 
@@ -44,10 +47,11 @@ export default function historyRouter({
 
     const formattedHistory = formatApplicationHistory(history, commentItems, responses)
 
-    return res.render(PATHS.APPLICATIONS.HISTORY, {
+    res.render(PATHS.APPLICATIONS.HISTORY, {
       application,
       history: formattedHistory,
       title: applicationType.name,
+      isClosed: !isOpenStatus(application.status),
       isForwardable: departments?.length > 1,
     })
   })

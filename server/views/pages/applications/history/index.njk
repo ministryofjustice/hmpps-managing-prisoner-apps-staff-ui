@@ -29,8 +29,7 @@
 
 {% block content %}
   <div class="govuk-body govuk-width-container">
-    <span class="govuk-caption-xl">{{ title }}</span>
-    <h1 class="govuk-heading-xl govuk-!-margin-top-0">History</h1>
+    <h1 class="govuk-heading-xl govuk-!-margin-top-0 govuk-!-margin-bottom-4">{{ title }}</h1>
     {% include "../partials/application-header.njk" %}
     {% set activeTab = 'history' %}
     {% include "../partials/sub-navigation.njk" %}

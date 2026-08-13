@@ -19,13 +19,15 @@ export default function submitAppRouter({
   const router = Router()
 
   router.get(`${URLS.LOG_SUBMIT_APPLICATION}/:prisonerId/:applicationId`, async (req: Request, res: Response) => {
-    const { application, applicationType } = await getValidApplicationOrRedirect(
+    const validApplication = await getValidApplicationOrRedirect(
       req,
       res,
       auditService,
       managingPrisonerAppsService,
       Page.SUBMIT_APPLICATION_PAGE,
     )
+    if (!validApplication) return
+    const { application, applicationType } = validApplication
 
     res.render(PATHS.LOG_APPLICATION.SUBMIT, {
       title: applicationType.name,

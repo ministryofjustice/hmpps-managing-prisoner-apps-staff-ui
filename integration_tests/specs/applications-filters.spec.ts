@@ -42,9 +42,10 @@ test.describe('Applications List - Filter Functionality', () => {
     await expect(headers.nth(4)).toContainText('Messages')
   })
 
-  test('should display default filter values with Pending and Newest', async ({ page }) => {
+  test('should display default filter values with New, In Progress and Newest', async ({ page }) => {
     await expect(page.locator('.moj-filter')).toBeVisible()
-    await expect(page.locator('input[name="status"][value="PENDING"]')).toBeChecked()
+    await expect(page.locator('input[name="status"][value="NEW"]')).toBeChecked()
+    await expect(page.locator('input[name="status"][value="IN_PROGRESS"]')).toBeChecked()
     await expect(page.locator('input[name="order"][value="newest"]')).toBeChecked()
     await expect(page.locator('input[name="order"][value="oldest"]')).not.toBeChecked()
   })
@@ -118,7 +119,8 @@ test.describe('Applications List - Filter Functionality', () => {
     await page.getByRole('link', { name: 'Clear filters' }).click()
 
     await expect(page).toHaveURL(/clearFilters=true/)
-    await expect(page.locator('input[name="status"][value="PENDING"]')).not.toBeChecked()
+    await expect(page.locator('input[name="status"][value="NEW"]')).not.toBeChecked()
+    await expect(page.locator('input[name="status"][value="IN_PROGRESS"]')).not.toBeChecked()
     await expect(page.locator('input[name="order"][value="newest"]')).toBeChecked()
     await expect(page.locator('input[name="order"][value="oldest"]')).not.toBeChecked()
     await expect(page.locator('input[name="type"]:checked')).toHaveCount(0)

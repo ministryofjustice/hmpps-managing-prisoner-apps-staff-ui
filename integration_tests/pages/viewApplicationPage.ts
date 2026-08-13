@@ -48,10 +48,6 @@ export default class ViewApplicationPage extends AbstractPage {
     return this.page.locator('.moj-sub-navigation__link[href$="/comments"]')
   }
 
-  actionAndReplyTab(): PageElement {
-    return this.page.locator('.moj-sub-navigation__link:has-text("Action and reply")')
-  }
-
   historyTab(): PageElement {
     return this.page.locator('.moj-sub-navigation__link:has-text("History")')
   }

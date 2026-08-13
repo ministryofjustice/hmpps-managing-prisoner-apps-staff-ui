@@ -11,7 +11,7 @@ const targetBaseUrl = process.env.PW_BASE_URL || process.env.DPS_PRISONER_URL ||
 const isWiremock = process.env.PW_ENV === 'mock' || targetBaseUrl.includes('localhost')
 
 Object.values(appTypes).forEach(({ id, name }) => {
-  const pendingApplication = { ...app, status: APPLICATION_STATUS.PENDING, applicationType: { id, name } }
+  const pendingApplication = { ...app, status: APPLICATION_STATUS.NEW, applicationType: { id, name } }
   const closedApplication = { ...app, status: APPLICATION_STATUS.APPROVED, applicationType: { id, name } }
 
   test.describe(`Action and Reply Page - AppType: ${id} | Status: pending`, () => {
@@ -88,7 +88,9 @@ Object.values(appTypes).forEach(({ id, name }) => {
       await actionAndReplyPage.selectAction('APPROVED').check()
       await actionAndReplyPage.saveButton().click()
       await expect(page).toHaveURL(
-        new RegExp(`/applications/${pendingApplication.requestedBy.username}/${pendingApplication.id}/reply`),
+        new RegExp(
+          `/applications/${pendingApplication.requestedBy.username}/${pendingApplication.id}\\?applicationClosed=true`,
+        ),
       )
     })
 
@@ -106,7 +108,9 @@ Object.values(appTypes).forEach(({ id, name }) => {
       await actionAndReplyPage.reasonInput().fill('Application does not meet the required criteria')
       await actionAndReplyPage.saveButton().click()
       await expect(page).toHaveURL(
-        new RegExp(`/applications/${pendingApplication.requestedBy.username}/${pendingApplication.id}/reply`),
+        new RegExp(
+          `/applications/${pendingApplication.requestedBy.username}/${pendingApplication.id}\\?applicationClosed=true`,
+        ),
       )
     })
   })
