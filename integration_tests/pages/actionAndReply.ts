@@ -7,7 +7,7 @@ export default class ActionAndReplyPage extends AbstractPage {
   }
 
   async checkOnPage(): Promise<void> {
-    await expect(this.page.locator('h1.govuk-heading-xl')).toContainText('Action and reply')
+    await expect(this.page.locator('h1.govuk-heading-xl')).toContainText('Mark as closed')
   }
 
   async assertBrowserTitleContains(text: string): Promise<void> {
@@ -36,21 +36,5 @@ export default class ActionAndReplyPage extends AbstractPage {
 
   errorSummary(): PageElement {
     return this.page.locator('.govuk-error-summary')
-  }
-
-  summaryList(): PageElement {
-    return this.page.locator('.govuk-summary-list').first()
-  }
-
-  summaryListKeys(): PageElement {
-    return this.summaryList().locator('.govuk-summary-list__key')
-  }
-
-  summaryListValues(): PageElement {
-    return this.summaryList().locator('.govuk-summary-list__value')
-  }
-
-  printButton(): PageElement {
-    return this.page.locator('#print-button')
   }
 }

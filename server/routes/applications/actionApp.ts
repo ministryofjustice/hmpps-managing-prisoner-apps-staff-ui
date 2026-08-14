@@ -3,7 +3,7 @@ import { Request, Response, Router } from 'express'
 
 import { AppResponsePayload } from '../../@types/managingAppsApi'
 
-import { APPLICATION_STATUS } from '../../constants/applicationStatus'
+import { isOpenStatus } from '../../constants/applicationStatus'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
@@ -35,22 +35,24 @@ export default function actionAppRouter({
     const { prisonerId, applicationId } = req.params
     const { user } = res.locals
 
-    const { application, applicationType } = await getValidApplicationOrRedirect(
+    const validApplication = await getValidApplicationOrRedirect(
       req,
       res,
       auditService,
       managingPrisonerAppsService,
       Page.ACTION_AND_REPLY_PAGE,
     )
+    if (!validApplication) return
+    const { application, applicationType } = validApplication
 
     const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
 
-    const isAppPending = application.status === APPLICATION_STATUS.PENDING
+    const isAppOpen = isOpenStatus(application.status)
     const [request] = application.requests ?? []
 
     let formattedResponse
 
-    if (!isAppPending && request?.responseId) {
+    if (!isAppOpen && request?.responseId) {
       const { decision, createdDate, reason } = await managingPrisonerAppsService.getResponse(
         `${prisonerId}`,
         `${applicationId}`,
@@ -66,10 +68,9 @@ export default function actionAppRouter({
       }
     }
 
-    return renderActionAndReplyPage(res, {
+    renderActionAndReplyPage(res, {
       application,
       applicationType,
-      isAppPending,
       response: formattedResponse,
       isForwardable: departments?.length > 1,
       appLoggedDate: format(new Date(application.createdDate), 'd MMMM yyyy'),
@@ -92,14 +93,12 @@ export default function actionAppRouter({
     )
     const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
     const errors = validateActionAndReply(decision, reason, rejectedReason)
-    const isAppPending = application.status === APPLICATION_STATUS.PENDING
     const [request] = application.requests ?? []
 
     if (Object.keys(errors).length > 0) {
       return renderActionAndReplyPage(res, {
         application,
         applicationType,
-        isAppPending,
         selectedAction: decision,
         selectedRejectedReason: rejectedReason,
         textareaValue: reason,
@@ -116,7 +115,7 @@ export default function actionAppRouter({
 
     await managingPrisonerAppsService.addResponse(`${prisonerId}`, `${applicationId}`, payload, user)
 
-    return res.redirect(`/applications/${prisonerId}/${applicationId}/reply`)
+    return res.redirect(`/applications/${prisonerId}/${applicationId}?applicationClosed=true`)
   })
 
   return router

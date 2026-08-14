@@ -1,7 +1,7 @@
 import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
 
-import { APPLICATION_STATUS } from '../../constants/applicationStatus'
+import { APPLICATION_STATUS_LABELS, isOpenStatus } from '../../constants/applicationStatus'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
@@ -18,7 +18,6 @@ import {
   parseApplicationFilters,
   retainFiltersMiddleware,
 } from '../../utils/http/filters'
-import { convertToTitleCase } from '../../utils/utils'
 
 import logger from '../../../logger'
 import config from '../../config'
@@ -115,7 +114,8 @@ export default function viewAppsRouter({
   router.get(`${URLS.APPLICATIONS}/:prisonerId/:applicationId`, async (req: Request, res: Response) => {
     const { user } = res.locals
     const forwardedTo = typeof req.query.forwardedTo === 'string' ? req.query.forwardedTo : undefined
-    const { application, applicationType, documents } = await getValidApplicationOrRedirect(
+    const applicationClosed = req.query.applicationClosed === 'true'
+    const validApplication = await getValidApplicationOrRedirect(
       req,
       res,
       auditService,
@@ -123,6 +123,8 @@ export default function viewAppsRouter({
       Page.VIEW_APPLICATION_PAGE,
       documentManagementService,
     )
+    if (!validApplication) return
+    const { application, applicationType, documents } = validApplication
 
     logger.info(`Application ${application.id} has ${application.files?.length || 0} files`)
     logger.info(`Fetched ${documents?.length || 0} documents`)
@@ -130,7 +132,7 @@ export default function viewAppsRouter({
 
     const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
 
-    return res.render(PATHS.APPLICATIONS.VIEW, {
+    res.render(PATHS.APPLICATIONS.VIEW, {
       title: applicationType.name,
       applicationType: applicationType.name
         .replace(/[^\w\s]/g, '')
@@ -141,9 +143,9 @@ export default function viewAppsRouter({
         ...application,
         prisonerName: formatName(application.requestedByFirstName, '', application.requestedByLastName),
         createdDate: format(new Date(application.createdDate), 'd MMMM yyyy'),
-        status: application.status === APPLICATION_STATUS.PENDING ? convertToTitleCase(application.status) : 'Closed',
+        status: APPLICATION_STATUS_LABELS[application.status] ?? 'Closed',
       },
-      isClosed: application.status !== APPLICATION_STATUS.PENDING,
+      isClosed: !isOpenStatus(application.status),
       dpsPrisonerUrl: config.dpsPrisoner,
       organisation:
         (application?.requests?.[0] as Partial<{ organisation?: string; company?: string }>)?.organisation?.trim() ||
@@ -152,6 +154,7 @@ export default function viewAppsRouter({
       isGeneric: applicationType.genericType || applicationType.genericForm,
       isForwardable: departments?.length > 1,
       forwardedTo,
+      applicationClosed,
       documents,
     })
   })

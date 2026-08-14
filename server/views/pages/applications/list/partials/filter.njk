@@ -38,9 +38,14 @@
         },
         items: [
           {
-            value: "PENDING",
-            text: "Pending",
-            checked: filters.selectedStatusValues and ("PENDING" in filters.selectedStatusValues)
+            value: "NEW",
+            text: "New",
+            checked: filters.selectedStatusValues and ("NEW" in filters.selectedStatusValues)
+          },
+          {
+            value: "IN_PROGRESS",
+            text: "In progress",
+            checked: filters.selectedStatusValues and ("IN_PROGRESS" in filters.selectedStatusValues)
           },
           {
             value: "CLOSED",

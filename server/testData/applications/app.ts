@@ -49,7 +49,7 @@ export const app: App = {
       amount: 5.0,
     },
   ],
-  status: APPLICATION_STATUS.PENDING,
+  status: APPLICATION_STATUS.NEW,
   firstNightCenter: true,
   requestedDate: '',
   requestedByFirstName: '',

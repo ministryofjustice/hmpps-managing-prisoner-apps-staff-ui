@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const form = document.querySelector('form')
-  const closed = document.getElementById('status-2')
+  const closed = document.getElementById('status-3')
   const approved = document.getElementById('status-closed')
   const declined = document.getElementById('status-closed-2')
   const rejected = document.getElementById('status-closed-3')

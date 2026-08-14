@@ -1,6 +1,6 @@
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 
-<div class="govuk-!-display-none-print">
+<div class="govuk-!-display-none-print govuk-!-margin-top-4">
   {% set items = [{
     text: 'Application',
     href: "/applications/" + application.requestedBy.username + "/" + application.id,
@@ -14,10 +14,6 @@
   }]) %}
 
   {% set items = items.concat([{
-    text: 'Action and reply',
-    href: "/applications/" + application.requestedBy.username + "/" + application.id + "/reply",
-    active: activeTab == 'reply'
-  }, {
     text: 'History',
     href: "/applications/" + application.requestedBy.username + "/" + application.id + "/history",
     active: activeTab == 'history'

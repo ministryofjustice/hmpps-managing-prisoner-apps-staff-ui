@@ -24,13 +24,15 @@ export default function forwardAppRouter({
   router.get(`${URLS.APPLICATIONS}/:prisonerId/:applicationId/forward`, async (req: Request, res: Response) => {
     const { user } = res.locals
 
-    const { application, applicationType } = await getValidApplicationOrRedirect(
+    const validApplication = await getValidApplicationOrRedirect(
       req,
       res,
       auditService,
       managingPrisonerAppsService,
       Page.FORWARD_APPLICATION_PAGE,
     )
+    if (!validApplication) return
+    const { application, applicationType } = validApplication
 
     const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
 
@@ -41,7 +43,7 @@ export default function forwardAppRouter({
         text: dept.name,
       }))
 
-    return res.render(PATHS.APPLICATIONS.FORWARD, {
+    res.render(PATHS.APPLICATIONS.FORWARD, {
       application,
       applicationType,
       departments: filteredDepartments,

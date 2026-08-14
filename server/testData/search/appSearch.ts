@@ -43,7 +43,7 @@ export const appSearchResponse: ViewAppsListResponse = {
     {
       id: '1808f5e2-2bf4-499a-b79f-fb0a5f4bac7b',
       establishmentId: 'TEST_ESTABLISHMENT_FIRST',
-      status: 'PENDING',
+      status: 'NEW',
       appType: { id: 5, name: 'Swap Visiting Orders (VOs) for PIN Credit' },
       requestedBy: 'A12345',
       requestedByFirstName: 'John',
@@ -68,7 +68,7 @@ export const appSearchResponse: ViewAppsListResponse = {
     {
       id: '53a02b48-b6af-47d5-9c54-3d0137f6ed96',
       establishmentId: 'TEST_ESTABLISHMENT_FIRST',
-      status: 'PENDING',
+      status: 'IN_PROGRESS',
       appType: { id: 3, name: 'Add a social PIN phone contact' },
       requestedBy: 'A12345',
       requestedByFirstName: 'John',
@@ -93,7 +93,7 @@ export const appSearchResponse: ViewAppsListResponse = {
     {
       id: 'b4e9944b-3a27-4d10-b12b-895426349ea3',
       establishmentId: 'TEST_ESTABLISHMENT_FIRST',
-      status: 'PENDING',
+      status: 'IN_PROGRESS',
       appType: { id: 5, name: 'Swap Visiting Orders (VOs) for PIN Credit' },
       requestedBy: 'A12345',
       requestedByFirstName: 'John',
@@ -154,7 +154,7 @@ export const buildAppsSearchResponse = (input?: typeof appSearchResponse | typeo
 export const appSearchPayload: ApplicationSearchPayload = {
   page: 1,
   size: 10,
-  status: ['PENDING'],
+  status: ['NEW', 'IN_PROGRESS'],
   applicationTypes: undefined,
   requestedBy: undefined,
   assignedGroups: undefined,

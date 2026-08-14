@@ -4,7 +4,7 @@ import { Request, Response, Router } from 'express'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 import { MessageVisibility } from '../../constants/messageVisibility'
-import { APPLICATION_STATUS } from '../../constants/applicationStatus'
+import { isOpenStatus } from '../../constants/applicationStatus'
 
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
@@ -30,13 +30,15 @@ export default function commentsRouter({
     const { prisonerId } = req.params
     const { user } = res.locals
 
-    const { application, applicationType } = await getValidApplicationOrRedirect(
+    const validApplication = await getValidApplicationOrRedirect(
       req,
       res,
       auditService,
       managingPrisonerAppsService,
       Page.COMMENTS_PAGE,
     )
+    if (!validApplication) return
+    const { application, applicationType } = validApplication
 
     const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
 
@@ -55,12 +57,12 @@ export default function commentsRouter({
         }
       }) ?? []
 
-    return res.render(PATHS.APPLICATIONS.COMMENTS, {
+    res.render(PATHS.APPLICATIONS.COMMENTS, {
       application,
       applicationType,
       comments: formattedComments,
       title: 'Messages',
-      isClosed: application.status !== APPLICATION_STATUS.PENDING,
+      isClosed: !isOpenStatus(application.status),
       isForwardable: departments?.length > 1,
     })
   })
@@ -76,7 +78,7 @@ export default function commentsRouter({
       return res.redirect(URLS.APPLICATIONS)
     }
 
-    if (application.status !== APPLICATION_STATUS.PENDING) {
+    if (!isOpenStatus(application.status)) {
       return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/comments`)
     }
 

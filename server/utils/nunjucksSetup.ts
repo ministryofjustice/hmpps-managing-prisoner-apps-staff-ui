@@ -6,6 +6,7 @@ import fs from 'fs'
 import { initialiseName } from './utils'
 import config from '../config'
 import logger from '../../logger'
+import { getStatusTag } from '../constants/applicationStatus'
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const mojFilters = require('@ministryofjustice/frontend/moj/filters/all')
@@ -47,6 +48,7 @@ export default function nunjucksSetup(app: express.Express): void {
   njkEnv.addGlobal('featureFlags', config.featureFlags)
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addFilter('assetMap', (url: string) => assetManifest[url] || url)
+  njkEnv.addFilter('statusTag', getStatusTag)
 
   Object.entries(mojFilters()).forEach(([name, filter]) => {
     njkEnv.addFilter(name, filter as (...args: unknown[]) => unknown)

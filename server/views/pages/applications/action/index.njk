@@ -1,8 +1,9 @@
-{%- from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs -%}
 {%- from "govuk/components/button/macro.njk" import govukButton -%}
 {%- from "govuk/components/character-count/macro.njk" import govukCharacterCount -%}
 {%- from "govuk/components/error-summary/macro.njk" import govukErrorSummary -%}
 {%- from "govuk/components/radios/macro.njk" import govukRadios -%}
+{%- from "govuk/components/back-link/macro.njk" import govukBackLink -%}
+{%- from "govuk/components/tag/macro.njk" import govukTag -%}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -10,28 +11,17 @@
 {% set mainClasses = "app-container govuk-body applications-landing-page" %}
 
 {% block beforeContent %}
-  <div class="govuk-body govuk-width-container govuk-!-display-none-print">
-    {{ govukBreadcrumbs({
-      items: [
-        {
-          text: "Digital Prisons Services",
-          href: dpsUrl
-        },
-        {
-          text: "Applications",
-          href: "/"
-        },
-        {
-          text: "View all applications",
-          href: "/applications"
-        }
-      ]
-    }) }}
-  </div>
+  {% include "../partials/breadcrumbs.njk" %}
 {% endblock %}
 
 {% block content %}
   <div class="govuk-body govuk-width-container">
+    {{ govukBackLink({
+      text: "Back",
+      href: "/applications/" + application.requestedBy.username + "/" + application.id,
+      classes: "govuk-!-display-none-print govuk-!-margin-top-4"
+    }) }}
+
     {% if errors %}
       {% set errorList = [] %}
 
@@ -54,19 +44,15 @@
     {% endif %}
 
     <span class="govuk-caption-xl govuk-!-display-none-print">{{ applicationType.name }}</span>
+    <h1 class="govuk-heading-xl govuk-!-margin-top-0 govuk-!-display-none-print govuk-!-margin-bottom-4">Mark as closed</h1>
+    
+    {{ govukTag(application.status | statusTag) }}
 
-    <h1 class="govuk-heading-xl govuk-!-margin-top-0 govuk-!-display-none-print">{{ title }}</h1>
-    {% include "../partials/application-header.njk" %}
-    {% set activeTab = 'reply' %}
-    {% include "../partials/sub-navigation.njk" %}
+    <p class="govuk-body govuk-!-margin-top-4">You can not forward or change this application when it has been closed.</p>
 
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
-        {% if isAppPending %}
-          {% include "./pending.njk" %}
-        {% else %}
-          {% include "./closed.njk" %}
-        {% endif %}
+        {% include "./action-form.njk" %}
       </div>
     </div>
   </div>
