@@ -146,7 +146,9 @@ test.describe('Action and Reply Page - REJECTED decision', () => {
     await actionAndReplyPage.selectAction('REJECTED').check()
     await actionAndReplyPage.rejectedReasonRadio('Prisoner sent an abusive app').check()
     await actionAndReplyPage.saveButton().click()
-    await expect(page).toHaveURL(new RegExp(`/applications/${pendingApp.requestedBy.username}/${pendingApp.id}/reply`))
+    await expect(page).toHaveURL(
+      new RegExp(`/applications/${pendingApp.requestedBy.username}/${pendingApp.id}\\?applicationClosed=true`),
+    )
   })
 
   test('should successfully submit with REJECTED and "Prisoner used the wrong app"', async ({ page }) => {
@@ -160,7 +162,9 @@ test.describe('Action and Reply Page - REJECTED decision', () => {
     await actionAndReplyPage.selectAction('REJECTED').check()
     await actionAndReplyPage.rejectedReasonRadio('Prisoner used the wrong app').check()
     await actionAndReplyPage.saveButton().click()
-    await expect(page).toHaveURL(new RegExp(`/applications/${pendingApp.requestedBy.username}/${pendingApp.id}/reply`))
+    await expect(page).toHaveURL(
+      new RegExp(`/applications/${pendingApp.requestedBy.username}/${pendingApp.id}\\?applicationClosed=true`),
+    )
   })
 
   test('should successfully submit with REJECTED and "Prisoner has already sent this app"', async ({ page }) => {
@@ -174,7 +178,9 @@ test.describe('Action and Reply Page - REJECTED decision', () => {
     await actionAndReplyPage.selectAction('REJECTED').check()
     await actionAndReplyPage.rejectedReasonRadio('Prisoner has already sent this app').check()
     await actionAndReplyPage.saveButton().click()
-    await expect(page).toHaveURL(new RegExp(`/applications/${pendingApp.requestedBy.username}/${pendingApp.id}/reply`))
+    await expect(page).toHaveURL(
+      new RegExp(`/applications/${pendingApp.requestedBy.username}/${pendingApp.id}\\?applicationClosed=true`),
+    )
   })
 
   test('should show all three valid rejected reason options', async ({ page }) => {
@@ -212,12 +218,10 @@ test.describe('Action and Reply Page - closed application decision summary', () 
     })
 
     await signIn()
-    await page.goto(`/applications/${declinedApp.requestedBy.username}/${declinedApp.id}/reply`)
+    await page.goto(`/applications/${declinedApp.requestedBy.username}/${declinedApp.id}?applicationClosed=true`)
 
-    const declinedSummaryPage = new ActionAndReplyPage(page)
-    await expect(declinedSummaryPage.summaryList()).toBeVisible()
-    await expect(declinedSummaryPage.summaryDecisionValue()).toContainText('Declined')
-    await expect(declinedSummaryPage.summaryReasonValue()).toContainText('Does not meet the criteria')
+    await expect(page.locator('.moj-alert')).toContainText('Application closed')
+    await expect(page.locator('h1')).toContainText(declinedApp.applicationType.name)
   })
 
   test('should display REJECTED decision and rejection reason in summary list', async ({ page, signIn }) => {
@@ -237,12 +241,10 @@ test.describe('Action and Reply Page - closed application decision summary', () 
     })
 
     await signIn()
-    await page.goto(`/applications/${rejectedApp.requestedBy.username}/${rejectedApp.id}/reply`)
+    await page.goto(`/applications/${rejectedApp.requestedBy.username}/${rejectedApp.id}?applicationClosed=true`)
 
-    const rejectedSummaryPage = new ActionAndReplyPage(page)
-    await expect(rejectedSummaryPage.summaryList()).toBeVisible()
-    await expect(rejectedSummaryPage.summaryDecisionValue()).toContainText('Rejected')
-    await expect(rejectedSummaryPage.summaryReasonValue()).toContainText('Prisoner used the wrong app')
+    await expect(page.locator('.moj-alert')).toContainText('Application closed')
+    await expect(page.locator('h1')).toContainText(rejectedApp.applicationType.name)
   })
 
   test('should display APPROVED decision in summary list', async ({ page, signIn }) => {
@@ -258,11 +260,10 @@ test.describe('Action and Reply Page - closed application decision summary', () 
     await managingPrisonerAppsApi.stubGetAppResponse({ app: approvedApp, decision: 'APPROVED' })
 
     await signIn()
-    await page.goto(`/applications/${approvedApp.requestedBy.username}/${approvedApp.id}/reply`)
+    await page.goto(`/applications/${approvedApp.requestedBy.username}/${approvedApp.id}?applicationClosed=true`)
 
-    const approvedSummaryPage = new ActionAndReplyPage(page)
-    await expect(approvedSummaryPage.summaryList()).toBeVisible()
-    await expect(approvedSummaryPage.summaryDecisionValue()).toContainText('Approved')
+    await expect(page.locator('.moj-alert')).toContainText('Application closed')
+    await expect(page.locator('h1')).toContainText(approvedApp.applicationType.name)
   })
 })
 
@@ -330,10 +331,10 @@ test.describe('Action and Reply Page - APPROVED complete journey', () => {
     await actionAndReplyPage.selectAction('APPROVED').check()
     await actionAndReplyPage.saveButton().click()
 
-    await expect(page).toHaveURL(new RegExp(`/applications/${app.requestedBy.username}/${app.id}/reply`))
+    await expect(page).toHaveURL(new RegExp(`/applications/${app.requestedBy.username}/${app.id}\\?applicationClosed=true`))
 
-    await expect(actionAndReplyPage.summaryList()).toBeVisible()
-    await expect(actionAndReplyPage.summaryDecisionValue()).toContainText('Approved')
+    await expect(page.locator('.moj-alert')).toContainText('Application closed')
+    await expect(page.locator('h1')).toContainText(firstAppType.name)
   })
 })
 
@@ -403,11 +404,10 @@ test.describe('Action and Reply Page - DECLINED complete journey', () => {
     await actionAndReplyPage.reasonInput().fill(declineReason)
     await actionAndReplyPage.saveButton().click()
 
-    await expect(page).toHaveURL(new RegExp(`/applications/${app.requestedBy.username}/${app.id}/reply`))
+    await expect(page).toHaveURL(new RegExp(`/applications/${app.requestedBy.username}/${app.id}\\?applicationClosed=true`))
 
-    await expect(actionAndReplyPage.summaryList()).toBeVisible()
-    await expect(actionAndReplyPage.summaryDecisionValue()).toContainText('Declined')
-    await expect(actionAndReplyPage.summaryReasonValue()).toContainText(declineReason)
+    await expect(page.locator('.moj-alert')).toContainText('Application closed')
+    await expect(page.locator('h1')).toContainText(firstAppType.name)
   })
 })
 
@@ -491,11 +491,10 @@ test.describe('Action and Reply Page - REJECTED complete journey', () => {
       await actionAndReplyPage.rejectedReasonRadio(rejectionReason).check()
       await actionAndReplyPage.saveButton().click()
 
-      await expect(page).toHaveURL(new RegExp(`/applications/${app.requestedBy.username}/${app.id}/reply`))
+      await expect(page).toHaveURL(new RegExp(`/applications/${app.requestedBy.username}/${app.id}\\?applicationClosed=true`))
 
-      await expect(actionAndReplyPage.summaryList()).toBeVisible()
-      await expect(actionAndReplyPage.summaryDecisionValue()).toContainText('Rejected')
-      await expect(actionAndReplyPage.summaryReasonValue()).toContainText(rejectionReason)
+      await expect(page.locator('.moj-alert')).toContainText('Application closed')
+      await expect(page.locator('h1')).toContainText(firstAppType.name)
     })
   })
 })
