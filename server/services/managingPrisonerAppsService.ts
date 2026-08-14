@@ -27,6 +27,10 @@ export default class ManagingPrisonerAppsService {
     })
   }
 
+  async updateAppToInProgress(prisonerId: string, applicationId: string, user: BaseUser) {
+    return this.managingPrisonerAppsApiClient.updateAppToInProgress(user.username, prisonerId, applicationId)
+  }
+
   async submitPrisonerApp(applicationData: ApplicationData, user: BaseUser) {
     return this.managingPrisonerAppsApiClient.submitPrisonerApp(user.username, applicationData)
   }

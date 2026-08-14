@@ -78,6 +78,20 @@ export default class ManagingPrisonerAppsApiClient extends RestClient {
     }
   }
 
+  async updateAppToInProgress(username: string, prisonerId: string, applicationId: string): Promise<void> {
+    try {
+      await this.patch(
+        {
+          path: `/v1/prisoners/${prisonerId}/apps/${applicationId}/status`,
+          data: { status: 'IN_PROGRESS' },
+        },
+        asSystem(username),
+      )
+    } catch (error) {
+      logger.error(`Error updating status to in progress for applicationId: ${applicationId}`, error)
+    }
+  }
+
   async submitPrisonerApp(username: string, applicationData: ApplicationData): Promise<App | null> {
     try {
       const {

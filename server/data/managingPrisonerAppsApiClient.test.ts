@@ -81,6 +81,16 @@ describe('ManagingPrisonerAppsApiClient', () => {
     expect(output).toBeUndefined()
   })
 
+  it('should update an application status to in progress', async () => {
+    fakeManagingPrisonerAppApi
+      .patch('/v1/prisoners/G4567/apps/app-id/status', { status: 'IN_PROGRESS' })
+      .matchHeader('authorization', `Bearer ${user.token}`)
+      .reply(200, app)
+
+    const output = await client.updateAppToInProgress(user.username, 'G4567', 'app-id')
+    expect(output).toBeUndefined()
+  })
+
   it('should submit a new prisoner application', async () => {
     fakeManagingPrisonerAppApi
       .post('/v1/prisoners/G4567/apps')

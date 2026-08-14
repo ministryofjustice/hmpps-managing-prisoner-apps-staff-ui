@@ -1,7 +1,7 @@
 import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
 
-import { APPLICATION_STATUS_LABELS, isOpenStatus } from '../../constants/applicationStatus'
+import { isOpenStatus } from '../../constants/applicationStatus'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
@@ -115,6 +115,7 @@ export default function viewAppsRouter({
     const { user } = res.locals
     const forwardedTo = typeof req.query.forwardedTo === 'string' ? req.query.forwardedTo : undefined
     const applicationClosed = req.query.applicationClosed === 'true'
+    const markedInProgress = req.query.markedInProgress === 'true'
     const validApplication = await getValidApplicationOrRedirect(
       req,
       res,
@@ -143,7 +144,6 @@ export default function viewAppsRouter({
         ...application,
         prisonerName: formatName(application.requestedByFirstName, '', application.requestedByLastName),
         createdDate: format(new Date(application.createdDate), 'd MMMM yyyy'),
-        status: APPLICATION_STATUS_LABELS[application.status] ?? 'Closed',
       },
       isClosed: !isOpenStatus(application.status),
       dpsPrisonerUrl: config.dpsPrisoner,
@@ -155,9 +155,22 @@ export default function viewAppsRouter({
       isForwardable: departments?.length > 1,
       forwardedTo,
       applicationClosed,
+      markedInProgress,
       documents,
     })
   })
+
+  router.post(
+    `${URLS.APPLICATIONS}/:prisonerId/:applicationId/mark-in-progress`,
+    async (req: Request, res: Response) => {
+      const { prisonerId, applicationId } = req.params
+      const { user } = res.locals
+
+      await managingPrisonerAppsService.updateAppToInProgress(`${prisonerId}`, `${applicationId}`, user)
+
+      return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}?markedInProgress=true`)
+    },
+  )
 
   return router
 }

@@ -54,6 +54,15 @@ describe('ManagingPrisonerAppsService', () => {
     })
   })
 
+  describe('updateAppToInProgress', () => {
+    it('should update an application status to in progress', async () => {
+      const result = await service.updateAppToInProgress('prisoner-id', 'application-id', user)
+
+      expect(result).toBeUndefined()
+      expect(mockClient.updateAppToInProgress).toHaveBeenCalledWith(user.username, 'prisoner-id', 'application-id')
+    })
+  })
+
   describe('getApplications', () => {
     it('should fetch a list of applications based on search criteria', async () => {
       const result = await service.getApps(appSearchPayload, user)

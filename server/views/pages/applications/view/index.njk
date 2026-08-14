@@ -26,6 +26,16 @@
           }) }}
         {% endif %}
 
+        {% if markedInProgress %}
+          {{ mojAlert({
+            variant: "success",
+            title: {
+              text: "Success"
+            },
+            text: "Application now in progress"
+          }) }}
+        {% endif %}
+
         {% if forwardedTo %}
           {{ mojAlert({
             variant: "success",
