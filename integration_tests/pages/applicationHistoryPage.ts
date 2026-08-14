@@ -18,10 +18,6 @@ export default class ApplicationHistoryPage extends AbstractPage {
     return this.page.locator('.moj-sub-navigation__link:has-text("History")')
   }
 
-  pageCaption(): PageElement {
-    return this.page.locator('.govuk-caption-xl')
-  }
-
   historyContent(): PageElement {
     return this.page.getByText('History of this application')
   }

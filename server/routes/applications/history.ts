@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express'
 
 import { PATHS } from '../../constants/paths'
+import { isOpenStatus } from '../../constants/applicationStatus'
 
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
@@ -16,17 +17,20 @@ export default function historyRouter({
   managingPrisonerAppsService: ManagingPrisonerAppsService
 }): Router {
   const router = Router()
+
   router.get('/applications/:prisonerId/:applicationId/history', async (req: Request, res: Response) => {
     const { prisonerId, applicationId } = req.params
     const { user } = res.locals
 
-    const { application, applicationType } = await getValidApplicationOrRedirect(
+    const validApplication = await getValidApplicationOrRedirect(
       req,
       res,
       auditService,
       managingPrisonerAppsService,
       Page.APPLICATION_HISTORY_PAGE,
     )
+    if (!validApplication) return
+    const { application, applicationType } = validApplication
 
     const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
 
@@ -44,10 +48,11 @@ export default function historyRouter({
 
     const formattedHistory = formatApplicationHistory(history, commentItems, responses)
 
-    return res.render(PATHS.APPLICATIONS.HISTORY, {
+    res.render(PATHS.APPLICATIONS.HISTORY, {
       application,
       history: formattedHistory,
       title: applicationType.name,
+      isClosed: !isOpenStatus(application.status),
       isForwardable: departments?.length > 1,
     })
   })

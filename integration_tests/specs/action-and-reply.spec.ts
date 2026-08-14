@@ -11,10 +11,9 @@ const targetBaseUrl = process.env.PW_BASE_URL || process.env.DPS_PRISONER_URL ||
 const isWiremock = process.env.PW_ENV === 'mock' || targetBaseUrl.includes('localhost')
 
 Object.values(appTypes).forEach(({ id, name }) => {
-  const pendingApplication = { ...app, status: APPLICATION_STATUS.PENDING, applicationType: { id, name } }
-  const closedApplication = { ...app, status: APPLICATION_STATUS.APPROVED, applicationType: { id, name } }
+  const pendingApplication = { ...app, status: APPLICATION_STATUS.NEW, applicationType: { id, name } }
 
-  test.describe(`Action and Reply Page - AppType: ${id} | Status: pending`, () => {
+  test.describe(`Action and Reply Page - AppType: ${id} | Status: open`, () => {
     test.beforeEach(async ({ page, signIn }) => {
       if (isWiremock) {
         await resetStubs()
@@ -59,24 +58,17 @@ Object.values(appTypes).forEach(({ id, name }) => {
       await expect(actionAndReplyPage.errorSummary()).toContainText('Add a reason')
     })
 
-    test('should allow navigating to Messages from Action and reply', async ({ page }) => {
-      if (isWiremock) {
-        await managingPrisonerAppsApi.stubGetComments({ app: pendingApplication })
-      }
-
-      const messagesTab = page.locator('.moj-sub-navigation__link:has-text("Messages")')
-      await expect(messagesTab).toHaveAttribute(
+    test('should display a back link to the application', async ({ page }) => {
+      const backLink = page.locator('.govuk-back-link')
+      await expect(backLink).toBeVisible()
+      await expect(backLink).toHaveAttribute(
         'href',
-        `/applications/${pendingApplication.requestedBy.username}/${pendingApplication.id}/comments`,
+        `/applications/${pendingApplication.requestedBy.username}/${pendingApplication.id}`,
       )
+    })
 
-      await messagesTab.click()
-
-      await expect(page).toHaveURL(
-        new RegExp(`/applications/${pendingApplication.requestedBy.username}/${pendingApplication.id}/comments`),
-      )
-      await expect(page.getByRole('heading', { name: 'Messages and replies' })).toBeVisible()
-      await expect(page.locator('.moj-sub-navigation__item a[aria-current="page"]')).toContainText('Messages')
+    test('should display the application status tag', async ({ page }) => {
+      await expect(page.locator('main .govuk-tag')).toContainText('New')
     })
 
     test('should successfully submit with APPROVED decision', async ({ page }) => {
@@ -88,7 +80,9 @@ Object.values(appTypes).forEach(({ id, name }) => {
       await actionAndReplyPage.selectAction('APPROVED').check()
       await actionAndReplyPage.saveButton().click()
       await expect(page).toHaveURL(
-        new RegExp(`/applications/${pendingApplication.requestedBy.username}/${pendingApplication.id}/reply`),
+        new RegExp(
+          `/applications/${pendingApplication.requestedBy.username}/${pendingApplication.id}\\?applicationClosed=true`,
+        ),
       )
     })
 
@@ -106,59 +100,10 @@ Object.values(appTypes).forEach(({ id, name }) => {
       await actionAndReplyPage.reasonInput().fill('Application does not meet the required criteria')
       await actionAndReplyPage.saveButton().click()
       await expect(page).toHaveURL(
-        new RegExp(`/applications/${pendingApplication.requestedBy.username}/${pendingApplication.id}/reply`),
+        new RegExp(
+          `/applications/${pendingApplication.requestedBy.username}/${pendingApplication.id}\\?applicationClosed=true`,
+        ),
       )
-    })
-  })
-
-  test.describe(`Action and Reply Page - AppType: ${id} | Status: closed`, () => {
-    test.beforeEach(async ({ page, signIn }) => {
-      if (isWiremock) {
-        await resetStubs()
-        await auth.stubSignIn()
-        await prisonApi.stubGetCaseLoads()
-        await managingPrisonerAppsApi.stubGetPrisonerApp({ app: closedApplication })
-        await managingPrisonerAppsApi.stubGetGroupsAndTypes()
-        await managingPrisonerAppsApi.stubGetAppResponse({ app: closedApplication, decision: 'APPROVED' })
-      }
-
-      await signIn()
-      await page.goto(`/applications/${closedApplication.requestedBy.username}/${closedApplication.id}/reply`)
-    })
-
-    test('should display the correct page title', async ({ page }) => {
-      const actionAndReplyPage = new ActionAndReplyPage(page)
-      await actionAndReplyPage.assertBrowserTitleContains('Action and reply')
-    })
-
-    test('should display the correct app type name', async ({ page }) => {
-      const actionAndReplyPage = new ActionAndReplyPage(page)
-      await expect(actionAndReplyPage.caption()).toContainText(name)
-    })
-
-    test('should display the correct summary list', async ({ page }) => {
-      const actionAndReplyPage = new ActionAndReplyPage(page)
-      await expect(actionAndReplyPage.summaryList()).toBeVisible()
-      await expect(actionAndReplyPage.summaryListKeys()).toContainText(['Action', 'Reason', 'Date', 'Location'])
-      await expect(actionAndReplyPage.summaryListValues().first()).toBeVisible()
-    })
-
-    test('should trigger window print when Print reply button is clicked', async ({ page }) => {
-      const actionAndReplyPage = new ActionAndReplyPage(page)
-      await expect(actionAndReplyPage.printButton()).toBeVisible()
-
-      await page.evaluate(() => {
-        ;(window as unknown as { printCalledCount: number }).printCalledCount = 0
-        window.print = () => {
-          ;(window as unknown as { printCalledCount: number }).printCalledCount += 1
-        }
-      })
-
-      await actionAndReplyPage.printButton().click()
-      const printCalled = await page.evaluate(
-        () => (window as unknown as { printCalledCount: number }).printCalledCount,
-      )
-      expect(printCalled).toBe(1)
     })
   })
 })

@@ -126,20 +126,6 @@ test.describe('Comments Page', () => {
     await expect(commentsPage.commentsSectionHeading()).toBeVisible()
   })
 
-  test('should allow navigating to Action and reply from Messages', async ({ page }) => {
-    if (isWiremock) {
-      await managingPrisonerAppsApi.stubGetAppResponse({ app, decision: undefined })
-    }
-
-    const actionAndReplyTab = page.locator('.moj-sub-navigation__link:has-text("Action and reply")')
-    await expect(actionAndReplyTab).toHaveAttribute('href', `/applications/${app.requestedBy.username}/${app.id}/reply`)
-
-    await actionAndReplyTab.click()
-
-    await expect(page).toHaveURL(`/applications/${app.requestedBy.username}/${app.id}/reply`)
-    await expect(page.getByRole('heading', { name: 'Action and reply' })).toBeVisible()
-  })
-
   test('should allow a user to add a comment and display it', async ({ page }) => {
     if (isWiremock) {
       await managingPrisonerAppsApi.stubAddComments({ app })

@@ -7,7 +7,7 @@ export default class ActionAndReplyPage extends AbstractPage {
   }
 
   async checkOnPage(): Promise<void> {
-    await expect(this.page.locator('h1.govuk-heading-xl')).toContainText('Action and reply')
+    await expect(this.page.locator('h1.govuk-heading-xl')).toContainText('Mark as closed')
   }
 
   async assertBrowserTitleContains(text: string): Promise<void> {

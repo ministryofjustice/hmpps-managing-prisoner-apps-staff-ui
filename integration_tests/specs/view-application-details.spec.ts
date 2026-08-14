@@ -72,16 +72,6 @@ filteredApplicationTypes.forEach(({ name, id }) => {
       )
     })
 
-    test('should allow navigating to the Action and Reply section', async ({ page }) => {
-      const viewPage = new ViewApplicationPage(page)
-      await expect(viewPage.actionAndReplyTab()).toBeVisible()
-      await expect(viewPage.actionAndReplyTab()).toContainText('Action and reply')
-      await expect(viewPage.actionAndReplyTab()).toHaveAttribute(
-        'href',
-        '/applications/G123456/13d2c453-be11-44a8-9861-21fd8ae6e911/reply',
-      )
-    })
-
     test('should allow navigating to the History section', async ({ page }) => {
       const viewPage = new ViewApplicationPage(page)
       await expect(viewPage.historyTab()).toBeVisible()

@@ -26,9 +26,9 @@ test.describe('Application History Page', () => {
     await page.goto(`/applications/${app.requestedBy.username}/${app.id}/history`)
   })
 
-  test('should display the page title', async ({ page }) => {
+  test('should display the application type as the page heading', async ({ page }) => {
     const historyPage = new ApplicationHistoryPage(page)
-    await expect(historyPage.pageTitle()).toContainText('History')
+    await expect(historyPage.pageTitle()).toContainText('Add a social PIN phone contact')
   })
 
   test('should display the History section', async ({ page }) => {
@@ -39,11 +39,6 @@ test.describe('Application History Page', () => {
       'href',
       `/applications/${app.requestedBy.username}/${app.id}/history`,
     )
-  })
-
-  test('should display the application type name in the caption', async ({ page }) => {
-    const historyPage = new ApplicationHistoryPage(page)
-    await expect(historyPage.pageCaption()).toContainText('Add a social PIN phone contact')
   })
 
   test('should display the history page content', async ({ page }) => {
