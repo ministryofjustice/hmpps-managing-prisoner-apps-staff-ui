@@ -60,7 +60,7 @@ export default {
     reason = '',
   }: {
     app: App
-    decision?: 'APPROVED' | 'DECLINED'
+    decision?: 'APPROVED' | 'DECLINED' | 'REJECTED'
     reason?: string
   }): SuperAgentRequest => {
     return stubFor({
@@ -81,7 +81,7 @@ export default {
     reason = '',
   }: {
     app: App
-    decision?: 'APPROVED' | 'DECLINED'
+    decision?: 'APPROVED' | 'DECLINED' | 'REJECTED'
     reason?: string
   }): SuperAgentRequest => {
     return stubFor({

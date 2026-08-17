@@ -87,6 +87,28 @@ filteredApplicationTypes.forEach(({ name, id }) => {
 test.describe('View Application Page - Forward button visibility', () => {
   const application = { ...app, applicationType: { id: 3, name: 'Add a social PIN phone contact' } }
 
+  test('should display the action panel actions and open the Mark as closed form from the application page', async ({
+    page,
+    signIn,
+  }) => {
+    await visitApplicationPage({ page, signIn, application, departmentCount: 2 })
+
+    const viewPage = new ViewApplicationPage(page)
+    await expect(viewPage.markAsInProgress()).toBeVisible()
+    await expect(viewPage.markAsInProgress()).toContainText('Mark as in progress')
+    await expect(viewPage.forwardApplication()).toBeVisible()
+    await expect(viewPage.forwardApplication()).toContainText('Forward to another department')
+    await expect(viewPage.markAsClosed()).toBeVisible()
+    await expect(viewPage.markAsClosed()).toContainText('Mark as closed')
+
+    await viewPage.markAsClosed().click()
+
+    await expect(page).toHaveURL(
+      new RegExp(`/applications/${application.requestedBy.username}/${application.id}/reply`),
+    )
+    await expect(page.locator('h1.govuk-heading-xl')).toContainText('Mark as closed')
+  })
+
   test('should display the Forward to another department button when more than one department is available', async ({
     page,
     signIn,
