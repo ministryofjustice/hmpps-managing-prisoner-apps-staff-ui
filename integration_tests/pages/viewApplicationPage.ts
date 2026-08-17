@@ -40,6 +40,14 @@ export default class ViewApplicationPage extends AbstractPage {
     return this.page.locator('.govuk-summary-list__row:has(dt:text-is("Date")) .govuk-summary-list__value')
   }
 
+  markAsInProgress(): PageElement {
+    return this.page.getByRole('button', { name: 'Mark as in progress' })
+  }
+
+  markAsClosed(): PageElement {
+    return this.page.getByRole('button', { name: 'Mark as closed' })
+  }
+
   forwardApplication(): PageElement {
     return this.page.getByRole('button', { name: 'Forward to another department' })
   }

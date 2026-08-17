@@ -22,8 +22,16 @@ export default class ActionAndReplyPage extends AbstractPage {
     return this.page.locator('.govuk-radios').first()
   }
 
-  selectAction(action: 'APPROVED' | 'DECLINED'): PageElement {
+  selectAction(action: 'APPROVED' | 'DECLINED' | 'REJECTED'): PageElement {
     return this.page.locator(`input[name="decision"][value="${action}"]`)
+  }
+
+  rejectedReasonRadio(reason: string): PageElement {
+    return this.page.locator(`input[name="rejectedReason"][value="${reason}"]`)
+  }
+
+  rejectedReasonError(): PageElement {
+    return this.page.locator('#rejectedReason-error')
   }
 
   reasonInput(): PageElement {
@@ -36,5 +44,29 @@ export default class ActionAndReplyPage extends AbstractPage {
 
   errorSummary(): PageElement {
     return this.page.locator('.govuk-error-summary')
+  }
+
+  summaryList(): PageElement {
+    return this.page.locator('.govuk-summary-list').first()
+  }
+
+  summaryDecisionValue(): PageElement {
+    return this.summaryList().locator('.govuk-summary-list__value').nth(0)
+  }
+
+  summaryReasonValue(): PageElement {
+    return this.summaryList().locator('.govuk-summary-list__value').nth(1)
+  }
+
+  summaryListKeys(): PageElement {
+    return this.summaryList().locator('.govuk-summary-list__key')
+  }
+
+  summaryListValues(): PageElement {
+    return this.summaryList().locator('.govuk-summary-list__value')
+  }
+
+  printButton(): PageElement {
+    return this.page.locator('#print-button')
   }
 }
