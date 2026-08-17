@@ -8,10 +8,15 @@
   {% if not isClosed %}
     {% call govukInsetText() %}
       <p class="govuk-!-font-weight-bold govuk-!-margin-bottom-2">Action this application</p>
-      {{ govukButton({
-          text: "Mark as in progress",
-          classes: "govuk-button--secondary govuk-!-margin-right-2"
-        }) }}
+      {% if application.status == "NEW" %}
+        <form method="POST" action="/applications/{{ application.requestedBy.username }}/{{ application.id }}/mark-in-progress" class="govuk-!-display-inline-block govuk-!-margin-right-2">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+          {{ govukButton({
+              text: "Mark as in progress",
+              classes: "govuk-button--secondary"
+            }) }}
+        </form>
+      {% endif %}
 
       {% if isForwardable %}
         {{ govukButton({

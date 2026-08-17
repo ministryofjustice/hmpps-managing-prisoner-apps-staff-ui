@@ -19,7 +19,7 @@ export const APPLICATION_STATUS_LABELS: Record<string, string> = {
 
 export const APPLICATION_STATUS_TAG_COLOURS: Record<string, string> = {
   [APPLICATION_STATUS.NEW]: 'govuk-tag--blue',
-  [APPLICATION_STATUS.IN_PROGRESS]: 'govuk-tag--light-blue',
+  [APPLICATION_STATUS.IN_PROGRESS]: 'govuk-tag--yellow',
   [APPLICATION_STATUS.APPROVED]: 'govuk-tag--green',
   [APPLICATION_STATUS.DECLINED]: 'govuk-tag--red',
   [APPLICATION_STATUS.REJECTED]: 'govuk-tag--purple',

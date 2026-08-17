@@ -4,7 +4,7 @@
 
 {% set _ = rows.push({
   key: { text: "Status" },
-  value: { text: application.status }
+  value: { text: (application.status | statusTag).text }
 }) %}
 
 {% set _ = rows.push({
