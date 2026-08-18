@@ -17,20 +17,24 @@
             }) }}
         </form>
       {% endif %}
+      {{ govukButton({
+          text: "Mark as in progress",
+          classes: "govuk-button--secondary govuk-!-margin-right-2 govuk-!-margin-bottom-0"
+        }) }}
 
       {% if isForwardable %}
         {{ govukButton({
             text: "Forward to another department",
             href: "/applications/" + application.requestedBy.username + "/" + application.id + "/forward",
-            classes: "govuk-button--secondary govuk-!-margin-right-2"
+            classes: "govuk-button--secondary govuk-!-margin-right-2 govuk-!-margin-bottom-0"
           }) }}
       {% endif %}
 
       {{ govukButton({
           text: "Mark as closed",
           href: "/applications/" + application.requestedBy.username + "/" + application.id + "/reply",
-          classes: "govuk-button--secondary"
-        }) 
+          classes: "govuk-button--secondary govuk-!-margin-bottom-0"
+        })
       }}
     {% endcall %}
   {% endif %}
