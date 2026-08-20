@@ -18,6 +18,7 @@ import forwardAppRouter from './forwardApp'
 import groupsRouter from './groups'
 import historyRouter from './history'
 import prisonerRouter from './prisoner'
+import printReplyRouter from './printReply'
 import submitAppRouter from './submitApp'
 import viewDocumentRouter from './viewDocument'
 import viewAppsRouter from './view'
@@ -82,6 +83,7 @@ export default function applicationsRoutes({
   router.use(groupsRouter({ auditService, managingPrisonerAppsService }))
   router.use(historyRouter({ auditService, managingPrisonerAppsService }))
   router.use(prisonerRouter({ auditService, prisonService }))
+  router.use(printReplyRouter({ auditService, managingPrisonerAppsService }))
   router.use(submitAppRouter({ auditService, managingPrisonerAppsService }))
   router.use(viewAppsRouter({ auditService, managingPrisonerAppsService, prisonService, documentManagementService }))
   router.use(logMethodRouter({ auditService }))
