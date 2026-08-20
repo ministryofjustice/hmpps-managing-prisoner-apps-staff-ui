@@ -5,6 +5,7 @@ export const PATHS = {
     LIST: 'pages/applications/list/index',
     HISTORY: 'pages/applications/history/index',
     COMMENTS: 'pages/applications/comments/index',
+    PRINT_REPLY: 'pages/applications/print-reply/index',
     ACTION_AND_REPLY: 'pages/applications/action/index',
     FORWARD: 'pages/applications/forward/index',
     CHANGE_DETAILS: 'pages/applications/change/index',

@@ -1,0 +1,42 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% import "../action/macro.njk" as closedAction %}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + title %}
+{% set mainClasses = "app-container govuk-body applications-landing-page" %}
+{% set activeTab = 'printReply' %}
+
+{% block beforeContent %}
+  {% include "../partials/breadcrumbs.njk" %}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-body govuk-width-container">
+    <div class="govuk-!-display-none-print">
+      <h1 class="govuk-heading-xl govuk-!-margin-top-0 govuk-!-margin-bottom-4">{{ applicationType.name }}</h1>
+      {% include "../partials/application-header.njk" %}
+    </div>
+
+    {% include "../partials/sub-navigation.njk" %}
+
+    {% if isClosed and response %}
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+          {{ closedAction.renderWebView(response) }}
+        </div>
+      </div>
+      {{ closedAction.renderPrintView(application, response, applicationType, todayDate, appLoggedDate, prisonerName) }}
+
+      <div class="govuk-!-display-none-print">
+        {{ govukButton({
+          text: "Print reply",
+          type: "button",
+          attributes: { id: "print-button" }
+        }) }}
+      </div>
+    {% else %}
+      <h2 class="govuk-heading-m">This application is now {{ applicationStatus }}</h2>
+    {% endif %}
+  </div>
+{% endblock %}
