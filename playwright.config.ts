@@ -22,18 +22,24 @@ export default defineConfig({
   globalTimeout: 60 * 60 * 1000,
   /* Run tests in files in parallel */
   fullyParallel: false,
-  /* Ensure tests run consecutively due to inability to share wiremock instance */
+  /* Keep each Playwright process serial; CI parallelism is handled by job sharding. */
   workers: 1,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 1 : 0,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [
-    ['list'],
-    ['html', { outputFolder: 'test_results/playwright/report', open: process.env.CI ? 'never' : 'on-failure' }],
-    ['junit', { outputFile: 'test_results/playwright/junit.xml' }],
-  ],
+  reporter: process.env.CI
+    ? [
+        ['list'],
+        ['blob', { outputDir: 'test_results/playwright/test-report' }],
+        ['junit', { outputFile: 'test_results/playwright/junit.xml' }],
+      ]
+    : [
+        ['list'],
+        ['html', { outputFolder: 'test_results/playwright/report', open: 'on-failure' }],
+        ['junit', { outputFile: 'test_results/playwright/junit.xml' }],
+      ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     actionTimeout: 30 /* seconds */ * 1000,
