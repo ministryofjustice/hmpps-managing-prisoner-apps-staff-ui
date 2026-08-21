@@ -84,6 +84,18 @@ jobs:
       - name: Install Playwright browsers
         run: npm run int-test-init:ci
 
+      - name: Seed WireMock health stubs
+        env:
+          WIREMOCK_PORT: ${{ matrix.wiremock_port }}
+        run: |
+          curl --fail --silent -X POST "http://localhost:${WIREMOCK_PORT}/__admin/mappings" \
+            -H 'Content-Type: application/json' \
+            -d '{"request":{"method":"GET","urlPattern":"/auth/health/ping"},"response":{"status":200}}'
+
+          curl --fail --silent -X POST "http://localhost:${WIREMOCK_PORT}/__admin/mappings" \
+            -H 'Content-Type: application/json' \
+            -d '{"request":{"method":"GET","urlPattern":"/(verification/)?health/ping"},"response":{"status":200,"headers":{"Content-Type":"application/json;charset=UTF-8"},"jsonBody":{"status":"UP"}}}'
+
       - name: Start application
         env:
           PORT: ${{ matrix.app_port }}
