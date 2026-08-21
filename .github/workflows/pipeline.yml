@@ -177,7 +177,7 @@ jobs:
           mkdir -p test_results/playwright
           mkdir -p merged-test-reports
           rm -rf test_results/playwright/report
-          find all-test-reports -type f -name '*.zip' -exec cp '{}' merged-test-reports/ '\;'
+          find all-test-reports -type f -name '*.zip' -print0 | xargs -0 -I '{}' cp '{}' merged-test-reports/
           if ! find merged-test-reports -type f -name '*.zip' -print -quit | grep -q .; then
             echo 'No Playwright blob report zip files found after download'
             find all-test-reports -maxdepth 3 -type f -print
