@@ -148,7 +148,7 @@ jobs:
         with:
           name: integration-test-worker-${{ matrix.shard }}-test-report
           path: |
-            test_results/playwright/blob-report
+            test_results/playwright/test-report
             test_results/playwright/junit.xml
   node_integration_test_report:
     name: node integration test report
@@ -171,13 +171,14 @@ jobs:
         with:
           pattern: integration-test-worker-*-test-report
           path: all-test-reports
+          merge-multiple: true
 
       - name: Merge Playwright reports
         run: |
           mkdir -p test_results/playwright
           rm -rf test_results/playwright/report
           npx playwright merge-reports --reporter html ./all-test-reports
-          mv test_results/playwright/html-report test_results/playwright/report
+          mv playwright-report test_results/playwright/report
 
       - name: Upload consolidated report
         uses: actions/upload-artifact@v4
