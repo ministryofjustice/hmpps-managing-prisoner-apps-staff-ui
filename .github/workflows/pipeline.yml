@@ -46,9 +46,78 @@ jobs:
   # generic node integration tests using wiremock - feel free to override with local tests if required
   node_integration_tests:
     name: node integration tests
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_integration_tests.yml@v2 # WORKFLOW_VERSION
     needs: [node_build]
-    secrets: inherit
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: 1
+            app_port: 3007
+            wiremock_port: 9091
+          - shard: 2
+            app_port: 3008
+            wiremock_port: 9092
+          - shard: 3
+            app_port: 3009
+            wiremock_port: 9093
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    services:
+      wiremock:
+        image: wiremock/wiremock
+        ports:
+          - ${{ matrix.wiremock_port }}:8080
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Install Playwright browsers
+        run: npm run int-test-init:ci
+
+      - name: Start application
+        env:
+          PORT: ${{ matrix.app_port }}
+          PW_BASE_URL: http://localhost:${{ matrix.app_port }}
+          HMPPS_AUTH_URL: http://localhost:${{ matrix.wiremock_port }}/auth
+          TOKEN_VERIFICATION_API_URL: http://localhost:${{ matrix.wiremock_port }}/verification
+          MANAGING_PRISONER_APPS_API_URL: http://localhost:${{ matrix.wiremock_port }}/managingPrisonerApps
+          PRISON_API_URL: http://localhost:${{ matrix.wiremock_port }}/prison
+          PERSONAL_RELATIONSHIPS_API_URL: http://localhost:${{ matrix.wiremock_port }}/personalRelationships
+          DOCUMENT_API_URL: http://localhost:${{ matrix.wiremock_port }}/documentApi
+          OS_PLACES_API_URL: http://localhost:${{ matrix.wiremock_port }}/osPlaces
+        run: nohup npm run start-feature > "$RUNNER_TEMP/start-feature.log" 2>&1 &
+
+      - name: Wait for application
+        env:
+          APP_PORT: ${{ matrix.app_port }}
+        run: |
+          for attempt in {1..60}; do
+            if curl --fail --silent "http://localhost:${APP_PORT}/health" > /dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+
+          echo "Application did not become ready"
+          cat "$RUNNER_TEMP/start-feature.log"
+          exit 1
+
+      - name: Run integration tests
+        env:
+          PW_ENV: mock
+          PW_BASE_URL: http://localhost:${{ matrix.app_port }}
+          WIREMOCK_PORT: ${{ matrix.wiremock_port }}
+        run: npm run int-test -- --shard=${{ matrix.shard }}/3
   helm_lint:
     strategy:
       matrix:

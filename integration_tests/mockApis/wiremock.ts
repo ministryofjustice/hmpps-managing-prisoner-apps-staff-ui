@@ -1,14 +1,16 @@
 import superagent, { SuperAgentRequest, Response } from 'superagent'
 
-const url = 'http://localhost:9091/__admin'
+const defaultWiremockPort = '9091'
+
+const getWiremockUrl = () => `http://localhost:${process.env.WIREMOCK_PORT || defaultWiremockPort}/__admin`
 
 const stubFor = (mapping: Record<string, unknown>): SuperAgentRequest =>
-  superagent.post(`${url}/mappings`).send(mapping)
+  superagent.post(`${getWiremockUrl()}/mappings`).send(mapping)
 
 const getMatchingRequests = (body: string | Record<string, unknown> | object): SuperAgentRequest =>
-  superagent.post(`${url}/requests/find`).send(body)
+  superagent.post(`${getWiremockUrl()}/requests/find`).send(body)
 
 const resetStubs = (): Promise<Array<Response>> =>
-  Promise.all([superagent.delete(`${url}/mappings`), superagent.delete(`${url}/requests`)])
+  Promise.all([superagent.delete(`${getWiremockUrl()}/mappings`), superagent.delete(`${getWiremockUrl()}/requests`)])
 
 export { stubFor, getMatchingRequests, resetStubs }
