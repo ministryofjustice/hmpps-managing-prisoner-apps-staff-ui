@@ -1,10 +1,10 @@
-{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+{%- from "moj/components/timeline/macro.njk" import mojTimeline -%}
 
 {% extends "../../../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + title %}
 {% set mainClasses = "app-container govuk-body applications-landing-page" %}
- {% set activeTab = 'history' %}
+{% set activeTab = 'history' %}
 
 {% block beforeContent %}
   {% include "../partials/breadcrumbs.njk" %}
@@ -16,31 +16,26 @@
 
     {% include "../partials/application-header.njk" %}
     {% include "../partials/sub-navigation.njk" %}
-    
+
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <h2 class="govuk-heading-m">History of this application</h2>
 
+        {% set timelineItems = [] %}
         {% for item in history %}
-          <div class="app-message govuk-body">
-            <div class="app-message--metadata">
-              {{ item.activityMessage.header }} | {{ item.date }} at
-              {{ item.time }}
-            </div>
-
-            {% if item.activityMessage.body %}
-              <div class="app-message--content">{{ item.activityMessage.body }}</div>
-            {% endif %}
-
-            {% if item.commentMessage %}
-              <div class="app-message--content">{{ item.commentMessage }}</div>
-            {% endif %}
-            
-            {% if item.responseMessage %}
-              <div class="app-message--content">{{ item.responseMessage }}</div>
-            {% endif %}
-          </div>
+          {% set description = item.activityMessage.body or item.commentMessage or item.responseMessage or '' %}
+          {% set timelineItems = timelineItems.concat([{
+            label: { text: item.activityMessage.header },
+            byline: { text: item.activityMessage.createdBy },
+            datetime: { timestamp: item.createdDate, type: "datetime"},
+            text: description
+          }]) %}
         {% endfor %}
+
+        {{ mojTimeline({
+          headingLevel: 3,
+          items: timelineItems
+        }) }}
       </div>
     </div>
   </div>
