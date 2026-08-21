@@ -29,11 +29,17 @@ export default defineConfig({
   /* Retry on CI only */
   retries: process.env.CI ? 1 : 0,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [
-    ['list'],
-    ['html', { outputFolder: 'test_results/playwright/report', open: process.env.CI ? 'never' : 'on-failure' }],
-    ['junit', { outputFile: 'test_results/playwright/junit.xml' }],
-  ],
+  reporter: process.env.CI
+    ? [
+        ['list'],
+        ['blob', { outputDir: 'test_results/playwright/test-report' }],
+        ['junit', { outputFile: 'test_results/playwright/junit.xml' }],
+      ]
+    : [
+        ['list'],
+        ['html', { outputFolder: 'test_results/playwright/report', open: 'on-failure' }],
+        ['junit', { outputFile: 'test_results/playwright/junit.xml' }],
+      ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     actionTimeout: 30 /* seconds */ * 1000,
