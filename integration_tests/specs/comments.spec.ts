@@ -134,8 +134,8 @@ test.describe('Comments Page', () => {
 
     const commentsPage = new CommentsPage(page)
     await commentsPage.commentBox().fill('This is my first comment')
-    await page.getByRole('radio', { name: 'Staff only' }).check()
     await commentsPage.submitButton().click()
+    await page.locator('#visibility-modal-confirm').click()
 
     await expect(page).toHaveURL(`/applications/${app.requestedBy.username}/${app.id}/comments`)
     await expect(page.locator('.moj-message-item__text--sent', { hasText: 'This is my first comment' })).toBeVisible()
@@ -143,26 +143,7 @@ test.describe('Comments Page', () => {
     await expect(page.getByText('9 April 2025')).toBeVisible()
   })
 
-  test('should show staff only visibility when sending a staff-only message', async ({ page }) => {
-    if (isWiremock) {
-      await stubCommentSubmissionWithVisibility({
-        message: 'Staff only message',
-        visibility: 'STAFF_ONLY',
-      })
-    }
-
-    const commentsPage = new CommentsPage(page)
-    await commentsPage.commentBox().fill('Staff only message')
-    await page.getByRole('radio', { name: 'Staff only' }).check()
-    await commentsPage.submitButton().click()
-
-    await expect(page).toHaveURL(`/applications/${app.requestedBy.username}/${app.id}/comments`)
-    await expect(page.locator('.app-message-item--staff-only')).toBeVisible()
-    await expect(page.locator('.app-message-visibility--staff-only')).toContainText('Staff only')
-    await expect(page.locator('.moj-message-item__text--sent', { hasText: 'Staff only message' })).toBeVisible()
-  })
-
-  test('should show staff and prisoner visibility when sending a prisoner-and-staff message', async ({ page }) => {
+  test('should show prisoner and staff visibility when sending a message', async ({ page }) => {
     if (isWiremock) {
       await stubCommentSubmissionWithVisibility({
         message: 'Shared with prisoner',
@@ -172,14 +153,31 @@ test.describe('Comments Page', () => {
 
     const commentsPage = new CommentsPage(page)
     await commentsPage.commentBox().fill('Shared with prisoner')
-    await page.getByRole('radio', { name: 'Prisoner and staff' }).check()
+    await commentsPage.submitButton().click()
+    await page.locator('#visibility-modal-confirm').click()
+
+    await expect(page).toHaveURL(`/applications/${app.requestedBy.username}/${app.id}/comments`)
+    await expect(page.locator('.app-message-item--prisoner-and-staff')).toBeVisible()
+    await expect(page.locator('.moj-message-item__text--sent', { hasText: 'Shared with prisoner' })).toBeVisible()
+  })
+
+  test('should send a message with prisoner-and-staff visibility', async ({ page }) => {
+    if (isWiremock) {
+      await stubCommentSubmissionWithVisibility({
+        message: 'Shared with prisoner',
+        visibility: 'STAFF_AND_PRISONER',
+      })
+    }
+
+    const commentsPage = new CommentsPage(page)
+    await commentsPage.commentBox().fill('Shared with prisoner')
+    await commentsPage.submitButton().click()
     const confirmVisibilityButton = page.locator('#visibility-modal-confirm')
     await expect(confirmVisibilityButton).toBeVisible()
     await confirmVisibilityButton.click()
 
     await expect(page).toHaveURL(`/applications/${app.requestedBy.username}/${app.id}/comments`)
     await expect(page.locator('.app-message-item--prisoner-and-staff')).toBeVisible()
-    await expect(page.locator('.app-message-visibility--prisoner-and-staff')).toContainText('Staff and prisoner')
     await expect(page.locator('.moj-message-item__text--sent', { hasText: 'Shared with prisoner' })).toBeVisible()
   })
 
@@ -188,13 +186,7 @@ test.describe('Comments Page', () => {
     await commentsPage.submitButton().click()
 
     await expect(commentsPage.errorSummary()).toContainText('Add a message')
-    await expect(commentsPage.errorSummary()).toContainText(
-      'Select if this message is for staff only, or for prisoner and staff',
-    )
     await expect(commentsPage.errorMessage()).toContainText('Add a message')
-    await expect(commentsPage.visibilityErrorMessage()).toContainText(
-      'Select if this message is for staff only, or for prisoner and staff',
-    )
   })
 })
 
