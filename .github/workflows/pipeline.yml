@@ -148,7 +148,7 @@ jobs:
         with:
           name: integration-test-worker-${{ matrix.shard }}-test-report
           path: |
-            test_results/playwright/test-report
+            test_results/playwright/test-report/*
             test_results/playwright/junit.xml
   node_integration_test_report:
     name: node integration test report
