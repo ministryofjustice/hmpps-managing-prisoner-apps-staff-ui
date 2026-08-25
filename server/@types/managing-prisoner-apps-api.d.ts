@@ -204,6 +204,37 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/v1/prisoners/apps/journey-events': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Record frontend journey events for stats tracking
+     * @description Called by the Frontend after an app is successfully submitted.
+     *           Example payload:
+     *           {
+     *              "appId": "UUID",
+     *              "events": [
+     *                { "event": "app_group_viewed",        "timestamp": "2026-08-11T08:40:55.998Z" },
+     *                { "event": "app_type_viewed",         "timestamp": "2026-08-11T08:41:58.181Z" },
+     *                { "event": "app_creation_page_viewed","timestamp": "2026-08-11T08:42:01.113Z" },
+     *                { "event": "app_submitted",           "timestamp": "2026-08-11T08:45:10.283Z" }
+     *              ]
+     *           }
+     *           Returns 204 No Content on success.
+     */
+    post: operations['recordJourneyEvents']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/v1/apps/{appId}/forward/groups/{groupId}': {
     parameters: {
       query?: never
@@ -686,7 +717,7 @@ export interface components {
       requestedByFirstName: string
       requestedByLastName: string
       /** @enum {string} */
-      status: 'PENDING' | 'NEW' | 'IN_PROGRESS' | 'APPROVED' | 'DECLINED' | 'REJECTED'
+      status: 'NEW' | 'IN_PROGRESS' | 'APPROVED' | 'DECLINED' | 'REJECTED'
       establishmentId: string
       firstNightCenter: boolean
       files: components['schemas']['FileResponseDto'][]
@@ -823,7 +854,7 @@ export interface components {
       requestedByFirstName: string
       requestedByLastName: string
       /** @enum {string} */
-      status: 'PENDING' | 'NEW' | 'IN_PROGRESS' | 'APPROVED' | 'DECLINED' | 'REJECTED'
+      status: 'NEW' | 'IN_PROGRESS' | 'APPROVED' | 'DECLINED' | 'REJECTED'
       establishmentId: string
       reason?: string | null
     }
@@ -832,7 +863,7 @@ export interface components {
       page: number
       /** Format: int64 */
       size: number
-      status: ('PENDING' | 'NEW' | 'IN_PROGRESS' | 'APPROVED' | 'DECLINED' | 'REJECTED')[]
+      status: ('NEW' | 'IN_PROGRESS' | 'APPROVED' | 'DECLINED' | 'REJECTED')[]
       applicationTypes?: number[] | null
       requestedBy?: string | null
       assignedGroups?: string[] | null
@@ -876,13 +907,37 @@ export interface components {
       /** Format: int64 */
       count?: number | null
     }
+    AppJourneyEventsRequest: {
+      /**
+       * Format: uuid
+       * @description App Id
+       * @example UUID
+       */
+      appId: string
+      /** @description Ordered list of frontend journey events captured during app creation */
+      events: components['schemas']['FrontendJourneyEventDto'][]
+    }
+    FrontendJourneyEventDto: {
+      /**
+       * @description Snake-case event name from the frontend. Supported values: app_group_viewed, app_type_viewed, app_creation_page_viewed, app_submitted
+       * @enum {string}
+       */
+      event: 'app_group_viewed' | 'app_type_viewed' | 'app_creation_page_viewed' | 'app_submitted'
+      /**
+       * Format: date-time
+       * @description UTC timestamp of when this event occurred in the browser
+       * @example 2026-08-11T08:40:55.998Z
+       */
+      timestamp: string
+    }
     AppStatusUpdateDto: {
       /** @enum {string} */
-      status: 'PENDING' | 'NEW' | 'IN_PROGRESS' | 'APPROVED' | 'DECLINED' | 'REJECTED'
+      status: 'NEW' | 'IN_PROGRESS' | 'APPROVED' | 'DECLINED' | 'REJECTED'
       comment?: string | null
     }
     ActivityMessage: {
       header: string
+      createdBy: string
       body?: string | null
     }
     HistoryResponse: {
@@ -921,7 +976,7 @@ export interface components {
       /** Format: date-time */
       lastUpdatedDate: string
       /** @enum {string} */
-      status: 'PENDING' | 'NEW' | 'IN_PROGRESS' | 'APPROVED' | 'DECLINED' | 'REJECTED'
+      status: 'NEW' | 'IN_PROGRESS' | 'APPROVED' | 'DECLINED' | 'REJECTED'
     }
     PrisonerAppsPage: {
       /** Format: int32 */
@@ -1510,6 +1565,46 @@ export interface operations {
       }
       /** @description Forbidden to access this endpoint */
       403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  recordJourneyEvents: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AppJourneyEventsRequest']
+      }
+    }
+    responses: {
+      /** @description Journey events processed successfully */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description App not found */
+      404: {
         headers: {
           [name: string]: unknown
         }

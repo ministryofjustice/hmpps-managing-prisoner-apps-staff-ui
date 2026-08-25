@@ -35,21 +35,26 @@ test.describe('Application History Page', () => {
     const historyPage = new ApplicationHistoryPage(page)
     await expect(historyPage.historyTab()).toBeVisible()
     await expect(historyPage.historyTab()).toContainText('History')
+    await expect(historyPage.historyTab()).toHaveAttribute('aria-current', 'page')
     await expect(historyPage.historyTab()).toHaveAttribute(
       'href',
       `/applications/${app.requestedBy.username}/${app.id}/history`,
     )
   })
 
-  test('should display the history page content', async ({ page }) => {
-    const historyPage = new ApplicationHistoryPage(page)
-    await expect(historyPage.historyContent()).toBeVisible()
+  test('should display the heading h2 history page content and timeline component', async ({ page }) => {
+    await expect(
+      page.getByRole('heading', {
+        level: 2,
+        name: 'History of this application',
+      }),
+    ).toBeVisible()
+    await expect(page.locator('.moj-timeline')).toBeVisible()
   })
 })
 
 test.describe('Application History Page message rendering', () => {
   const commentId = 'history-comment-id'
-  const responseId = 'history-response-id'
 
   test.beforeEach(async ({ page, signIn }) => {
     test.skip(!isWiremock, 'Custom WireMock stubs are required for this scenario')
@@ -70,15 +75,28 @@ test.describe('Application History Page message rendering', () => {
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: [
           {
-            id: 'history-item-assigned',
+            id: 'history-item-logged',
             appId: app.id,
             entityId: 'assigned-group-id',
             entityType: 'ASSIGNED_GROUP',
             activityMessage: {
-              header: 'Assigned to central team',
-              body: 'Assigned to group',
+              header: 'Application logged',
+              createdBy: 'John Doe',
+              body: 'Assigned to Chaplaincy',
             },
             createdDate: '2026-07-10T10:00:00.000Z',
+          },
+          {
+            id: 'history-item-forwarded',
+            appId: app.id,
+            entityId: 'forwarded-group-id',
+            entityType: 'ASSIGNED_GROUP',
+            activityMessage: {
+              header: 'Application forwarded',
+              createdBy: 'John Doe',
+              body: 'Forwarded to Business Hub',
+            },
+            createdDate: '2026-07-10T10:00:30.000Z',
           },
           {
             id: 'history-item-comment',
@@ -86,41 +104,45 @@ test.describe('Application History Page message rendering', () => {
             entityId: commentId,
             entityType: 'COMMENT',
             activityMessage: {
-              header: 'Staff comment added',
+              header: 'Message to prisoner',
+              createdBy: 'John Doe',
+              body: 'Testing message rendering in history page',
             },
             createdDate: '2026-07-10T10:01:00.000Z',
           },
           {
-            id: 'history-item-response',
+            id: 'history-item-in-progress',
             appId: app.id,
-            entityId: responseId,
-            entityType: 'RESPONSE',
+            entityId: 'in-progress-group-id',
+            entityType: 'ASSIGNED_GROUP',
             activityMessage: {
-              header: 'Decision recorded',
+              header: 'Application set to In Progress',
+              createdBy: 'John Doe',
             },
             createdDate: '2026-07-10T10:02:00.000Z',
           },
           {
-            id: 'history-item-app',
+            id: 'history-item-details-updated',
             appId: app.id,
-            entityId: 'app-status-entity-id',
+            entityId: app.id,
             entityType: 'APP',
             activityMessage: {
-              header: 'Application status changed',
-              body: 'Application status updated to approved',
+              header: 'Form data updated',
+              createdBy: 'John Doe',
             },
             createdDate: '2026-07-10T10:03:00.000Z',
           },
           {
-            id: 'history-item-file',
+            id: 'history-item-response',
             appId: app.id,
-            entityId: 'file-entity-id',
-            entityType: 'FILE',
+            entityId: 'history-item-response-id',
+            entityType: 'RESPONSE',
             activityMessage: {
-              header: 'File attached',
-              body: 'Photo document attached to application',
+              header: 'Application closed',
+              createdBy: 'John Doe',
+              body: 'App request is approved',
             },
-            createdDate: '2026-07-10T10:04:00.000Z',
+            createdDate: '2026-07-10T10:00:30.000Z',
           },
         ],
       },
@@ -163,61 +185,23 @@ test.describe('Application History Page message rendering', () => {
       },
     })
 
-    await stubFor({
-      request: {
-        method: 'GET',
-        urlPathPattern: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/responses/${responseId}.*`,
-      },
-      response: {
-        status: 200,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: {
-          id: responseId,
-          prisonerId: app.requestedBy.username,
-          appId: app.id,
-          decision: 'DECLINED',
-          reason: 'Response reason is visible',
-          createdDate: '2026-07-10T10:02:10.000Z',
-          appliesTo: [],
-          createdBy: {
-            username: 'TEST_GEN',
-            userId: '487900',
-            fullName: 'Staff Name',
-            category: 'STAFF',
-            establishment: {
-              id: 'TEST_ESTABLISHMENT_FIRST',
-              name: 'ESTABLISHMENT_NAME_1',
-            },
-          },
-        },
-      },
-    })
-
     await signIn()
     await page.goto(`/applications/${app.requestedBy.username}/${app.id}/history`)
   })
 
-  test('should display comment and response messages when history items reference them', async ({ page }) => {
-    await expect(page.getByText('History comment is visible')).toBeVisible()
-    await expect(page.getByText('Response reason is visible')).toBeVisible()
-    await expect(page.getByText('Assigned to group')).toBeVisible()
+  test('should display activity messages from the API', async ({ page }) => {
+    await expect(page.getByText('Application logged')).toBeVisible()
+    await expect(page.getByText('Application forwarded')).toBeVisible()
+    await expect(page.getByText('Message to prisoner')).toBeVisible()
+    await expect(page.getByText('Application set to In Progress')).toBeVisible()
+    await expect(page.getByText('Form data updated')).toBeVisible()
+    await expect(page.getByText('Application closed')).toBeVisible()
   })
 
-  test('should display activity message body for APP entity type', async ({ page }) => {
-    await expect(page.getByText('Application status updated to approved')).toBeVisible()
-    await expect(page.getByText('Application status changed')).toBeVisible()
-  })
-
-  test('should display activity message body for FILE entity type', async ({ page }) => {
-    await expect(page.getByText('Photo document attached to application')).toBeVisible()
-    await expect(page.getByText('File attached')).toBeVisible()
-  })
-
-  test('should display all history entity type headers', async ({ page }) => {
-    await expect(page.getByText('Assigned to central team')).toBeVisible()
-    await expect(page.getByText('Staff comment added')).toBeVisible()
-    await expect(page.getByText('Decision recorded')).toBeVisible()
-    await expect(page.getByText('Application status changed')).toBeVisible()
-    await expect(page.getByText('File attached')).toBeVisible()
+  test('should display activity message body from the API', async ({ page }) => {
+    await expect(page.getByText('Assigned to Chaplaincy')).toBeVisible()
+    await expect(page.getByText('Forwarded to Business Hub')).toBeVisible()
+    await expect(page.getByText('Testing message rendering in history page')).toBeVisible()
+    await expect(page.getByText('App request is approved')).toBeVisible()
   })
 })

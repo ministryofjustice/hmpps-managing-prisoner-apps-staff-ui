@@ -109,7 +109,7 @@ Object.values(appTypes).forEach(({ id, name }) => {
 })
 
 const [firstAppType] = Object.values(appTypes)
-const pendingApp = { ...app, status: APPLICATION_STATUS.PENDING, applicationType: firstAppType }
+const pendingApp = { ...app, status: APPLICATION_STATUS.NEW, applicationType: firstAppType }
 
 test.describe('Action and Reply Page - REJECTED decision', () => {
   test.beforeEach(async ({ page, signIn }) => {
