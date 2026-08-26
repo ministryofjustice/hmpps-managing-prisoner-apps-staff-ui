@@ -10,6 +10,7 @@ export const appHistoryResponse: History[] = (
   entityType,
   activityMessage: {
     header: `Activity header for ${entityType}`,
+    createdBy: 'John Doe',
     ...(entityType === 'ASSIGNED_GROUP' && { body: 'Assigned to group' }),
     ...(entityType === 'APP' && { body: 'Application status updated' }),
     ...(entityType === 'FILE' && { body: 'File attached to application' }),
