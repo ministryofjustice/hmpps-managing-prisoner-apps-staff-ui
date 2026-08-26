@@ -151,7 +151,7 @@ jobs:
             test_results/playwright/test-report/*
             test_results/playwright/junit.xml
   ci_pass:
-    name: ci-pass
+    name: node integration tests / Run the integration tests
     needs: [node_integration_tests]
     if: always()
     runs-on: ubuntu-latest
