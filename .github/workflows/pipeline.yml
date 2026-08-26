@@ -150,6 +150,20 @@ jobs:
           path: |
             test_results/playwright/test-report/*
             test_results/playwright/junit.xml
+  node_integration_tests_required:
+    name: node integration tests required
+    needs: [node_integration_tests]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check matrix status
+        run: |
+          if [[ "${{ needs.node_integration_tests.result }}" == "success" ]]; then
+            exit 0
+          else
+            echo "node_integration_tests result: ${{ needs.node_integration_tests.result }}"
+            exit 1
+          fi
   node_integration_test_report:
     name: node integration test report
     needs: [node_integration_tests]
@@ -204,7 +218,7 @@ jobs:
     name: Build docker image from hmpps-github-actions
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v2 # WORKFLOW_VERSION
     needs:
-      - node_integration_tests
+      - node_integration_tests_required
       - node_integration_test_report
       - node_unit_tests
     with:
