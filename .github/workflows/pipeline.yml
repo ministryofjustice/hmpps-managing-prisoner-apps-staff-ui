@@ -45,10 +45,166 @@ jobs:
     secrets: inherit
   # generic node integration tests using wiremock - feel free to override with local tests if required
   node_integration_tests:
-    name: node integration tests
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_integration_tests.yml@v2 # WORKFLOW_VERSION
+    name: ${{ matrix.name }}
     needs: [node_build]
-    secrets: inherit
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: 1
+            name: Integration test parallel worker (1)
+            app_port: 3007
+            wiremock_port: 9091
+          - shard: 2
+            name: Integration test parallel worker (2)
+            app_port: 3008
+            wiremock_port: 9092
+          - shard: 3
+            name: Integration test parallel worker (3)
+            app_port: 3009
+            wiremock_port: 9093
+          - shard: 4
+            name: Integration test parallel worker (4)
+            app_port: 3010
+            wiremock_port: 9094
+          - shard: 5
+            name: Integration test parallel worker (5)
+            app_port: 3011
+            wiremock_port: 9095
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    services:
+      wiremock:
+        image: wiremock/wiremock
+        ports:
+          - ${{ matrix.wiremock_port }}:8080
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Install Playwright browsers
+        run: npm run int-test-init:ci
+
+      - name: Seed WireMock health stubs
+        env:
+          WIREMOCK_PORT: ${{ matrix.wiremock_port }}
+        run: |
+          curl --fail --silent -X POST "http://localhost:${WIREMOCK_PORT}/__admin/mappings" \
+            -H 'Content-Type: application/json' \
+            -d '{"request":{"method":"GET","urlPattern":"/auth/health/ping"},"response":{"status":200}}'
+
+          curl --fail --silent -X POST "http://localhost:${WIREMOCK_PORT}/__admin/mappings" \
+            -H 'Content-Type: application/json' \
+            -d '{"request":{"method":"GET","urlPattern":"/(verification/)?health/ping"},"response":{"status":200,"headers":{"Content-Type":"application/json;charset=UTF-8"},"jsonBody":{"status":"UP"}}}'
+
+      - name: Start application
+        env:
+          PORT: ${{ matrix.app_port }}
+          PW_BASE_URL: http://localhost:${{ matrix.app_port }}
+          HMPPS_AUTH_URL: http://localhost:${{ matrix.wiremock_port }}/auth
+          TOKEN_VERIFICATION_API_URL: http://localhost:${{ matrix.wiremock_port }}/verification
+          MANAGING_PRISONER_APPS_API_URL: http://localhost:${{ matrix.wiremock_port }}/managingPrisonerApps
+          PRISON_API_URL: http://localhost:${{ matrix.wiremock_port }}/prison
+          PERSONAL_RELATIONSHIPS_API_URL: http://localhost:${{ matrix.wiremock_port }}/personalRelationships
+          DOCUMENT_API_URL: http://localhost:${{ matrix.wiremock_port }}/documentApi
+          OS_PLACES_API_URL: http://localhost:${{ matrix.wiremock_port }}/osPlaces
+        run: nohup npm run start-feature > "$RUNNER_TEMP/start-feature.log" 2>&1 &
+
+      - name: Wait for application
+        env:
+          APP_PORT: ${{ matrix.app_port }}
+        run: |
+          for attempt in {1..60}; do
+            if curl --fail --silent "http://localhost:${APP_PORT}/health" > /dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+
+          echo "Application did not become ready"
+          cat "$RUNNER_TEMP/start-feature.log"
+          exit 1
+
+      - name: Run integration tests
+        env:
+          PW_ENV: mock
+          PW_BASE_URL: http://localhost:${{ matrix.app_port }}
+          WIREMOCK_PORT: ${{ matrix.wiremock_port }}
+        run: npm run int-test -- --shard=${{ matrix.shard }}/5
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-worker-${{ matrix.shard }}-test-report
+          path: |
+            test_results/playwright/test-report/*
+            test_results/playwright/junit.xml
+  ci_pass:
+    name: node integration tests / Run the integration tests
+    needs: [node_integration_tests]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check matrix status
+        run: |
+          if [[ "${{ needs.node_integration_tests.result }}" == "success" ]]; then
+            exit 0
+          else
+            echo "node_integration_tests result: ${{ needs.node_integration_tests.result }}"
+            exit 1
+          fi
+  node_integration_test_report:
+    name: node integration test report
+    needs: [node_integration_tests]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download shard reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: integration-test-worker-*-test-report
+          path: all-test-reports
+
+      - name: Merge Playwright reports
+        run: |
+          mkdir -p test_results/playwright
+          mkdir -p merged-test-reports
+          rm -rf test_results/playwright/report
+          find all-test-reports -type f -name '*.zip' -print0 | xargs -0 -I '{}' cp '{}' merged-test-reports/
+          if ! find merged-test-reports -type f -name '*.zip' -print -quit | grep -q .; then
+            echo 'No Playwright blob report zip files found after download'
+            find all-test-reports -maxdepth 3 -type f -print
+            exit 1
+          fi
+          npx playwright merge-reports --reporter html ./merged-test-reports
+          mv playwright-report test_results/playwright/report
+
+      - name: Upload consolidated report
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-report
+          path: test_results/playwright/report
   helm_lint:
     strategy:
       matrix:
@@ -62,7 +218,8 @@ jobs:
     name: Build docker image from hmpps-github-actions
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v2 # WORKFLOW_VERSION
     needs:
-      - node_integration_tests
+      - ci_pass
+      - node_integration_test_report
       - node_unit_tests
     with:
       docker_registry: 'ghcr.io'
