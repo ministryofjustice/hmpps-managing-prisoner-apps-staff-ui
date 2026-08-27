@@ -4,46 +4,64 @@
 {%- from "govuk/components/textarea/macro.njk" import govukTextarea -%}
 {%- from "components/appMessages/macro.njk" import appMessages -%}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
 {% extends "../../../partials/layout.njk" %}
+
 {% set pageTitle = applicationName + " - " + title %}
 {% set mainClasses = "app-container govuk-body applications-landing-page" %}
 {% set activeTab = 'messages' %}
+
 {% block beforeContent %}
   {% include "../partials/breadcrumbs.njk" %}
 {% endblock %}
+
 {% block content %}
   <div class="govuk-body govuk-width-container">
+
     {% if errors %}
       {% set textFieldError = errors.Messages if errors.Messages else undefined %}
       {% set messageFieldError = undefined %}
+
       {% if textFieldError %}
         {% set messageFieldError = { text: textFieldError.text } %}
       {% endif %}
+
       {% set errorList = [] %}
+
       {% if textFieldError %}
         {% set errorList = errorList.concat([{ text: textFieldError.text, href: "#comment" }]) %}
       {% endif %}
+
       {{ govukErrorSummary({
         titleText: "There is a problem",
         errorList: errorList
       }) }}
     {% endif %}
+
     <h1 class="govuk-heading-xl govuk-!-margin-top-0 govuk-!-margin-bottom-4">{{ applicationType.name }}</h1>
+
     {% include "../partials/application-header.njk" %}
+
     {% include "../partials/sub-navigation.njk" %}
+
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
+
         {{ govukWarningText({
           text: "These messages are sent to the prisoner",
           iconFallbackText: "Warning"
         }) }}
+
         <h2 class="govuk-heading-m">Messages and replies</h2>
+
         <div class="govuk-!-margin-bottom-4">
           {{ appMessages({ items: comments }) }}
         </div>
+
         {% if not isClosed %}
           <form method="POST" id="application-comments-form" novalidate>
             <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
             {{ govukCharacterCount({
               name: "comment",
               id: "comment",
@@ -57,6 +75,7 @@
               },
               errorMessage: messageFieldError
             }) }}
+
             {{ govukButton({
               text: "Send",
               type: "submit",
@@ -65,6 +84,7 @@
             }) }}
           </form>
         {% endif %}
+
       </div>
     </div>
   </div>
