@@ -1,7 +1,14 @@
 import { expect, test } from '../fixtures'
 import { app } from '../../server/testData'
+import ForwardApplicationPage from '../pages/forwardApplicationPage'
 import ViewApplicationPage from '../pages/viewApplicationPage'
 import { filteredApplicationTypes, visitApplicationPage } from './view-applicationTestUtils'
+import {
+  assertAndCaptureHistoryEvents,
+  getForwardTargetDepartment,
+  stubForwardFlowStateTransition,
+  stubForwardHistoryEvents,
+} from './view-application-forward-history-helper'
 
 filteredApplicationTypes.forEach(({ name, id }) => {
   test.describe(`View Application Page - ${name}`, () => {
@@ -132,5 +139,49 @@ test.describe('View Application Page - Forward button visibility', () => {
 
     const viewPage = new ViewApplicationPage(page)
     await expect(viewPage.forwardApplication()).not.toBeVisible()
+  })
+
+  test('should forward from application page and update the department details section', async (
+    { page, signIn },
+    testInfo,
+  ) => {
+    await visitApplicationPage({ page, signIn, application, departmentCount: 2 })
+
+    const viewPage = new ViewApplicationPage(page)
+    await expect(viewPage.department()).toContainText('Business Hub')
+    await expect(viewPage.forwardApplication()).toBeVisible()
+
+    await viewPage.forwardApplication().click()
+
+    const forwardPage = new ForwardApplicationPage(page)
+    await expect(forwardPage.pageTitle()).toContainText('Forward this application')
+
+    const targetDepartment = await getForwardTargetDepartment(page, forwardPage)
+    const forwardedApplication = await stubForwardFlowStateTransition({
+      application,
+      targetDepartment,
+    })
+
+    await forwardPage.selectDepartment(targetDepartment.value)
+    await forwardPage.enterForwardingReason('Forwarding to a new department')
+    await forwardPage.submit()
+
+    await expect(page).toHaveURL(new RegExp(`/applications/${application.requestedBy.username}/${application.id}`))
+    await expect(page.getByText(`Application forwarded to ${targetDepartment.name}`)).toBeVisible()
+    await expect(viewPage.department()).toContainText(targetDepartment.name)
+
+    await stubForwardHistoryEvents({
+      application,
+      forwardedApplication,
+      targetDepartment,
+    })
+
+    await assertAndCaptureHistoryEvents({
+      page,
+      viewPage,
+      application,
+      targetDepartment,
+      testInfo,
+    })
   })
 })
