@@ -137,7 +137,9 @@ export const assertAndCaptureHistoryEvents = async ({
 }) => {
   await viewPage.historyTab().click()
 
-  await expect(page).toHaveURL(new RegExp(`/applications/${application.requestedBy.username}/${application.id}/history`))
+  await expect(page).toHaveURL(
+    new RegExp(`/applications/${application.requestedBy.username}/${application.id}/history`),
+  )
   await expect(page.getByText('History of this application')).toBeVisible()
   await expect(page.getByText('Application logged')).toBeVisible()
   await expect(page.getByText(`Assigned to ${application.assignedGroup.name}`)).toBeVisible()

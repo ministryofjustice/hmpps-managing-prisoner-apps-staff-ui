@@ -60,9 +60,9 @@ test.describe('Print reply tab', () => {
 
     await page.evaluate(() => {
       // Track print invocation from the page script click handler.
-      ;(window as Window & { __printInvoked?: boolean }).__printInvoked = false
+      ;(window as Window & { printInvokedForTest?: boolean }).printInvokedForTest = false
       window.print = () => {
-        ;(window as Window & { __printInvoked?: boolean }).__printInvoked = true
+        ;(window as Window & { printInvokedForTest?: boolean }).printInvokedForTest = true
       }
     })
 
@@ -70,7 +70,7 @@ test.describe('Print reply tab', () => {
 
     await expect
       .poll(async () =>
-        page.evaluate(() => (window as Window & { __printInvoked?: boolean }).__printInvoked === true),
+        page.evaluate(() => (window as Window & { printInvokedForTest?: boolean }).printInvokedForTest === true),
       )
       .toBe(true)
   })

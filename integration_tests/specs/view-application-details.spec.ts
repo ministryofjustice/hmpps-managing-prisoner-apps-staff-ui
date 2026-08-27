@@ -141,10 +141,10 @@ test.describe('View Application Page - Forward button visibility', () => {
     await expect(viewPage.forwardApplication()).not.toBeVisible()
   })
 
-  test('should forward from application page and update the department details section', async (
-    { page, signIn },
-    testInfo,
-  ) => {
+  test('should forward from application page and update the department details section', async ({
+    page,
+    signIn,
+  }, testInfo) => {
     await visitApplicationPage({ page, signIn, application, departmentCount: 2 })
 
     const viewPage = new ViewApplicationPage(page)
