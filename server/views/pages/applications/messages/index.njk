@@ -1,18 +1,20 @@
 {%- from "govuk/components/button/macro.njk" import govukButton -%}
 {%- from "govuk/components/character-count/macro.njk" import govukCharacterCount -%}
 {%- from "govuk/components/error-summary/macro.njk" import govukErrorSummary -%}
-{%- from "govuk/components/table/macro.njk" import govukTable -%}
+{%- from "govuk/components/textarea/macro.njk" import govukTextarea -%}
+{%- from "components/appMessages/macro.njk" import appMessages -%}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% extends "../../../partials/layout.njk" %}
 {% set pageTitle = applicationName + " - " + title %}
 {% set mainClasses = "app-container govuk-body applications-landing-page" %}
-{% set activeTab = 'comments' %}
+{% set activeTab = 'messages' %}
 {% block beforeContent %}
   {% include "../partials/breadcrumbs.njk" %}
 {% endblock %}
 {% block content %}
   <div class="govuk-body govuk-width-container">
     {% if errors %}
-      {% set textFieldError = errors.Comments if errors.Comments else undefined %}
+      {% set textFieldError = errors.Messages if errors.Messages else undefined %}
       {% set messageFieldError = undefined %}
       {% if textFieldError %}
         {% set messageFieldError = { text: textFieldError.text } %}
@@ -31,26 +33,14 @@
     {% include "../partials/sub-navigation.njk" %}
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
-        {% if comments and comments.length > 0 %}
-          {% set commentRows = [] %}
-          {% for item in comments %}
-            {% set commentRows = commentRows.concat([[
-              { text: item.message },
-              { text: item.createdByName },
-              { text: item.date }
-            ]]) %}
-          {% endfor %}
-          {{ govukTable({
-            head: [
-              { text: "Comments" },
-              { text: "From" },
-              { text: "Date" }
-            ],
-            rows: commentRows
-          }) }}
-        {% else %}
-          <p class="govuk-body">There are no comments yet.</p>
-        {% endif %}
+        {{ govukWarningText({
+          text: "These messages are sent to the prisoner",
+          iconFallbackText: "Warning"
+        }) }}
+        <h2 class="govuk-heading-m">Messages and replies</h2>
+        <div class="govuk-!-margin-bottom-4">
+          {{ appMessages({ items: comments }) }}
+        </div>
         {% if not isClosed %}
           <form method="POST" id="application-comments-form" novalidate>
             <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
@@ -61,8 +51,8 @@
               threshold: 75,
               value: comment,
               label: {
-                text: "Send comment",
-                classes: "govuk-label--m",
+                text: "Send message",
+                classes: "govuk-label--s govuk-!-margin-bottom-4",
                 isPageHeading: true
               },
               errorMessage: messageFieldError
@@ -70,7 +60,7 @@
             {{ govukButton({
               text: "Send",
               type: "submit",
-              attributes: { id: "send-comment-button" },
+              attributes: { id: "send-message-button" },
               classes: "govuk-button--primary"
             }) }}
           </form>

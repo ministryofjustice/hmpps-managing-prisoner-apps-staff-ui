@@ -5,87 +5,10 @@ import CommentsPage from '../pages/commentsPage'
 import auth from '../mockApis/auth'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
 import prisonApi from '../mockApis/prison'
-import { resetStubs, stubFor } from '../mockApis/wiremock'
+import { resetStubs } from '../mockApis/wiremock'
 
 const targetBaseUrl = process.env.PW_BASE_URL || process.env.DPS_PRISONER_URL || 'http://localhost:3007'
 const isWiremock = process.env.PW_ENV === 'mock' || targetBaseUrl.includes('localhost')
-
-const stubCommentSubmissionWithVisibility = async ({
-  message,
-  visibility,
-}: {
-  message: string
-  visibility: 'STAFF_ONLY' | 'STAFF_AND_PRISONER'
-}) => {
-  await stubFor({
-    priority: 1,
-    request: {
-      method: 'POST',
-      url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/comments`,
-    },
-    response: {
-      status: 200,
-      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-      jsonBody: {
-        id: 'comment-id-1',
-        appId: app.id,
-        message,
-        prisonerNumber: app.requestedBy.username,
-        createdDate: '2025-04-09T15:57:29Z',
-        visibility,
-        createdByType: 'STAFF',
-        createdBy: {
-          username: 'TEST_GEN',
-          userId: '487900',
-          fullName: 'Staff Name',
-          category: 'STAFF',
-          establishment: {
-            id: 'TEST_ESTABLISHMENT_FIRST',
-            name: 'ESTABLISHMENT_NAME_1',
-          },
-        },
-      },
-    },
-  })
-
-  await stubFor({
-    priority: 1,
-    request: {
-      method: 'GET',
-      url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/comments?page=1&size=20&createdBy=true`,
-    },
-    response: {
-      status: 200,
-      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-      jsonBody: {
-        page: 1,
-        totalElements: 1,
-        exhausted: true,
-        contents: [
-          {
-            id: 'comment-id-1',
-            appId: app.id,
-            message,
-            prisonerNumber: app.requestedBy.username,
-            createdDate: '2025-04-09T15:57:29Z',
-            visibility,
-            createdByType: 'STAFF',
-            createdBy: {
-              username: 'TEST_GEN',
-              userId: '487900',
-              fullName: 'Staff Name',
-              category: 'STAFF',
-              establishment: {
-                id: 'TEST_ESTABLISHMENT_FIRST',
-                name: 'ESTABLISHMENT_NAME_1',
-              },
-            },
-          },
-        ],
-      },
-    },
-  })
-}
 
 test.describe('Comments Page', () => {
   test.beforeEach(async ({ page, signIn }) => {
@@ -105,25 +28,32 @@ test.describe('Comments Page', () => {
   test('should display the correct page title', async ({ page }) => {
     const commentsPage = new CommentsPage(page)
     const title = await commentsPage.pageTitle()
-    expect(title).toMatch(/Messages/)
+    expect(title).toMatch(/Comments/)
   })
 
-  test('should highlight the messages tab as active in sub-navigation', async ({ page }) => {
+  test('should highlight the comments tab as active in sub-navigation', async ({ page }) => {
     const commentsPage = new CommentsPage(page)
     await expect(commentsPage.subNavigation()).toBeVisible()
-    await expect(commentsPage.activeTab()).toContainText(/Messages/)
+    await expect(commentsPage.activeTab()).toContainText(/Comments/)
   })
 
-  test('should display the message form', async ({ page }) => {
+  test('should display the comments table with the correct columns', async ({ page }) => {
     const commentsPage = new CommentsPage(page)
-    await expect(commentsPage.commentLabel()).toContainText(/Send message/)
+    await expect(commentsPage.commentsTable()).toBeVisible()
+    await expect(commentsPage.tableHeaders()).toContainText(['Comments', 'From', 'Date'])
+  })
+
+  test('should display a staff-only comment in the table', async ({ page }) => {
+    await expect(page.getByRole('cell', { name: 'This is my first comment' })).toBeVisible()
+    await expect(page.getByRole('cell', { name: 'Staff Name' })).toBeVisible()
+    await expect(page.getByRole('cell', { name: '9 April 2025' })).toBeVisible()
+  })
+
+  test('should display the send comment form', async ({ page }) => {
+    const commentsPage = new CommentsPage(page)
+    await expect(commentsPage.commentLabel()).toContainText(/Send comment/)
     await expect(commentsPage.commentBox()).toBeVisible()
     await expect(commentsPage.submitButton()).toContainText(/Send/)
-  })
-
-  test('should display the comments section', async ({ page }) => {
-    const commentsPage = new CommentsPage(page)
-    await expect(commentsPage.commentsSectionHeading()).toBeVisible()
   })
 
   test('should allow a user to add a comment and display it', async ({ page }) => {
@@ -135,58 +65,19 @@ test.describe('Comments Page', () => {
     const commentsPage = new CommentsPage(page)
     await commentsPage.commentBox().fill('This is my first comment')
     await commentsPage.submitButton().click()
-    await page.locator('#visibility-modal-confirm').click()
 
     await expect(page).toHaveURL(`/applications/${app.requestedBy.username}/${app.id}/comments`)
-    await expect(page.locator('.moj-message-item__text--sent', { hasText: 'This is my first comment' })).toBeVisible()
-    await expect(page.getByText('Staff Name')).toBeVisible()
-    await expect(page.getByText('9 April 2025')).toBeVisible()
-  })
-
-  test('should show prisoner and staff visibility when sending a message', async ({ page }) => {
-    if (isWiremock) {
-      await stubCommentSubmissionWithVisibility({
-        message: 'Shared with prisoner',
-        visibility: 'STAFF_AND_PRISONER',
-      })
-    }
-
-    const commentsPage = new CommentsPage(page)
-    await commentsPage.commentBox().fill('Shared with prisoner')
-    await commentsPage.submitButton().click()
-    await page.locator('#visibility-modal-confirm').click()
-
-    await expect(page).toHaveURL(`/applications/${app.requestedBy.username}/${app.id}/comments`)
-    await expect(page.locator('.app-message-item--prisoner-and-staff')).toBeVisible()
-    await expect(page.locator('.moj-message-item__text--sent', { hasText: 'Shared with prisoner' })).toBeVisible()
-  })
-
-  test('should send a message with prisoner-and-staff visibility', async ({ page }) => {
-    if (isWiremock) {
-      await stubCommentSubmissionWithVisibility({
-        message: 'Shared with prisoner',
-        visibility: 'STAFF_AND_PRISONER',
-      })
-    }
-
-    const commentsPage = new CommentsPage(page)
-    await commentsPage.commentBox().fill('Shared with prisoner')
-    await commentsPage.submitButton().click()
-    const confirmVisibilityButton = page.locator('#visibility-modal-confirm')
-    await expect(confirmVisibilityButton).toBeVisible()
-    await confirmVisibilityButton.click()
-
-    await expect(page).toHaveURL(`/applications/${app.requestedBy.username}/${app.id}/comments`)
-    await expect(page.locator('.app-message-item--prisoner-and-staff')).toBeVisible()
-    await expect(page.locator('.moj-message-item__text--sent', { hasText: 'Shared with prisoner' })).toBeVisible()
+    await expect(page.getByRole('cell', { name: 'This is my first comment' })).toBeVisible()
+    await expect(page.getByRole('cell', { name: 'Staff Name' })).toBeVisible()
+    await expect(page.getByRole('cell', { name: '9 April 2025' })).toBeVisible()
   })
 
   test('should show an error message when no comment is entered', async ({ page }) => {
     const commentsPage = new CommentsPage(page)
     await commentsPage.submitButton().click()
 
-    await expect(commentsPage.errorSummary()).toContainText('Add a message')
-    await expect(commentsPage.errorMessage()).toContainText('Add a message')
+    await expect(commentsPage.errorSummary()).toContainText('Add a comment')
+    await expect(commentsPage.errorMessage()).toContainText('Add a comment')
   })
 })
 
@@ -211,9 +102,9 @@ test.describe('Comments Page - closed application', () => {
         await page.goto(`/applications/${closedApp.requestedBy.username}/${closedApp.id}/comments`)
       })
 
-      test('should not display the send message form', async ({ page }) => {
+      test('should not display the send comment form', async ({ page }) => {
         const commentsPage = new CommentsPage(page)
-        await expect(commentsPage.commentsSectionHeading()).toBeVisible()
+        await expect(commentsPage.commentsTable()).toBeVisible()
         await expect(commentsPage.commentForm()).toHaveCount(0)
         await expect(commentsPage.commentBox()).toHaveCount(0)
         await expect(commentsPage.submitButton()).toHaveCount(0)

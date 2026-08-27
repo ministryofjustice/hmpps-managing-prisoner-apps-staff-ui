@@ -56,6 +56,19 @@ export default class ManagingPrisonerAppsService {
     return this.managingPrisonerAppsApiClient.getComments(user.username, prisonerId, applicationId)
   }
 
+  async addMessage(
+    prisonerId: string,
+    applicationId: string,
+    payload: { message: string; visibility: MessageVisibility },
+    user: BaseUser,
+  ) {
+    return this.managingPrisonerAppsApiClient.addMessage(user.username, prisonerId, applicationId, payload)
+  }
+
+  async getMessages(prisonerId: string, applicationId: string, user: BaseUser) {
+    return this.managingPrisonerAppsApiClient.getMessages(user.username, prisonerId, applicationId)
+  }
+
   async addResponse(prisonerId: string, applicationId: string, payload: AppResponsePayload, user: BaseUser) {
     return this.managingPrisonerAppsApiClient.addResponse(user.username, prisonerId, applicationId, payload)
   }

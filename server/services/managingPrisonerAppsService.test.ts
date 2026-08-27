@@ -95,6 +95,29 @@ describe('ManagingPrisonerAppsService', () => {
     })
   })
 
+  describe('addMessage', () => {
+    it('should add a message to an application', async () => {
+      const payload = {
+        message: 'Test message',
+        visibility: MessageVisibility.STAFF_AND_PRISONER,
+      }
+
+      const result = await service.addMessage('prisoner-id', 'application-id', payload, user)
+
+      expect(result).toBeUndefined()
+      expect(mockClient.addMessage).toHaveBeenCalledWith(user.username, 'prisoner-id', 'application-id', payload)
+    })
+  })
+
+  describe('getMessages', () => {
+    it('should fetch the messages for an application', async () => {
+      const result = await service.getMessages('prisoner-id', 'application-id', user)
+
+      expect(result).toBeUndefined()
+      expect(mockClient.getMessages).toHaveBeenCalledWith(user.username, 'prisoner-id', 'application-id')
+    })
+  })
+
   describe('addResponse', () => {
     it('should add a response to an application request', async () => {
       const payload = {

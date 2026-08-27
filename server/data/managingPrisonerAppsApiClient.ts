@@ -207,6 +207,46 @@ export default class ManagingPrisonerAppsApiClient extends RestClient {
     }
   }
 
+  async addMessage(
+    username: string,
+    prisonerId: string,
+    appId: string,
+    payload: { message: string; visibility: MessageVisibility },
+  ): Promise<Comment | null> {
+    try {
+      return await this.post(
+        {
+          path: `/v1/prisoners/${prisonerId}/apps/${appId}/comments`,
+          data: payload,
+        },
+        asSystem(username),
+      )
+    } catch (error) {
+      logger.error(`Failed to add message for prisoner ${prisonerId} on app ${appId}`, error)
+      return null
+    }
+  }
+
+  async getMessages(
+    username: string,
+    prisonerId: string,
+    appId: string,
+    page = 1,
+    size = 20,
+  ): Promise<CommentsResponse | null> {
+    try {
+      return await this.get(
+        {
+          path: `/v1/prisoners/${prisonerId}/apps/${appId}/messages?page=${page}&size=${size}&createdBy=true`,
+        },
+        asSystem(username),
+      )
+    } catch (error) {
+      logger.error(`Failed to fetch messages for prisoner ${prisonerId} on app ${appId}`, error)
+      return null
+    }
+  }
+
   async getHistory(username: string, prisonerId: string, appId: string): Promise<History[] | null> {
     try {
       return await this.get(

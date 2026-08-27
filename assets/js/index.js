@@ -5,7 +5,7 @@ import * as addressAutosuggest from '@ministryofjustice/hmpps-connect-dps-shared
 import * as connectDps from '@ministryofjustice/hmpps-connect-dps-shared-items/dist/assets/js/all'
 import 'cropperjs'
 import initPhotoCropper from './photo-cropper'
-import { getModalDialogInstance, initModalDialogs } from './modal-dialog'
+import { initModalDialogs } from './modal-dialog'
 
 govukFrontend.initAll()
 mojFrontend.initAll()
@@ -226,56 +226,4 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 
   toggleReasonVisibility()
-})
-
-document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => {
-    const sendMessageButton = document.getElementById('send-message-button')
-    const triggerButton = document.getElementById('visibility-modal-trigger')
-    const confirmButton = document.getElementById('visibility-modal-confirm')
-    const cancelButton = document.getElementById('visibility-modal-cancel')
-    const commentsForm = document.getElementById('application-comments-form')
-    const commentInput = document.getElementById('comment')
-    const modalElement = document.querySelector('.govuk-modal-dialogue[data-trigger="#visibility-modal-trigger"]')
-
-    if (!sendMessageButton || !triggerButton || !modalElement || !confirmButton || !cancelButton) {
-      return
-    }
-
-    // Get the modal instance created by initModalDialogs()
-    const modalInstance = getModalDialogInstance(modalElement)
-
-    if (!modalInstance) {
-      return
-    }
-
-    // Sending a comment to the prisoner requires confirmation.
-    sendMessageButton.addEventListener('click', event => {
-      if (!commentInput || commentInput.value.trim() === '' || commentInput.value.length > 1000) {
-        return
-      }
-
-      event.preventDefault()
-      triggerButton.click()
-    })
-
-    // Yes button — close modal then submit the form
-    confirmButton.addEventListener('click', event => {
-      event.preventDefault()
-      if (commentsForm) {
-        commentsForm.submit()
-      }
-    })
-
-    // No, go back — deselect all visibility radios and close modal
-    cancelButton.addEventListener('click', event => {
-      event.preventDefault()
-      const allRadios = document.querySelectorAll('input[name="visibility"]')
-      allRadios.forEach(radio => {
-        // eslint-disable-next-line no-param-reassign
-        radio.checked = false
-      })
-      modalInstance.close()
-    })
-  }, 0)
 })

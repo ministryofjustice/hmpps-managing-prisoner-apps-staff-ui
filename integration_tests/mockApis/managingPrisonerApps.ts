@@ -5,6 +5,7 @@ import { App } from '../../server/@types/managingAppsApi'
 import {
   appDecisionResponse,
   commentsResponse,
+  messagesResponse,
   appSearchResponse,
   buildAppsSearchResponse,
   appHistoryResponse,
@@ -119,6 +120,32 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: commentsResponse,
+      },
+    })
+  },
+  stubGetMessages: ({ app }: { app: App }): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/messages?page=1&size=20&createdBy=true`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: messagesResponse,
+      },
+    })
+  },
+  stubAddMessages: ({ app }: { app: App }): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'POST',
+        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/messages`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: messagesResponse,
       },
     })
   },

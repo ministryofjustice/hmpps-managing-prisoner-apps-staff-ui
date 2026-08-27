@@ -62,13 +62,23 @@ filteredApplicationTypes.forEach(({ name, id }) => {
       await expect(viewPage.summaryListRowKey('Incentive level')).toBeVisible()
     })
 
-    test('should allow navigating to the Comments or Messages section', async ({ page }) => {
+    test('should allow navigating to the Comments section', async ({ page }) => {
       const viewPage = new ViewApplicationPage(page)
       await expect(viewPage.commentsTab()).toBeVisible()
-      await expect(viewPage.commentsTab()).toContainText(/Comments|Messages/)
+      await expect(viewPage.commentsTab()).toContainText('Comments')
       await expect(viewPage.commentsTab()).toHaveAttribute(
         'href',
         '/applications/G123456/13d2c453-be11-44a8-9861-21fd8ae6e911/comments',
+      )
+    })
+
+    test('should allow navigating to the Prisoner messages section', async ({ page }) => {
+      const viewPage = new ViewApplicationPage(page)
+      await expect(viewPage.messagesTab()).toBeVisible()
+      await expect(viewPage.messagesTab()).toContainText('Prisoner messages')
+      await expect(viewPage.messagesTab()).toHaveAttribute(
+        'href',
+        '/applications/G123456/13d2c453-be11-44a8-9861-21fd8ae6e911/messages',
       )
     })
 
