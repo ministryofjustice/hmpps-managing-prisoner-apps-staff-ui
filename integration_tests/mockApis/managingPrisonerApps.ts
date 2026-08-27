@@ -140,7 +140,7 @@ export default {
     return stubFor({
       request: {
         method: 'POST',
-        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/messages`,
+        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/comments`,
       },
       response: {
         status: 200,
