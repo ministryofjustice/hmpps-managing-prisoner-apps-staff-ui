@@ -22,6 +22,10 @@ export default class PrintReplyPage extends AbstractPage {
     return this.page.locator('.govuk-summary-list').first()
   }
 
+  printableTemplate(): PageElement {
+    return this.page.locator('div[class*="govuk-!-display-block-print"]')
+  }
+
   async checkOnPage(): Promise<void> {
     await expect(this.activeTab()).toContainText('Print reply')
   }
