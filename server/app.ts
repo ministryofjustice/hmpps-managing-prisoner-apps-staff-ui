@@ -5,7 +5,6 @@ import createError from 'http-errors'
 import dpsComponents from '@ministryofjustice/hmpps-connect-dps-components'
 import nunjucksSetup from './utils/nunjucksSetup'
 import errorHandler from './errorHandler'
-import { appInsightsMiddleware } from './utils/azureAppInsights'
 import authorisationMiddleware from './middleware/authorisationMiddleware'
 
 import setUpAuthentication from './middleware/setUpAuthentication'
@@ -14,7 +13,7 @@ import setUpCsrf from './middleware/setUpCsrf'
 import setUpCurrentUser from './middleware/setUpCurrentUser'
 import setUpHealthChecks from './middleware/setUpHealthChecks'
 import setUpStaticResources from './middleware/setUpStaticResources'
-import setUpWebRequestParsing from './middleware/setupRequestParsing'
+import setUpWebRequestParsing from './middleware/setUpRequestParsing'
 import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
 
@@ -32,7 +31,6 @@ export default function createApp(services: Services): express.Application {
 
   app.locals.dpsUrl = config.dpsHome
 
-  app.use(appInsightsMiddleware())
   app.use(setUpHealthChecks(services.applicationInfo, services.managingPrisonerAppsService))
   app.use(setUpWebSecurity())
   app.use(setUpWebSession())
@@ -45,8 +43,7 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpCurrentUser(services.prisonService))
   app.use(checkActiveAgencyAccess(services.managingPrisonerAppsService))
 
-  app.get(
-    '*splat',
+  app.use(
     dpsComponents.getPageComponents({
       dpsUrl: config.dpsHome,
       logger,
