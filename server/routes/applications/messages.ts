@@ -15,14 +15,18 @@ import { formatMessagesCreatedByName } from '../../utils/formatters/formatName'
 import { validateTextField } from '../validate/validateTextField'
 import { Comment } from '../../@types/managingAppsApi'
 
-const formatComments = (comments: Comment[] = []) =>
-  comments.map(({ message, createdBy, createdDate, createdByType }) => ({
+const formatMessages = (comments: Comment[] = []) =>
+  comments.map(({ message, createdBy, createdDate, visibility, createdByType }) => ({
     message,
     createdByName: formatMessagesCreatedByName(createdBy.fullName, createdByType),
+    timestamp: createdDate,
     date: format(createdDate, 'd MMMM yyyy'),
+    time: format(createdDate, 'HH:mm'),
+    visibility,
+    createdByType,
   }))
 
-export default function commentsRouter({
+export default function messagesRouter({
   auditService,
   managingPrisonerAppsService,
 }: {
@@ -31,7 +35,7 @@ export default function commentsRouter({
 }): Router {
   const router = Router()
 
-  router.get('/applications/:prisonerId/:applicationId/comments', async (req: Request, res: Response) => {
+  router.get('/applications/:prisonerId/:applicationId/messages', async (req: Request, res: Response) => {
     const { prisonerId } = req.params
     const { user } = res.locals
 
@@ -40,23 +44,26 @@ export default function commentsRouter({
       res,
       auditService,
       managingPrisonerAppsService,
-      Page.COMMENTS_PAGE,
+      Page.MESSAGES_PAGE,
     )
     if (!validApplication) return
     const { application, applicationType } = validApplication
 
-    const comments = await managingPrisonerAppsService.getComments(`${prisonerId}`, application.id, user)
+    const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
 
-    res.render(PATHS.APPLICATIONS.COMMENTS, {
+    const messages = await managingPrisonerAppsService.getMessages(`${prisonerId}`, application.id, user)
+
+    res.render(PATHS.APPLICATIONS.MESSAGES, {
       application,
       applicationType,
-      comments: formatComments(comments?.contents),
-      title: 'Comments',
+      comments: formatMessages(messages?.contents),
+      title: 'Prisoner messages',
       isClosed: !isOpenStatus(application.status),
+      isForwardable: departments?.length > 1,
     })
   })
 
-  router.post('/applications/:prisonerId/:applicationId/comments', async (req: Request, res: Response) => {
+  router.post('/applications/:prisonerId/:applicationId/messages', async (req: Request, res: Response) => {
     const { prisonerId, applicationId } = req.params
     const { comment } = req.body
     const { user } = res.locals
@@ -68,33 +75,36 @@ export default function commentsRouter({
     }
 
     if (!isOpenStatus(application.status)) {
-      return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/comments`)
+      return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/messages`)
     }
 
-    const errors = validateTextField({ fieldValue: comment, fieldName: 'Comments', isRequired: true })
+    const errors = validateTextField({ fieldValue: comment, fieldName: 'Messages', isRequired: true })
 
     if (Object.keys(errors).length > 0) {
-      const comments = await managingPrisonerAppsService.getComments(`${prisonerId}`, application.id, user)
+      const messages = await managingPrisonerAppsService.getMessages(`${prisonerId}`, application.id, user)
+
       const applicationType = await getAppType(
         managingPrisonerAppsService,
         user,
         application.applicationType.id.toString(),
       )
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
 
-      return res.render(PATHS.APPLICATIONS.COMMENTS, {
+      return res.render(PATHS.APPLICATIONS.MESSAGES, {
         application,
         applicationType,
         comment,
-        comments: formatComments(comments?.contents),
+        comments: formatMessages(messages?.contents),
         errors,
-        title: 'Comments',
+        title: 'Prisoner messages',
         isClosed: false,
+        isForwardable: departments?.length > 1,
       })
     }
 
-    await managingPrisonerAppsService.addComment(`${prisonerId}`, `${applicationId}`, comment, user)
+    await managingPrisonerAppsService.addMessage(`${prisonerId}`, `${applicationId}`, comment, user)
 
-    return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/comments`)
+    return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/messages`)
   })
 
   return router

@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test'
 import AbstractPage, { PageElement } from './abstractPage'
 
-export default class CommentsPage extends AbstractPage {
+export default class MessagesPage extends AbstractPage {
   constructor(page: Page) {
     super(page, '')
   }
@@ -42,11 +42,11 @@ export default class CommentsPage extends AbstractPage {
     return this.page.locator('#application-comments-form')
   }
 
-  commentsTable(): PageElement {
-    return this.page.locator('table.govuk-table')
+  comments(): PageElement {
+    return this.page.locator('.app-messages, .app-message')
   }
 
-  tableHeaders(): PageElement {
-    return this.page.locator('table.govuk-table thead th')
+  commentsSectionHeading(): PageElement {
+    return this.page.getByRole('heading', { name: 'Messages and replies' })
   }
 }
