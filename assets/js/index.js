@@ -230,15 +230,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
-    const sendMessageButton = document.getElementById('send-message-button')
+    const prisonerAndStaffRadio = document.querySelector('input[name="visibility"][value="prisoner-and-staff"]')
     const triggerButton = document.getElementById('visibility-modal-trigger')
     const confirmButton = document.getElementById('visibility-modal-confirm')
     const cancelButton = document.getElementById('visibility-modal-cancel')
     const commentsForm = document.getElementById('application-comments-form')
-    const commentInput = document.getElementById('comment')
     const modalElement = document.querySelector('.govuk-modal-dialogue[data-trigger="#visibility-modal-trigger"]')
 
-    if (!sendMessageButton || !triggerButton || !modalElement || !confirmButton || !cancelButton) {
+    if (!prisonerAndStaffRadio || !triggerButton || !modalElement || !confirmButton || !cancelButton) {
       return
     }
 
@@ -249,14 +248,11 @@ document.addEventListener('DOMContentLoaded', () => {
       return
     }
 
-    // Sending a comment to the prisoner requires confirmation.
-    sendMessageButton.addEventListener('click', event => {
-      if (!commentInput || commentInput.value.trim() === '' || commentInput.value.length > 1000) {
-        return
+    // When "Prisoner and staff" radio is selected, trigger the modal
+    prisonerAndStaffRadio.addEventListener('change', () => {
+      if (prisonerAndStaffRadio.checked) {
+        triggerButton.click()
       }
-
-      event.preventDefault()
-      triggerButton.click()
     })
 
     // Yes button — close modal then submit the form

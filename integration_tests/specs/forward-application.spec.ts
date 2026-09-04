@@ -83,6 +83,29 @@ test.describe('Forward Application Page', () => {
     await expect(page.getByText(`Application forwarded to ${deptLabel.trim()}`)).toBeVisible()
   })
 
+  test('should forward application to a new department', async ({ page }) => {
+    const forwardPage = new ForwardApplicationPage(page)
+
+    if (isWiremock) {
+      await managingPrisonerAppsApi.stubForwardApp({ applicationId: app.id })
+    }
+
+    const departments = forwardPage.departmentRadios()
+    await expect(departments).toHaveCount(2)
+
+    const secondDepartment = departments.nth(1)
+    const secondDepartmentId = await secondDepartment.getAttribute('id')
+    const secondDepartmentValue = await secondDepartment.getAttribute('value')
+    const secondDepartmentLabel = await page.locator(`label[for="${secondDepartmentId}"]`).innerText()
+
+    await forwardPage.selectDepartment(secondDepartmentValue)
+    await forwardPage.enterForwardingReason('Forwarding to a new department for follow-up')
+    await forwardPage.submit()
+
+    await expect(page).toHaveURL(new RegExp(`/applications/${app.requestedBy.username}/${app.id}`))
+    await expect(page.getByText(`Application forwarded to ${secondDepartmentLabel.trim()}`)).toBeVisible()
+  })
+
   test('should show validation error when forwarding reason exceeds 1000 characters', async ({ page }) => {
     const forwardPage = new ForwardApplicationPage(page)
     const longReason = 'a'.repeat(1001)
