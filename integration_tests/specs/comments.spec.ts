@@ -64,11 +64,10 @@ test.describe('Comments Page', () => {
 
     const commentsPage = new CommentsPage(page)
     await commentsPage.commentBox().fill('This is my first comment')
-    await page.getByRole('radio', { name: 'Staff only' }).check()
     await commentsPage.submitButton().click()
 
     await expect(page).toHaveURL(`/applications/${app.requestedBy.username}/${app.id}/comments`)
-    await expect(page.locator('.moj-message-item__text--sent', { hasText: 'This is my first comment' })).toBeVisible()
+    await expect(page.getByRole('cell', { name: 'This is my first comment' })).toBeVisible()
     await expect(page.getByText('Staff Name')).toBeVisible()
     await expect(page.getByText('9 April 2025')).toBeVisible()
   })
