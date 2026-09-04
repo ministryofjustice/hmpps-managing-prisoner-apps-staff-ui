@@ -101,7 +101,7 @@ export default {
     return stubFor({
       request: {
         method: 'GET',
-        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/comments?page=1&size=20&createdBy=true`,
+        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/comments?page=1&size=20`,
       },
       response: {
         status: 200,
@@ -127,7 +127,7 @@ export default {
     return stubFor({
       request: {
         method: 'GET',
-        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/messages?page=1&size=20&createdBy=true`,
+        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/messages?page=1&size=20`,
       },
       response: {
         status: 200,
@@ -140,7 +140,7 @@ export default {
     return stubFor({
       request: {
         method: 'POST',
-        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/comments`,
+        url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/messages`,
       },
       response: {
         status: 200,

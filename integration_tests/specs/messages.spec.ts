@@ -10,7 +10,7 @@ import { resetStubs, stubFor } from '../mockApis/wiremock'
 const targetBaseUrl = process.env.PW_BASE_URL || process.env.DPS_PRISONER_URL || 'http://localhost:3007'
 const isWiremock = process.env.PW_ENV === 'mock' || targetBaseUrl.includes('localhost')
 
-const stubMessageSubmissionWithVisibility = async ({
+const stubMessageSubmission = async ({
   message,
   visibility,
 }: {
@@ -21,7 +21,7 @@ const stubMessageSubmissionWithVisibility = async ({
     priority: 1,
     request: {
       method: 'POST',
-      url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/comments`,
+      url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/messages`,
     },
     response: {
       status: 200,
@@ -52,7 +52,7 @@ const stubMessageSubmissionWithVisibility = async ({
     priority: 1,
     request: {
       method: 'GET',
-      url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/messages?page=1&size=20&createdBy=true`,
+      url: `/managingPrisonerApps/v1/prisoners/${app.requestedBy.username}/apps/${app.id}/messages?page=1&size=20`,
     },
     response: {
       status: 200,
@@ -121,9 +121,9 @@ test.describe('Prisoner Messages Page', () => {
     await expect(messagesPage.submitButton()).toContainText(/Send/)
   })
 
-  test('should send a message with prisoner-and-staff visibility', async ({ page }) => {
+  test('should send a message to the prisoner', async ({ page }) => {
     if (isWiremock) {
-      await stubMessageSubmissionWithVisibility({
+      await stubMessageSubmission({
         message: 'Shared with prisoner',
         visibility: 'STAFF_AND_PRISONER',
       })
@@ -132,6 +132,8 @@ test.describe('Prisoner Messages Page', () => {
     const messagesPage = new MessagesPage(page)
     await messagesPage.commentBox().fill('Shared with prisoner')
     await messagesPage.submitButton().click()
+    await expect(page.getByRole('dialog', { name: 'Should this message be seen by the prisoner?' })).toBeVisible()
+    await page.getByRole('button', { name: 'Yes' }).click()
 
     await expect(page).toHaveURL(`/applications/${app.requestedBy.username}/${app.id}/messages`)
     await expect(page.locator('.app-message-item--prisoner-and-staff')).toBeVisible()

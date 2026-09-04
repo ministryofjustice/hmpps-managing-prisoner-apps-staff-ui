@@ -3,7 +3,6 @@ import { Request, Response, Router } from 'express'
 
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
-import { MessageVisibility } from '../../constants/messageVisibility'
 import { isOpenStatus } from '../../constants/applicationStatus'
 
 import AuditService, { Page } from '../../services/auditService'
@@ -103,12 +102,7 @@ export default function messagesRouter({
       })
     }
 
-    await managingPrisonerAppsService.addMessage(
-      `${prisonerId}`,
-      `${applicationId}`,
-      { message: comment, visibility: MessageVisibility.STAFF_AND_PRISONER },
-      user,
-    )
+    await managingPrisonerAppsService.addMessage(`${prisonerId}`, `${applicationId}`, comment, user)
 
     return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/messages`)
   })

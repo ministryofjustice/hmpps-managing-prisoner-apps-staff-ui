@@ -74,15 +74,12 @@ describe('ManagingPrisonerAppsService', () => {
 
   describe('addComment', () => {
     it('should add a comment to an application', async () => {
-      const payload = {
-        message: 'Test comment',
-        visibility: MessageVisibility.STAFF_ONLY,
-      }
+      const message = 'Test comment'
 
-      const result = await service.addComment('prisoner-id', 'application-id', payload, user)
+      const result = await service.addComment('prisoner-id', 'application-id', message, user)
 
       expect(result).toBeUndefined()
-      expect(mockClient.addComment).toHaveBeenCalledWith(user.username, 'prisoner-id', 'application-id', payload)
+      expect(mockClient.addComment).toHaveBeenCalledWith(user.username, 'prisoner-id', 'application-id', message)
     })
   })
 
@@ -97,15 +94,12 @@ describe('ManagingPrisonerAppsService', () => {
 
   describe('addMessage', () => {
     it('should add a message to an application', async () => {
-      const payload = {
-        message: 'Test message',
-        visibility: MessageVisibility.STAFF_AND_PRISONER,
-      }
+      const message = 'Test message'
 
-      const result = await service.addMessage('prisoner-id', 'application-id', payload, user)
+      const result = await service.addMessage('prisoner-id', 'application-id', message, user)
 
       expect(result).toBeUndefined()
-      expect(mockClient.addMessage).toHaveBeenCalledWith(user.username, 'prisoner-id', 'application-id', payload)
+      expect(mockClient.addMessage).toHaveBeenCalledWith(user.username, 'prisoner-id', 'application-id', message)
     })
   })
 

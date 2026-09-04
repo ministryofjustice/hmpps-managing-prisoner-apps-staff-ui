@@ -3,7 +3,6 @@ import { Request, Response, Router } from 'express'
 
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
-import { MessageVisibility } from '../../constants/messageVisibility'
 import { isOpenStatus } from '../../constants/applicationStatus'
 
 import AuditService, { Page } from '../../services/auditService'
@@ -76,7 +75,6 @@ export default function commentsRouter({
 
     if (Object.keys(errors).length > 0) {
       const comments = await managingPrisonerAppsService.getComments(`${prisonerId}`, application.id, user)
-
       const applicationType = await getAppType(
         managingPrisonerAppsService,
         user,
@@ -94,12 +92,7 @@ export default function commentsRouter({
       })
     }
 
-    await managingPrisonerAppsService.addComment(
-      `${prisonerId}`,
-      `${applicationId}`,
-      { message: comment, visibility: MessageVisibility.STAFF_ONLY },
-      user,
-    )
+    await managingPrisonerAppsService.addComment(`${prisonerId}`, `${applicationId}`, comment, user)
 
     return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/comments`)
   })

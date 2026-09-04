@@ -167,17 +167,13 @@ export default class ManagingPrisonerAppsApiClient extends RestClient {
     }
   }
 
-  async addComment(
-    username: string,
-    prisonerId: string,
-    appId: string,
-    payload: { message: string; visibility: MessageVisibility },
-  ): Promise<Comment | null> {
+  async addComment(username: string, prisonerId: string, appId: string, message: string): Promise<Comment | null> {
     try {
       return await this.post(
         {
           path: `/v1/prisoners/${prisonerId}/apps/${appId}/comments`,
-          data: payload,
+          headers: { 'Content-Type': 'application/json' },
+          data: message,
         },
         asSystem(username),
       )
@@ -197,7 +193,7 @@ export default class ManagingPrisonerAppsApiClient extends RestClient {
     try {
       return await this.get(
         {
-          path: `/v1/prisoners/${prisonerId}/apps/${appId}/comments?page=${page}&size=${size}&createdBy=true`,
+          path: `/v1/prisoners/${prisonerId}/apps/${appId}/comments?page=${page}&size=${size}`,
         },
         asSystem(username),
       )
@@ -207,17 +203,13 @@ export default class ManagingPrisonerAppsApiClient extends RestClient {
     }
   }
 
-  async addMessage(
-    username: string,
-    prisonerId: string,
-    appId: string,
-    payload: { message: string; visibility: MessageVisibility },
-  ): Promise<Comment | null> {
+  async addMessage(username: string, prisonerId: string, appId: string, message: string): Promise<Comment | null> {
     try {
       return await this.post(
         {
-          path: `/v1/prisoners/${prisonerId}/apps/${appId}/comments`,
-          data: payload,
+          path: `/v1/prisoners/${prisonerId}/apps/${appId}/messages`,
+          headers: { 'Content-Type': 'application/json' },
+          data: message,
         },
         asSystem(username),
       )
@@ -237,7 +229,7 @@ export default class ManagingPrisonerAppsApiClient extends RestClient {
     try {
       return await this.get(
         {
-          path: `/v1/prisoners/${prisonerId}/apps/${appId}/messages?page=${page}&size=${size}&createdBy=true`,
+          path: `/v1/prisoners/${prisonerId}/apps/${appId}/messages?page=${page}&size=${size}`,
         },
         asSystem(username),
       )

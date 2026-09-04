@@ -47,6 +47,10 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
+        <p class="govuk-body">These comments will be seen by staff only.</p>
+
+        <h2 class="govuk-heading-m">Comments and replies</h2>
+
         {% if comments and comments.length > 0 %}
           {% set commentRows = [] %}
 
@@ -67,7 +71,7 @@
             rows: commentRows
           }) }}
         {% else %}
-          <p class="govuk-body">There are no comments yet.</p>
+          <p class="govuk-body">No comments yet</p>
         {% endif %}
 
         {% if not isClosed %}
@@ -82,7 +86,7 @@
               value: comment,
               label: {
                 text: "Send comment",
-                classes: "govuk-label--m",
+                classes: "govuk-label--s",
                 isPageHeading: true
               },
               errorMessage: messageFieldError

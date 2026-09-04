@@ -13,7 +13,7 @@ export interface paths {
     }
     get?: never
     /**
-     * Update App request form data for a prisoner
+     * Update App request form data
      * @description This api endpoint is for updating app request for a prisoner. The logged staff and prisoner should belongs to same establishment. Requires role ROLE_MANAGING_PRISONER_APPS
      */
     put: operations['updateAppRequestData']
@@ -112,6 +112,30 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/v1/prisoners/{prisonerId}/apps/{appId}/messages': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get all messages send or received for an app
+     * @description This api endpoint is for getting list of messages by app Id. The logged staff and prisoner should belongs to same establishment. Requires role ROLE_MANAGING_PRISONER_APPS
+     */
+    get: operations['getMessagesByAppId']
+    put?: never
+    /**
+     * Add a message to an App that will be visible to Prisoners.
+     * @description This api endpoint is for adding message to an app request of a prisoner. The logged staff and prisoner for whom app request created should belongs to same establishment for adding comment. Requires role ROLE_MANAGING_PRISONER_APPS
+     */
+    post: operations['addMessage']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/v1/prisoners/{prisonerId}/apps/{appId}/comments': {
     parameters: {
       query?: never
@@ -120,14 +144,14 @@ export interface paths {
       cookie?: never
     }
     /**
-     * Get all comments for a give app by app id
+     * Get all internal comments for an app
      * @description This api endpoint is for getting list of comments by app Id. The logged staff and prisoner should belongs to same establishment. Requires role ROLE_MANAGING_PRISONER_APPS
      */
     get: operations['getCommentsByAppId']
     put?: never
     /**
-     * Add a comment to an App request of a prisoner.
-     * @description This api endpoint is for adding comment to an app request of a prisoner. The logged staff and prisoner  for whom app request created should belongs to same establishment for adding comment. Requires role ROLE_MANAGING_PRISONER_APPS
+     * Add an internal comment to an App.
+     * @description This api endpoint is for adding internal comment to an app request of a prisoner. The logged staff and prisoner for whom app request created should belongs to same establishment for adding comment. Requires role ROLE_MANAGING_PRISONER_APPS
      */
     post: operations['addComment']
     delete?: never
@@ -160,7 +184,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/v1/prisoners/apps/{appId}/comments': {
+  '/v1/prisoners/apps/{appId}/messages': {
     parameters: {
       query?: never
       header?: never
@@ -168,16 +192,16 @@ export interface paths {
       cookie?: never
     }
     /**
-     * Get all comments for a give app by app id
-     * @description This api endpoint is for getting list of comments by app Id. Requires role ROLE_PRISONER_FACING_APPS
+     * Get all comments for an app
+     * @description This api endpoint is for getting list of messages by app Id. Requires role ROLE_PRISONER_FACING_APPS
      */
-    get: operations['getCommentsByAppId_1']
+    get: operations['getMessagesByAppId_1']
     put?: never
     /**
-     * Add a comment to an App request of a prisoner.
-     * @description This api endpoint is for adding comment to an app request of a prisoner. The logged staff and prisoner  for whom app request created should belongs to same establishment for adding comment. Requires role ROLE_MANAGING_PRISONER_APPS
+     * Add a message by prisoner to an App request.
+     * @description This api endpoint is for adding message to an app request of a prisoner. The app should belong to logged prisoner. Requires role ROLE_MANAGING_PRISONER_APPS
      */
-    post: operations['addComment_1']
+    post: operations['addMessage_1']
     delete?: never
     options?: never
     head?: never
@@ -303,7 +327,7 @@ export interface paths {
       cookie?: never
     }
     /**
-     * Get app by id for a prisoner
+     * Get app details by Id
      * @description This api endpoint to get prisoner app. The logged staff and prisoner should belongs to same establishment. Requires role ROLE_MANAGING_PRISONER_APPS
      */
     get: operations['getAppById']
@@ -435,7 +459,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/v1/prisoners/apps/{appId}/comments/{commentId}': {
+  '/v1/prisoners/apps/{appId}/messages/{messageId}': {
     parameters: {
       query?: never
       header?: never
@@ -443,7 +467,7 @@ export interface paths {
       cookie?: never
     }
     /**
-     * Get a comment by comment id
+     * Get a message by message id
      * @description This api endpoint is for getting comment details. The logged staff and prisoner should belongs to same establishment. Requires role ROLE_PRISONER_FACING_APPS
      */
     get: operations['getCommentById_1']
@@ -802,11 +826,6 @@ export interface components {
       createdBy: unknown
       appliesTo: string[]
     }
-    CommentRequestDto: {
-      message: string
-      /** @enum {string} */
-      visibility: 'STAFF_AND_PRISONER' | 'STAFF_ONLY'
-    }
     CommentResponseDtoObject: {
       /** Format: uuid */
       id: string
@@ -929,6 +948,11 @@ export interface components {
        * @example 2026-08-11T08:40:55.998Z
        */
       timestamp: string
+    }
+    CommentRequestDto: {
+      message: string
+      /** @enum {string} */
+      visibility: 'STAFF_AND_PRISONER' | 'STAFF_ONLY'
     }
     AppStatusUpdateDto: {
       /** @enum {string} */
@@ -1271,12 +1295,11 @@ export interface operations {
       }
     }
   }
-  getCommentsByAppId: {
+  getMessagesByAppId: {
     parameters: {
       query: {
         page: number
         size: number
-        createdBy?: boolean
       }
       header?: never
       path: {
@@ -1288,6 +1311,95 @@ export interface operations {
     requestBody?: never
     responses: {
       /** @description List fo comments returned successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['PageResultComments']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden to access this endpoint */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  addMessage: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        prisonerId: string
+        appId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': string
+      }
+    }
+    responses: {
+      /** @description Message added successfully */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CommentResponseDtoObject']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden to access this endpoint. The issue can be logged staff and prisoner have different establishment. */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getCommentsByAppId: {
+    parameters: {
+      query: {
+        page: number
+        size: number
+      }
+      header?: never
+      path: {
+        prisonerId: string
+        appId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description List of comments returned successfully. */
       200: {
         headers: {
           [name: string]: unknown
@@ -1328,7 +1440,7 @@ export interface operations {
     }
     requestBody: {
       content: {
-        'application/json': components['schemas']['CommentRequestDto']
+        'application/json': string
       }
     }
     responses: {
@@ -1444,12 +1556,11 @@ export interface operations {
       }
     }
   }
-  getCommentsByAppId_1: {
+  getMessagesByAppId_1: {
     parameters: {
       query: {
         page: number
         size: number
-        createdBy?: boolean
       }
       header?: never
       path: {
@@ -1459,7 +1570,7 @@ export interface operations {
     }
     requestBody?: never
     responses: {
-      /** @description List fo comments returned successfully. */
+      /** @description List fo messages returned successfully. */
       200: {
         headers: {
           [name: string]: unknown
@@ -1488,7 +1599,7 @@ export interface operations {
       }
     }
   }
-  addComment_1: {
+  addMessage_1: {
     parameters: {
       query?: never
       header?: never
@@ -1499,7 +1610,7 @@ export interface operations {
     }
     requestBody: {
       content: {
-        'application/json': components['schemas']['CommentRequestDto']
+        'application/json': string
       }
     }
     responses: {
@@ -2043,7 +2154,7 @@ export interface operations {
       header?: never
       path: {
         appId: string
-        commentId: string
+        messageId: string
       }
       cookie?: never
     }
