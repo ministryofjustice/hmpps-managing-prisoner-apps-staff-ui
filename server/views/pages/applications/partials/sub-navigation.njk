@@ -8,9 +8,15 @@
   }] %}
 
   {% set items = items.concat([{
-    text: 'Messages',
+    text: 'Comments',
     href: "/applications/" + application.requestedBy.username + "/" + application.id + "/comments",
     active: activeTab == 'comments'
+  }]) %}
+
+  {% set items = items.concat([{
+    text: 'Prisoner messages',
+    href: "/applications/" + application.requestedBy.username + "/" + application.id + "/messages",
+    active: activeTab == 'messages'
   }]) %}
 
   {% set items = items.concat([{

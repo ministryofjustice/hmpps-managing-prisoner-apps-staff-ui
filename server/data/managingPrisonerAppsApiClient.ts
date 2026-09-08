@@ -167,17 +167,13 @@ export default class ManagingPrisonerAppsApiClient extends RestClient {
     }
   }
 
-  async addComment(
-    username: string,
-    prisonerId: string,
-    appId: string,
-    payload: { message: string; visibility: MessageVisibility },
-  ): Promise<Comment | null> {
+  async addComment(username: string, prisonerId: string, appId: string, message: string): Promise<Comment | null> {
     try {
       return await this.post(
         {
           path: `/v1/prisoners/${prisonerId}/apps/${appId}/comments`,
-          data: payload,
+          headers: { 'Content-Type': 'application/json' },
+          data: message,
         },
         asSystem(username),
       )
@@ -197,12 +193,48 @@ export default class ManagingPrisonerAppsApiClient extends RestClient {
     try {
       return await this.get(
         {
-          path: `/v1/prisoners/${prisonerId}/apps/${appId}/comments?page=${page}&size=${size}&createdBy=true`,
+          path: `/v1/prisoners/${prisonerId}/apps/${appId}/comments?page=${page}&size=${size}`,
         },
         asSystem(username),
       )
     } catch (error) {
       logger.error(`Failed to fetch comments for prisoner ${prisonerId} on app ${appId}`, error)
+      return null
+    }
+  }
+
+  async addMessage(username: string, prisonerId: string, appId: string, message: string): Promise<Comment | null> {
+    try {
+      return await this.post(
+        {
+          path: `/v1/prisoners/${prisonerId}/apps/${appId}/messages`,
+          headers: { 'Content-Type': 'application/json' },
+          data: message,
+        },
+        asSystem(username),
+      )
+    } catch (error) {
+      logger.error(`Failed to add message for prisoner ${prisonerId} on app ${appId}`, error)
+      return null
+    }
+  }
+
+  async getMessages(
+    username: string,
+    prisonerId: string,
+    appId: string,
+    page = 1,
+    size = 20,
+  ): Promise<CommentsResponse | null> {
+    try {
+      return await this.get(
+        {
+          path: `/v1/prisoners/${prisonerId}/apps/${appId}/messages?page=${page}&size=${size}`,
+        },
+        asSystem(username),
+      )
+    } catch (error) {
+      logger.error(`Failed to fetch messages for prisoner ${prisonerId} on app ${appId}`, error)
       return null
     }
   }

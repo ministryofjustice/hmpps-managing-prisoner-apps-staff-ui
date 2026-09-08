@@ -230,47 +230,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
-    const prisonerAndStaffRadio = document.querySelector('input[name="visibility"][value="prisoner-and-staff"]')
     const triggerButton = document.getElementById('visibility-modal-trigger')
     const confirmButton = document.getElementById('visibility-modal-confirm')
     const cancelButton = document.getElementById('visibility-modal-cancel')
     const commentsForm = document.getElementById('application-comments-form')
     const modalElement = document.querySelector('.govuk-modal-dialogue[data-trigger="#visibility-modal-trigger"]')
+    let confirmed = false
 
-    if (!prisonerAndStaffRadio || !triggerButton || !modalElement || !confirmButton || !cancelButton) {
+    if (!triggerButton || !modalElement || !confirmButton || !cancelButton || !commentsForm) {
       return
     }
 
-    // Get the modal instance created by initModalDialogs()
-    const modalInstance = getModalDialogInstance(modalElement)
+    let modalInstance = getModalDialogInstance(modalElement)
+    if (!modalInstance) {
+      initModalDialogs()
+      modalInstance = getModalDialogInstance(modalElement)
+    }
 
     if (!modalInstance) {
       return
     }
 
-    // When "Prisoner and staff" radio is selected, trigger the modal
-    prisonerAndStaffRadio.addEventListener('change', () => {
-      if (prisonerAndStaffRadio.checked) {
-        triggerButton.click()
+    commentsForm.addEventListener('submit', event => {
+      const commentInput = commentsForm.querySelector('#comment')
+      if (!commentInput || !commentInput.value.trim()) {
+        return
+      }
+
+      if (!confirmed) {
+        event.preventDefault()
+        modalInstance.open()
       }
     })
 
-    // Yes button — close modal then submit the form
     confirmButton.addEventListener('click', event => {
       event.preventDefault()
-      if (commentsForm) {
-        commentsForm.submit()
-      }
+      confirmed = true
+      commentsForm.requestSubmit()
     })
 
-    // No, go back — deselect all visibility radios and close modal
     cancelButton.addEventListener('click', event => {
       event.preventDefault()
-      const allRadios = document.querySelectorAll('input[name="visibility"]')
-      allRadios.forEach(radio => {
-        // eslint-disable-next-line no-param-reassign
-        radio.checked = false
-      })
       modalInstance.close()
     })
   }, 0)

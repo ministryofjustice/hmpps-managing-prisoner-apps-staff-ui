@@ -56,6 +56,10 @@ export default class ViewApplicationPage extends AbstractPage {
     return this.page.locator('.moj-sub-navigation__link[href$="/comments"]')
   }
 
+  messagesTab(): PageElement {
+    return this.page.locator('.moj-sub-navigation__link[href$="/messages"]')
+  }
+
   printReplyTab(): PageElement {
     return this.page.locator('.moj-sub-navigation__link[href$="/print-reply"]')
   }
