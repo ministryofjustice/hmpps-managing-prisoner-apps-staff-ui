@@ -9,7 +9,7 @@ const targetBaseUrl = process.env.PW_BASE_URL || process.env.DPS_PRISONER_URL ||
 const isWiremock = process.env.PW_ENV === 'mock' || targetBaseUrl.includes('localhost')
 
 test.describe('Application Group Page', () => {
-  test.beforeEach(async ({ page, signIn }) => {
+  test.beforeEach(async ({ page, signIn, enterPrisonerDetails }) => {
     if (isWiremock) {
       await resetStubs()
       await auth.stubSignIn()
@@ -20,12 +20,7 @@ test.describe('Application Group Page', () => {
 
     await signIn()
     await page.goto('/log/group')
-    await page.locator('#prison-number').fill('A1234AA')
-    await page.locator('#prisoner-lookup-button').evaluate(element => {
-      const input = element as HTMLInputElement
-      input.value = 'true'
-    })
-    await page.getByRole('button', { name: 'Continue' }).click()
+    await enterPrisonerDetails()
     await expect(page).toHaveURL(/\/log\/group$/)
   })
 

@@ -14,6 +14,10 @@ export default class ApplicationGroupPage extends AbstractPage {
     return this.page.locator('input[type="radio"][name="group"]')
   }
 
+  radioButtonByLabel(label: string): PageElement {
+    return this.page.getByRole('radio', { name: label })
+  }
+
   pinPhoneContactAppsLabel(): PageElement {
     return this.page.getByText('Pin Phone Contact Apps')
   }
@@ -32,5 +36,13 @@ export default class ApplicationGroupPage extends AbstractPage {
 
   async assertBrowserTitleContains(text: string): Promise<void> {
     await expect(this.page).toHaveTitle(new RegExp(text))
+  }
+
+  async selectGroup(groupName: string): Promise<void> {
+    await this.radioButtonByLabel(groupName).check({ force: true })
+  }
+
+  async continueToNextPage(): Promise<void> {
+    await this.submitButton().click()
   }
 }

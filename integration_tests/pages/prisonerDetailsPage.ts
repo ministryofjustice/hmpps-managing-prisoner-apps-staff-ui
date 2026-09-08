@@ -18,6 +18,14 @@ export default class PrisonerDetailsPage extends AbstractPage {
     return this.page.locator('input#prison-number')
   }
 
+  prisonerLookupButton(): PageElement {
+    return this.page.locator('#prisoner-lookup-button')
+  }
+
+  prisonerExistsInput(): PageElement {
+    return this.page.locator('#prisoner-exists')
+  }
+
   findPrisonerButton(): PageElement {
     return this.page.locator('[data-test="find-prisoner-button"]')
   }
@@ -48,5 +56,10 @@ export default class PrisonerDetailsPage extends AbstractPage {
 
   async clickContinue(): Promise<void> {
     await this.continueButton().click()
+  }
+
+  async completePrisonerLookup(prisonNumber: string): Promise<void> {
+    await this.enterPrisonNumber(prisonNumber)
+    await this.clickFindPrisoner()
   }
 }

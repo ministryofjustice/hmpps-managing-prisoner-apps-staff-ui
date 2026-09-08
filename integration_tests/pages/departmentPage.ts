@@ -14,6 +14,10 @@ export default class DepartmentPage extends AbstractPage {
     return this.page.locator('.govuk-radios__item')
   }
 
+  radioButtonByLabel(label: string): PageElement {
+    return this.page.getByRole('radio', { name: label })
+  }
+
   continueButton(): PageElement {
     return this.page.getByRole('button', { name: 'Continue' })
   }
@@ -24,5 +28,13 @@ export default class DepartmentPage extends AbstractPage {
 
   errorMessage(): PageElement {
     return this.page.locator('.govuk-form-group--error .govuk-error-message')
+  }
+
+  async selectDepartment(departmentName: string): Promise<void> {
+    await this.radioButtonByLabel(departmentName).check({ force: true })
+  }
+
+  async continueToNextPage(): Promise<void> {
+    await this.continueButton().click()
   }
 }

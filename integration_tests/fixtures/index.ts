@@ -1,6 +1,11 @@
-import { Page, test as base } from '@playwright/test'
+import { expect, Page, test as base } from '@playwright/test'
 import auth from '../mockApis/auth'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
+import ApplicationGroupPage from '../pages/applicationGroup'
+import ApplicationTypePage from '../pages/applicationTypePage'
+import DepartmentPage from '../pages/departmentPage'
+import LogMethodPage from '../pages/logMethodPage'
+import PrisonerDetailsPage from '../pages/prisonerDetailsPage'
 import prisonApi from '../mockApis/prison'
 import { resetStubs } from '../mockApis/wiremock'
 
@@ -124,37 +129,46 @@ export const test = base.extend<Fixtures>({
 
   enterPrisonerDetails: async ({ page }, use) => {
     await use(async () => {
-      await page.locator('#prison-number').fill('A1234AA')
-      await page.getByRole('button', { name: 'Find prisoner' }).click()
-      await page.getByRole('button', { name: 'Continue' }).click()
+      const prisonerDetailsPage = new PrisonerDetailsPage(page)
+      await prisonerDetailsPage.completePrisonerLookup('A1234AA')
+      await expect(prisonerDetailsPage.prisonerLookupButton()).toHaveValue('true')
+      await expect(prisonerDetailsPage.prisonerExistsInput()).toHaveValue('true')
+      await prisonerDetailsPage.clickContinue()
+      await expect(page).toHaveURL(/\/log\/group/)
     })
   },
 
   selectGroup: async ({ page }, use) => {
     await use(async (group: string) => {
-      await page.getByRole('radio', { name: group }).check({ force: true })
-      await page.getByRole('button', { name: 'Continue' }).click()
+      const applicationGroupPage = new ApplicationGroupPage(page)
+      await applicationGroupPage.checkOnPage()
+      await expect(applicationGroupPage.radioButtonByLabel(group)).toBeVisible()
+      await applicationGroupPage.selectGroup(group)
+      await applicationGroupPage.continueToNextPage()
     })
   },
 
   selectApplicationType: async ({ page }, use) => {
     await use(async (appType: string) => {
-      await page.getByRole('radio', { name: appType }).check({ force: true })
-      await page.getByRole('button', { name: 'Continue' }).click()
+      const applicationTypePage = new ApplicationTypePage(page)
+      await applicationTypePage.selectApplicationType(appType)
+      await applicationTypePage.continueToNextPage()
     })
   },
 
   selectDepartment: async ({ page }, use) => {
     await use(async (departmentName: string) => {
-      await page.getByRole('radio', { name: departmentName }).check({ force: true })
-      await page.getByRole('button', { name: 'Continue' }).click()
+      const departmentPage = new DepartmentPage(page)
+      await departmentPage.selectDepartment(departmentName)
+      await departmentPage.continueToNextPage()
     })
   },
 
   selectLoggingMethod: async ({ page }, use) => {
     await use(async (method: 'manual' | 'webcam') => {
-      await page.locator(`input[name="loggingMethod"][value="${method}"]`).check({ force: true })
-      await page.getByRole('button', { name: 'Continue' }).click()
+      const logMethodPage = new LogMethodPage(page)
+      await logMethodPage.selectLoggingMethod(method)
+      await logMethodPage.continueToNextPage()
     })
   },
 })
