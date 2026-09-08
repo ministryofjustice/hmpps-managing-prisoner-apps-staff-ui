@@ -132,7 +132,7 @@ test.describe('Prisoner Messages Page', () => {
     const messagesPage = new MessagesPage(page)
     await messagesPage.commentBox().fill('Shared with prisoner')
     await messagesPage.submitButton().click()
-    await expect(page.getByRole('dialog', { name: 'Should this message be seen by the prisoner?' })).toBeVisible()
+    await expect(page.getByRole('dialog', { name: 'Are you sure you want to send this to a prisoner?' })).toBeVisible()
     await page.getByRole('button', { name: 'Yes' }).click()
 
     await expect(page).toHaveURL(`/applications/${app.requestedBy.username}/${app.id}/messages`)
