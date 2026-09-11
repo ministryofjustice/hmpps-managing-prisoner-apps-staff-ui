@@ -6,10 +6,6 @@ export default class PrintReplyPage extends AbstractPage {
     super(page, 'Print reply')
   }
 
-  activeTab(): PageElement {
-    return this.page.locator('.moj-sub-navigation__item a[aria-current="page"]')
-  }
-
   statusMessage(): PageElement {
     return this.page.getByRole('heading', { level: 2 })
   }
@@ -27,6 +23,6 @@ export default class PrintReplyPage extends AbstractPage {
   }
 
   async checkOnPage(): Promise<void> {
-    await expect(this.activeTab()).toContainText('Print reply')
+    await expect(this.page).toHaveURL(/\/print-reply$/)
   }
 }

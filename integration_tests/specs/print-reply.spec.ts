@@ -6,7 +6,7 @@ import ViewApplicationPage from '../pages/viewApplicationPage'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
 import { isWiremock, visitApplicationPage } from './view-applicationTestUtils'
 
-test.describe('Print reply tab', () => {
+test.describe('Print reply', () => {
   test('should display the current status for an open application', async ({ page, signIn }) => {
     test.skip(!isWiremock, 'Requires WireMock stubs')
 
@@ -14,8 +14,8 @@ test.describe('Print reply tab', () => {
     await visitApplicationPage({ page, signIn, application: openApplication })
 
     const viewApplicationPage = new ViewApplicationPage(page)
-    await expect(viewApplicationPage.printReplyTab()).toBeVisible()
-    await viewApplicationPage.printReplyTab().click()
+    await expect(viewApplicationPage.printReplyButton()).not.toBeVisible()
+    await page.goto(`${page.url()}/print-reply`)
 
     const printReplyPage = new PrintReplyPage(page)
     await printReplyPage.checkOnPage()
@@ -32,7 +32,7 @@ test.describe('Print reply tab', () => {
     await managingPrisonerAppsApi.stubGetAppResponse({ app: closedApplication, decision: 'APPROVED' })
 
     const viewApplicationPage = new ViewApplicationPage(page)
-    await viewApplicationPage.printReplyTab().click()
+    await viewApplicationPage.printReplyButton().click()
 
     const printReplyPage = new PrintReplyPage(page)
     await printReplyPage.checkOnPage()
@@ -51,20 +51,21 @@ test.describe('Print reply tab', () => {
     await visitApplicationPage({ page, signIn, application: closedApplication })
     await managingPrisonerAppsApi.stubGetAppResponse({ app: closedApplication, decision: 'APPROVED' })
 
-    const viewApplicationPage = new ViewApplicationPage(page)
-    await viewApplicationPage.printReplyTab().click()
-
-    const printReplyPage = new PrintReplyPage(page)
-    await printReplyPage.checkOnPage()
-    await expect(printReplyPage.printButton()).toBeVisible()
-
-    await page.evaluate(() => {
-      // Track print invocation from the page script click handler.
+    await page.addInitScript(() => {
       ;(window as Window & { printInvokedForTest?: boolean }).printInvokedForTest = false
       window.print = () => {
         ;(window as Window & { printInvokedForTest?: boolean }).printInvokedForTest = true
       }
     })
+
+    const viewApplicationPage = new ViewApplicationPage(page)
+    await viewApplicationPage.printReplyButton().click()
+
+    const printReplyPage = new PrintReplyPage(page)
+    await printReplyPage.checkOnPage()
+    await expect
+      .poll(async () => page.evaluate(() => (window as Window & { printInvokedForTest?: boolean }).printInvokedForTest))
+      .toBe(false)
 
     await printReplyPage.printButton().click()
 
@@ -83,7 +84,7 @@ test.describe('Print reply tab', () => {
     await managingPrisonerAppsApi.stubGetAppResponse({ app: closedApplication, decision: 'APPROVED' })
 
     const viewApplicationPage = new ViewApplicationPage(page)
-    await viewApplicationPage.printReplyTab().click()
+    await viewApplicationPage.printReplyButton().click()
 
     const printReplyPage = new PrintReplyPage(page)
     await printReplyPage.checkOnPage()
