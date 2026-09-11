@@ -25,12 +25,6 @@
     active: activeTab == 'history'
   }]) %}
 
-  {% set items = items.concat([{
-    text: 'Print reply',
-    href: "/applications/" + application.requestedBy.username + "/" + application.id + "/print-reply",
-    active: activeTab == 'printReply'
-  }]) %}
-
   {{ mojSubNavigation({
     label: 'Sub navigation',
     items: items

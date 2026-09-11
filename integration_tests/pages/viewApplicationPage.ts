@@ -60,8 +60,8 @@ export default class ViewApplicationPage extends AbstractPage {
     return this.page.locator('.moj-sub-navigation__link[href$="/messages"]')
   }
 
-  printReplyTab(): PageElement {
-    return this.page.locator('.moj-sub-navigation__link[href$="/print-reply"]')
+  printReplyButton(): PageElement {
+    return this.page.getByRole('button', { name: 'Print reply' })
   }
 
   historyTab(): PageElement {
