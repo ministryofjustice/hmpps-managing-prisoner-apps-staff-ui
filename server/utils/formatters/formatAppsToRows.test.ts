@@ -82,4 +82,23 @@ describe(formatAppsToRows.name, () => {
       ],
     ])
   })
+
+  it('should append the list query string to the View link when provided', async () => {
+    ;(format as jest.Mock).mockReturnValue('24 March 2025')
+
+    const applications = [
+      {
+        ...appSearchResponse.apps[0],
+        prisonerName: 'Doe, John',
+        appType: { id: 2, name: 'Add new official PIN phone contact' },
+        comments: 0,
+      },
+    ]
+
+    const result = await formatAppsToRows(managingPrisonerAppsService, mockUser, applications, 'type=3&page=2')
+
+    expect(result[0][5]).toEqual({
+      html: '<a href="/applications/A12345/1808f5e2-2bf4-499a-b79f-fb0a5f4bac7b?type=3&page=2" class="govuk-link">View</a>',
+    })
+  })
 })

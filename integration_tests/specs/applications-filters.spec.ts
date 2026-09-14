@@ -109,6 +109,52 @@ test.describe('Applications List - Filter Functionality', () => {
     await expect(page.locator('tbody tr').first().locator('td').nth(1)).toContainText(selectedApp.appType.name)
   })
 
+  test('should retain filters when returning via the View all applications breadcrumb', async ({ page }) => {
+    const filteredApps = getAppsByType(3)
+    const selectedApp = filteredApps.apps[0]
+
+    const application = {
+      ...appDetailTemplate,
+      id: selectedApp.id,
+      requestedBy: {
+        ...appDetailTemplate.requestedBy,
+        username: selectedApp.requestedBy,
+      },
+    }
+
+    if (isWiremock) {
+      await managingPrisonerAppsApi.stubGetApps(filteredApps.apps)
+    }
+
+    await page.locator('input[name="type"][value="3"]').check({ force: true })
+    await page.locator('[data-test-id="submit-button"]').first().click()
+
+    await expect(page).toHaveURL(/type=3/)
+
+    if (isWiremock) {
+      await managingPrisonerAppsApi.stubGetPrisonerApp({ app: application })
+      await managingPrisonerAppsApi.stubGetComments({ app: application })
+      await managingPrisonerAppsApi.stubGetHistory({ app: application })
+      await prisonApi.stubGetPrisonerByPrisonerNumber(application.requestedBy.username)
+      await managingPrisonerAppsApi.stubGetGroupsAndTypes()
+      await managingPrisonerAppsApi.stubGetActiveAgencies()
+    }
+
+    await page.locator('tbody tr').first().getByRole('link', { name: 'View' }).click()
+    await expect(page).toHaveURL(new RegExp(`/applications/${application.requestedBy.username}/${application.id}\\?.*type=3`))
+
+    if (isWiremock) {
+      await managingPrisonerAppsApi.stubGetApps(filteredApps.apps)
+    }
+
+    await page.getByRole('link', { name: 'View all applications' }).click()
+
+    await expect(page).toHaveURL(/type=3/)
+    await expect(page.locator('input[name="type"][value="3"]')).toBeChecked()
+    await expect(page.locator('tbody tr')).toHaveCount(filteredApps.apps.length)
+    await expect(page.locator('tbody tr').first().locator('td').nth(1)).toContainText(selectedApp.appType.name)
+  })
+
   test('should clear all filters when clicking clear filters', async ({ page }) => {
     await expect(page.getByRole('link', { name: 'Clear filters' })).toBeVisible()
 

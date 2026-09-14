@@ -12,6 +12,7 @@ import PrisonService from '../../services/prisonService'
 import { formatName } from '../../utils/formatters/formatName'
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
 import {
+  buildListQueryString,
   buildSelectedTags,
   checkSelectedFilters,
   formatFilterOptions,
@@ -57,7 +58,8 @@ export default function viewAppsRouter({
     const error = validatePrisonerFilter(filters, prisonerDetails)
 
     const appsWithNames = addPrisonerNames(apps)
-    const rows = await formatAppsToRows(managingPrisonerAppsService, user, appsWithNames)
+    const listQuery = buildListQueryString(req.query)
+    const rows = await formatAppsToRows(managingPrisonerAppsService, user, appsWithNames, listQuery)
 
     const filterOptions = formatFilterOptions(applicationTypes, assignedGroups, filters, firstNightCenter)
     const selectedTags = buildSelectedTags(req, filters, filterOptions)
@@ -157,6 +159,7 @@ export default function viewAppsRouter({
       applicationClosed,
       markedInProgress,
       documents,
+      listQuery: buildListQueryString(req.query),
     })
   })
 

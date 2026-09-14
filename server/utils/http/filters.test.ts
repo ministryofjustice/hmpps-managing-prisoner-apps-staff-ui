@@ -1,6 +1,6 @@
 import { Request } from 'express'
 import { ListFilters } from 'express-session'
-import { removeFilterFromHref, retainFilters, saveFiltersToSession } from './filters'
+import { buildListQueryString, removeFilterFromHref, retainFilters, saveFiltersToSession } from './filters'
 import { FILTER_KEYS } from '../../constants/filters'
 
 describe(removeFilterFromHref.name, () => {
@@ -136,5 +136,35 @@ describe(saveFiltersToSession.name, () => {
     saveFiltersToSession(req)
     expect(req.session.listFilters?.status).toEqual(['PENDING', 'APPROVED'])
     expect(req.session.listFilters?.group).toEqual(['group1', 'group2'])
+  })
+})
+
+describe(buildListQueryString.name, () => {
+  it('should return an empty string when there are no filters or page', () => {
+    expect(buildListQueryString({})).toBe('')
+  })
+
+  it('should include filter keys and the current page', () => {
+    const query = {
+      status: ['NEW', 'IN_PROGRESS'],
+      type: '3',
+      order: 'oldest',
+      page: '2',
+    }
+    const result = buildListQueryString(query)
+
+    expect(result).toBe('order=oldest&status=NEW&status=IN_PROGRESS&type=3&page=2')
+  })
+
+  it('should ignore params that are not filters or page', () => {
+    const query = { status: 'NEW', applicationClosed: 'true', forwardedTo: 'someone' }
+
+    expect(buildListQueryString(query)).toBe('status=NEW')
+  })
+
+  it('should ignore empty values', () => {
+    const query = { status: '', prisoner: '   ', group: ['', 'group1'] }
+
+    expect(buildListQueryString(query)).toBe('group=group1')
   })
 })
