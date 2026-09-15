@@ -49,9 +49,10 @@ describe(formatAppsToRows.name, () => {
     expect(result).toEqual([
       [
         { text: '24 March 2025', attributes: { 'data-sort-value': '1742824993000' }, classes: 'govuk-!-text-nowrap' },
-        { text: 'Add new official PIN phone contact' },
+        {
+          html: 'Add new official PIN phone contact<br/><span class="govuk-table__subtext govuk-body-s">Business Hub</span>',
+        },
         { html: 'Doe, John<br/><span class="govuk-table__subtext govuk-body-s">A12345</span>' },
-        { text: 'Business Hub' },
         { html: '<span class="moj-notification-badge">3</span>' },
         { html: '<a href="/applications/A12345/1808f5e2-2bf4-499a-b79f-fb0a5f4bac7b" class="govuk-link">View</a>' },
       ],
@@ -74,9 +75,10 @@ describe(formatAppsToRows.name, () => {
     expect(result).toEqual([
       [
         { text: '24 March 2025', attributes: { 'data-sort-value': '1742824993000' }, classes: 'govuk-!-text-nowrap' },
-        { text: 'Add new official PIN phone contact' },
+        {
+          html: 'Add new official PIN phone contact<br/><span class="govuk-table__subtext govuk-body-s">Business Hub</span>',
+        },
         { html: 'Doe, John<br/><span class="govuk-table__subtext govuk-body-s">A12345</span>' },
-        { text: 'Business Hub' },
         { html: 'None' },
         { html: '<a href="/applications/A12345/1808f5e2-2bf4-499a-b79f-fb0a5f4bac7b" class="govuk-link">View</a>' },
       ],
