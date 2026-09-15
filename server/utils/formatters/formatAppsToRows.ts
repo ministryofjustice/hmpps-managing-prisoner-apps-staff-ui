@@ -31,11 +31,12 @@ export const formatAppsToRows = async (
 
       const row = [
         { text: formattedDate, attributes: { 'data-sort-value': sortValue }, classes: 'govuk-!-text-nowrap' },
-        { text: type?.name },
+        {
+          html: `${type?.name}<br/><span class="govuk-table__subtext govuk-body-s">${assignedGroup?.name || 'N/A'}</span>`,
+        },
         {
           html: `${prisonerName}<br/><span class="govuk-table__subtext govuk-body-s">${requestedBy}</span>`,
         },
-        { text: assignedGroup?.name || 'N/A' },
         {
           html: comments > 0 ? mojNotificationBadge({ text: `${comments}` }) : 'None',
         },
