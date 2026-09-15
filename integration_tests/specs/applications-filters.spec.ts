@@ -141,7 +141,9 @@ test.describe('Applications List - Filter Functionality', () => {
     }
 
     await page.locator('tbody tr').first().getByRole('link', { name: 'View' }).click()
-    await expect(page).toHaveURL(new RegExp(`/applications/${application.requestedBy.username}/${application.id}\\?.*type=3`))
+    await expect(page).toHaveURL(
+      new RegExp(`/applications/${application.requestedBy.username}/${application.id}\\?.*type=3`),
+    )
 
     if (isWiremock) {
       await managingPrisonerAppsApi.stubGetApps(filteredApps.apps)
