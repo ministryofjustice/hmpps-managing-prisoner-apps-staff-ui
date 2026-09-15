@@ -26,6 +26,22 @@ type LinkText = {
   text: string
 }
 
+export const buildListQueryString = (query: Request['query']): string => {
+  const params = new URLSearchParams()
+
+  ;[...FILTER_KEYS, 'page'].forEach(key => {
+    const value = query[key]
+
+    if (Array.isArray(value)) {
+      value.forEach(v => v && params.append(key, v.toString()))
+    } else if (value !== undefined && value !== null && value.toString().trim() !== '') {
+      params.append(key, value.toString())
+    }
+  })
+
+  return params.toString()
+}
+
 export const removeFilterFromHref = (req: Request, filterKey: string, valueToRemove: string) => {
   const newQuery = new URLSearchParams(req.query as Record<string, string | string[]>)
 

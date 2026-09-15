@@ -17,6 +17,7 @@ export const formatAppsToRows = async (
   managingPrisonerAppsService: ManagingPrisonerAppsService,
   user: HmppsUser,
   applications: ViewAppListAppWithName[],
+  listQuery = '',
 ) => {
   return Promise.all(
     applications.map(async application => {
@@ -40,7 +41,7 @@ export const formatAppsToRows = async (
           html: comments > 0 ? mojNotificationBadge({ text: `${comments}` }) : 'None',
         },
         {
-          html: `<a href="/applications/${requestedBy}/${id}" class="govuk-link">View</a>`,
+          html: `<a href="/applications/${requestedBy}/${id}${listQuery ? `?${listQuery}` : ''}" class="govuk-link">View</a>`,
         },
       ]
 
