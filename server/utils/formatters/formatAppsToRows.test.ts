@@ -99,7 +99,7 @@ describe(formatAppsToRows.name, () => {
 
     const result = await formatAppsToRows(managingPrisonerAppsService, mockUser, applications, 'type=3&page=2')
 
-    expect(result[0][5]).toEqual({
+    expect(result[0][4]).toEqual({
       html: '<a href="/applications/A12345/1808f5e2-2bf4-499a-b79f-fb0a5f4bac7b?type=3&page=2" class="govuk-link">View</a>',
     })
   })
