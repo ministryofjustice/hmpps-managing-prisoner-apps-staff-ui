@@ -2,13 +2,13 @@ import { expect, test } from '../fixtures'
 import { app } from '../../server/testData'
 import ForwardApplicationPage from '../pages/forwardApplicationPage'
 import ViewApplicationPage from '../pages/viewApplicationPage'
-import { filteredApplicationTypes, visitApplicationPage } from './view-applicationTestUtils'
+import { filteredApplicationTypes, visitApplicationPage } from '../helpers/view-applicationTestUtils'
 import {
   assertAndCaptureHistoryEvents,
   getForwardTargetDepartment,
   stubForwardFlowStateTransition,
   stubForwardHistoryEvents,
-} from './view-application-forward-history-helper'
+} from '../helpers/view-application-forward-history-helper'
 
 filteredApplicationTypes.forEach(({ name, id }) => {
   test.describe(`View Application Page - ${name}`, () => {

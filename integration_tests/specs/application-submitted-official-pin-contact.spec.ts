@@ -1,5 +1,8 @@
 import { test } from '../fixtures'
-import { APP_SUBMITTED_JOURNEYS, runApplicationSubmissionJourney } from './application-submitted-journey-helper'
+import {
+  APP_SUBMITTED_JOURNEYS,
+  runApplicationSubmissionJourney,
+} from '../helpers/application-submitted-journey-helper'
 
 const journey = APP_SUBMITTED_JOURNEYS.find(item => item.id === 2)
 if (!journey) throw new Error('Journey definition for app type 2 is missing')

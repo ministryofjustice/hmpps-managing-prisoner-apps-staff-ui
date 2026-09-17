@@ -6,6 +6,11 @@ import auth from '../mockApis/auth'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
 import prisonApi from '../mockApis/prison'
 import { resetStubs } from '../mockApis/wiremock'
+import {
+  createAdditionalInternalCommentFixture,
+  createInternalCommentFixture,
+  stubStaffOnlyCommentHistoryFlow,
+} from '../helpers/commentHistory'
 
 const targetBaseUrl = process.env.PW_BASE_URL || process.env.DPS_PRISONER_URL || 'http://localhost:3007'
 const isWiremock = process.env.PW_ENV === 'mock' || targetBaseUrl.includes('localhost')
@@ -70,6 +75,33 @@ test.describe('Comments Page', () => {
     await expect(page.getByRole('cell', { name: 'This is my first comment' })).toBeVisible()
     await expect(page.getByText('Staff Name')).toBeVisible()
     await expect(page.getByText('9 April 2025')).toBeVisible()
+  })
+
+  test('should allow staff to add an internal-use-only comment and show it in app history', async ({ page }) => {
+    test.skip(!isWiremock, 'Custom WireMock stubs are required for this scenario')
+
+    const internalComment = createInternalCommentFixture()
+    const additionalInternalComment = createAdditionalInternalCommentFixture()
+    await stubStaffOnlyCommentHistoryFlow({
+      app,
+      comment: internalComment,
+      additionalComment: additionalInternalComment,
+    })
+
+    const commentsPage = new CommentsPage(page)
+    await expect(page.getByText('These comments will be seen by staff only.')).toBeVisible()
+    await commentsPage.commentBox().fill(internalComment.message)
+    await commentsPage.submitButton().click()
+
+    await expect(page).toHaveURL(`/applications/${app.requestedBy.username}/${app.id}/comments`)
+    await expect(page.getByRole('cell', { name: internalComment.message })).toBeVisible()
+    await expect(page.getByRole('cell', { name: additionalInternalComment.message })).toBeVisible()
+    await expect(page.getByRole('cell', { name: 'Staff Name' })).toHaveCount(2)
+
+    await page.goto(`/applications/${app.requestedBy.username}/${app.id}/history`)
+    await expect(page.getByRole('heading', { name: 'Comment added' })).toHaveCount(2)
+    await expect(page.getByText(internalComment.message)).toBeVisible()
+    await expect(page.getByText(additionalInternalComment.message)).toBeVisible()
   })
 
   test('should show an error message when no comment is entered', async ({ page }) => {

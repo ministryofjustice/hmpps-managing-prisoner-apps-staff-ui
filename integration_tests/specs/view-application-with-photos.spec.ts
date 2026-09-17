@@ -1,6 +1,6 @@
 import { expect, test } from '../fixtures'
 import ViewApplicationPage from '../pages/viewApplicationPage'
-import { applicationWithPhotos, visitApplicationPage } from './view-applicationTestUtils'
+import { applicationWithPhotos, visitApplicationPage } from '../helpers/view-applicationTestUtils'
 
 test.describe('View Application Page - With Photos', () => {
   test.beforeEach(async ({ page, signIn }) => {
