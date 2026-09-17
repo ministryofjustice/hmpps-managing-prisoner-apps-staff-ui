@@ -4,7 +4,7 @@ import { app } from '../../server/testData'
 import PrintReplyPage from '../pages/printReplyPage'
 import ViewApplicationPage from '../pages/viewApplicationPage'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
-import { isWiremock, visitApplicationPage } from './view-applicationTestUtils'
+import { isWiremock, visitApplicationPage } from '../helpers/view-applicationTestUtils'
 
 test.describe('Print reply', () => {
   test('should display the current status for an open application', async ({ page, signIn }) => {
