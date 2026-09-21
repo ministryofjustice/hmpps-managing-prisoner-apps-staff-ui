@@ -1,15 +1,14 @@
 {% from "../../../../components/pagination/macro.njk" import pagination as paginationMacro %}
 {%- from "moj/components/notification-badge/macro.njk" import mojNotificationBadge -%}
-
 <div class="app-results-table">
   {% if apps.length %}
     <h2 class="govuk-heading-m">Showing {{ pagination.totalCount }} applications</h2>
-
     {{ govukTable({
       head: [
         { text: "Date" },
-        { text: "Application type" },
+        { text: "Application type", classes: "govuk-!-text-nowrap" },
         { text: "From" },
+        { text: "Status" },
         { text: "Messages" },
         { text: "" }
       ],
@@ -20,6 +19,5 @@
   {% else %}
     <p class="govuk-body">No applications found</p>
   {% endif %}
-
   {{ paginationMacro(pagination, query) }}
 </div>
