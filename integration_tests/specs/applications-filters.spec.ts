@@ -34,11 +34,12 @@ test.describe('Applications List - Filter Functionality', () => {
     await expect(page.locator('table')).toBeVisible()
 
     const headers = page.locator('thead th')
-    await expect(headers).toHaveCount(5)
+    await expect(headers).toHaveCount(6)
     await expect(headers.nth(0)).toContainText('Date')
     await expect(headers.nth(1)).toContainText('Application type')
     await expect(headers.nth(2)).toContainText('From')
-    await expect(headers.nth(3)).toContainText('Messages')
+    await expect(headers.nth(3)).toContainText('Status')
+    await expect(headers.nth(4)).toContainText('Messages')
   })
 
   test('should display default filter values with New, In Progress and Newest', async ({ page }) => {

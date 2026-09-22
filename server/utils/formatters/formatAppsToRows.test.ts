@@ -52,7 +52,10 @@ describe(formatAppsToRows.name, () => {
         {
           html: 'Add new official PIN phone contact<br/><span class="govuk-table__subtext govuk-body-s">Business Hub</span>',
         },
-        { html: 'Doe, John<br/><span class="govuk-table__subtext govuk-body-s">A12345</span>' },
+        {
+          html: '<span class="govuk-!-text-nowrap">Doe, John</span><br/><span class="govuk-table__subtext govuk-body-s">A12345</span>',
+        },
+        { html: '<strong class="govuk-tag govuk-tag--blue govuk-!-text-nowrap">New</strong>' },
         { html: '<span class="moj-notification-badge">3</span>' },
         { html: '<a href="/applications/A12345/1808f5e2-2bf4-499a-b79f-fb0a5f4bac7b" class="govuk-link">View</a>' },
       ],
@@ -78,7 +81,10 @@ describe(formatAppsToRows.name, () => {
         {
           html: 'Add new official PIN phone contact<br/><span class="govuk-table__subtext govuk-body-s">Business Hub</span>',
         },
-        { html: 'Doe, John<br/><span class="govuk-table__subtext govuk-body-s">A12345</span>' },
+        {
+          html: '<span class="govuk-!-text-nowrap">Doe, John</span><br/><span class="govuk-table__subtext govuk-body-s">A12345</span>',
+        },
+        { html: '<strong class="govuk-tag govuk-tag--blue govuk-!-text-nowrap">New</strong>' },
         { html: 'None' },
         { html: '<a href="/applications/A12345/1808f5e2-2bf4-499a-b79f-fb0a5f4bac7b" class="govuk-link">View</a>' },
       ],
@@ -99,7 +105,7 @@ describe(formatAppsToRows.name, () => {
 
     const result = await formatAppsToRows(managingPrisonerAppsService, mockUser, applications, 'type=3&page=2')
 
-    expect(result[0][4]).toEqual({
+    expect(result[0][5]).toEqual({
       html: '<a href="/applications/A12345/1808f5e2-2bf4-499a-b79f-fb0a5f4bac7b?type=3&page=2" class="govuk-link">View</a>',
     })
   })
