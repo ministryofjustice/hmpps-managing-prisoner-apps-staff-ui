@@ -24,6 +24,8 @@
   <div class="govuk-body govuk-width-container govuk-!-padding-top-5 govuk-!-padding-bottom-5">
     <div class="govuk-grid-row">
       <ul class="card-group">
+
+        {% if canLogNewApplication %}
         <li class="govuk-grid-column-one-third card-group__item">
           <div class="card card--clickable" data-testid="log-new-application">
             <h2 class="govuk-heading-m card__heading">
@@ -32,6 +34,7 @@
             <p class="govuk-body card__description">Log a new application to process.</p>
           </div>
         </li>
+        {% endif %}
 
         <li class="govuk-grid-column-one-third card-group__item">
           <div class="card card--clickable" data-testid="view-all-applications">

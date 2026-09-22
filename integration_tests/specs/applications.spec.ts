@@ -1,6 +1,7 @@
-import { test } from '../fixtures'
+import { expect, test } from '../fixtures'
 import auth from '../mockApis/auth'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
+import prisonApi from '../mockApis/prison'
 import { resetStubs } from '../mockApis/wiremock'
 import IndexPage from '../pages'
 
@@ -33,6 +34,24 @@ test.describe('Applications Page', () => {
   test('should display the Log a new application card', async ({ page }) => {
     const indexPage = new IndexPage(page)
     await indexPage.assertLogNewApplicationCard()
+  })
+
+  test('should not display the Log a new application card', async ({ page }) => {
+    if (isWiremock) {
+      await resetStubs()
+      await auth.stubSignIn()
+      await prisonApi.stubGetCaseLoads('RNI')
+      await managingPrisonerAppsApi.stubGetActiveAgencies(['RNI'])
+      await managingPrisonerAppsApi.stubGetGroupsAndTypes()
+    }
+
+    if (isWiremock) {
+      await page.goto('/')
+    }
+
+    const indexPage = new IndexPage(page)
+    await expect(indexPage.logNewApplicationCard()).not.toBeVisible()
+    await indexPage.assertViewAllApplicationsCard()
   })
 
   test('should display the View all applications card', async ({ page }) => {
