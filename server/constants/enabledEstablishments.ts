@@ -13,5 +13,10 @@ export const isLogMethodEnabledEstablishment = (activeCaseLoadId?: string): bool
 
 export const LOG_NEW_APPLICATION_DISABLED_ESTABLISHMENTS: ReadonlyArray<string> = ['RNI']
 
-export const isLogNewApplicationEnabledEstablishment = (activeCaseLoadId?: string): boolean =>
-  !activeCaseLoadId || !LOG_NEW_APPLICATION_DISABLED_ESTABLISHMENTS.includes(activeCaseLoadId)
+export const isLogNewApplicationDisabledEstablishment = (activeCaseLoadId?: string): boolean =>
+  Boolean(activeCaseLoadId && LOG_NEW_APPLICATION_DISABLED_ESTABLISHMENTS.includes(activeCaseLoadId))
+
+export const CHANGE_APP_DETAILS_DISABLED_ESTABLISHMENTS: ReadonlyArray<string> = ['RNI']
+
+export const isChangeAppDetailsDisabledEstablishment = (activeCaseLoadId?: string): boolean =>
+  Boolean(activeCaseLoadId && CHANGE_APP_DETAILS_DISABLED_ESTABLISHMENTS.includes(activeCaseLoadId))

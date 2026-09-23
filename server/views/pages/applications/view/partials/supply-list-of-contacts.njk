@@ -3,16 +3,16 @@
 {% from "pages/applications/view/partials/document-images-summary.njk" import documentImagesSummary %}
 
 {% if documents and documents.length > 0 %}
-  {{ appTypeSummaryListHeader("Supply contact list", application.requestedBy.username, application.id, isClosed, hideChangeButton=true) }}
+  {{ appTypeSummaryListHeader("Supply contact list", application.requestedBy.username, application.id, isClosed, canChangeAppDetails, hideChangeButton=true) }}
   {{ documentImagesSummary(documents, application.requestedBy.username, application.id, application.requests[0].details) }}
-{% else %}  
-  {{ appTypeSummaryListHeader("Supply contact list", application.requestedBy.username, application.id, isClosed) }}
+{% else %}
+  {{ appTypeSummaryListHeader("Supply contact list", application.requestedBy.username, application.id, isClosed, canChangeAppDetails) }}
 
 {{ govukSummaryList({
   rows: [
-    { 
-      key: { text: "Details" }, 
-      value: { text: application.requests[0].details }  
+    {
+      key: { text: "Details" },
+      value: { text: application.requests[0].details }
     }
   ]
 }) }}

@@ -3,16 +3,16 @@
 {% from "pages/applications/view/partials/document-images-summary.njk" import documentImagesSummary %}
 
 {% if documents and documents.length > 0 %}
-  {{ appTypeSummaryListHeader("Emergency credit to add", application.requestedBy.username, application.id, isClosed, hideChangeButton=true) }}
+  {{ appTypeSummaryListHeader("Emergency credit to add", application.requestedBy.username, application.id, isClosed, canChangeAppDetails, hideChangeButton=true) }}
   {{ documentImagesSummary(documents, application.requestedBy.username, application.id, application.requests[0].details) }}
 {% else %}
-  {{ appTypeSummaryListHeader("Emergency credit to add", application.requestedBy.username, application.id, isClosed) }}
-  
+  {{ appTypeSummaryListHeader("Emergency credit to add", application.requestedBy.username, application.id, isClosed, canChangeAppDetails) }}
+
   {{ govukSummaryList({
     rows: [
-      { 
-        key: { text: "Amount" }, 
-        value: { text: "£" + application.requests[0].amount }        
+      {
+        key: { text: "Amount" },
+        value: { text: "£" + application.requests[0].amount }
       },
       {
         key: { text: "Reason" },

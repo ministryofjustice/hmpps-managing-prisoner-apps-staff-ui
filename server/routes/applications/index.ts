@@ -1,7 +1,7 @@
 import { OsPlacesAddressService } from '@ministryofjustice/hmpps-connect-dps-shared-items'
 import { Request, Response, Router } from 'express'
 
-import { isLogNewApplicationEnabledEstablishment } from '../../constants/enabledEstablishments'
+import { isLogNewApplicationDisabledEstablishment } from '../../constants/enabledEstablishments'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PersonalRelationshipsService from '../../services/personalRelationshipsService'
@@ -59,7 +59,7 @@ export default function applicationsRoutes({
     res.render('pages/applications', {
       title: 'Applications',
       canLogNewApplication:
-        !('activeCaseLoadId' in user) || isLogNewApplicationEnabledEstablishment(user.activeCaseLoadId),
+        user.authSource !== 'nomis' || !isLogNewApplicationDisabledEstablishment(user.activeCaseLoadId),
     })
   })
 
