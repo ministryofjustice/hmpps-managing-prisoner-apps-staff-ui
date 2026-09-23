@@ -1,6 +1,7 @@
 import { OsPlacesAddressService } from '@ministryofjustice/hmpps-connect-dps-shared-items'
 import { Request, Response, Router } from 'express'
 
+import { isLogNewApplicationEnabledEstablishment } from '../../constants/enabledEstablishments'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PersonalRelationshipsService from '../../services/personalRelationshipsService'
@@ -49,12 +50,17 @@ export default function applicationsRoutes({
   const router = Router()
 
   router.get('/', async (req: Request, res: Response) => {
+    const { user } = res.locals
     await auditService.logPageView(Page.APPLICATIONS_PAGE, {
-      who: res.locals.user.username,
+      who: user.username,
       correlationId: req.id,
     })
 
-    res.render('pages/applications', { title: 'Applications' })
+    res.render('pages/applications', {
+      title: 'Applications',
+      canLogNewApplication:
+        !('activeCaseLoadId' in user) || isLogNewApplicationEnabledEstablishment(user.activeCaseLoadId),
+    })
   })
 
   router.use(viewDocumentRouter({ documentManagementService }))
