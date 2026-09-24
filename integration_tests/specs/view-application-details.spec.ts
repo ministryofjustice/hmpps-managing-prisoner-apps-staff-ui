@@ -104,6 +104,13 @@ filteredApplicationTypes.forEach(({ name, id }) => {
 test.describe('View Application Page - Forward button visibility', () => {
   const application = { ...app, applicationType: { id: 3, name: 'Add a social PIN phone contact' } }
 
+  test('should not display the Change link', async ({ page, signIn }) => {
+    await visitApplicationPage({ page, signIn, application, activeCaseLoadId: 'RNI' })
+
+    const viewPage = new ViewApplicationPage(page)
+    await expect(viewPage.changeButton()).not.toBeVisible()
+  })
+
   test('should display the action panel actions and open the Mark as closed form from the application page', async ({
     page,
     signIn,

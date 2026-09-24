@@ -31,17 +31,20 @@ export async function visitApplicationPage({
   application,
   documentUuids = [],
   departmentCount,
+  activeCaseLoadId = 'HMI',
 }: {
   page: Page
   signIn: () => Promise<void>
   application: typeof app
   documentUuids?: string[]
   departmentCount?: number
+  activeCaseLoadId?: string
 }) {
   if (isWiremock) {
     await resetStubs()
     await auth.stubSignIn()
-    await prisonApi.stubGetCaseLoads()
+    await prisonApi.stubGetCaseLoads(activeCaseLoadId)
+    await managingPrisonerAppsApi.stubGetActiveAgencies([activeCaseLoadId])
     await prisonApi.stubGetPrisonerByPrisonerNumber('A1234AA')
     await personalRelationships.stubGetRelationships('OFFICIAL_RELATIONSHIP')
     await personalRelationships.stubGetRelationships('SOCIAL_RELATIONSHIP')

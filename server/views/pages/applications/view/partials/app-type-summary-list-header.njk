@@ -1,8 +1,8 @@
-{% macro appTypeSummaryListHeader(title, username, appId, isClosed, hideChangeButton) %}
+{% macro appTypeSummaryListHeader(title, username, appId, isClosed, canChangeAppDetails, hideChangeButton) %}
   <div class="govuk-summary-list--header">
     <h2 class="govuk-heading-m">{{ title }}</h2>
 
-    {% if not isClosed and not hideChangeButton %}
+    {% if canChangeAppDetails and not isClosed and not hideChangeButton %}
       <a href="/applications/{{ username }}/{{ appId }}/change" class="govuk-body">
         Change <span class="govuk-visually-hidden">reason</span>
       </a>

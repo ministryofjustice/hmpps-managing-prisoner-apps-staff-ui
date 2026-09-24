@@ -27,6 +27,7 @@ import { validatePrisonerFilter } from '../../helpers/prisoner'
 import { formatAppsToRows } from '../../utils/formatters/formatAppsToRows'
 import { getPaginationData } from '../../utils/http/pagination'
 import DocumentManagementService from '../../services/documentManagementService'
+import { isChangeAppDetailsDisabledEstablishment } from '../../constants/enabledEstablishments'
 
 export default function viewAppsRouter({
   auditService,
@@ -148,6 +149,8 @@ export default function viewAppsRouter({
         createdDate: format(new Date(application.createdDate), 'd MMMM yyyy'),
       },
       isClosed: !isOpenStatus(application.status),
+      canChangeAppDetails:
+        user.authSource !== 'nomis' || !isChangeAppDetailsDisabledEstablishment(user.activeCaseLoadId),
       dpsPrisonerUrl: config.dpsPrisoner,
       organisation:
         (application?.requests?.[0] as Partial<{ organisation?: string; company?: string }>)?.organisation?.trim() ||
