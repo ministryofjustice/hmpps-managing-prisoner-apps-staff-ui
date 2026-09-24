@@ -53,7 +53,7 @@ describe(formatAppsToRows.name, () => {
           html: 'Add new official PIN phone contact<br/><span class="govuk-table__subtext govuk-body-s">Business Hub</span>',
         },
         {
-          html: '<span class="govuk-!-text-nowrap">Doe, John</span><br/><span class="govuk-table__subtext govuk-body-s">A12345</span>',
+          html: 'Doe, John<br/><span class="govuk-table__subtext govuk-body-s">A12345</span>',
         },
         { html: '<strong class="govuk-tag govuk-tag--blue">New</strong>' },
         { html: '<span class="moj-notification-badge">3</span>' },
@@ -85,7 +85,7 @@ describe(formatAppsToRows.name, () => {
           html: 'Add new official PIN phone contact<br/><span class="govuk-table__subtext govuk-body-s">Business Hub</span>',
         },
         {
-          html: '<span class="govuk-!-text-nowrap">Doe, John</span><br/><span class="govuk-table__subtext govuk-body-s">A12345</span>',
+          html: 'Doe, John<br/><span class="govuk-table__subtext govuk-body-s">A12345</span>',
         },
         { html: '<strong class="govuk-tag govuk-tag--blue">New</strong>' },
         { html: 'None' },
