@@ -37,7 +37,7 @@ export const formatAppsToRows = async (
           html: `${type?.name}<br/><span class="govuk-table__subtext govuk-body-s">${assignedGroup?.name || 'N/A'}</span>`,
         },
         {
-          html: `<span class="govuk-!-text-nowrap">${prisonerName}</span><br/><span class="govuk-table__subtext govuk-body-s">${requestedBy}</span>`,
+          html: `${prisonerName}<br/><span class="govuk-table__subtext govuk-body-s">${requestedBy}</span>`,
         },
         {
           html: `<strong class="govuk-tag ${statusTag.classes}">${statusTag.text}</strong>`,
