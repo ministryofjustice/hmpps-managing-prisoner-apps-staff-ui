@@ -55,7 +55,7 @@ describe(formatAppsToRows.name, () => {
         {
           html: 'Doe, John<br/><span class="govuk-table__subtext govuk-body-s">A12345</span>',
         },
-        { html: '<strong class="govuk-tag govuk-tag--blue">New</strong>' },
+        { html: '<strong class="govuk-tag govuk-tag--blue govuk-!-text-nowrap">New</strong>' },
         { html: '<span class="moj-notification-badge">3</span>' },
         {
           html: '<a href="/applications/A12345/1808f5e2-2bf4-499a-b79f-fb0a5f4bac7b" class="govuk-link">View</a>',
@@ -87,7 +87,7 @@ describe(formatAppsToRows.name, () => {
         {
           html: 'Doe, John<br/><span class="govuk-table__subtext govuk-body-s">A12345</span>',
         },
-        { html: '<strong class="govuk-tag govuk-tag--blue">New</strong>' },
+        { html: '<strong class="govuk-tag govuk-tag--blue govuk-!-text-nowrap">New</strong>' },
         { html: 'None' },
         {
           html: '<a href="/applications/A12345/1808f5e2-2bf4-499a-b79f-fb0a5f4bac7b" class="govuk-link">View</a>',
