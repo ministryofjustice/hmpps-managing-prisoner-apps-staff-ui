@@ -40,7 +40,7 @@ export const formatAppsToRows = async (
           html: `${prisonerName}<br/><span class="govuk-table__subtext govuk-body-s">${requestedBy}</span>`,
         },
         {
-          html: `<strong class="govuk-tag ${statusTag.classes}">${statusTag.text}</strong>`,
+          html: `<strong class="govuk-tag ${statusTag.classes} govuk-!-text-nowrap">${statusTag.text}</strong>`,
         },
         {
           html: comments > 0 ? mojNotificationBadge({ text: `${comments}` }) : 'None',
