@@ -6,6 +6,7 @@ export const LOG_METHOD_ENABLED_ESTABLISHMENTS: ReadonlyArray<string> = [
   'HHI',
   'HLI',
   'WEI',
+  'DHI',
 ]
 
 export const isLogMethodEnabledEstablishment = (activeCaseLoadId?: string): boolean =>
