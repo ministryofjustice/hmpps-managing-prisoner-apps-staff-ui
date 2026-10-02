@@ -14,6 +14,7 @@ import { getAppType } from '../../helpers/application/getAppType'
 import { formatMessagesCreatedByName } from '../../utils/formatters/formatName'
 import { validateTextField } from '../validate/validateTextField'
 import { Comment } from '../../@types/managingAppsApi'
+import { doWithAuditLogging } from '../../utils/audit'
 
 const formatMessages = (comments: Comment[] = []) =>
   comments.map(({ message, createdBy, createdDate, visibility, createdByType }) => ({
@@ -35,31 +36,42 @@ export default function messagesRouter({
 }): Router {
   const router = Router()
 
-  router.get('/applications/:prisonerId/:applicationId/messages', async (req: Request, res: Response) => {
-    const { prisonerId } = req.params
+  router.get('/applications/:prisonerId/:applicationId/messages', async (req, res, next) => {
+    const { prisonerId, applicationId } = req.params
     const { user } = res.locals
 
-    const validApplication = await getValidApplicationOrRedirect(
+    const auditDetails = {
+      auditPrefix: 'VIEW_MESSAGES',
       req,
-      res,
       auditService,
-      managingPrisonerAppsService,
-      Page.MESSAGES_PAGE,
-    )
-    if (!validApplication) return
-    const { application, applicationType } = validApplication
+      coreAuditEvent: {
+        details: { applicationId },
+        subjectId: prisonerId as string,
+        subjectType: 'PRISONER_ID',
+      },
+    }
 
-    const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
+    await doWithAuditLogging(auditDetails, async () => {
+      const { application, applicationType } = await getValidApplicationOrRedirect(
+        req,
+        res,
+        auditService,
+        managingPrisonerAppsService,
+        Page.MESSAGES_PAGE,
+      )
 
-    const messages = await managingPrisonerAppsService.getMessages(`${prisonerId}`, application.id, user)
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
 
-    res.render(PATHS.APPLICATIONS.MESSAGES, {
-      application,
-      applicationType,
-      comments: formatMessages(messages?.contents),
-      title: 'Prisoner messages',
-      isClosed: !isOpenStatus(application.status),
-      isForwardable: departments?.length > 1,
+      const messages = await managingPrisonerAppsService.getMessages(`${prisonerId}`, application.id, user)
+
+      res.render(PATHS.APPLICATIONS.MESSAGES, {
+        application,
+        applicationType,
+        comments: formatMessages(messages?.contents),
+        title: 'Prisoner messages',
+        isClosed: !isOpenStatus(application.status),
+        isForwardable: departments?.length > 1,
+      })
     })
   })
 
