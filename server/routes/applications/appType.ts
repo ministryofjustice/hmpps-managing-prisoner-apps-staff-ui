@@ -1,6 +1,5 @@
 import { Request, Response, Router } from 'express'
-
-import { Group } from '../../@types/managingAppsApi'
+import { buildAppTypes } from '../../helpers/application/buildAppTypes'
 
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
@@ -8,8 +7,6 @@ import { URLS } from '../../constants/urls'
 import AuditService, { Page } from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import { updateSessionData } from '../../utils/http/session'
-
-type AppTypeItem = { value: string; text: string; checked: boolean } | { divider: 'or' }
 
 const ERROR_MESSAGE = 'Choose one application type'
 
@@ -21,32 +18,6 @@ export default function appTypeRouter({
   managingPrisonerAppsService: ManagingPrisonerAppsService
 }): Router {
   const router = Router()
-
-  const buildAppTypes = (group: Group, selectedValue: string | null): AppTypeItem[] => {
-    const items: AppTypeItem[] = []
-
-    const genericAppType = group.appTypes.find(appType => appType.genericType)
-    const nonGenericAppTypes = group.appTypes.filter(appType => !appType.genericType)
-    nonGenericAppTypes.forEach(appType => {
-      items.push({
-        value: appType.id.toString(),
-        text: appType.name,
-        checked: selectedValue === appType.id.toString(),
-      })
-    })
-    if (genericAppType) {
-      if (nonGenericAppTypes.length > 0) {
-        items.push({ divider: 'or' })
-      }
-      items.push({
-        value: genericAppType.id.toString(),
-        text: genericAppType.name,
-        checked: selectedValue === genericAppType.id.toString(),
-      })
-    }
-
-    return items
-  }
 
   router.get(URLS.LOG_APPLICATION_TYPE, async (req: Request, res: Response) => {
     const { user } = res.locals
