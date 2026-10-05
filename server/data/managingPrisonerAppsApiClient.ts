@@ -341,7 +341,7 @@ export default class ManagingPrisonerAppsApiClient extends RestClient {
     try {
       return await this.get(
         {
-          path: `/v2/establishments/apps/groups`,
+          path: `/v1/establishments/apps/groups`,
         },
         asSystem(username),
       )
