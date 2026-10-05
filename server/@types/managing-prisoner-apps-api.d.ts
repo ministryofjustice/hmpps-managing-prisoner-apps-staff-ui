@@ -24,6 +24,26 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/v1/prisoners/apps/{appId}/messages/read': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /**
+     * Mark staff messages on an app as read
+     * @description This api endpoint marks the staff messages on an app as read for the logged prisoner by advancing the read watermark to the server time. The app should belong to the logged prisoner. Requires role ROLE_PRISONER_FACING_APPS
+     */
+    put: operations['markMessagesAsRead']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/queue-admin/retry-dlq/{dlqName}': {
     parameters: {
       query?: never
@@ -168,7 +188,7 @@ export interface paths {
       cookie?: never
     }
     /**
-     * Get apps for  a prisoner
+     * Get Open or Closed apps for  a prisoner
      * @description This api endpoint to get prisoner apps. Requires role ROLE_PRISONER_FACING_APPS
      */
     get: operations['getPrisonerApps']
@@ -297,6 +317,50 @@ export interface paths {
      * @description This api endpoint is for updating app status to InProgress. The logged staff and prisoner should belong to the same establishment. Requires role ROLE_MANAGING_PRISONER_APPS
      */
     patch: operations['updateAppToInProgress']
+    trace?: never
+  }
+  '/v1/admin/department-mappings': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get All Application Types by Establishment
+     * @description This api endpoint is for getting all application types by establishment. The logged staff  must have the role MANAGING_PRISONER_APPS and be associated with an establishment.
+     */
+    get: operations['getAllApplicationTypes']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /**
+     * Update Application Types by Establishment
+     * @description This api endpoint is for updating application types by establishment. The logged staff  must have the role MANAGING_PRISONER_APPS and be associated with an establishment.
+     */
+    patch: operations['updateApplicationTypes']
+    trace?: never
+  }
+  '/v2/prisoners/apps/groups': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get app groups and app types.
+     * @description This api endpoint to app groups and app types for a logged prisoner. Requires role ROLE_PRISONER_FACING_APPS
+     */
+    get: operations['getPrisonerAppGroupsAndTypes']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
     trace?: never
   }
   '/v2/establishments/apps/groups': {
@@ -959,6 +1023,25 @@ export interface components {
       status: 'NEW' | 'IN_PROGRESS' | 'APPROVED' | 'DECLINED' | 'REJECTED'
       comment?: string | null
     }
+    EstablishmentApplicationTypeRequestDto: {
+      /** Format: uuid */
+      id: string
+      /** Format: int64 */
+      applicationTypeId: number
+      establishmentId: string
+      /** Format: uuid */
+      departmentId?: string | null
+      active: boolean
+    }
+    EstablishmentApplicationTypeResponseDto: {
+      /** Format: uuid */
+      id: string
+      establishmentId: string
+      /** Format: uuid */
+      departmentId?: string | null
+      active: boolean
+      applicationGroupResponse: components['schemas']['ApplicationGroupResponse']
+    }
     ActivityMessage: {
       header: string
       createdBy: string
@@ -1001,6 +1084,10 @@ export interface components {
       lastUpdatedDate: string
       /** @enum {string} */
       status: 'NEW' | 'IN_PROGRESS' | 'APPROVED' | 'DECLINED' | 'REJECTED'
+      /** Format: int64 */
+      messageCount?: number | null
+      /** @description True when the app has a staff message the prisoner has not yet read */
+      hasUnreadMessages: boolean
     }
     PrisonerAppsPage: {
       /** Format: int32 */
@@ -1133,6 +1220,53 @@ export interface operations {
       }
       /** @description Forbidden to access this endpoint */
       403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  markMessagesAsRead: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        appId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Read watermark updated successfully. */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden to access this endpoint */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description App not found */
+      404: {
         headers: {
           [name: string]: unknown
         }
@@ -1478,6 +1612,7 @@ export interface operations {
       query: {
         pageNum: number
         pageSize?: number
+        scope: 'OPEN' | 'CLOSED'
       }
       header?: never
       path?: never
@@ -1793,6 +1928,124 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['AppResponseDtoObjectObject']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden to access this endpoint */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getAllApplicationTypes: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successfully retrieved all application types for the staff's establishment */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['EstablishmentApplicationTypeResponseDto'][]
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden to access this endpoint */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  updateApplicationTypes: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['EstablishmentApplicationTypeRequestDto'][]
+      }
+    }
+    responses: {
+      /** @description Successfully updated all application types for the staff's establishment */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['EstablishmentApplicationTypeResponseDto'][]
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden to access this endpoint */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getPrisonerAppGroupsAndTypes: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description App request created. */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['ApplicationGroupResponse'][]
         }
       }
       /** @description Unauthorized to access this endpoint */
