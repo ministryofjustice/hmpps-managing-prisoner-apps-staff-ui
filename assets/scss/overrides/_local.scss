@@ -5,28 +5,32 @@
   }
 }
 
-.card-group {
-  display: flex;
-  flex-wrap: wrap;
-  margin-bottom: govuk-spacing(3);
-  padding: 0;
+.card-container {
+  background: var(--govuk-template-background-colour, #f4f8fb);
+  margin-bottom: govuk-spacing(-8);
 
-  &__item {
+  .card-group {
     display: flex;
-    list-style-type: none;
-    margin-bottom: govuk-spacing(0);
-  }
+    flex-wrap: wrap;
+    row-gap: govuk-spacing(5);
+    padding: 0;
 
-  .card {
-    margin-bottom: govuk-spacing(5);
-    background: govuk-colour('white');
-    border: 1px solid #d8dde1;
-    position: relative;
-    width: 100%;
-    padding: govuk-spacing(5);
+    &__item {
+      display: flex;
+      list-style-type: none;
+      margin-bottom: govuk-spacing(0);
+    }
 
-    &--clickable {
-      border-bottom-width: govuk-spacing(1);
+    .card {
+      background: govuk-colour('white');
+      border: 1px solid #d8dde1;
+      position: relative;
+      width: 100%;
+      padding: govuk-spacing(5);
+
+      &--clickable {
+        border-bottom-width: govuk-spacing(1);
+      }
     }
   }
 }
