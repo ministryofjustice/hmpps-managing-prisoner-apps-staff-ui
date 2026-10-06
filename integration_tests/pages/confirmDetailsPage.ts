@@ -7,7 +7,7 @@ export default class ConfirmDetailsPage extends AbstractPage {
   }
 
   backLink(): PageElement {
-    return this.page.getByRole('link', { name: 'Back' })
+    return this.page.getByRole('link', { name: 'Back', exact: true })
   }
 
   summaryRowByLabel(label: string): PageElement {

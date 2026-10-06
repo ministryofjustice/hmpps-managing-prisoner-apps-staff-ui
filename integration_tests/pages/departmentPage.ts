@@ -7,7 +7,7 @@ export default class DepartmentPage extends AbstractPage {
   }
 
   backLink(): PageElement {
-    return this.page.getByRole('link', { name: 'Back' })
+    return this.page.getByRole('link', { name: 'Back', exact: true })
   }
 
   radioButtons(): PageElement {
