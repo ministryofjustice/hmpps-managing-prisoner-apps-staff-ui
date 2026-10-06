@@ -1,14 +1,7 @@
 .applications-landing-page {
   &__banner {
     margin-top: govuk-spacing(-7);
-    background: #263135;
-    color: govuk-colour('white');
-
-    h1,
-    p,
-    a {
-      color: inherit;
-    }
+    background: govuk-colour('white');
   }
 }
 
@@ -36,6 +29,10 @@
       border-bottom-width: govuk-spacing(1);
     }
   }
+}
+
+.mpa-phase-banner {
+  border-bottom: 1px solid $govuk-border-colour;
 }
 
 .app-message {
