@@ -101,8 +101,6 @@ export default class IndexPage extends AbstractPage {
     await expect(banner).toBeVisible()
     await expect(banner.locator('h1')).toContainText('Applications')
     await expect(banner.locator('p').nth(0)).toContainText('Log, action and reply to prisoner applications.')
-    await expect(banner.locator('p').nth(1)).toContainText('Give us your')
-    await expect(banner.locator('p').nth(1).locator('a')).toBeVisible()
   }
 
   async assertLogNewApplicationCard(): Promise<void> {

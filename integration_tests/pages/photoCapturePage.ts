@@ -7,7 +7,7 @@ export default class PhotoCapturePage extends AbstractPage {
   }
 
   backLink(): PageElement {
-    return this.page.getByRole('link', { name: 'Back' })
+    return this.page.getByRole('link', { name: 'Back', exact: true })
   }
 
   instructions(): PageElement {

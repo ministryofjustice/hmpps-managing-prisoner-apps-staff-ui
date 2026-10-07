@@ -62,7 +62,7 @@ test.describe('Logging Method Page', () => {
   })
 
   test('should display the back link', async ({ page }) => {
-    const backLink = page.getByRole('link', { name: 'Back' })
+    const backLink = page.getByRole('link', { name: 'Back', exact: true })
     await expect(backLink).toBeVisible()
     await expect(backLink).toHaveAttribute('href', '/log/department')
   })

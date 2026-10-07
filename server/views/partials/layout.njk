@@ -1,5 +1,7 @@
 {% extends "govuk/template.njk" %}
 
+{% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
+
 {% block head %}
 
   <!-- Google tag (gtag.js) -->
@@ -36,6 +38,15 @@
 
 {% set containerClasses = "" %}
 {% block container %}
+  <div class="govuk-width-container">
+    {{ govukPhaseBanner({
+      tag: {
+        text: "Beta"
+      },
+      classes: "mpa-phase-banner",
+      html: 'This is a new service - your <a class="govuk-link" href="https://www.smartsurvey.co.uk/t/EC7Z5H/" target="_blank">feedback</a> will help us to improve it.'
+    }) }}
+  </div>
   {% block main %}
     <main class="govuk-main-wrapper" id="main-content" role="main">
       {% block beforeContent %}{% endblock %}
