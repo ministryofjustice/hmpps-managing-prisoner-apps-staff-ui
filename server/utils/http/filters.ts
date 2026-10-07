@@ -43,18 +43,16 @@ export const buildListQueryString = (query: Request['query']): string => {
 }
 
 export const removeFilterFromHref = (req: Request, filterKey: string, valueToRemove: string) => {
-  const newQuery = new URLSearchParams(req.query as Record<string, string | string[]>)
+  const query = new URLSearchParams(req.query as never)
 
-  newQuery.delete(filterKey)
+  if (req.query[filterKey]) {
+    query.delete(filterKey)
 
-  const queryValues = req.query[filterKey]
-
-  if (queryValues) {
-    const valuesArray = Array.isArray(queryValues) ? queryValues : [queryValues as string]
-    valuesArray.filter(value => value !== valueToRemove).forEach(value => newQuery.append(filterKey, value as string))
+    const filtersMinusValueToRemove = [req.query[filterKey]].flat().filter(value => value !== valueToRemove)
+    filtersMinusValueToRemove.forEach(value => query.append(filterKey, value as string))
   }
 
-  return `/applications?${newQuery.toString()}`
+  return `/applications?${query.toString()}`
 }
 
 export const extractQueryParamArray = (

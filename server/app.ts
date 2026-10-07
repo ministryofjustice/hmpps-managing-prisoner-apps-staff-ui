@@ -44,10 +44,11 @@ export default function createApp(services: Services): express.Application {
   app.use(checkActiveAgencyAccess(services.managingPrisonerAppsService))
 
   app.use(
-    dpsComponents.getPageComponents({
-      dpsUrl: config.dpsHome,
+    dpsComponents.getFrontendComponents({
       logger,
-      includeSharedData: true,
+      componentApiConfig: config.apis.componentApi,
+      dpsUrl: config.dpsHome,
+      requestOptions: { includeSharedData: true },
     }),
   )
 
