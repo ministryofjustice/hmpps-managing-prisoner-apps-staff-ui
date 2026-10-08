@@ -43,7 +43,7 @@ export const buildListQueryString = (query: Request['query']): string => {
 }
 
 export const removeFilterFromHref = (req: Request, filterKey: string, valueToRemove: string) => {
-  const newQuery = new URLSearchParams(req.query as Record<string, string | string[]>)
+  const newQuery = new URLSearchParams(req.query as never)
 
   newQuery.delete(filterKey)
 
