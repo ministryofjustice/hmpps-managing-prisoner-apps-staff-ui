@@ -38,6 +38,7 @@ describe(formatAppsToRows.name, () => {
     const applications = [
       {
         ...appSearchResponse.apps[0],
+        createdDate: new Date().toISOString(),
         prisonerName: 'Doe, John',
         appType: { id: 2, name: 'Add new official PIN phone contact' },
         comments: 3,
@@ -48,7 +49,11 @@ describe(formatAppsToRows.name, () => {
 
     expect(result).toEqual([
       [
-        { text: '24 March 2025', attributes: { 'data-sort-value': '1742824993000' }, classes: 'govuk-!-text-nowrap' },
+        {
+          text: '24 March 2025',
+          attributes: { 'data-sort-value': new Date(applications[0].createdDate).getTime().toString() },
+          classes: 'govuk-!-text-nowrap',
+        },
         {
           html: 'Add new official PIN phone contact<br/><span class="govuk-table__subtext govuk-body-s">Business Hub</span>',
         },
@@ -70,6 +75,7 @@ describe(formatAppsToRows.name, () => {
     const applications = [
       {
         ...appSearchResponse.apps[0],
+        createdDate: new Date().toISOString(),
         prisonerName: 'Doe, John',
         appType: { id: 2, name: 'Add new official PIN phone contact' },
         comments: 0,
@@ -80,7 +86,11 @@ describe(formatAppsToRows.name, () => {
 
     expect(result).toEqual([
       [
-        { text: '24 March 2025', attributes: { 'data-sort-value': '1742824993000' }, classes: 'govuk-!-text-nowrap' },
+        {
+          text: '24 March 2025',
+          attributes: { 'data-sort-value': new Date(applications[0].createdDate).getTime().toString() },
+          classes: 'govuk-!-text-nowrap',
+        },
         {
           html: 'Add new official PIN phone contact<br/><span class="govuk-table__subtext govuk-body-s">Business Hub</span>',
         },
@@ -95,6 +105,27 @@ describe(formatAppsToRows.name, () => {
         },
       ],
     ])
+  })
+
+  it('shows an overdue tag for an open app at least five days old', async () => {
+    ;(format as jest.Mock).mockReturnValue('24 March 2025')
+
+    const applications = [
+      {
+        ...appSearchResponse.apps[0],
+        createdDate: '2020-01-01T00:00:00.000Z',
+        status: 'NEW',
+        prisonerName: 'Doe, John',
+        appType: { id: 2, name: 'Add new official PIN phone contact' },
+        comments: 0,
+      },
+    ]
+
+    const result = await formatAppsToRows(managingPrisonerAppsService, mockUser, applications)
+
+    expect(result[0][3].html).toContain('<span class="app-overdue-icon" aria-hidden="true">')
+    expect(result[0][3].html).toContain('<strong class="app-overdue-text">Overdue</strong>')
+    expect(result[0][3].html).not.toContain('govuk-tag--red')
   })
 
   it('should append the list query string to the View link when provided', async () => {
