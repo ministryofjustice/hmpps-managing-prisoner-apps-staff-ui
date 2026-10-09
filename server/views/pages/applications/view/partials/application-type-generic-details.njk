@@ -3,11 +3,10 @@
 {% from "pages/applications/view/partials/document-images-summary.njk" import documentImagesSummary %}
 
 {% if documents and documents.length > 0 %}
-  {{ appTypeSummaryListHeader("Application details", application.requestedBy.username, application.id, isClosed, canChangeAppDetails, hideChangeButton=true) }}
+  {{ appTypeSummaryListHeader(title, application.requestedBy.username, application.id, isClosed, canChangeAppDetails, hideChangeButton=true) }}
   {{ documentImagesSummary(documents, application.requestedBy.username, application.id, application.requests[0].details) }}
 {% else %}
-  {{ appTypeSummaryListHeader("Application details", application.requestedBy.username, application.id, isClosed, canChangeAppDetails) }}
-
+  {{ appTypeSummaryListHeader(title, application.requestedBy.username, application.id, isClosed, canChangeAppDetails) }}
   {{ govukSummaryList({
     rows: [
       {

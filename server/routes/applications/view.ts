@@ -24,6 +24,7 @@ import logger from '../../../logger'
 import config from '../../config'
 import { addPrisonerNames, buildApplicationsPayload } from '../../helpers/apps'
 import { validatePrisonerFilter } from '../../helpers/prisoner'
+import isApplicationOverdue from '../../helpers/application/isApplicationOverdue'
 import { formatAppsToRows } from '../../utils/formatters/formatAppsToRows'
 import { getPaginationData } from '../../utils/http/pagination'
 import DocumentManagementService from '../../services/documentManagementService'
@@ -135,6 +136,7 @@ export default function viewAppsRouter({
     logger.info(`Documents:`, JSON.stringify(documents, null, 2))
 
     const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
+    const isOverdue = isApplicationOverdue(application.createdDate, application.status)
 
     res.render(PATHS.APPLICATIONS.VIEW, {
       title: applicationType.name,
@@ -158,6 +160,7 @@ export default function viewAppsRouter({
         '',
       isGeneric: applicationType.genericType || applicationType.genericForm,
       isForwardable: departments?.length > 1,
+      isOverdue,
       forwardedTo,
       applicationClosed,
       markedInProgress,
