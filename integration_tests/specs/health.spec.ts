@@ -4,6 +4,7 @@ import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
 import tokenVerification from '../mockApis/tokenVerification'
 
 import { resetStubs } from '../testUtils'
+import componentApi from '../mockApis/componentApi'
 
 test.describe('Health', () => {
   test.afterEach(async () => {
@@ -16,6 +17,7 @@ test.describe('Health', () => {
         hmppsAuth.stubPing(),
         tokenVerification.stubPing(),
         managingPrisonerAppsApi.stubGetActiveAgencies(),
+        componentApi.stubPing(),
       ])
     })
 

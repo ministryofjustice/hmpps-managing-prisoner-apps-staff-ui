@@ -107,6 +107,10 @@ jobs:
             -H 'Content-Type: application/json' \
             -d '{"request":{"method":"GET","urlPattern":"/(verification/)?health/ping"},"response":{"status":200,"headers":{"Content-Type":"application/json;charset=UTF-8"},"jsonBody":{"status":"UP"}}}'
 
+          curl --fail --silent -X POST "http://localhost:${WIREMOCK_PORT}/__admin/mappings" \
+            -H 'Content-Type: application/json' \
+            -d '{"request":{"method":"GET","urlPattern":"/componentApi/ping"},"response":{"status":200,"headers":{"Content-Type":"application/json;charset=UTF-8"},"jsonBody":{"status":"UP"}}}'
+
       - name: Start application
         env:
           PORT: ${{ matrix.app_port }}
@@ -118,6 +122,7 @@ jobs:
           PERSONAL_RELATIONSHIPS_API_URL: http://localhost:${{ matrix.wiremock_port }}/personalRelationships
           DOCUMENT_API_URL: http://localhost:${{ matrix.wiremock_port }}/documentApi
           OS_PLACES_API_URL: http://localhost:${{ matrix.wiremock_port }}/osPlaces
+          COMPONENT_API_URL: http://localhost:${{ matrix.wiremock_port }}/componentApi
         run: nohup npm run start-feature > "$RUNNER_TEMP/start-feature.log" 2>&1 &
 
       - name: Wait for application
