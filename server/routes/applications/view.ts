@@ -165,7 +165,7 @@ export default function viewAppsRouter({
       applicationClosed,
       markedInProgress,
       documents,
-      listQuery: buildListQueryString(req.query),
+      listQuery: buildListQueryString(req.query) || res.locals.listQuery,
     })
   })
 
