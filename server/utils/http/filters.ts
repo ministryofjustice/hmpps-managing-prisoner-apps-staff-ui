@@ -295,8 +295,6 @@ export const saveFiltersToSession = (req: Request): void => {
   req.session.listFilters = saved
 }
 
-// Exposes the persisted list filters as `listQuery` so the "View all applications"
-// breadcrumb keeps the filtered list when navigating between application sub-pages.
 export const setListQueryLocals = (req: Request, res: Response, next: NextFunction): void => {
   const filters = req.session.listFilters
   res.locals.listQuery = filters ? buildListQueryString(filters as unknown as Request['query']) : ''
