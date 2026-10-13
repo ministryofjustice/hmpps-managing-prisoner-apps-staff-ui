@@ -287,7 +287,7 @@ export const saveFiltersToSession = (req: Request): void => {
     }
   })
 
-  const page = req.query.page
+  const { page } = req.query
   if (page !== undefined && page.toString().trim() !== '' && page.toString() !== '1') {
     saved.page = page.toString()
   }
