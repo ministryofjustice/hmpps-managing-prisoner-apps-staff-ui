@@ -29,6 +29,3 @@ generic-service:
     groups:
       - internal
       - prisons
-
-generic-prometheus-alerts:
-  alertSeverity: hmpps-managing-prisoner-apps-nonprod
