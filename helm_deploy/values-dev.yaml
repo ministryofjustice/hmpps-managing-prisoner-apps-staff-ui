@@ -29,6 +29,3 @@ generic-service:
     ENVIRONMENT_NAME: DEV
     AUDIT_ENABLED: 'true'
     GA4_SITE_ID: 'G-HE5P4PEE48'
-
-generic-prometheus-alerts:
-  alertSeverity: hmpps-managing-prisoner-apps-nonprod
