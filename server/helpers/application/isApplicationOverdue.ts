@@ -1,8 +1,6 @@
 import { isOpenStatus } from '../../constants/applicationStatus'
-import { milliseconds, minutes } from '../../utils/timeSpans'
 
-const MINUTES_PER_DAY = 24 * 60
-const SLA_DURATION = minutes(5 * MINUTES_PER_DAY)
+const SLA_WORKING_DAYS = 5
 
 const isApplicationOverdue = (createdDate: string, status: string, now = new Date()): boolean => {
   const createdAt = Date.parse(createdDate)
@@ -11,12 +9,21 @@ const isApplicationOverdue = (createdDate: string, status: string, now = new Dat
     return false
   }
 
-  const slaStart = new Date(createdAt)
-  slaStart.setUTCHours(0, 0, 0, 0)
-  slaStart.setUTCDate(slaStart.getUTCDate() + 1)
+  const dueAt = new Date(createdAt)
+  dueAt.setUTCHours(0, 0, 0, 0)
 
-  const elapsedSinceSlaStart = milliseconds(now.getTime() - slaStart.getTime())
-  return elapsedSinceSlaStart.isGreaterThanOrEqualTo(SLA_DURATION)
+  dueAt.setUTCDate(dueAt.getUTCDate() + 1)
+
+  let workingDays = 0
+  while (workingDays < SLA_WORKING_DAYS) {
+    const weekday = dueAt.getUTCDay()
+
+    if (weekday !== 0 && weekday !== 6) workingDays += 1
+
+    dueAt.setUTCDate(dueAt.getUTCDate() + 1)
+  }
+
+  return now.getTime() >= dueAt.getTime()
 }
 
 export default isApplicationOverdue
