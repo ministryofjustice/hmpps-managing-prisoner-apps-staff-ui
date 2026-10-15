@@ -1,6 +1,12 @@
-import { Request } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { ListFilters } from 'express-session'
-import { buildListQueryString, removeFilterFromHref, retainFilters, saveFiltersToSession } from './filters'
+import {
+  buildListQueryString,
+  removeFilterFromHref,
+  retainFilters,
+  saveFiltersToSession,
+  setListQueryLocals,
+} from './filters'
 import { FILTER_KEYS } from '../../constants/filters'
 
 describe(removeFilterFromHref.name, () => {
@@ -136,6 +142,49 @@ describe(saveFiltersToSession.name, () => {
     saveFiltersToSession(req)
     expect(req.session.listFilters?.status).toEqual(['PENDING', 'APPROVED'])
     expect(req.session.listFilters?.group).toEqual(['group1', 'group2'])
+  })
+
+  it('should save the current page when it is not the first page', () => {
+    const req = mockReq({ status: 'NEW', page: '3' })
+    saveFiltersToSession(req)
+    expect(req.session.listFilters?.page).toEqual('3')
+  })
+
+  it('should not save the page when it is the first page', () => {
+    const req = mockReq({ status: 'NEW', page: '1' })
+    saveFiltersToSession(req)
+    expect(req.session.listFilters?.page).toBeUndefined()
+  })
+})
+
+describe(setListQueryLocals.name, () => {
+  const mockReq = (listFilters?: ListFilters): Request =>
+    ({
+      session: { listFilters },
+    }) as unknown as Request
+
+  const mockRes = (): Response => ({ locals: {} }) as unknown as Response
+
+  it('should expose a listQuery built from the persisted session filters', () => {
+    const req = mockReq({ status: ['NEW', 'IN_PROGRESS'], type: ['3'], page: '2' })
+    const res = mockRes()
+    const next = jest.fn() as unknown as NextFunction
+
+    setListQueryLocals(req, res, next)
+
+    expect(res.locals.listQuery).toBe('status=NEW&status=IN_PROGRESS&type=3&page=2')
+    expect(next).toHaveBeenCalled()
+  })
+
+  it('should expose an empty listQuery when no filters are persisted', () => {
+    const req = mockReq(undefined)
+    const res = mockRes()
+    const next = jest.fn() as unknown as NextFunction
+
+    setListQueryLocals(req, res, next)
+
+    expect(res.locals.listQuery).toBe('')
+    expect(next).toHaveBeenCalled()
   })
 })
 

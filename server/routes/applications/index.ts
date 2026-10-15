@@ -31,6 +31,7 @@ import anotherPhotoRouter from './anotherPhoto'
 import additionalPhotoDetailsRouter from './additionalPhotoDetails'
 import removePhotoRouter from './removePhoto'
 import cancelAppRouter from './cancelApp'
+import { setListQueryLocals } from '../../utils/http/filters'
 
 export default function applicationsRoutes({
   auditService,
@@ -64,6 +65,8 @@ export default function applicationsRoutes({
   })
 
   router.use(viewDocumentRouter({ documentManagementService }))
+
+  router.use('/applications/:prisonerId/:applicationId', setListQueryLocals)
 
   router.use(actionAppRouter({ auditService, managingPrisonerAppsService }))
   router.use(

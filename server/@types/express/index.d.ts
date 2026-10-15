@@ -56,6 +56,7 @@ export declare module 'express-session' {
     group?: string[]
     applicationTypeFilter?: string[]
     type?: string[]
+    page?: string
   }
 
   type AdditionalApplicationData =

@@ -287,5 +287,16 @@ export const saveFiltersToSession = (req: Request): void => {
     }
   })
 
+  const { page } = req.query
+  if (page !== undefined && page.toString().trim() !== '' && page.toString() !== '1') {
+    saved.page = page.toString()
+  }
+
   req.session.listFilters = saved
+}
+
+export const setListQueryLocals = (req: Request, res: Response, next: NextFunction): void => {
+  const filters = req.session.listFilters
+  res.locals.listQuery = filters ? buildListQueryString(filters as unknown as Request['query']) : ''
+  next()
 }
