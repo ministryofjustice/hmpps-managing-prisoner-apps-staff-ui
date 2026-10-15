@@ -1,4 +1,5 @@
 import express from 'express'
+import { telemetryMiddleware } from '@ministryofjustice/hmpps-azure-telemetry'
 
 import createError from 'http-errors'
 
@@ -52,6 +53,7 @@ export default function createApp(services: Services): express.Application {
     }),
   )
 
+  app.use(telemetryMiddleware.addUserMetadataToTelemetry())
   app.use(routes(services))
 
   app.use((_req, _res, next) => next(createError(404, 'Not found')))
