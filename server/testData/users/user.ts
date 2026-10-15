@@ -6,6 +6,7 @@ export const user: BaseUser = {
   username: 'user',
   authSource: 'auth',
   userId: '608955ae-52ed-44cc-884c-011597a77949',
+  userUuid: undefined,
   name: 'name',
   displayName: 'Name',
   userRoles: [],

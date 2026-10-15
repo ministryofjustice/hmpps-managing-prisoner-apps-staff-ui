@@ -1,3 +1,5 @@
+import { UUID } from 'crypto'
+
 export type AuthSource = 'nomis' | 'delius' | 'external' | 'azuread' | 'auth'
 
 /**
@@ -7,6 +9,7 @@ export interface BaseUser {
   authSource: AuthSource
   username: string
   userId: string | undefined
+  userUuid: UUID | undefined
   name: string | undefined
   displayName: string
   userRoles: string[]
