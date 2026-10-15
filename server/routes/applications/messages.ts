@@ -1,6 +1,7 @@
 import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
 
+import { auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 import { isOpenStatus } from '../../constants/applicationStatus'
@@ -14,7 +15,6 @@ import { getAppType } from '../../helpers/application/getAppType'
 import { formatMessagesCreatedByName } from '../../utils/formatters/formatName'
 import { validateTextField } from '../validate/validateTextField'
 import { Comment } from '../../@types/managingAppsApi'
-import { doWithAuditLogging } from '../../utils/audit'
 
 const formatMessages = (comments: Comment[] = []) =>
   comments.map(({ message, createdBy, createdDate, visibility, createdByType }) => ({
@@ -40,39 +40,41 @@ export default function messagesRouter({
     const { prisonerId, applicationId } = req.params
     const { user } = res.locals
 
-    const auditDetails = {
-      auditPrefix: 'VIEW_MESSAGES',
-      req,
-      auditService,
-      coreAuditEvent: {
-        details: { applicationId },
-        subjectId: prisonerId as string,
-        subjectType: 'PRISONER_ID',
+    await auditLogged(
+      'VIEW_MESSAGES',
+      async (what, extraDetails = {}) => {
+        await auditService.logAuditEvent({
+          what,
+          who: req.user.username,
+          correlationId: req.id,
+          subjectId: prisonerId as string,
+          subjectType: 'PRISONER_ID',
+          details: { applicationId, ...extraDetails },
+        })
       },
-    }
+      async () => {
+        const { application, applicationType } = await getValidApplicationOrRedirect(
+          req,
+          res,
+          auditService,
+          managingPrisonerAppsService,
+          Page.MESSAGES_PAGE,
+        )
 
-    await doWithAuditLogging(auditDetails, async () => {
-      const { application, applicationType } = await getValidApplicationOrRedirect(
-        req,
-        res,
-        auditService,
-        managingPrisonerAppsService,
-        Page.MESSAGES_PAGE,
-      )
+        const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
 
-      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
+        const messages = await managingPrisonerAppsService.getMessages(`${prisonerId}`, application.id, user)
 
-      const messages = await managingPrisonerAppsService.getMessages(`${prisonerId}`, application.id, user)
-
-      res.render(PATHS.APPLICATIONS.MESSAGES, {
-        application,
-        applicationType,
-        comments: formatMessages(messages?.contents),
-        title: 'Prisoner messages',
-        isClosed: !isOpenStatus(application.status),
-        isForwardable: departments?.length > 1,
-      })
-    })
+        res.render(PATHS.APPLICATIONS.MESSAGES, {
+          application,
+          applicationType,
+          comments: formatMessages(messages?.contents),
+          title: 'Prisoner messages',
+          isClosed: !isOpenStatus(application.status),
+          isForwardable: departments?.length > 1,
+        })
+      },
+    )
   })
 
   router.post('/applications/:prisonerId/:applicationId/messages', async (req: Request, res: Response) => {
