@@ -1,9 +1,10 @@
 import { Request, Response, Router } from 'express'
 
+import { auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
-import AuditService, { Page } from '../../services/auditService'
+import AuditService from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
@@ -19,21 +20,39 @@ export default function submitAppRouter({
   const router = Router()
 
   router.get(`${URLS.LOG_SUBMIT_APPLICATION}/:prisonerId/:applicationId`, async (req: Request, res: Response) => {
-    const validApplication = await getValidApplicationOrRedirect(
-      req,
-      res,
-      auditService,
-      managingPrisonerAppsService,
-      Page.SUBMIT_APPLICATION_PAGE,
-    )
-    if (!validApplication) return
-    const { application, applicationType } = validApplication
+    const { prisonerId, applicationId } = req.params
+    const { user } = res.locals
 
-    res.render(PATHS.LOG_APPLICATION.SUBMIT, {
-      title: applicationType.name,
-      application,
-      prisonerName: convertToTitleCase(`${application.requestedBy.firstName} ${application.requestedBy.lastName}`),
-    })
+    await auditLogged(
+      'VIEW_SUBMIT_APPLICATION',
+      async (what, extraDetails = {}) => {
+        const successful = what.endsWith('_SUCCESS') && res.statusCode < 300
+        return auditService.logAuditEvent({
+          what: what.endsWith('_SUCCESS') && !successful ? 'VIEW_SUBMIT_APPLICATION_FAILURE' : what,
+          who: user.username,
+          correlationId: String(req.id),
+          subjectId: String(prisonerId),
+          subjectType: 'PRISONER_ID',
+          details: {
+            entityId: applicationId,
+            applicationId,
+            ...extraDetails,
+            ...(!successful && res.statusCode >= 300 ? { failureReason: `HTTP ${res.statusCode}` } : {}),
+          },
+        })
+      },
+      async () => {
+        const validApplication = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
+        if (!validApplication) return
+        const { application, applicationType } = validApplication
+
+        res.render(PATHS.LOG_APPLICATION.SUBMIT, {
+          title: applicationType.name,
+          application,
+          prisonerName: convertToTitleCase(`${application.requestedBy.firstName} ${application.requestedBy.lastName}`),
+        })
+      },
+    )
   })
 
   return router

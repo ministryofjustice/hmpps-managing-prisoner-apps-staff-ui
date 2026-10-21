@@ -1,8 +1,9 @@
 import { OsPlacesAddressService } from '@ministryofjustice/hmpps-connect-dps-shared-items'
 import { Request, Response, Router } from 'express'
 
+import { auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
 import { isLogNewApplicationDisabledEstablishment } from '../../constants/enabledEstablishments'
-import AuditService, { Page } from '../../services/auditService'
+import AuditService from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PersonalRelationshipsService from '../../services/personalRelationshipsService'
 import PrisonService from '../../services/prisonService'
@@ -52,19 +53,29 @@ export default function applicationsRoutes({
 
   router.get('/', async (req: Request, res: Response) => {
     const { user } = res.locals
-    await auditService.logPageView(Page.APPLICATIONS_PAGE, {
-      who: user.username,
-      correlationId: req.id,
-    })
 
-    res.render('pages/applications', {
-      title: 'Applications',
-      canLogNewApplication:
-        user.authSource !== 'nomis' || !isLogNewApplicationDisabledEstablishment(user.activeCaseLoadId),
-    })
+    await auditLogged(
+      'VIEW_APPLICATIONS_HOME',
+      async (what, details = {}) =>
+        auditService.logAuditEvent({
+          what,
+          who: user.username,
+          correlationId: String(req.id),
+          subjectId: 'NONE',
+          subjectType: 'NOT_APPLICABLE',
+          details,
+        }),
+      async () => {
+        res.render('pages/applications', {
+          title: 'Applications',
+          canLogNewApplication:
+            user.authSource !== 'nomis' || !isLogNewApplicationDisabledEstablishment(user.activeCaseLoadId),
+        })
+      },
+    )
   })
 
-  router.use(viewDocumentRouter({ documentManagementService }))
+  router.use(viewDocumentRouter({ auditService, documentManagementService }))
 
   router.use('/applications/:prisonerId/:applicationId', setListQueryLocals)
 
@@ -105,20 +116,52 @@ export default function applicationsRoutes({
   router.use(removePhotoRouter({ auditService }))
   router.use(cancelAppRouter({ auditService }))
   router.get('/api/addresses/find/:query', async (req: Request, res: Response) => {
-    try {
-      const { query } = req.params
-      if (!query) {
-        res.status(400).json({ status: 400, error: 'Query parameter is required' })
-        return
-      }
+    const { user } = res.locals
+    const { query } = req.params
 
-      const results = await osPlacesAddressService.getAddressesMatchingQuery(query as string)
+    await auditLogged(
+      'SEARCH_ADDRESS',
+      async (what, extraDetails = {}) => {
+        const successful = what.endsWith('_SUCCESS') && res.statusCode < 300
+        return auditService.logAuditEvent({
+          what: what.endsWith('_SUCCESS') && !successful ? 'SEARCH_ADDRESS_FAILURE' : what,
+          who: user.username,
+          correlationId: String(req.id),
+          subjectId: String(query || ''),
+          subjectType: 'SEARCH_TERM',
+          details: {
+            queryParams: req.query,
+            ...(successful ? res.locals.auditDetails : {}),
+            ...extraDetails,
+            ...(!successful && res.statusCode >= 300 ? { failureReason: `HTTP ${res.statusCode}` } : {}),
+          },
+        })
+      },
+      async () => {
+        try {
+          if (!query) {
+            res.status(400).json({ status: 400, error: 'Query parameter is required' })
+            return
+          }
 
-      res.json({ status: 200, results })
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-      res.status(500).json({ status: 500, error: errorMessage })
-    }
+          const results = await osPlacesAddressService.getAddressesMatchingQuery(query as string)
+
+          res.locals.auditDetails = {
+            results: {
+              resultCount: results.length,
+              returnedSubjectIds: results
+                .filter(address => address.uprn !== undefined)
+                .map(address => String(address.uprn)),
+            },
+          }
+
+          res.json({ status: 200, results })
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+          res.status(500).json({ status: 500, error: errorMessage })
+        }
+      },
+    )
   })
 
   return router
