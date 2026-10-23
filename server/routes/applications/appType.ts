@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express'
 
-import { auditEventLoggers, auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
+import { auditEventLoggers } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
 import { buildAppTypes } from '../../helpers/application/buildAppTypes'
 
 import { PATHS } from '../../constants/paths'
@@ -24,46 +24,48 @@ export default function appTypeRouter({
   router.get(URLS.LOG_APPLICATION_TYPE, async (req: Request, res: Response) => {
     const { user } = res.locals
     const { applicationData, isLoggingForSamePrisoner } = req.session
-
-    await auditLogged(
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers(
       'VIEW_LOG_APPLICATION_TYPE',
-      async (what, extraDetails = {}) => {
-        const successful = what.endsWith('_SUCCESS') && res.statusCode < 300
-        return auditService.logAuditEvent({
-          what: what.endsWith('_SUCCESS') && !successful ? 'VIEW_LOG_APPLICATION_TYPE_FAILURE' : what,
+      async (what, extraDetails = {}) =>
+        auditService.logAuditEvent({
+          what,
           who: user.username,
           correlationId: String(req.id),
           subjectId: applicationData?.prisonerId || 'NONE',
           subjectType: applicationData?.prisonerId ? 'PRISONER_ID' : 'NOT_APPLICABLE',
-          details: {
-            ...extraDetails,
-            ...(!successful && res.statusCode >= 300 ? { failureReason: `HTTP ${res.statusCode}` } : {}),
-          },
-        })
-      },
-      async () => {
-        if (!applicationData?.group) {
-          return res.redirect(URLS.LOG_GROUP)
-        }
-
-        const groups = await managingPrisonerAppsService.getGroupsAndTypes(user)
-        const selectedGroup = groups.find(group => group.id.toString() === applicationData.group.value)
-
-        if (!selectedGroup) {
-          return res.redirect(URLS.LOG_GROUP)
-        }
-
-        const selectedValue = applicationData?.type?.value || null
-
-        return res.render(PATHS.LOG_APPLICATION.SELECT_TYPE, {
-          title: 'Select application type',
-          applicationTypes: buildAppTypes(selectedGroup, selectedValue),
-          errorMessage: null,
-          isLoggingForSamePrisoner,
-          prisonerName: applicationData.prisonerName,
-        })
-      },
+          details: extraDetails,
+        }),
     )
+
+    await logAttempt()
+    try {
+      if (!applicationData?.group) {
+        await logFailure({ failureReason: 'Group not selected' })
+        return res.redirect(URLS.LOG_GROUP)
+      }
+
+      const groups = await managingPrisonerAppsService.getGroupsAndTypes(user)
+      const selectedGroup = groups.find(group => group.id.toString() === applicationData.group.value)
+
+      if (!selectedGroup) {
+        await logFailure({ failureReason: 'Group not found' })
+        return res.redirect(URLS.LOG_GROUP)
+      }
+
+      const selectedValue = applicationData?.type?.value || null
+
+      await logSuccess()
+      return res.render(PATHS.LOG_APPLICATION.SELECT_TYPE, {
+        title: 'Select application type',
+        applicationTypes: buildAppTypes(selectedGroup, selectedValue),
+        errorMessage: null,
+        isLoggingForSamePrisoner,
+        prisonerName: applicationData.prisonerName,
+      })
+    } catch (error) {
+      await logFailure({ failureReason: error instanceof Error ? error.message : 'Unknown error' })
+      throw error
+    }
   })
 
   router.post(URLS.LOG_APPLICATION_TYPE, async (req: Request, res: Response) => {

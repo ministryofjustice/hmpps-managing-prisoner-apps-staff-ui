@@ -2,7 +2,7 @@ import { Request, Response, Router } from 'express'
 import { AddNewOfficialPinPhoneContactDetails } from 'express-session'
 import { OsPlacesAddressService } from '@ministryofjustice/hmpps-connect-dps-shared-items'
 
-import { auditEventLoggers, auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
+import { auditEventLoggers } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
@@ -35,61 +35,59 @@ export default function changeAppRouter({
     const { prisonerId, applicationId } = req.params
     const { applicationData } = req.session
     const { user } = res.locals
-
-    await auditLogged(
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers(
       'VIEW_CHANGE_APPLICATION',
-      async (what, extraDetails = {}) => {
-        const successful = what.endsWith('_SUCCESS') && res.statusCode < 300
-        return auditService.logAuditEvent({
-          what: what.endsWith('_SUCCESS') && !successful ? 'VIEW_CHANGE_APPLICATION_FAILURE' : what,
+      async (what, extraDetails = {}) =>
+        auditService.logAuditEvent({
+          what,
           who: user.username,
           correlationId: String(req.id),
           subjectId: String(prisonerId),
           subjectType: 'PRISONER_ID',
-          details: {
-            entityId: applicationId,
-            applicationId,
-            ...extraDetails,
-            ...(!successful && res.statusCode >= 300 ? { failureReason: `HTTP ${res.statusCode}` } : {}),
-          },
-        })
-      },
-      async () => {
-        const validApplication = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
-        if (!validApplication) return
-        const { application, applicationType } = validApplication
-
-        const isGeneric = Boolean(applicationType.genericType || applicationType.genericForm)
-        const additionalData = applicationData?.additionalData || {}
-        const formData = getAppTypeLogDetailsData(application.applicationType.id, additionalData, isGeneric)
-        const earlyDaysCentreValue = formatEarlyDaysCentre(
-          applicationData?.earlyDaysCentre,
-          application.firstNightCenter,
-        )
-
-        const templateData = await getApplicationDetails(
-          formData,
-          personalRelationshipsService,
-          application,
-          earlyDaysCentreValue,
-          isGeneric,
-        )
-
-        res.render(PATHS.APPLICATIONS.CHANGE_DETAILS, {
-          application,
-          applicationType: applicationType.name
-            .replace(/[^\w\s]/g, '')
-            .trim()
-            .toLowerCase()
-            .replace(/\s+/g, '-'),
-          backLink: `${URLS.APPLICATIONS}/${prisonerId}/${applicationId}`,
-          title: applicationType.name,
-          errors: null,
-          ...templateData,
-          isGeneric,
-        })
-      },
+          details: { entityId: applicationId, applicationId, ...extraDetails },
+        }),
     )
+
+    await logAttempt()
+    try {
+      const validApplication = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
+      if (!validApplication) {
+        await logFailure({ failureReason: 'Application not valid' })
+        return
+      }
+      const { application, applicationType } = validApplication
+
+      const isGeneric = Boolean(applicationType.genericType || applicationType.genericForm)
+      const additionalData = applicationData?.additionalData || {}
+      const formData = getAppTypeLogDetailsData(application.applicationType.id, additionalData, isGeneric)
+      const earlyDaysCentreValue = formatEarlyDaysCentre(applicationData?.earlyDaysCentre, application.firstNightCenter)
+
+      const templateData = await getApplicationDetails(
+        formData,
+        personalRelationshipsService,
+        application,
+        earlyDaysCentreValue,
+        isGeneric,
+      )
+
+      await logSuccess()
+      res.render(PATHS.APPLICATIONS.CHANGE_DETAILS, {
+        application,
+        applicationType: applicationType.name
+          .replace(/[^\w\s]/g, '')
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, '-'),
+        backLink: `${URLS.APPLICATIONS}/${prisonerId}/${applicationId}`,
+        title: applicationType.name,
+        errors: null,
+        ...templateData,
+        isGeneric,
+      })
+    } catch (error) {
+      await logFailure({ failureReason: error instanceof Error ? error.message : 'Unknown error' })
+      throw error
+    }
   })
 
   router.post(`${URLS.APPLICATIONS}/:prisonerId/:applicationId/change`, async (req, res) => {
@@ -173,57 +171,54 @@ export default function changeAppRouter({
     const { prisonerId, applicationId } = req.params
     const { applicationData } = req.session
     const { user } = res.locals
-
-    await auditLogged(
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers(
       'VIEW_CONFIRM_APPLICATION_CHANGE',
-      async (what, extraDetails = {}) => {
-        const successful = what.endsWith('_SUCCESS') && res.statusCode < 300
-        return auditService.logAuditEvent({
-          what: what.endsWith('_SUCCESS') && !successful ? 'VIEW_CONFIRM_APPLICATION_CHANGE_FAILURE' : what,
+      async (what, extraDetails = {}) =>
+        auditService.logAuditEvent({
+          what,
           who: user.username,
           correlationId: String(req.id),
           subjectId: String(prisonerId),
           subjectType: 'PRISONER_ID',
-          details: {
-            entityId: applicationId,
-            applicationId,
-            ...extraDetails,
-            ...(!successful && res.statusCode >= 300 ? { failureReason: `HTTP ${res.statusCode}` } : {}),
-          },
-        })
-      },
-      async () => {
-        const validApplication = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
-        if (!validApplication) return
-        const { application, applicationType } = validApplication
-
-        res.render(PATHS.LOG_APPLICATION.CONFIRM_DETAILS, {
-          application,
-          applicationType: applicationType.name
-            .replace(/[^\w\s]/g, '')
-            .trim()
-            .toLowerCase()
-            .replace(/\s+/g, '-'),
-          applicationData: {
-            prisoner: `${application.requestedBy.firstName} ${application.requestedBy.lastName}`,
-            earlyDaysCentre: formatEarlyDaysCentre(
-              applicationData?.earlyDaysCentre,
-              application.firstNightCenter,
-              true,
-            ),
-            request: applicationData.additionalData,
-            type: applicationType,
-            group: application.applicationGroup.name,
-            department: application.assignedGroup.name,
-          },
-          backLink: `${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/change`,
-          isUpdate: true,
-          title: applicationType.name,
-          isGeneric: applicationType.genericType || applicationType.genericForm,
-          loggingMethod: applicationData?.loggingMethod,
-        })
-      },
+          details: { entityId: applicationId, applicationId, ...extraDetails },
+        }),
     )
+
+    await logAttempt()
+    try {
+      const validApplication = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
+      if (!validApplication) {
+        await logFailure({ failureReason: 'Application not valid' })
+        return
+      }
+      const { application, applicationType } = validApplication
+
+      await logSuccess()
+      res.render(PATHS.LOG_APPLICATION.CONFIRM_DETAILS, {
+        application,
+        applicationType: applicationType.name
+          .replace(/[^\w\s]/g, '')
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, '-'),
+        applicationData: {
+          prisoner: `${application.requestedBy.firstName} ${application.requestedBy.lastName}`,
+          earlyDaysCentre: formatEarlyDaysCentre(applicationData?.earlyDaysCentre, application.firstNightCenter, true),
+          request: applicationData.additionalData,
+          type: applicationType,
+          group: application.applicationGroup.name,
+          department: application.assignedGroup.name,
+        },
+        backLink: `${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/change`,
+        isUpdate: true,
+        title: applicationType.name,
+        isGeneric: applicationType.genericType || applicationType.genericForm,
+        loggingMethod: applicationData?.loggingMethod,
+      })
+    } catch (error) {
+      await logFailure({ failureReason: error instanceof Error ? error.message : 'Unknown error' })
+      throw error
+    }
   })
 
   router.post(`${URLS.APPLICATIONS}/:prisonerId/:applicationId/change/confirm`, async (req: Request, res: Response) => {
@@ -293,38 +288,39 @@ export default function changeAppRouter({
   router.get(`${URLS.APPLICATIONS}/:prisonerId/:applicationId/change/submit`, async (req: Request, res: Response) => {
     const { prisonerId, applicationId } = req.params
     const { user } = res.locals
-
-    await auditLogged(
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers(
       'VIEW_SUBMIT_APPLICATION_CHANGE',
-      async (what, extraDetails = {}) => {
-        const successful = what.endsWith('_SUCCESS') && res.statusCode < 300
-        return auditService.logAuditEvent({
-          what: what.endsWith('_SUCCESS') && !successful ? 'VIEW_SUBMIT_APPLICATION_CHANGE_FAILURE' : what,
+      async (what, extraDetails = {}) =>
+        auditService.logAuditEvent({
+          what,
           who: user.username,
           correlationId: String(req.id),
           subjectId: String(prisonerId),
           subjectType: 'PRISONER_ID',
-          details: {
-            entityId: applicationId,
-            applicationId,
-            ...extraDetails,
-            ...(!successful && res.statusCode >= 300 ? { failureReason: `HTTP ${res.statusCode}` } : {}),
-          },
-        })
-      },
-      async () => {
-        const validApplication = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
-        if (!validApplication) return
-        const { application, applicationType } = validApplication
-
-        res.render(PATHS.LOG_APPLICATION.SUBMIT, {
-          title: applicationType.name,
-          application,
-          isUpdated: true,
-          prisonerName: convertToTitleCase(`${application.requestedBy.firstName} ${application.requestedBy.lastName}`),
-        })
-      },
+          details: { entityId: applicationId, applicationId, ...extraDetails },
+        }),
     )
+
+    await logAttempt()
+    try {
+      const validApplication = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
+      if (!validApplication) {
+        await logFailure({ failureReason: 'Application not valid' })
+        return
+      }
+      const { application, applicationType } = validApplication
+
+      await logSuccess()
+      res.render(PATHS.LOG_APPLICATION.SUBMIT, {
+        title: applicationType.name,
+        application,
+        isUpdated: true,
+        prisonerName: convertToTitleCase(`${application.requestedBy.firstName} ${application.requestedBy.lastName}`),
+      })
+    } catch (error) {
+      await logFailure({ failureReason: error instanceof Error ? error.message : 'Unknown error' })
+      throw error
+    }
   })
 
   return router

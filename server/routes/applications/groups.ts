@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express'
 
-import { auditEventLoggers, auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
+import { auditEventLoggers } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
@@ -29,52 +29,53 @@ export default function groupsRouter({
 
   router.get(URLS.LOG_GROUP, async (req: Request, res: Response) => {
     const { user } = res.locals
-
-    await auditLogged(
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers(
       'VIEW_LOG_APPLICATION_GROUP',
-      async (what, extraDetails = {}) => {
-        const successful = what.endsWith('_SUCCESS') && res.statusCode < 300
-        return auditService.logAuditEvent({
-          what: what.endsWith('_SUCCESS') && !successful ? 'VIEW_LOG_APPLICATION_GROUP_FAILURE' : what,
+      async (what, extraDetails = {}) =>
+        auditService.logAuditEvent({
+          what,
           who: user.username,
           correlationId: String(req.id),
           subjectId: req.session.applicationData?.prisonerId || 'NONE',
           subjectType: req.session.applicationData?.prisonerId ? 'PRISONER_ID' : 'NOT_APPLICABLE',
-          details: {
-            ...extraDetails,
-            ...(!successful && res.statusCode >= 300 ? { failureReason: `HTTP ${res.statusCode}` } : {}),
-          },
-        })
-      },
-      async () => {
-        const isLoggingForSamePrisoner = req.query.isLoggingForSamePrisoner === 'true' && req.session.prisonerContext
-
-        if (isLoggingForSamePrisoner) {
-          const { prisonerId, prisonerName } = req.session.prisonerContext
-
-          updateSessionData(req, { prisonerId, prisonerName })
-
-          req.session.isLoggingForSamePrisoner = true
-        }
-
-        const { applicationData } = req.session
-
-        if (!applicationData?.prisonerId) {
-          return res.redirect(URLS.LOG_PRISONER_DETAILS)
-        }
-
-        const groups = await managingPrisonerAppsService.getGroupsAndTypes(user)
-        const selectedValue = req.session?.applicationData?.group?.value || null
-
-        return res.render(PATHS.LOG_APPLICATION.SELECT_GROUP, {
-          title: 'Select application group',
-          groups: buildGroups(groups, selectedValue),
-          errorMessage: null,
-          isLoggingForSamePrisoner,
-          prisonerName: isLoggingForSamePrisoner ? req.session.applicationData.prisonerName : null,
-        })
-      },
+          details: extraDetails,
+        }),
     )
+
+    await logAttempt()
+    try {
+      const isLoggingForSamePrisoner = req.query.isLoggingForSamePrisoner === 'true' && req.session.prisonerContext
+
+      if (isLoggingForSamePrisoner) {
+        const { prisonerId, prisonerName } = req.session.prisonerContext
+
+        updateSessionData(req, { prisonerId, prisonerName })
+
+        req.session.isLoggingForSamePrisoner = true
+      }
+
+      const { applicationData } = req.session
+
+      if (!applicationData?.prisonerId) {
+        await logFailure({ failureReason: 'Prisoner not selected' })
+        return res.redirect(URLS.LOG_PRISONER_DETAILS)
+      }
+
+      const groups = await managingPrisonerAppsService.getGroupsAndTypes(user)
+      const selectedValue = req.session?.applicationData?.group?.value || null
+
+      await logSuccess()
+      return res.render(PATHS.LOG_APPLICATION.SELECT_GROUP, {
+        title: 'Select application group',
+        groups: buildGroups(groups, selectedValue),
+        errorMessage: null,
+        isLoggingForSamePrisoner,
+        prisonerName: isLoggingForSamePrisoner ? req.session.applicationData.prisonerName : null,
+      })
+    } catch (error) {
+      await logFailure({ failureReason: error instanceof Error ? error.message : 'Unknown error' })
+      throw error
+    }
   })
 
   router.post(URLS.LOG_GROUP, async (req: Request, res: Response) => {

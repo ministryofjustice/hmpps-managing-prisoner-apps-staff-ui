@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express'
 
-import { auditEventLoggers, auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
+import { auditEventLoggers } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 import { PHOTO_KEYS } from '../../constants/photos'
@@ -18,38 +18,39 @@ export default function anotherPhotoRouter({ auditService }: { auditService: Aud
   router.get(URLS.LOG_ADD_ANOTHER_PHOTO, async (req: Request, res: Response) => {
     const { applicationData } = req.session
     const { user } = res.locals
-
-    await auditLogged(
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers(
       'VIEW_LOG_APPLICATION_ADD_ANOTHER_PHOTO',
-      async (what, extraDetails = {}) => {
-        const successful = what.endsWith('_SUCCESS') && res.statusCode < 300
-        return auditService.logAuditEvent({
-          what: what.endsWith('_SUCCESS') && !successful ? 'VIEW_LOG_APPLICATION_ADD_ANOTHER_PHOTO_FAILURE' : what,
+      async (what, extraDetails = {}) =>
+        auditService.logAuditEvent({
+          what,
           who: user.username,
           correlationId: String(req.id),
           subjectId: applicationData?.prisonerId || 'NONE',
           subjectType: applicationData?.prisonerId ? 'PRISONER_ID' : 'NOT_APPLICABLE',
-          details: {
-            ...extraDetails,
-            ...(!successful && res.statusCode >= 300 ? { failureReason: `HTTP ${res.statusCode}` } : {}),
-          },
-        })
-      },
-      async () => {
-        if (!applicationData?.loggingMethod) {
-          return res.redirect(URLS.LOG_METHOD)
-        }
-
-        resetSecondPhotoIfExists(req)
-
-        return res.render(PATHS.LOG_APPLICATION.ADD_ANOTHER_PHOTO, {
-          title: 'Do you want to add another photo?',
-          applicationType: applicationData.type.name,
-          backLink: getBackLink(req),
-          addAnotherPhoto: applicationData.addAnotherPhoto || null,
-        })
-      },
+          details: extraDetails,
+        }),
     )
+
+    await logAttempt()
+    try {
+      if (!applicationData?.loggingMethod) {
+        await logFailure({ failureReason: 'Logging method not selected' })
+        return res.redirect(URLS.LOG_METHOD)
+      }
+
+      resetSecondPhotoIfExists(req)
+
+      await logSuccess()
+      return res.render(PATHS.LOG_APPLICATION.ADD_ANOTHER_PHOTO, {
+        title: 'Do you want to add another photo?',
+        applicationType: applicationData.type.name,
+        backLink: getBackLink(req),
+        addAnotherPhoto: applicationData.addAnotherPhoto || null,
+      })
+    } catch (error) {
+      await logFailure({ failureReason: error instanceof Error ? error.message : 'Unknown error' })
+      throw error
+    }
   })
 
   router.post(URLS.LOG_ADD_ANOTHER_PHOTO, async (req: Request, res: Response) => {

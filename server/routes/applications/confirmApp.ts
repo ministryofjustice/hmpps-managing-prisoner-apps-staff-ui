@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express'
 
-import { auditEventLoggers, auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
+import { auditEventLoggers } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 import { EXCLUDED_LOG_METHOD_APP_TYPES } from '../../constants/excludedApplicationTypes'
@@ -28,56 +28,59 @@ export default function confirmAppRouter({
   router.get(URLS.LOG_CONFIRM_DETAILS, async (req: Request, res: Response) => {
     const { user } = res.locals
     const { applicationData } = req.session
-
-    await auditLogged(
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers(
       'VIEW_LOG_APPLICATION_CONFIRM_DETAILS',
-      async (what, extraDetails = {}) => {
-        const successful = what.endsWith('_SUCCESS') && res.statusCode < 300
-        return auditService.logAuditEvent({
-          what: what.endsWith('_SUCCESS') && !successful ? 'VIEW_LOG_APPLICATION_CONFIRM_DETAILS_FAILURE' : what,
+      async (what, extraDetails = {}) =>
+        auditService.logAuditEvent({
+          what,
           who: user.username,
           correlationId: String(req.id),
           subjectId: applicationData?.prisonerId || 'NONE',
           subjectType: applicationData?.prisonerId ? 'PRISONER_ID' : 'NOT_APPLICABLE',
-          details: {
-            ...extraDetails,
-            ...(!successful && res.statusCode >= 300 ? { failureReason: `HTTP ${res.statusCode}` } : {}),
-          },
-        })
-      },
-      async () => {
-        const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.value)
-
-        if (!applicationType) return res.redirect(URLS.LOG_PRISONER_DETAILS)
-
-        const { photosForDisplay, photoDetails, hasNoPhotos } = getPhotosForDisplay(applicationData)
-        const excludedAppTypeIds = Object.values(EXCLUDED_LOG_METHOD_APP_TYPES)
-        const isExcluded = excludedAppTypeIds.includes(applicationData?.type.value)
-
-        return res.render(PATHS.LOG_APPLICATION.CONFIRM_DETAILS, {
-          applicationType: applicationData?.type.key,
-          applicationData: {
-            earlyDaysCentre: convertToTitleCase(applicationData?.earlyDaysCentre?.toString()),
-            prisoner: `${applicationData?.prisonerName} (${applicationData?.prisonerId})`,
-            request: applicationData?.additionalData,
-            group: applicationData?.group,
-            type: applicationData?.type,
-            department: applicationData?.department,
-          },
-          photos: photosForDisplay,
-          photoDetails,
-          loggingMethod: applicationData?.loggingMethod,
-          hasNoPhotos,
-          backLink:
-            applicationData?.loggingMethod === 'manual' || !applicationData?.loggingMethod
-              ? URLS.LOG_APPLICATION_DETAILS
-              : URLS.LOG_ADDITIONAL_PHOTO_DETAILS,
-          title: applicationType.name,
-          isGeneric: applicationType.genericType || applicationType.genericForm,
-          isExcluded,
-        })
-      },
+          details: extraDetails,
+        }),
     )
+
+    await logAttempt()
+    try {
+      const applicationType = await getAppType(managingPrisonerAppsService, user, applicationData?.type.value)
+
+      if (!applicationType) {
+        await logFailure({ failureReason: 'Application type not found' })
+        return res.redirect(URLS.LOG_PRISONER_DETAILS)
+      }
+
+      const { photosForDisplay, photoDetails, hasNoPhotos } = getPhotosForDisplay(applicationData)
+      const excludedAppTypeIds = Object.values(EXCLUDED_LOG_METHOD_APP_TYPES)
+      const isExcluded = excludedAppTypeIds.includes(applicationData?.type.value)
+
+      await logSuccess()
+      return res.render(PATHS.LOG_APPLICATION.CONFIRM_DETAILS, {
+        applicationType: applicationData?.type.key,
+        applicationData: {
+          earlyDaysCentre: convertToTitleCase(applicationData?.earlyDaysCentre?.toString()),
+          prisoner: `${applicationData?.prisonerName} (${applicationData?.prisonerId})`,
+          request: applicationData?.additionalData,
+          group: applicationData?.group,
+          type: applicationData?.type,
+          department: applicationData?.department,
+        },
+        photos: photosForDisplay,
+        photoDetails,
+        loggingMethod: applicationData?.loggingMethod,
+        hasNoPhotos,
+        backLink:
+          applicationData?.loggingMethod === 'manual' || !applicationData?.loggingMethod
+            ? URLS.LOG_APPLICATION_DETAILS
+            : URLS.LOG_ADDITIONAL_PHOTO_DETAILS,
+        title: applicationType.name,
+        isGeneric: applicationType.genericType || applicationType.genericForm,
+        isExcluded,
+      })
+    } catch (error) {
+      await logFailure({ failureReason: error instanceof Error ? error.message : 'Unknown error' })
+      throw error
+    }
   })
 
   router.post(URLS.LOG_CONFIRM_DETAILS, async (req: Request, res: Response) => {

@@ -54,62 +54,60 @@ export default function prisonerRouter({
 
   router.get(`${URLS.LOG_PRISONER_DETAILS}/find/:prisonNumber`, async (req: Request, res: Response) => {
     const { user } = res.locals
-
-    await auditLogged(
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers(
       'SEARCH_PRISONER',
-      async (what, extraDetails = {}) => {
-        const successful = what.endsWith('_SUCCESS') && res.statusCode < 300
-        const auditWhat = what.endsWith('_SUCCESS') && !successful ? 'SEARCH_PRISONER_FAILURE' : what
-        await auditService.logAuditEvent({
-          what: auditWhat,
+      async (what, extraDetails = {}) =>
+        auditService.logAuditEvent({
+          what,
           who: user.username,
           correlationId: String(req.id),
           subjectId: String(req.params.prisonNumber || ''),
           subjectType: 'SEARCH_TERM',
-          details: {
-            queryParams: req.query,
-            ...(successful ? res.locals.auditDetails : {}),
-            ...extraDetails,
-            ...(!successful && res.statusCode >= 300 ? { failureReason: `HTTP ${res.statusCode}` } : {}),
-          },
-        })
-        if (what === 'SEARCH_PRISONER_SUCCESS' && successful) {
-          await auditService.logAuditEvent({
-            what: 'VIEW_PRISONER_SEARCH_RESULTS_SUCCESS',
-            who: user.username,
-            correlationId: String(req.id),
-            subjectId: String(req.params.prisonNumber),
-            subjectType: 'SEARCH_TERM',
-            details: res.locals.auditDetails,
-          })
-        }
-      },
-      async () => {
-        if (!req.params.prisonNumber) {
-          res.status(400).json({ error: 'Prison number is required' })
-          return
-        }
-
-        const prisoner = await prisonService.getPrisonerByPrisonNumber(
-          res.locals.user.username,
-          req.params.prisonNumber as string,
-        )
-
-        if (!prisoner) {
-          res.status(404).json({ error: 'Prisoner not found' })
-          return
-        }
-
-        res.locals.auditDetails = {
-          results: { resultCount: 1, returnedSubjectIds: [req.params.prisonNumber] },
-        }
-
-        res.json({
-          prisonerName: formatName(prisoner.firstName, prisoner.middleName, prisoner.lastName),
-          activeAlertCount: prisoner.activeAlertCount ?? 0,
-        })
-      },
+          details: { queryParams: req.query, ...extraDetails },
+        }),
     )
+
+    await logAttempt()
+    try {
+      if (!req.params.prisonNumber) {
+        await logFailure({ failureReason: 'Prison number is required' })
+        res.status(400).json({ error: 'Prison number is required' })
+        return
+      }
+
+      const prisoner = await prisonService.getPrisonerByPrisonNumber(
+        res.locals.user.username,
+        req.params.prisonNumber as string,
+      )
+
+      if (!prisoner) {
+        await logFailure({ failureReason: 'Prisoner not found' })
+        res.status(404).json({ error: 'Prisoner not found' })
+        return
+      }
+
+      res.locals.auditDetails = {
+        results: { resultCount: 1, returnedSubjectIds: [req.params.prisonNumber] },
+      }
+
+      await logSuccess(res.locals.auditDetails)
+      await auditService.logAuditEvent({
+        what: 'VIEW_PRISONER_SEARCH_RESULTS_SUCCESS',
+        who: user.username,
+        correlationId: String(req.id),
+        subjectId: String(req.params.prisonNumber),
+        subjectType: 'SEARCH_TERM',
+        details: res.locals.auditDetails,
+      })
+
+      res.json({
+        prisonerName: formatName(prisoner.firstName, prisoner.middleName, prisoner.lastName),
+        activeAlertCount: prisoner.activeAlertCount ?? 0,
+      })
+    } catch (error) {
+      await logFailure({ failureReason: error instanceof Error ? error.message : 'Unknown error' })
+      throw error
+    }
   })
 
   router.post(URLS.LOG_PRISONER_DETAILS, async (req: Request, res: Response) => {

@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express'
 import { OsPlacesAddressService } from '@ministryofjustice/hmpps-connect-dps-shared-items'
 
-import { auditEventLoggers, auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
+import { auditEventLoggers } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
 import { countries } from '../../constants/countries'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
@@ -40,83 +40,87 @@ export default function appDetailsRouter({
   router.get(URLS.LOG_APPLICATION_DETAILS, async (req: Request, res: Response) => {
     const { user } = res.locals
     const { applicationData, isLoggingForSamePrisoner } = req.session
-
-    await auditLogged(
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers(
       'VIEW_LOG_APPLICATION_DETAILS',
-      async (what, extraDetails = {}) => {
-        const successful = what.endsWith('_SUCCESS') && res.statusCode < 300
-        return auditService.logAuditEvent({
-          what: what.endsWith('_SUCCESS') && !successful ? 'VIEW_LOG_APPLICATION_DETAILS_FAILURE' : what,
+      async (what, extraDetails = {}) =>
+        auditService.logAuditEvent({
+          what,
           who: user.username,
           correlationId: String(req.id),
           subjectId: applicationData?.prisonerId || 'NONE',
           subjectType: applicationData?.prisonerId ? 'PRISONER_ID' : 'NOT_APPLICABLE',
-          details: {
-            ...extraDetails,
-            ...(!successful && res.statusCode >= 300 ? { failureReason: `HTTP ${res.statusCode}` } : {}),
-          },
-        })
-      },
-      async () => {
-        if (!applicationData?.department) {
-          return res.redirect(URLS.LOG_DEPARTMENT)
-        }
-
-        const groups = await managingPrisonerAppsService.getGroupsAndTypes(user)
-
-        const selectedGroup = groups.find(group => group.id.toString() === applicationData.group?.value)
-        if (!selectedGroup) {
-          return res.redirect(URLS.LOG_GROUP)
-        }
-
-        const selectedAppType = selectedGroup.appTypes.find(type => type.id.toString() === applicationData.type?.value)
-
-        if (!selectedAppType) {
-          return res.redirect(URLS.LOG_APPLICATION_TYPE)
-        }
-
-        const isGeneric = selectedAppType.genericType || selectedAppType.genericForm
-
-        const logDetails = getAppTypeLogDetailsData(selectedAppType.id, applicationData.additionalData || {}, isGeneric)
-
-        if (!logDetails) {
-          return res.redirect(URLS.LOG_APPLICATION_TYPE)
-        }
-
-        const templateFields = await getApplicationDetails(
-          logDetails,
-          personalRelationshipsService,
-          undefined,
-          applicationData.earlyDaysCentre,
-        )
-
-        let backLink = URLS.LOG_DEPARTMENT
-
-        const excludedAppTypeIds = Object.values(EXCLUDED_LOG_METHOD_APP_TYPES)
-        const isExcluded = excludedAppTypeIds.includes(selectedAppType.id.toString())
-        const isEnabledEstablishment =
-          'activeCaseLoadId' in user && isLogMethodEnabledEstablishment(user.activeCaseLoadId)
-
-        if (
-          config.featureFlags.logMethodPageEnabled &&
-          isEnabledEstablishment &&
-          !isExcluded &&
-          applicationData?.loggingMethod
-        ) {
-          backLink = URLS.LOG_METHOD
-        }
-
-        return res.render(PATHS.LOG_APPLICATION.APPLICATION_DETAILS, {
-          ...templateFields,
-          applicationType: applicationData.type,
-          title: 'Log details',
-          isLoggingForSamePrisoner,
-          isGeneric,
-          prisonerName: isLoggingForSamePrisoner ? applicationData.prisonerName : null,
-          backLink,
-        })
-      },
+          details: extraDetails,
+        }),
     )
+
+    await logAttempt()
+    try {
+      if (!applicationData?.department) {
+        await logFailure({ failureReason: 'Department not selected' })
+        return res.redirect(URLS.LOG_DEPARTMENT)
+      }
+
+      const groups = await managingPrisonerAppsService.getGroupsAndTypes(user)
+
+      const selectedGroup = groups.find(group => group.id.toString() === applicationData.group?.value)
+      if (!selectedGroup) {
+        await logFailure({ failureReason: 'Group not found' })
+        return res.redirect(URLS.LOG_GROUP)
+      }
+
+      const selectedAppType = selectedGroup.appTypes.find(type => type.id.toString() === applicationData.type?.value)
+
+      if (!selectedAppType) {
+        await logFailure({ failureReason: 'Application type not found' })
+        return res.redirect(URLS.LOG_APPLICATION_TYPE)
+      }
+
+      const isGeneric = selectedAppType.genericType || selectedAppType.genericForm
+
+      const logDetails = getAppTypeLogDetailsData(selectedAppType.id, applicationData.additionalData || {}, isGeneric)
+
+      if (!logDetails) {
+        await logFailure({ failureReason: 'Log details not found' })
+        return res.redirect(URLS.LOG_APPLICATION_TYPE)
+      }
+
+      const templateFields = await getApplicationDetails(
+        logDetails,
+        personalRelationshipsService,
+        undefined,
+        applicationData.earlyDaysCentre,
+      )
+
+      let backLink = URLS.LOG_DEPARTMENT
+
+      const excludedAppTypeIds = Object.values(EXCLUDED_LOG_METHOD_APP_TYPES)
+      const isExcluded = excludedAppTypeIds.includes(selectedAppType.id.toString())
+      const isEnabledEstablishment =
+        'activeCaseLoadId' in user && isLogMethodEnabledEstablishment(user.activeCaseLoadId)
+
+      if (
+        config.featureFlags.logMethodPageEnabled &&
+        isEnabledEstablishment &&
+        !isExcluded &&
+        applicationData?.loggingMethod
+      ) {
+        backLink = URLS.LOG_METHOD
+      }
+
+      await logSuccess()
+      return res.render(PATHS.LOG_APPLICATION.APPLICATION_DETAILS, {
+        ...templateFields,
+        applicationType: applicationData.type,
+        title: 'Log details',
+        isLoggingForSamePrisoner,
+        isGeneric,
+        prisonerName: isLoggingForSamePrisoner ? applicationData.prisonerName : null,
+        backLink,
+      })
+    } catch (error) {
+      await logFailure({ failureReason: error instanceof Error ? error.message : 'Unknown error' })
+      throw error
+    }
   })
 
   router.post(URLS.LOG_APPLICATION_DETAILS, async (req, res) => {

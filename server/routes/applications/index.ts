@@ -1,7 +1,7 @@
 import { OsPlacesAddressService } from '@ministryofjustice/hmpps-connect-dps-shared-items'
 import { Request, Response, Router } from 'express'
 
-import { auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
+import { auditEventLoggers, auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
 import { isLogNewApplicationDisabledEstablishment } from '../../constants/enabledEstablishments'
 import AuditService from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
@@ -118,50 +118,45 @@ export default function applicationsRoutes({
   router.get('/api/addresses/find/:query', async (req: Request, res: Response) => {
     const { user } = res.locals
     const { query } = req.params
-
-    await auditLogged(
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers(
       'SEARCH_ADDRESS',
-      async (what, extraDetails = {}) => {
-        const successful = what.endsWith('_SUCCESS') && res.statusCode < 300
-        return auditService.logAuditEvent({
-          what: what.endsWith('_SUCCESS') && !successful ? 'SEARCH_ADDRESS_FAILURE' : what,
+      async (what, extraDetails = {}) =>
+        auditService.logAuditEvent({
+          what,
           who: user.username,
           correlationId: String(req.id),
           subjectId: String(query || ''),
           subjectType: 'SEARCH_TERM',
-          details: {
-            queryParams: req.query,
-            ...(successful ? res.locals.auditDetails : {}),
-            ...extraDetails,
-            ...(!successful && res.statusCode >= 300 ? { failureReason: `HTTP ${res.statusCode}` } : {}),
-          },
-        })
-      },
-      async () => {
-        try {
-          if (!query) {
-            res.status(400).json({ status: 400, error: 'Query parameter is required' })
-            return
-          }
-
-          const results = await osPlacesAddressService.getAddressesMatchingQuery(query as string)
-
-          res.locals.auditDetails = {
-            results: {
-              resultCount: results.length,
-              returnedSubjectIds: results
-                .filter(address => address.uprn !== undefined)
-                .map(address => String(address.uprn)),
-            },
-          }
-
-          res.json({ status: 200, results })
-        } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-          res.status(500).json({ status: 500, error: errorMessage })
-        }
-      },
+          details: { queryParams: req.query, ...extraDetails },
+        }),
     )
+
+    await logAttempt()
+    try {
+      if (!query) {
+        await logFailure({ failureReason: 'Query parameter is required' })
+        res.status(400).json({ status: 400, error: 'Query parameter is required' })
+        return
+      }
+
+      const results = await osPlacesAddressService.getAddressesMatchingQuery(query as string)
+
+      res.locals.auditDetails = {
+        results: {
+          resultCount: results.length,
+          returnedSubjectIds: results
+            .filter(address => address.uprn !== undefined)
+            .map(address => String(address.uprn)),
+        },
+      }
+
+      await logSuccess(res.locals.auditDetails)
+      res.json({ status: 200, results })
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      await logFailure({ failureReason: errorMessage })
+      res.status(500).json({ status: 500, error: errorMessage })
+    }
   })
 
   return router

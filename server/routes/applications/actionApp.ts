@@ -1,7 +1,7 @@
 import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
 
-import { auditEventLoggers, auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
+import { auditEventLoggers } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
 import { AppResponsePayload } from '../../@types/managingAppsApi'
 
 import { isOpenStatus } from '../../constants/applicationStatus'
@@ -35,64 +35,65 @@ export default function actionAppRouter({
   router.get('/applications/:prisonerId/:applicationId/reply', async (req: Request, res: Response) => {
     const { prisonerId, applicationId } = req.params
     const { user } = res.locals
-
-    await auditLogged(
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers(
       'VIEW_ACTION_AND_REPLY',
-      async (what, extraDetails = {}) => {
-        const successful = what.endsWith('_SUCCESS') && res.statusCode < 300
-        return auditService.logAuditEvent({
-          what: what.endsWith('_SUCCESS') && !successful ? 'VIEW_ACTION_AND_REPLY_FAILURE' : what,
+      async (what, extraDetails = {}) =>
+        auditService.logAuditEvent({
+          what,
           who: user.username,
           correlationId: String(req.id),
           subjectId: String(prisonerId),
           subjectType: 'PRISONER_ID',
-          details: {
-            entityId: applicationId,
-            applicationId,
-            ...extraDetails,
-            ...(!successful && res.statusCode >= 300 ? { failureReason: `HTTP ${res.statusCode}` } : {}),
-          },
-        })
-      },
-      async () => {
-        const validApplication = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
-        if (!validApplication) return
-        const { application, applicationType } = validApplication
-
-        const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
-
-        const isAppOpen = isOpenStatus(application.status)
-        const [request] = application.requests ?? []
-
-        let formattedResponse
-
-        if (!isAppOpen && request?.responseId) {
-          const { decision, createdDate, reason } = await managingPrisonerAppsService.getResponse(
-            `${prisonerId}`,
-            `${applicationId}`,
-            request.responseId,
-            user,
-          )
-
-          formattedResponse = {
-            decision: convertToTitleCase(decision),
-            actionedDate: format(createdDate, 'd MMMM yyyy'),
-            reason: reason?.trim() || 'None',
-            cellLocation: application.requestedBy.cellLocation,
-          }
-        }
-
-        renderActionAndReplyPage(res, {
-          application,
-          applicationType,
-          response: formattedResponse,
-          isForwardable: departments?.length > 1,
-          appLoggedDate: format(new Date(application.createdDate), 'd MMMM yyyy'),
-          todayDate: format(new Date(), 'd MMMM yyyy'),
-          prisonerName: convertToTitleCase(`${application.requestedBy.lastName}, ${application.requestedBy.firstName}`),
-        })
-      },
+          details: { entityId: applicationId, applicationId, ...extraDetails },
+        }),
     )
+
+    await logAttempt()
+    try {
+      const validApplication = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
+      if (!validApplication) {
+        await logFailure({ failureReason: 'Application not valid' })
+        return
+      }
+      const { application, applicationType } = validApplication
+
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
+
+      const isAppOpen = isOpenStatus(application.status)
+      const [request] = application.requests ?? []
+
+      let formattedResponse
+
+      if (!isAppOpen && request?.responseId) {
+        const { decision, createdDate, reason } = await managingPrisonerAppsService.getResponse(
+          `${prisonerId}`,
+          `${applicationId}`,
+          request.responseId,
+          user,
+        )
+
+        formattedResponse = {
+          decision: convertToTitleCase(decision),
+          actionedDate: format(createdDate, 'd MMMM yyyy'),
+          reason: reason?.trim() || 'None',
+          cellLocation: application.requestedBy.cellLocation,
+        }
+      }
+
+      await logSuccess()
+      renderActionAndReplyPage(res, {
+        application,
+        applicationType,
+        response: formattedResponse,
+        isForwardable: departments?.length > 1,
+        appLoggedDate: format(new Date(application.createdDate), 'd MMMM yyyy'),
+        todayDate: format(new Date(), 'd MMMM yyyy'),
+        prisonerName: convertToTitleCase(`${application.requestedBy.lastName}, ${application.requestedBy.firstName}`),
+      })
+    } catch (error) {
+      await logFailure({ failureReason: error instanceof Error ? error.message : 'Unknown error' })
+      throw error
+    }
   })
 
   router.post('/applications/:prisonerId/:applicationId/reply', async (req: Request, res: Response) => {

@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express'
 
-import { auditEventLoggers, auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
+import { auditEventLoggers } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
@@ -19,39 +19,40 @@ export default function logMethodRouter({ auditService }: { auditService: AuditS
   router.get(URLS.LOG_METHOD, async (req: Request, res: Response) => {
     const { applicationData, isLoggingForSamePrisoner } = req.session
     const { user } = res.locals
-
-    await auditLogged(
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers(
       'VIEW_LOG_APPLICATION_METHOD',
-      async (what, extraDetails = {}) => {
-        const successful = what.endsWith('_SUCCESS') && res.statusCode < 300
-        return auditService.logAuditEvent({
-          what: what.endsWith('_SUCCESS') && !successful ? 'VIEW_LOG_APPLICATION_METHOD_FAILURE' : what,
+      async (what, extraDetails = {}) =>
+        auditService.logAuditEvent({
+          what,
           who: user.username,
           correlationId: String(req.id),
           subjectId: applicationData?.prisonerId || 'NONE',
           subjectType: applicationData?.prisonerId ? 'PRISONER_ID' : 'NOT_APPLICABLE',
-          details: {
-            ...extraDetails,
-            ...(!successful && res.statusCode >= 300 ? { failureReason: `HTTP ${res.statusCode}` } : {}),
-          },
-        })
-      },
-      async () => {
-        if (!applicationData?.department) {
-          return res.redirect(URLS.LOG_DEPARTMENT)
-        }
-
-        return res.render(PATHS.LOG_APPLICATION.SELECT_METHOD, {
-          title: 'Select method to log this application',
-          errorMessage: null,
-          errorSummary: null,
-          applicationType: applicationData.type.name,
-          isLoggingForSamePrisoner,
-          selectedLogMethod: applicationData?.loggingMethod || null,
-          prisonerName: isLoggingForSamePrisoner ? req.session.applicationData.prisonerName : null,
-        })
-      },
+          details: extraDetails,
+        }),
     )
+
+    await logAttempt()
+    try {
+      if (!applicationData?.department) {
+        await logFailure({ failureReason: 'Department not selected' })
+        return res.redirect(URLS.LOG_DEPARTMENT)
+      }
+
+      await logSuccess()
+      return res.render(PATHS.LOG_APPLICATION.SELECT_METHOD, {
+        title: 'Select method to log this application',
+        errorMessage: null,
+        errorSummary: null,
+        applicationType: applicationData.type.name,
+        isLoggingForSamePrisoner,
+        selectedLogMethod: applicationData?.loggingMethod || null,
+        prisonerName: isLoggingForSamePrisoner ? req.session.applicationData.prisonerName : null,
+      })
+    } catch (error) {
+      await logFailure({ failureReason: error instanceof Error ? error.message : 'Unknown error' })
+      throw error
+    }
   })
 
   router.post(URLS.LOG_METHOD, async (req: Request, res: Response) => {

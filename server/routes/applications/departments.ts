@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express'
 
-import { auditEventLoggers, auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
+import { auditEventLoggers } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 import { EXCLUDED_LOG_METHOD_APP_TYPES } from '../../constants/excludedApplicationTypes'
@@ -35,44 +35,46 @@ export default function departmentsRouter({
   router.get(URLS.LOG_DEPARTMENT, async (req: Request, res: Response) => {
     const { user } = res.locals
     const { applicationData, isLoggingForSamePrisoner } = req.session
-
-    await auditLogged(
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers(
       'VIEW_LOG_APPLICATION_DEPARTMENT',
-      async (what, extraDetails = {}) => {
-        const successful = what.endsWith('_SUCCESS') && res.statusCode < 300
-        return auditService.logAuditEvent({
-          what: what.endsWith('_SUCCESS') && !successful ? 'VIEW_LOG_APPLICATION_DEPARTMENT_FAILURE' : what,
+      async (what, extraDetails = {}) =>
+        auditService.logAuditEvent({
+          what,
           who: user.username,
           correlationId: String(req.id),
           subjectId: applicationData?.prisonerId || 'NONE',
           subjectType: applicationData?.prisonerId ? 'PRISONER_ID' : 'NOT_APPLICABLE',
-          details: {
-            ...extraDetails,
-            ...(!successful && res.statusCode >= 300 ? { failureReason: `HTTP ${res.statusCode}` } : {}),
-          },
-        })
-      },
-      async () => {
-        if (!applicationData?.type) {
-          return res.redirect(URLS.LOG_APPLICATION_TYPE)
-        }
-
-        const selectedDepartment = applicationData?.department || null
-        const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.value)
-        if (!departments) {
-          return res.redirect(URLS.LOG_APPLICATION_TYPE)
-        }
-
-        return res.render(PATHS.LOG_APPLICATION.SELECT_DEPARTMENT, {
-          title: 'Select department',
-          errorMessage: null,
-          applicationType: applicationData.type.name,
-          departmentOptions: buildDepartmentOptions(departments, selectedDepartment),
-          isLoggingForSamePrisoner,
-          prisonerName: isLoggingForSamePrisoner ? req.session.applicationData.prisonerName : null,
-        })
-      },
+          details: extraDetails,
+        }),
     )
+
+    await logAttempt()
+    try {
+      if (!applicationData?.type) {
+        await logFailure({ failureReason: 'Application type not selected' })
+        return res.redirect(URLS.LOG_APPLICATION_TYPE)
+      }
+
+      const selectedDepartment = applicationData?.department || null
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationData.type.value)
+      if (!departments) {
+        await logFailure({ failureReason: 'Departments not found' })
+        return res.redirect(URLS.LOG_APPLICATION_TYPE)
+      }
+
+      await logSuccess()
+      return res.render(PATHS.LOG_APPLICATION.SELECT_DEPARTMENT, {
+        title: 'Select department',
+        errorMessage: null,
+        applicationType: applicationData.type.name,
+        departmentOptions: buildDepartmentOptions(departments, selectedDepartment),
+        isLoggingForSamePrisoner,
+        prisonerName: isLoggingForSamePrisoner ? req.session.applicationData.prisonerName : null,
+      })
+    } catch (error) {
+      await logFailure({ failureReason: error instanceof Error ? error.message : 'Unknown error' })
+      throw error
+    }
   })
 
   router.post(URLS.LOG_DEPARTMENT, async (req: Request, res: Response) => {

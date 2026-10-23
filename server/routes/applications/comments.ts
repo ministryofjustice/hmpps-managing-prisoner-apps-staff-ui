@@ -1,7 +1,7 @@
 import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
 
-import { auditEventLoggers, auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
+import { auditEventLoggers } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 import { isOpenStatus } from '../../constants/applicationStatus'
@@ -35,43 +35,44 @@ export default function commentsRouter({
   router.get('/applications/:prisonerId/:applicationId/comments', async (req: Request, res: Response) => {
     const { prisonerId, applicationId } = req.params
     const { user } = res.locals
-
-    await auditLogged(
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers(
       'VIEW_APPLICATION_COMMENTS',
-      async (what, extraDetails = {}) => {
-        const successful = what.endsWith('_SUCCESS') && res.statusCode < 300
-        return auditService.logAuditEvent({
-          what: what.endsWith('_SUCCESS') && !successful ? 'VIEW_APPLICATION_COMMENTS_FAILURE' : what,
+      async (what, extraDetails = {}) =>
+        auditService.logAuditEvent({
+          what,
           who: user.username,
           correlationId: String(req.id),
           subjectId: String(prisonerId),
           subjectType: 'PRISONER_ID',
-          details: {
-            entityId: applicationId,
-            applicationId,
-            ...extraDetails,
-            ...(!successful && res.statusCode >= 300 ? { failureReason: `HTTP ${res.statusCode}` } : {}),
-          },
-        })
-      },
-      async () => {
-        const validApplication = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
-        if (!validApplication) return
-        const { application, applicationType } = validApplication
-
-        const comments = await managingPrisonerAppsService.getComments(`${prisonerId}`, application.id, user)
-        const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
-
-        res.render(PATHS.APPLICATIONS.COMMENTS, {
-          application,
-          applicationType,
-          comments: formatComments(comments?.contents),
-          title: 'Comments',
-          isClosed: !isOpenStatus(application.status),
-          isForwardable: departments?.length > 1,
-        })
-      },
+          details: { entityId: applicationId, applicationId, ...extraDetails },
+        }),
     )
+
+    await logAttempt()
+    try {
+      const validApplication = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
+      if (!validApplication) {
+        await logFailure({ failureReason: 'Application not valid' })
+        return
+      }
+      const { application, applicationType } = validApplication
+
+      const comments = await managingPrisonerAppsService.getComments(`${prisonerId}`, application.id, user)
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
+
+      await logSuccess()
+      res.render(PATHS.APPLICATIONS.COMMENTS, {
+        application,
+        applicationType,
+        comments: formatComments(comments?.contents),
+        title: 'Comments',
+        isClosed: !isOpenStatus(application.status),
+        isForwardable: departments?.length > 1,
+      })
+    } catch (error) {
+      await logFailure({ failureReason: error instanceof Error ? error.message : 'Unknown error' })
+      throw error
+    }
   })
 
   router.post('/applications/:prisonerId/:applicationId/comments', async (req: Request, res: Response) => {

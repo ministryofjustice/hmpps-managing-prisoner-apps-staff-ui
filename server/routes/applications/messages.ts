@@ -1,7 +1,7 @@
 import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
 
-import { auditEventLoggers, auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
+import { auditEventLoggers } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 import { isOpenStatus } from '../../constants/applicationStatus'
@@ -39,44 +39,43 @@ export default function messagesRouter({
   router.get('/applications/:prisonerId/:applicationId/messages', async (req, res) => {
     const { prisonerId, applicationId } = req.params
     const { user } = res.locals
-
-    await auditLogged(
-      'VIEW_MESSAGES',
-      async (what, extraDetails = {}) => {
-        const successful = what.endsWith('_SUCCESS') && res.statusCode < 300
-        return auditService.logAuditEvent({
-          what: what.endsWith('_SUCCESS') && !successful ? 'VIEW_MESSAGES_FAILURE' : what,
-          who: user.username,
-          correlationId: String(req.id),
-          subjectId: String(prisonerId),
-          subjectType: 'PRISONER_ID',
-          details: {
-            entityId: applicationId,
-            applicationId,
-            ...extraDetails,
-            ...(!successful && res.statusCode >= 300 ? { failureReason: `HTTP ${res.statusCode}` } : {}),
-          },
-        })
-      },
-      async () => {
-        const validApplication = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
-        if (!validApplication) return
-        const { application, applicationType } = validApplication
-
-        const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
-
-        const messages = await managingPrisonerAppsService.getMessages(`${prisonerId}`, application.id, user)
-
-        res.render(PATHS.APPLICATIONS.MESSAGES, {
-          application,
-          applicationType,
-          comments: formatMessages(messages?.contents),
-          title: 'Prisoner messages',
-          isClosed: !isOpenStatus(application.status),
-          isForwardable: departments?.length > 1,
-        })
-      },
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers('VIEW_MESSAGES', async (what, extraDetails = {}) =>
+      auditService.logAuditEvent({
+        what,
+        who: user.username,
+        correlationId: String(req.id),
+        subjectId: String(prisonerId),
+        subjectType: 'PRISONER_ID',
+        details: { entityId: applicationId, applicationId, ...extraDetails },
+      }),
     )
+
+    await logAttempt()
+    try {
+      const validApplication = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
+      if (!validApplication) {
+        await logFailure({ failureReason: 'Application not valid' })
+        return
+      }
+      const { application, applicationType } = validApplication
+
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
+
+      const messages = await managingPrisonerAppsService.getMessages(`${prisonerId}`, application.id, user)
+
+      await logSuccess()
+      res.render(PATHS.APPLICATIONS.MESSAGES, {
+        application,
+        applicationType,
+        comments: formatMessages(messages?.contents),
+        title: 'Prisoner messages',
+        isClosed: !isOpenStatus(application.status),
+        isForwardable: departments?.length > 1,
+      })
+    } catch (error) {
+      await logFailure({ failureReason: error instanceof Error ? error.message : 'Unknown error' })
+      throw error
+    }
   })
 
   router.post('/applications/:prisonerId/:applicationId/messages', async (req: Request, res: Response) => {

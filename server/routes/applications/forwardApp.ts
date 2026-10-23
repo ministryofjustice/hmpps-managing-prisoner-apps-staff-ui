@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express'
 
-import { auditEventLoggers, auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
+import { auditEventLoggers } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 
@@ -25,49 +25,50 @@ export default function forwardAppRouter({
   router.get(`${URLS.APPLICATIONS}/:prisonerId/:applicationId/forward`, async (req: Request, res: Response) => {
     const { prisonerId, applicationId } = req.params
     const { user } = res.locals
-
-    await auditLogged(
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers(
       'VIEW_FORWARD_APPLICATION',
-      async (what, extraDetails = {}) => {
-        const successful = what.endsWith('_SUCCESS') && res.statusCode < 300
-        return auditService.logAuditEvent({
-          what: what.endsWith('_SUCCESS') && !successful ? 'VIEW_FORWARD_APPLICATION_FAILURE' : what,
+      async (what, extraDetails = {}) =>
+        auditService.logAuditEvent({
+          what,
           who: user.username,
           correlationId: String(req.id),
           subjectId: String(prisonerId),
           subjectType: 'PRISONER_ID',
-          details: {
-            entityId: applicationId,
-            applicationId,
-            ...extraDetails,
-            ...(!successful && res.statusCode >= 300 ? { failureReason: `HTTP ${res.statusCode}` } : {}),
-          },
-        })
-      },
-      async () => {
-        const validApplication = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
-        if (!validApplication) return
-        const { application, applicationType } = validApplication
-
-        const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
-
-        const filteredDepartments = (departments ?? [])
-          .filter(dept => dept.id !== application.assignedGroup.id)
-          .map(dept => ({
-            value: dept.id,
-            text: dept.name,
-          }))
-
-        res.render(PATHS.APPLICATIONS.FORWARD, {
-          application,
-          applicationType,
-          departments: filteredDepartments,
-          textareaValue: '',
-          title: PAGE_TITLE,
-          errors: null,
-        })
-      },
+          details: { entityId: applicationId, applicationId, ...extraDetails },
+        }),
     )
+
+    await logAttempt()
+    try {
+      const validApplication = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
+      if (!validApplication) {
+        await logFailure({ failureReason: 'Application not valid' })
+        return
+      }
+      const { application, applicationType } = validApplication
+
+      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
+
+      const filteredDepartments = (departments ?? [])
+        .filter(dept => dept.id !== application.assignedGroup.id)
+        .map(dept => ({
+          value: dept.id,
+          text: dept.name,
+        }))
+
+      await logSuccess()
+      res.render(PATHS.APPLICATIONS.FORWARD, {
+        application,
+        applicationType,
+        departments: filteredDepartments,
+        textareaValue: '',
+        title: PAGE_TITLE,
+        errors: null,
+      })
+    } catch (error) {
+      await logFailure({ failureReason: error instanceof Error ? error.message : 'Unknown error' })
+      throw error
+    }
   })
 
   router.post(`${URLS.APPLICATIONS}/:prisonerId/:applicationId/forward`, async (req: Request, res: Response) => {
