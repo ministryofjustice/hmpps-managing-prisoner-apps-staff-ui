@@ -1,5 +1,7 @@
 import { Request, Response, Router } from 'express'
-import AuditService, { Page } from '../../services/auditService'
+
+import { auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
+import AuditService from '../../services/auditService'
 
 import { URLS } from '../../constants/urls'
 
@@ -8,16 +10,27 @@ export default function cancelAppRouter({ auditService }: { auditService: AuditS
 
   router.get(URLS.LOG_CANCEL_APPLICATION, async (req: Request, res: Response) => {
     const { user } = res.locals
-    delete req.session.applicationData
-    delete req.session.prisonerContext
-    delete req.session.isLoggingForSamePrisoner
+    const prisonerId = req.session.applicationData?.prisonerId
 
-    await auditService.logPageView(Page.LOG_CANCEL_APPLICATION_PAGE, {
-      who: user.username,
-      correlationId: req.id,
-    })
+    await auditLogged(
+      'DELETE_LOG_APPLICATION_DRAFT',
+      async (what, details = {}) =>
+        auditService.logAuditEvent({
+          what,
+          who: user.username,
+          correlationId: String(req.id),
+          subjectId: String(prisonerId || 'NONE'),
+          subjectType: prisonerId ? 'PRISONER_ID' : 'NOT_APPLICABLE',
+          details,
+        }),
+      async () => {
+        delete req.session.applicationData
+        delete req.session.prisonerContext
+        delete req.session.isLoggingForSamePrisoner
 
-    return res.redirect('/')
+        res.redirect('/')
+      },
+    )
   })
 
   return router

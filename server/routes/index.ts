@@ -26,7 +26,7 @@ export default function routes({
       osPlacesAddressService,
     }),
   )
-  router.use('/', staticPagesRoutes())
+  router.use('/', staticPagesRoutes(auditService))
 
   return router
 }
