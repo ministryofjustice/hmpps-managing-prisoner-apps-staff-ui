@@ -36,7 +36,7 @@ test.describe('Applications Page', () => {
     await indexPage.assertLogNewApplicationCard()
   })
 
-  test('should not display the Log a new application card', async ({ page }) => {
+  test('should not allow a Ranby caseload user to create and log new applications', async ({ page }) => {
     if (isWiremock) {
       await resetStubs()
       await auth.stubSignIn()
@@ -51,6 +51,7 @@ test.describe('Applications Page', () => {
 
     const indexPage = new IndexPage(page)
     await expect(indexPage.logNewApplicationCard()).not.toBeVisible()
+    await expect(page.getByRole('link', { name: 'Log a new application' })).toHaveCount(0)
     await indexPage.assertViewAllApplicationsCard()
   })
 
