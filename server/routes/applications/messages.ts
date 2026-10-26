@@ -1,11 +1,12 @@
 import { format } from 'date-fns'
 import { Request, Response, Router } from 'express'
 
+import { auditEventLoggers } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
 import { PATHS } from '../../constants/paths'
 import { URLS } from '../../constants/urls'
 import { isOpenStatus } from '../../constants/applicationStatus'
 
-import AuditService, { Page } from '../../services/auditService'
+import AuditService from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 
 import getValidApplicationOrRedirect from '../../utils/getValidApplicationOrRedirect'
@@ -14,7 +15,6 @@ import { getAppType } from '../../helpers/application/getAppType'
 import { formatMessagesCreatedByName } from '../../utils/formatters/formatName'
 import { validateTextField } from '../validate/validateTextField'
 import { Comment } from '../../@types/managingAppsApi'
-import { doWithAuditLogging } from '../../utils/audit'
 
 const formatMessages = (comments: Comment[] = []) =>
   comments.map(({ message, createdBy, createdDate, visibility, createdByType }) => ({
@@ -36,34 +36,34 @@ export default function messagesRouter({
 }): Router {
   const router = Router()
 
-  router.get('/applications/:prisonerId/:applicationId/messages', async (req, res, next) => {
+  router.get('/applications/:prisonerId/:applicationId/messages', async (req, res) => {
     const { prisonerId, applicationId } = req.params
     const { user } = res.locals
-
-    const auditDetails = {
-      auditPrefix: 'VIEW_MESSAGES',
-      req,
-      auditService,
-      coreAuditEvent: {
-        details: { applicationId },
-        subjectId: prisonerId as string,
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers('VIEW_MESSAGES', async (what, extraDetails = {}) =>
+      auditService.logAuditEvent({
+        what,
+        who: user.username,
+        correlationId: String(req.id),
+        subjectId: String(prisonerId),
         subjectType: 'PRISONER_ID',
-      },
-    }
+        details: { entityId: applicationId, applicationId, ...extraDetails },
+      }),
+    )
 
-    await doWithAuditLogging(auditDetails, async () => {
-      const { application, applicationType } = await getValidApplicationOrRedirect(
-        req,
-        res,
-        auditService,
-        managingPrisonerAppsService,
-        Page.MESSAGES_PAGE,
-      )
+    await logAttempt()
+    try {
+      const validApplication = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
+      if (!validApplication) {
+        await logFailure({ failureReason: 'Application not valid' })
+        return
+      }
+      const { application, applicationType } = validApplication
 
       const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
 
       const messages = await managingPrisonerAppsService.getMessages(`${prisonerId}`, application.id, user)
 
+      await logSuccess()
       res.render(PATHS.APPLICATIONS.MESSAGES, {
         application,
         applicationType,
@@ -72,51 +72,76 @@ export default function messagesRouter({
         isClosed: !isOpenStatus(application.status),
         isForwardable: departments?.length > 1,
       })
-    })
+    } catch (error) {
+      await logFailure({ failureReason: error instanceof Error ? error.message : 'Unknown error' })
+      throw error
+    }
   })
 
   router.post('/applications/:prisonerId/:applicationId/messages', async (req: Request, res: Response) => {
     const { prisonerId, applicationId } = req.params
     const { comment } = req.body
     const { user } = res.locals
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers(
+      'CREATE_APPLICATION_MESSAGE',
+      async (what, extraDetails = {}) =>
+        auditService.logAuditEvent({
+          what,
+          who: user.username,
+          correlationId: String(req.id),
+          subjectId: String(prisonerId),
+          subjectType: 'PRISONER_ID',
+          details: { entityId: applicationId, applicationId, changes: [{ field: 'message' }], ...extraDetails },
+        }),
+    )
 
-    const application = await managingPrisonerAppsService.getPrisonerApp(`${prisonerId}`, `${applicationId}`, user)
+    await logAttempt()
+    try {
+      const application = await managingPrisonerAppsService.getPrisonerApp(`${prisonerId}`, `${applicationId}`, user)
 
-    if (!application) {
-      return res.redirect(URLS.APPLICATIONS)
-    }
+      if (!application) {
+        await logFailure({ failureReason: 'Application not found' })
+        return res.redirect(URLS.APPLICATIONS)
+      }
 
-    if (!isOpenStatus(application.status)) {
+      if (!isOpenStatus(application.status)) {
+        await logFailure({ failureReason: 'Application is closed' })
+        return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/messages`)
+      }
+
+      const errors = validateTextField({ fieldValue: comment, fieldName: 'Messages', isRequired: true })
+
+      if (Object.keys(errors).length > 0) {
+        await logFailure({ failureReason: 'Validation failed' })
+        const messages = await managingPrisonerAppsService.getMessages(`${prisonerId}`, application.id, user)
+
+        const applicationType = await getAppType(
+          managingPrisonerAppsService,
+          user,
+          application.applicationType.id.toString(),
+        )
+        const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
+
+        return res.render(PATHS.APPLICATIONS.MESSAGES, {
+          application,
+          applicationType,
+          comment,
+          comments: formatMessages(messages?.contents),
+          errors,
+          title: 'Prisoner messages',
+          isClosed: false,
+          isForwardable: departments?.length > 1,
+        })
+      }
+
+      await managingPrisonerAppsService.addMessage(`${prisonerId}`, `${applicationId}`, comment, user)
+
+      await logSuccess()
       return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/messages`)
+    } catch (error) {
+      await logFailure({ failureReason: error instanceof Error ? error.message : 'Unknown error' })
+      throw error
     }
-
-    const errors = validateTextField({ fieldValue: comment, fieldName: 'Messages', isRequired: true })
-
-    if (Object.keys(errors).length > 0) {
-      const messages = await managingPrisonerAppsService.getMessages(`${prisonerId}`, application.id, user)
-
-      const applicationType = await getAppType(
-        managingPrisonerAppsService,
-        user,
-        application.applicationType.id.toString(),
-      )
-      const departments = await managingPrisonerAppsService.getDepartments(user, applicationType.id.toString())
-
-      return res.render(PATHS.APPLICATIONS.MESSAGES, {
-        application,
-        applicationType,
-        comment,
-        comments: formatMessages(messages?.contents),
-        errors,
-        title: 'Prisoner messages',
-        isClosed: false,
-        isForwardable: departments?.length > 1,
-      })
-    }
-
-    await managingPrisonerAppsService.addMessage(`${prisonerId}`, `${applicationId}`, comment, user)
-
-    return res.redirect(`${URLS.APPLICATIONS}/${prisonerId}/${applicationId}/messages`)
   })
 
   return router

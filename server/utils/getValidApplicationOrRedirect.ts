@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import { getAppType } from '../helpers/application/getAppType'
-import AuditService, { Page } from '../services/auditService'
 import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
 import DocumentManagementService from '../services/documentManagementService'
 import { Document } from '../@types/documentManagementApi'
@@ -8,9 +7,7 @@ import { Document } from '../@types/documentManagementApi'
 export default async function getValidApplicationOrRedirect(
   req: Request,
   res: Response,
-  auditService: AuditService,
   managingPrisonerAppsService: ManagingPrisonerAppsService,
-  auditPage?: Page,
   documentManagementService?: DocumentManagementService,
 ) {
   const { prisonerId, applicationId } = req.params
@@ -42,13 +39,6 @@ export default async function getValidApplicationOrRedirect(
     documents = (await Promise.allSettled(documentPromises))
       .filter((result): result is PromiseFulfilledResult<Document> => result.status === 'fulfilled')
       .map(result => result.value)
-  }
-
-  if (auditPage) {
-    await auditService.logPageView(auditPage, {
-      who: user.username,
-      correlationId: req.id,
-    })
   }
 
   return { application, applicationType, documents }

@@ -1,8 +1,9 @@
 import { OsPlacesAddressService } from '@ministryofjustice/hmpps-connect-dps-shared-items'
 import { Request, Response, Router } from 'express'
 
+import { auditEventLoggers, auditLogged } from '@ministryofjustice/hmpps-prisoner-facing-services-utilities'
 import { isLogNewApplicationDisabledEstablishment } from '../../constants/enabledEstablishments'
-import AuditService, { Page } from '../../services/auditService'
+import AuditService from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PersonalRelationshipsService from '../../services/personalRelationshipsService'
 import PrisonService from '../../services/prisonService'
@@ -52,19 +53,29 @@ export default function applicationsRoutes({
 
   router.get('/', async (req: Request, res: Response) => {
     const { user } = res.locals
-    await auditService.logPageView(Page.APPLICATIONS_PAGE, {
-      who: user.username,
-      correlationId: req.id,
-    })
 
-    res.render('pages/applications', {
-      title: 'Applications',
-      canLogNewApplication:
-        user.authSource !== 'nomis' || !isLogNewApplicationDisabledEstablishment(user.activeCaseLoadId),
-    })
+    await auditLogged(
+      'VIEW_APPLICATIONS_HOME',
+      async (what, details = {}) =>
+        auditService.logAuditEvent({
+          what,
+          who: user.username,
+          correlationId: String(req.id),
+          subjectId: 'NONE',
+          subjectType: 'NOT_APPLICABLE',
+          details,
+        }),
+      async () => {
+        res.render('pages/applications', {
+          title: 'Applications',
+          canLogNewApplication:
+            user.authSource !== 'nomis' || !isLogNewApplicationDisabledEstablishment(user.activeCaseLoadId),
+        })
+      },
+    )
   })
 
-  router.use(viewDocumentRouter({ documentManagementService }))
+  router.use(viewDocumentRouter({ auditService, documentManagementService }))
 
   router.use('/applications/:prisonerId/:applicationId', setListQueryLocals)
 
@@ -105,18 +116,45 @@ export default function applicationsRoutes({
   router.use(removePhotoRouter({ auditService }))
   router.use(cancelAppRouter({ auditService }))
   router.get('/api/addresses/find/:query', async (req: Request, res: Response) => {
+    const { user } = res.locals
+    const { query } = req.params
+    const { logAttempt, logSuccess, logFailure } = auditEventLoggers(
+      'SEARCH_ADDRESS',
+      async (what, extraDetails = {}) =>
+        auditService.logAuditEvent({
+          what,
+          who: user.username,
+          correlationId: String(req.id),
+          subjectId: String(query || ''),
+          subjectType: 'SEARCH_TERM',
+          details: { queryParams: req.query, ...extraDetails },
+        }),
+    )
+
+    await logAttempt()
     try {
-      const { query } = req.params
       if (!query) {
+        await logFailure({ failureReason: 'Query parameter is required' })
         res.status(400).json({ status: 400, error: 'Query parameter is required' })
         return
       }
 
       const results = await osPlacesAddressService.getAddressesMatchingQuery(query as string)
 
+      res.locals.auditDetails = {
+        results: {
+          resultCount: results.length,
+          returnedSubjectIds: results
+            .filter(address => address.uprn !== undefined)
+            .map(address => String(address.uprn)),
+        },
+      }
+
+      await logSuccess(res.locals.auditDetails)
       res.json({ status: 200, results })
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      await logFailure({ failureReason: errorMessage })
       res.status(500).json({ status: 500, error: errorMessage })
     }
   })

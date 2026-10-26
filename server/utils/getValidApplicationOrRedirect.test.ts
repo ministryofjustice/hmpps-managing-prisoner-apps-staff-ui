@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import { getAppType } from '../helpers/application/getAppType'
-import AuditService, { Page } from '../services/auditService'
 import ManagingPrisonerAppsService from '../services/managingPrisonerAppsService'
 import { app, appTypes } from '../testData'
 import getValidApplicationOrRedirect from './getValidApplicationOrRedirect'
@@ -16,7 +15,6 @@ const mockedGetAppType = jest.mocked(getAppType)
 describe(getValidApplicationOrRedirect.name, () => {
   let managingPrisonerAppsService: ManagingPrisonerAppsService
   let documentManagementService: DocumentManagementService
-  let auditService: AuditService
   let req: Request
   let res: Response
 
@@ -44,10 +42,6 @@ describe(getValidApplicationOrRedirect.name, () => {
       getPrisonerApp: jest.fn(),
     } as unknown as ManagingPrisonerAppsService
 
-    auditService = {
-      logPageView: jest.fn(),
-    } as unknown as AuditService
-
     documentManagementService = {
       getDocument: jest.fn(),
     } as unknown as DocumentManagementService
@@ -70,12 +64,11 @@ describe(getValidApplicationOrRedirect.name, () => {
   it('redirects to /applications and returns null when application is not found', async () => {
     managingPrisonerAppsService.getPrisonerApp = jest.fn().mockResolvedValue(null)
 
-    const result = await getValidApplicationOrRedirect(req, res, auditService, managingPrisonerAppsService)
+    const result = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
 
     expect(managingPrisonerAppsService.getPrisonerApp).toHaveBeenCalledWith('P123', 'A456', res.locals.user)
     expect(res.redirect).toHaveBeenCalledWith('/applications')
     expect(mockedGetAppType).not.toHaveBeenCalled()
-    expect(auditService.logPageView).not.toHaveBeenCalled()
     expect(result).toBeNull()
   })
 
@@ -83,45 +76,22 @@ describe(getValidApplicationOrRedirect.name, () => {
     managingPrisonerAppsService.getPrisonerApp = jest.fn().mockResolvedValue(app)
     mockedGetAppType.mockResolvedValue(null)
 
-    await expect(getValidApplicationOrRedirect(req, res, auditService, managingPrisonerAppsService)).rejects.toThrow(
+    await expect(getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)).rejects.toThrow(
       'Unknown application type',
     )
 
     expect(managingPrisonerAppsService.getPrisonerApp).toHaveBeenCalledWith('P123', 'A456', res.locals.user)
     expect(mockedGetAppType).toHaveBeenCalledWith(managingPrisonerAppsService, res.locals.user, '3')
-    expect(auditService.logPageView).not.toHaveBeenCalled()
     expect(res.redirect).not.toHaveBeenCalled()
   })
 
-  it('returns application and applicationType, and does not audit when auditPage is not provided', async () => {
+  it('returns application and applicationType', async () => {
     managingPrisonerAppsService.getPrisonerApp = jest.fn().mockResolvedValue(app)
 
-    const result = await getValidApplicationOrRedirect(req, res, auditService, managingPrisonerAppsService)
+    const result = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
 
     expect(res.redirect).not.toHaveBeenCalled()
     expect(mockedGetAppType).toHaveBeenCalledWith(managingPrisonerAppsService, res.locals.user, '3')
-    expect(auditService.logPageView).not.toHaveBeenCalled()
-
-    expect(result).toEqual({ application: app, applicationType: Object.values(appTypes)[0], documents: [] })
-  })
-
-  it('audits page view when auditPage is provided (with who + correlationId)', async () => {
-    managingPrisonerAppsService.getPrisonerApp = jest.fn().mockResolvedValue(app)
-
-    const result = await getValidApplicationOrRedirect(
-      req,
-      res,
-      auditService,
-      managingPrisonerAppsService,
-      Page.EXAMPLE_PAGE,
-    )
-
-    expect(auditService.logPageView).toHaveBeenCalledTimes(1)
-    expect(auditService.logPageView).toHaveBeenCalledWith(Page.EXAMPLE_PAGE, {
-      who: 'emma',
-      correlationId: 'corr-abc',
-    })
-
     expect(result).toEqual({ application: app, applicationType: Object.values(appTypes)[0], documents: [] })
   })
 
@@ -143,14 +113,7 @@ describe(getValidApplicationOrRedirect.name, () => {
     managingPrisonerAppsService.getPrisonerApp = jest.fn().mockResolvedValue(appWithFiles)
     documentManagementService.getDocument = jest.fn().mockResolvedValue(mockDocument)
 
-    const result = await getValidApplicationOrRedirect(
-      req,
-      res,
-      auditService,
-      managingPrisonerAppsService,
-      undefined,
-      documentManagementService,
-    )
+    const result = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService, documentManagementService)
 
     expect(documentManagementService.getDocument).toHaveBeenCalledWith('doc-uuid-1', 'emma')
     expect(result).toEqual({
@@ -163,14 +126,7 @@ describe(getValidApplicationOrRedirect.name, () => {
   it('returns empty documents array when application has no files', async () => {
     managingPrisonerAppsService.getPrisonerApp = jest.fn().mockResolvedValue(app)
 
-    const result = await getValidApplicationOrRedirect(
-      req,
-      res,
-      auditService,
-      managingPrisonerAppsService,
-      undefined,
-      documentManagementService,
-    )
+    const result = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService, documentManagementService)
 
     expect(documentManagementService.getDocument).not.toHaveBeenCalled()
     expect(result).toEqual({
@@ -197,7 +153,7 @@ describe(getValidApplicationOrRedirect.name, () => {
 
     managingPrisonerAppsService.getPrisonerApp = jest.fn().mockResolvedValue(appWithFiles)
 
-    const result = await getValidApplicationOrRedirect(req, res, auditService, managingPrisonerAppsService, undefined)
+    const result = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService)
 
     expect(result).toEqual({
       application: appWithFiles,
@@ -224,14 +180,7 @@ describe(getValidApplicationOrRedirect.name, () => {
     managingPrisonerAppsService.getPrisonerApp = jest.fn().mockResolvedValue(appWithFiles)
     documentManagementService.getDocument = jest.fn().mockRejectedValue(new Error('API Error'))
 
-    const result = await getValidApplicationOrRedirect(
-      req,
-      res,
-      auditService,
-      managingPrisonerAppsService,
-      undefined,
-      documentManagementService,
-    )
+    const result = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService, documentManagementService)
 
     expect(result?.documents).toEqual([])
   })
@@ -266,14 +215,7 @@ describe(getValidApplicationOrRedirect.name, () => {
       .mockResolvedValueOnce(mockDocument)
       .mockResolvedValueOnce(mockDocument2)
 
-    const result = await getValidApplicationOrRedirect(
-      req,
-      res,
-      auditService,
-      managingPrisonerAppsService,
-      undefined,
-      documentManagementService,
-    )
+    const result = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService, documentManagementService)
 
     expect(documentManagementService.getDocument).toHaveBeenCalledTimes(2)
     expect(result?.documents).toHaveLength(2)
@@ -308,14 +250,7 @@ describe(getValidApplicationOrRedirect.name, () => {
       .mockResolvedValueOnce(mockDocument)
       .mockRejectedValueOnce(new Error('Not found'))
 
-    const result = await getValidApplicationOrRedirect(
-      req,
-      res,
-      auditService,
-      managingPrisonerAppsService,
-      undefined,
-      documentManagementService,
-    )
+    const result = await getValidApplicationOrRedirect(req, res, managingPrisonerAppsService, documentManagementService)
 
     expect(result?.documents).toEqual([mockDocument])
   })
