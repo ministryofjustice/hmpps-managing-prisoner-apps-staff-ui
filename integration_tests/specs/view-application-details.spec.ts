@@ -1,8 +1,9 @@
 import { expect, test } from '../fixtures'
 import { app } from '../../server/testData'
+import { APPLICATION_STATUS } from '../../server/constants/applicationStatus'
 import ForwardApplicationPage from '../pages/forwardApplicationPage'
 import ViewApplicationPage from '../pages/viewApplicationPage'
-import { filteredApplicationTypes, visitApplicationPage } from '../helpers/view-applicationTestUtils'
+import { filteredApplicationTypes, isWiremock, visitApplicationPage } from '../helpers/view-applicationTestUtils'
 import {
   assertAndCaptureHistoryEvents,
   getForwardTargetDepartment,
@@ -200,5 +201,35 @@ test.describe('View Application Page - Forward button visibility', () => {
       targetDepartment,
       testInfo,
     })
+  })
+})
+
+test.describe('Application overdue banner', () => {
+  test('should display the banner for an overdue application', async ({ page, signIn }) => {
+    test.skip(!isWiremock, 'Requires WireMock stubs')
+
+    const overdueApplication = {
+      ...app,
+      createdDate: '2024-09-15T00:00:00Z',
+      status: APPLICATION_STATUS.NEW,
+    }
+    await visitApplicationPage({ page, signIn, application: overdueApplication })
+
+    const viewPage = new ViewApplicationPage(page)
+    await expect(viewPage.overdueBanner()).toBeVisible()
+  })
+
+  test('should not display the banner for a non-overdue application', async ({ page, signIn }) => {
+    test.skip(!isWiremock, 'Requires WireMock stubs')
+
+    const nonOverdueApplication = {
+      ...app,
+      createdDate: new Date().toISOString(),
+      status: APPLICATION_STATUS.NEW,
+    }
+    await visitApplicationPage({ page, signIn, application: nonOverdueApplication })
+
+    const viewPage = new ViewApplicationPage(page)
+    await expect(viewPage.overdueBanner()).not.toBeVisible()
   })
 })
