@@ -24,6 +24,10 @@ export default class ViewApplicationPage extends AbstractPage {
     return this.page.locator('.govuk-summary-list__row:has-text("Status") .govuk-summary-list__value')
   }
 
+  overdueBanner(): PageElement {
+    return this.page.getByRole('region', { name: /Application overdue/ })
+  }
+
   department(): PageElement {
     return this.page.locator('.govuk-summary-list__row:has-text("Department") .govuk-summary-list__value')
   }

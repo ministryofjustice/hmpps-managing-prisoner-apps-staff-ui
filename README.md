@@ -177,6 +177,68 @@ Or run with the Playwright UI:
 
 `npm run pw-test-ui:mock`
 
+### Getting local mock tests passing reliably
+
+Use this flow when local test runs are flaky or when WireMock stubs have drifted.
+
+1. Install dependencies and browser binaries:
+
+	`npm run setup`
+
+	`npx playwright install --with-deps chromium`
+
+2. Fully reset local app and mock processes:
+
+	```bash
+	pkill -f "playwright test" || true
+	pkill -f "node esbuild/esbuild" || true
+	pkill -f "npm run start-feature:dev" || true
+	pkill -f "wiremock" || true
+	docker compose -f docker-compose-test.yml down -v --remove-orphans || true
+	docker compose -f docker-compose-test.yml up -d
+	```
+
+3. Start the app in one terminal:
+
+	`npm run start-feature:dev`
+
+4. Run tests from a second terminal:
+
+	`npm run pw-test:mock`
+
+	or open the Playwright UI:
+
+	`npm run pw-test-ui:mock`
+
+5. Optional: run a single spec while debugging:
+
+	`PW_ENV=mock npx playwright test integration_tests/specs/applications.spec.ts --config playwright.config.ts`
+
+Expected healthy signals:
+
+- App logs show `Server listening on port 3007`.
+- WireMock is up on port `9091`.
+- Playwright starts without missing browser executable errors.
+
+If local processes are stale, use this clean restart sequence:
+
+```bash
+pkill -f "playwright test --config playwright.config.ts" || true
+pkill -f "node esbuild/esbuild" || true
+pkill -f "npm run start-feature:dev" || true
+pkill -f "wiremock" || true
+docker compose -f docker-compose-test.yml down -v --remove-orphans || true
+docker compose -f docker-compose-test.yml up -d
+```
+
+Then start the app:
+
+`npm run start-feature:dev`
+
+And open the Playwright UI in a separate terminal:
+
+`npm run pw-test-ui:mock`
+
 To run against DEV, use:
 
 `npm run pw-test:dev`

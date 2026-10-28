@@ -101,6 +101,16 @@ export default class IndexPage extends AbstractPage {
     await expect(banner).toBeVisible()
     await expect(banner.locator('h1')).toContainText('Applications')
     await expect(banner.locator('p').nth(0)).toContainText('Log, action and reply to prisoner applications.')
+
+    const phaseBanner = this.page.locator('.govuk-phase-banner')
+    if (await phaseBanner.isVisible().catch(() => false)) {
+      await expect(phaseBanner).toContainText('Beta')
+      await expect(phaseBanner).toContainText('This is a new service')
+      await expect(phaseBanner.getByRole('link', { name: 'feedback' })).toHaveAttribute(
+        'href',
+        'https://www.smartsurvey.co.uk/t/EC7Z5H/',
+      )
+    }
   }
 
   async assertLogNewApplicationCard(): Promise<void> {

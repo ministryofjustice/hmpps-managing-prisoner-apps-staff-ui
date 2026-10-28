@@ -18,10 +18,7 @@ test.describe('Print reply', () => {
     await page.goto(`${page.url()}/print-reply`)
 
     const printReplyPage = new PrintReplyPage(page)
-    await printReplyPage.checkOnPage()
-    await expect(page).toHaveURL(/\/print-reply$/)
-    await expect(printReplyPage.statusMessage()).toContainText('This application is now New')
-    await expect(printReplyPage.printButton()).not.toBeVisible()
+    await printReplyPage.assertOpenApplicationStatus('This application is now New')
   })
 
   test('should display the closed application response and print button', async ({ page, signIn }) => {
@@ -35,13 +32,7 @@ test.describe('Print reply', () => {
     await viewApplicationPage.printReplyButton().click()
 
     const printReplyPage = new PrintReplyPage(page)
-    await printReplyPage.checkOnPage()
-    await expect(page).toHaveURL(/\/print-reply$/)
-    await expect(printReplyPage.summaryList()).toContainText('Status')
-    await expect(printReplyPage.summaryList()).toContainText('Reason')
-    await expect(printReplyPage.summaryList()).toContainText('Date')
-    await expect(printReplyPage.summaryList()).toContainText('Location')
-    await expect(printReplyPage.printButton()).toBeVisible()
+    await printReplyPage.assertClosedApplicationSummary()
   })
 
   test('should trigger browser print when selecting Print reply for a closed application', async ({ page, signIn }) => {
@@ -51,29 +42,15 @@ test.describe('Print reply', () => {
     await visitApplicationPage({ page, signIn, application: closedApplication })
     await managingPrisonerAppsApi.stubGetAppResponse({ app: closedApplication, decision: 'APPROVED' })
 
-    await page.addInitScript(() => {
-      ;(window as Window & { printInvokedForTest?: boolean }).printInvokedForTest = false
-      window.print = () => {
-        ;(window as Window & { printInvokedForTest?: boolean }).printInvokedForTest = true
-      }
-    })
-
     const viewApplicationPage = new ViewApplicationPage(page)
+    const printReplyPage = new PrintReplyPage(page)
+
+    await printReplyPage.installPrintSpy()
     await viewApplicationPage.printReplyButton().click()
 
-    const printReplyPage = new PrintReplyPage(page)
-    await printReplyPage.checkOnPage()
-    await expect
-      .poll(async () => page.evaluate(() => (window as Window & { printInvokedForTest?: boolean }).printInvokedForTest))
-      .toBe(false)
-
+    await printReplyPage.assertPrintHasNotBeenTriggered()
     await printReplyPage.printButton().click()
-
-    await expect
-      .poll(async () =>
-        page.evaluate(() => (window as Window & { printInvokedForTest?: boolean }).printInvokedForTest === true),
-      )
-      .toBe(true)
+    await printReplyPage.assertPrintHasBeenTriggered()
   })
 
   test('should capture the printable reply template content', async ({ page, signIn }) => {
@@ -87,18 +64,13 @@ test.describe('Print reply', () => {
     await viewApplicationPage.printReplyButton().click()
 
     const printReplyPage = new PrintReplyPage(page)
-    await printReplyPage.checkOnPage()
-
-    await expect(printReplyPage.printableTemplate()).toHaveCount(1)
-
     const printableTemplateHtml = await printReplyPage.printableTemplate().evaluate(node => node.outerHTML)
     await test.info().attach('print-reply-template.html', {
       body: Buffer.from(printableTemplateHtml, 'utf-8'),
       contentType: 'text/html',
     })
 
-    const printableTemplateText = await printReplyPage.printableTemplate().innerText()
-    await expect(printReplyPage.printableTemplate()).toContainText('Your application has been approved.')
+    const printableTemplateText = await printReplyPage.assertPrintableReplyTemplate()
     expect(printableTemplateText).toContain('Application type')
     expect(printableTemplateText).toContain('Status')
     expect(printableTemplateText).toContain('Reason')
