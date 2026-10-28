@@ -61,7 +61,7 @@ export default class PrintReplyPage extends AbstractPage {
   async assertPrintHasBeenTriggered(): Promise<void> {
     await expect
       .poll(async () =>
-        this.page.evaluate(() => (window as Window & { printInvokedForTest?: boolean }).printInvokedForTest === true),
+        this.page.evaluate(() => (window as Window & { printInvokedForTest?: boolean }).printInvokedForTest),
       )
       .toBe(true)
   }
