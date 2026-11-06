@@ -149,7 +149,7 @@ jobs:
 
       - name: Upload test report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: integration-test-worker-${{ matrix.shard }}-test-report
           path: |
@@ -186,7 +186,7 @@ jobs:
         run: npm ci
 
       - name: Download shard reports
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: integration-test-worker-*-test-report
           path: all-test-reports
@@ -206,7 +206,7 @@ jobs:
           mv playwright-report test_results/playwright/report
 
       - name: Upload consolidated report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: integration-test-report
           path: test_results/playwright/report
