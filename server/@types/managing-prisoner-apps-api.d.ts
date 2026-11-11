@@ -363,7 +363,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/v2/establishments/apps/groups': {
+  '/v2/groups/app/types/{type}': {
     parameters: {
       query?: never
       header?: never
@@ -371,10 +371,10 @@ export interface paths {
       cookie?: never
     }
     /**
-     * Get application groups by establishment id
-     * @description This api endpoint is for getting an application groups by establishment id. Requires role ROLE_MANAGING_PRISONER_APPS
+     * Get list of departments enable for a given application type.
+     * @description This api endpoint is for getting list of all department enabled to handle request for a given application type. Requires role ROLE_MANAGING_PRISONER_APPS
      */
-    get: operations['getAppGroupsByEstablishment']
+    get: operations['getGroupsByAppType']
     put?: never
     post?: never
     delete?: never
@@ -543,26 +543,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/v1/prisoners/apps/groups': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /**
-     * Get app groups and app types.
-     * @description This api endpoint to app groups and app types for a logged prisoner. Requires role ROLE_PRISONER_FACING_APPS
-     */
-    get: operations['getPrisonerAppTypes']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/v1/groups': {
     parameters: {
       query?: never
@@ -611,10 +591,10 @@ export interface paths {
       cookie?: never
     }
     /**
-     * Get list of departments enable for a given application type.
+     * Get list of active departments enable for an establishment.
      * @description This api endpoint is for getting list of all department enabled to handle request for a given application type. Requires role ROLE_MANAGING_PRISONER_APPS
      */
-    get: operations['getGroupsByAppType']
+    get: operations['getActiveDepartmentsForEstablishment']
     put?: never
     post?: never
     delete?: never
@@ -809,6 +789,7 @@ export interface components {
       establishmentId: string
       firstNightCenter: boolean
       files: components['schemas']['FileResponseDto'][]
+      departmentSlug?: string | null
     }
     ApplicationGroupResponse: {
       /** Format: int64 */
@@ -860,7 +841,6 @@ export interface components {
       }[]
       /** @description Pass this value only for type PIN_PHONE_ADD_NEW_SOCIAL_CONTACT. No value passed is set as false. For other type this value is always false. */
       firstNightCenter?: boolean | null
-      /** Format: uuid */
       department?: string | null
       fileRequestDtos: components['schemas']['FileRequestDto'][]
     }
@@ -984,7 +964,6 @@ export interface components {
       apps: components['schemas']['AppListViewDto'][]
     }
     GroupAppListViewDto: {
-      /** Format: uuid */
       id: string
       name: string
       /** Format: int64 */
@@ -1029,18 +1008,30 @@ export interface components {
       /** Format: int64 */
       applicationTypeId: number
       establishmentId: string
-      /** Format: uuid */
-      departmentId?: string | null
+      departmentSlug?: string | null
       active: boolean
     }
     EstablishmentApplicationTypeResponseDto: {
       /** Format: uuid */
       id: string
       establishmentId: string
-      /** Format: uuid */
-      departmentId?: string | null
+      departmentSlug?: string | null
       active: boolean
       applicationGroupResponse: components['schemas']['ApplicationGroupResponse']
+    }
+    AssignedGroupDto: {
+      id: string
+      name: string
+      establishment: components['schemas']['EstablishmentDto']
+      /** Format: int64 */
+      initialApp?: number | null
+      /** @enum {string|null} */
+      type?: 'WING' | 'DEPARTMENT' | null
+    }
+    EstablishmentDto: {
+      id: string
+      name: string
+      defaultDepartments: boolean
     }
     ActivityMessage: {
       header: string
@@ -1053,7 +1044,7 @@ export interface components {
       /** Format: uuid */
       appId: string
       /** Format: uuid */
-      entityId: string
+      entityId?: string | null
       /** @enum {string} */
       entityType: 'APP' | 'COMMENT' | 'RESPONSE' | 'ASSIGNED_GROUP' | 'FILE'
       activityMessage: components['schemas']['ActivityMessage']
@@ -1069,9 +1060,9 @@ export interface components {
       contents: components['schemas']['CommentResponseDtoObject'][]
     }
     RequestedByNameSearchResult: {
+      prisonerId: string
       firstName: string
       lastName: string
-      prisonerId: string
     }
     AppListPrisonerFacing: {
       /** Format: uuid */
@@ -1110,23 +1101,6 @@ export interface components {
       latestAppSubmittedDate?: string | null
       /** @enum {string} */
       submittedBy: 'PRISONER' | 'STAFF'
-    }
-    AssignedGroupDto: {
-      /** Format: uuid */
-      id: string
-      name: string
-      establishment: components['schemas']['EstablishmentDto']
-      /** Format: int64 */
-      initialApp?: number | null
-      /** @enum {string|null} */
-      type?: 'WING' | 'DEPARTMENT' | null
-    }
-    EstablishmentDto: {
-      id: string
-      name: string
-      defaultDepartments: boolean
-      blacklistedAppGroups: number[]
-      blacklistedAppTypes: number[]
     }
     Attachment: {
       /**
@@ -2068,11 +2042,13 @@ export interface operations {
       }
     }
   }
-  getAppGroupsByEstablishment: {
+  getGroupsByAppType: {
     parameters: {
       query?: never
       header?: never
-      path?: never
+      path: {
+        type: number
+      }
       cookie?: never
     }
     requestBody?: never
@@ -2083,7 +2059,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['ApplicationGroupResponse'][]
+          'application/json': components['schemas']['AssignedGroupDto'][]
         }
       }
       /** @description Unauthorized to access this endpoint */
@@ -2442,44 +2418,6 @@ export interface operations {
       }
     }
   }
-  getPrisonerAppTypes: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description App request created. */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['ApplicationGroupResponse'][]
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden to access this endpoint */
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
   getGroupsByLoggedUserEstablishment: {
     parameters: {
       query?: never
@@ -2558,7 +2496,7 @@ export interface operations {
       }
     }
   }
-  getGroupsByAppType: {
+  getActiveDepartmentsForEstablishment: {
     parameters: {
       query?: never
       header?: never

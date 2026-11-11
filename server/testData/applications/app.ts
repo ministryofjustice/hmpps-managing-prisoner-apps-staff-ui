@@ -5,6 +5,7 @@ export const app: App = {
   id: '13d2c453-be11-44a8-9861-21fd8ae6e911',
   reference: '1232143',
   genericForm: false,
+  departmentSlug: '591185f2-863a-4a32-9812-c12f40b94ccb',
   assignedGroup: {
     id: '591185f2-863a-4a32-9812-c12f40b94ccb',
     name: 'Business Hub',
@@ -12,8 +13,6 @@ export const app: App = {
       id: 'TEST_ESTABLISHMENT_FIRST',
       name: 'ESTABLISHMENT_NAME_1',
       defaultDepartments: false,
-      blacklistedAppGroups: [],
-      blacklistedAppTypes: [],
     },
     initialApp: 1,
     type: 'DEPARTMENT',
