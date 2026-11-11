@@ -13,8 +13,6 @@ export const app: App = {
       id: 'TEST_ESTABLISHMENT_FIRST',
       name: 'ESTABLISHMENT_NAME_1',
       defaultDepartments: false,
-      blacklistedAppGroups: [],
-      blacklistedAppTypes: [],
     },
     initialApp: 1,
     type: 'DEPARTMENT',
