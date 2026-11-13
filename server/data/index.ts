@@ -17,6 +17,7 @@ import DocumentManagementApiClient from './documentManagementApiClient'
 import ManagingPrisonerAppsApiClient from './managingPrisonerAppsApiClient'
 import PersonalRelationshipsApiClient from './personalRelationshipsApiClient'
 import PrisonApiClient from './prisonApiClient'
+import LocationsInsidePrisonApiClient from './locationsInsidePrisonApiClient'
 
 export const dataAccess = () => {
   const hmppsAuthClient = new AuthenticationClient(
@@ -33,6 +34,7 @@ export const dataAccess = () => {
     managingPrisonerAppsApiClient: new ManagingPrisonerAppsApiClient(hmppsAuthClient),
     personalRelationshipsApiClient: new PersonalRelationshipsApiClient(hmppsAuthClient),
     prisonApiClient: new PrisonApiClient(hmppsAuthClient),
+    locationsInsidePrisonApiClient: new LocationsInsidePrisonApiClient(hmppsAuthClient),
     osPlacesApiClient: new OsPlacesApiClient(logger, config.apis.osPlacesApi),
   }
 }
@@ -46,4 +48,5 @@ export {
   ManagingPrisonerAppsApiClient,
   PersonalRelationshipsApiClient,
   PrisonApiClient,
+  LocationsInsidePrisonApiClient,
 }

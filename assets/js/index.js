@@ -169,6 +169,36 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 document.addEventListener('DOMContentLoaded', () => {
+  const setLocationDescendantsChecked = (locationCheckbox, isChecked) => {
+    const conditionalId = locationCheckbox.getAttribute('aria-controls') || locationCheckbox.dataset.ariaControls
+    const conditionalElement = conditionalId ? document.getElementById(conditionalId) : null
+
+    if (!conditionalElement) return
+
+    for (const descendantCheckbox of conditionalElement.querySelectorAll('input[name="location"]')) {
+      descendantCheckbox.checked = isChecked
+
+      const descendantConditionalId =
+        descendantCheckbox.getAttribute('aria-controls') || descendantCheckbox.dataset.ariaControls
+      const descendantConditional = descendantConditionalId ? document.getElementById(descendantConditionalId) : null
+
+      if (descendantConditional) {
+        descendantCheckbox.setAttribute('aria-expanded', String(isChecked))
+        descendantConditional.classList.toggle('govuk-checkboxes__conditional--hidden', !isChecked)
+      }
+    }
+  }
+
+  document
+    .querySelectorAll('input[name="location"][data-aria-controls], input[name="location"][aria-controls]')
+    .forEach(locationCheckbox => {
+      locationCheckbox.addEventListener('change', () => {
+        setLocationDescendantsChecked(locationCheckbox, locationCheckbox.checked)
+      })
+    })
+})
+
+document.addEventListener('DOMContentLoaded', () => {
   const manualLink = document.getElementById('enter-address-manually-link')
   const lookupLink = document.getElementById('lookup-address-link')
   const manualFields = document.getElementById('manual-address-fields')
