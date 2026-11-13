@@ -16,6 +16,7 @@ import {
   buildListQueryString,
   buildSelectedTags,
   checkSelectedFilters,
+  extractQueryParamArray,
   formatFilterOptions,
   parseApplicationFilters,
   retainFiltersMiddleware,
@@ -30,16 +31,20 @@ import { formatAppsToRows } from '../../utils/formatters/formatAppsToRows'
 import { getPaginationData } from '../../utils/http/pagination'
 import DocumentManagementService from '../../services/documentManagementService'
 import { isChangeAppDetailsDisabledEstablishment } from '../../constants/enabledEstablishments'
+import LocationsInsidePrisonService from '../../services/locationsInsidePrisonService'
+import { formatLocationFilterOptions } from '../../helpers/locationFilter'
 
 export default function viewAppsRouter({
   auditService,
   managingPrisonerAppsService,
   prisonService,
+  locationsInsidePrisonService,
   documentManagementService,
 }: {
   auditService: AuditService
   managingPrisonerAppsService: ManagingPrisonerAppsService
   prisonService: PrisonService
+  locationsInsidePrisonService: LocationsInsidePrisonService
   documentManagementService: DocumentManagementService
 }): Router {
   const router = Router()
@@ -70,6 +75,13 @@ export default function viewAppsRouter({
         const { apps, applicationTypes, assignedGroups, totalRecords, firstNightCenter } =
           await managingPrisonerAppsService.getApps(payload, user)
 
+        const locationHierarchy =
+          'activeCaseLoadId' in user && user.activeCaseLoadId
+            ? await locationsInsidePrisonService.getResidentialHierarchy(user.activeCaseLoadId)
+            : []
+
+        const requestedLocationIds = extractQueryParamArray(req.query.location)
+
         const prisonerDetails = await Promise.all(
           apps.map(app =>
             app.requestedBy ? prisonService.getPrisonerByPrisonNumber(user.username, app.requestedBy) : null,
@@ -82,7 +94,8 @@ export default function viewAppsRouter({
         const rows = await formatAppsToRows(managingPrisonerAppsService, user, appsWithNames, listQuery)
 
         const filterOptions = formatFilterOptions(applicationTypes, assignedGroups, filters, firstNightCenter)
-        const selectedTags = buildSelectedTags(req, filters, filterOptions)
+        const locationOptions = formatLocationFilterOptions(locationHierarchy ?? [], requestedLocationIds)
+        const selectedTags = buildSelectedTags(req, filters, { ...filterOptions, locationOptions })
         const hasSelectedFilters = checkSelectedFilters(filters, selectedTags)
 
         res.locals.auditDetails = {
@@ -105,6 +118,7 @@ export default function viewAppsRouter({
             selectedStatusValues: filters.selectedStatusValues,
             applicationTypeFilter: filters.applicationTypeFilter,
             oldestAppFirst: filters.oldestAppFirst,
+            locations: locationOptions,
           },
           pagination: getPaginationData(Number(req.query.page) || 1, totalRecords),
           query: req.query,

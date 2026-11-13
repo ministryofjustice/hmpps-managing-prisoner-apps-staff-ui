@@ -10,6 +10,7 @@ export default function routes({
   managingPrisonerAppsService,
   documentManagementService,
   prisonService,
+  locationsInsidePrisonService,
   personalRelationshipsService,
   osPlacesAddressService,
 }: Services): Router {
@@ -22,6 +23,7 @@ export default function routes({
       managingPrisonerAppsService,
       documentManagementService,
       prisonService,
+      locationsInsidePrisonService,
       personalRelationshipsService,
       osPlacesAddressService,
     }),

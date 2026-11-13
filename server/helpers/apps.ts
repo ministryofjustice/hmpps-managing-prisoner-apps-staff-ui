@@ -10,6 +10,7 @@ export const buildApplicationsPayload = (filters: ParsedFilters) => {
     applicationTypes: filters.types.length > 0 ? filters.types.map(Number) : undefined,
     requestedBy: filters.prisonerId || undefined,
     assignedGroups: filters.groups.length > 0 ? filters.groups : undefined,
+    locations: filters.locations.length > 0 ? filters.locations : undefined,
     firstNightCenter: filters.priority.includes('first-night-centre') ? true : undefined,
     oldestAppFirst: filters.oldestAppFirst,
   }

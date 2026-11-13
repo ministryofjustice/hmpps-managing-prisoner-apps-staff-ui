@@ -109,6 +109,16 @@ export default {
       agent: new AgentConfig(Number(get('PRISONER_DETAILS_API_TIMEOUT_RESPONSE', 10000))),
       enabled: get('PRISON_ENABLED', 'false') === 'true',
     },
+    locationsInsidePrison: {
+      url: get('LOCATIONS_INSIDE_PRISON_API_URL', 'http://localhost:8080', requiredInProduction),
+      healthPath: '/health/ping',
+      timeout: {
+        response: Number(get('LOCATIONS_INSIDE_PRISON_API_TIMEOUT_RESPONSE', 10000)),
+        deadline: Number(get('LOCATIONS_INSIDE_PRISON_API_TIMEOUT_DEADLINE', 10000)),
+      },
+      agent: new AgentConfig(Number(get('LOCATIONS_INSIDE_PRISON_API_TIMEOUT_RESPONSE', 10000))),
+      enabled: get('LOCATIONS_INSIDE_PRISON_API_ENABLED', 'false') === 'true',
+    },
     managingPrisonerApps: {
       url: get('MANAGING_PRISONER_APPS_API_URL', 'http://localhost:8080', requiredInProduction),
       healthPath: '/health/ping',

@@ -7,4 +7,5 @@ export const FILTER_KEYS = [
   'group',
   'applicationTypeFilter',
   'type',
+  'location',
 ] as const

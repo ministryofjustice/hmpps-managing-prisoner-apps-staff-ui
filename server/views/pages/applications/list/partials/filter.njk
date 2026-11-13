@@ -1,10 +1,43 @@
 {%- from "../../../../components/accessibleAutocomplete/macro.njk" import accessibleAutocomplete -%}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-
+{% macro locationCheckboxes(locations, idPrefix, legendText) %}
+  {% set checkboxItems = [] %}
+  {% for location in locations %}
+    {% if location.subLocations.length %}
+      {% set nestedCheckboxes %}
+      {{ locationCheckboxes(location.subLocations, idPrefix + "-children-" + loop.index, "Locations within " + location.text) }}
+      {% endset %}
+      {% set checkboxItems = checkboxItems.concat([{
+        value: location.value,
+        text: location.text,
+        checked: location.checked,
+        conditional: { html: nestedCheckboxes }
+      }]) %}
+    {% else %}
+      {% set checkboxItems = checkboxItems.concat([{
+        value: location.value,
+        text: location.text,
+        checked: location.checked
+      }]) %}
+    {% endif %}
+  {% endfor %}
+  {{ govukCheckboxes({
+    idPrefix: idPrefix,
+    name: "location",
+    classes: "govuk-checkboxes--small",
+    fieldset: {
+      legend: {
+        text: legendText,
+        classes: "govuk-fieldset__legend--s" if legendText == "Location" else "govuk-visually-hidden"
+      }
+    },
+    items: checkboxItems
+  }) }}
+{% endmacro %}
 <form novalidate>
   {%- set filterOptionsHtml %}
-    <div class="filter-section">
-      {{ govukRadios({
+  <div class="filter-section">
+    {{ govukRadios({
         name: "order",
         classes: "govuk-radios--small",
         fieldset: {
@@ -26,10 +59,9 @@
           }
         ]
       }) }}
-    </div>
-
-    <div class="filter-section">
-      {{ govukCheckboxes({
+  </div>
+  <div class="filter-section">
+    {{ govukCheckboxes({
         idPrefix: "status",
         name: "status",
         classes: "govuk-checkboxes--small",
@@ -84,26 +116,26 @@
           }
         ]
       }) }}
-    </div>
-
-    <div class="filter-section">
-      {{ accessibleAutocomplete({
+  </div>
+  <div class="filter-section">
+    {{ accessibleAutocomplete({
         label: "Prisoner name or number",
         nonce: cspNonce,
         selectedLabel: filters.selectedPrisonerLabel,
         selectedValue: filters.selectedPrisonerId
       }) }}
-
-      {{ govukCheckboxes({
+    {{ govukCheckboxes({
         idPrefix: "priority",
         name: "priority",
         classes: "govuk-checkboxes--small",
         items: filters.priority
       }) }}
-    </div>
-
-    <div class="filter-section">
-      {{ govukCheckboxes({
+  </div>
+  <div class="filter-section">
+    {{ locationCheckboxes(filters.locations, "location", "Location") }}
+  </div>
+  <div class="filter-section">
+    {{ govukCheckboxes({
         idPrefix: "group",
         name: "group",
         classes: "govuk-checkboxes--small",
@@ -115,10 +147,9 @@
         },
         items: filters.groups
       }) }}
-    </div>
-
-    <div class="filter-section filter-section__app-type">
-      {{ govukInput({
+  </div>
+  <div class="filter-section filter-section__app-type">
+    {{ govukInput({
         id: "application-type-filter",
         name: "applicationTypeFilter",
         label: {
@@ -133,57 +164,54 @@
         classes: "govuk-input",
         value: filters.applicationTypeFilter
       }) }}
-      
-
-      <div class="app-type-filter-checkbox-wrapper">
-        {{ govukCheckboxes({
+    <div class="app-type-filter-checkbox-wrapper">
+      {{ govukCheckboxes({
           idPrefix: "type",
           name: "type",
           classes: "govuk-checkboxes--small app-type-filter-scroll-box",
           items: filters.appTypes
         }) }}
-      </div>
     </div>
-
-    <div class="filter-section filter-section__submit">
-      {{ govukButton({
+  </div>
+  <div class="filter-section filter-section__submit">
+    {{ govukButton({
         text: "Apply filters",
         type: "submit",
         attributes: { "data-test-id": "submit-button-bottom" }
       }) }}
-    </div>
+  </div>
   {% endset -%}
-
   {% set categories = [] %}
-
   {% if filters.selectedFilters.status | length %}
     {% set categories = categories.concat([{
       heading: { text: "Status" },
       items: filters.selectedFilters.status
     }]) %}
   {% endif %}
-
   {% if filters.selectedFilters.priority | length %}
     {% set categories = categories.concat([{
       heading: { text: "Priority" },
       items: filters.selectedFilters.priority
     }]) %}
   {% endif %}
-  
+  {% if filters.selectedFilters.locations | length %}
+    {% set categories = categories.concat([{
+      heading: { text: "Location" },
+      items: filters.selectedFilters.locations
+    }]) %}
+  {% endif %}
   {% if filters.selectedFilters.groups | length %}
     {% set categories = categories.concat([{
       heading: { text: "Department" },
       items: filters.selectedFilters.groups
     }]) %}
   {% endif %}
-
   {% if filters.selectedFilters.types | length %}
     {% set categories = categories.concat([{
       heading: { text: "Application type" },
       items: filters.selectedFilters.types
     }]) %}
   {% endif %}
-
   {% if filters.selectedPrisonerLabel or categories.length %}
     {{ mojFilter({
       heading: { text: "Filter" },
