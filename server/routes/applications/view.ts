@@ -94,7 +94,7 @@ export default function viewAppsRouter({
         const rows = await formatAppsToRows(managingPrisonerAppsService, user, appsWithNames, listQuery)
 
         const filterOptions = formatFilterOptions(applicationTypes, assignedGroups, filters, firstNightCenter)
-        const locationOptions = formatLocationFilterOptions(locationHierarchy ?? [], requestedLocationIds)
+        const locationOptions = formatLocationFilterOptions(locationHierarchy, requestedLocationIds)
         const selectedTags = buildSelectedTags(req, filters, { ...filterOptions, locationOptions })
         const hasSelectedFilters = checkSelectedFilters(filters, selectedTags)
 
@@ -118,6 +118,7 @@ export default function viewAppsRouter({
             selectedStatusValues: filters.selectedStatusValues,
             applicationTypeFilter: filters.applicationTypeFilter,
             oldestAppFirst: filters.oldestAppFirst,
+            locationFilterEnabled: config.featureFlags.locationFilterEnabled,
             locations: locationOptions,
           },
           pagination: getPaginationData(Number(req.query.page) || 1, totalRecords),

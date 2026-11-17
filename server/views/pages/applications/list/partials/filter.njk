@@ -131,9 +131,11 @@
         items: filters.priority
       }) }}
   </div>
-  <div class="filter-section">
-    {{ locationCheckboxes(filters.locations, "location", "Location") }}
-  </div>
+  {% if filters.locationFilterEnabled %}
+    <div class="filter-section">
+      {{ locationCheckboxes(filters.locations, "location", "Location") }}
+    </div>
+  {% endif %}
   <div class="filter-section">
     {{ govukCheckboxes({
         idPrefix: "group",
@@ -194,7 +196,7 @@
       items: filters.selectedFilters.priority
     }]) %}
   {% endif %}
-  {% if filters.selectedFilters.locations | length %}
+  {% if filters.locationFilterEnabled and filters.selectedFilters.locations | length %}
     {% set categories = categories.concat([{
       heading: { text: "Location" },
       items: filters.selectedFilters.locations
