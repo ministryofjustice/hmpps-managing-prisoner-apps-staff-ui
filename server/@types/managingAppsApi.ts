@@ -36,6 +36,7 @@ export interface App extends ApplicationDto {
     id: number
     name: string
   }
+  departmentSlug: string
   assignedGroup: AssignedGroup
   requestedBy: AppRequestedBy
   requests: AppRequest[]
