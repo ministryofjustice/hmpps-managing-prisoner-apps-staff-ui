@@ -1,5 +1,4 @@
 import { Request, Response } from 'express'
-import nock from 'nock'
 import { ApplicationType } from '../@types/managingAppsApi'
 import * as validateAmountField from '../routes/validate/validateAmountField'
 import * as validateNewOfficialContact from '../routes/validate/validateNewOfficialContact'
@@ -48,11 +47,6 @@ describe(handleApplicationDetails.name, () => {
     mockGetAppType = jest.fn().mockReturnValue(baseApplicationType)
     mockGetTemplateData = jest.fn().mockResolvedValue({})
     mockSuccessRedirect = jest.fn().mockReturnValue('/success')
-  })
-
-  afterAll(() => {
-    nock.cleanAll()
-    nock.restore()
   })
 
   const getOptions = (overrides = {}) => ({
