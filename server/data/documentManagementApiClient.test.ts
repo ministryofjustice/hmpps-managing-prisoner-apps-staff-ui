@@ -1,5 +1,6 @@
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import nock from 'nock'
+import { after } from 'node:test'
 import DocumentManagementApiClient from './documentManagementApiClient'
 import { mockDocument, mockDocuments } from '../testData'
 import config from '../config'
@@ -23,6 +24,8 @@ describe('DocumentManagementApiClient', () => {
     nock.cleanAll()
     jest.resetAllMocks()
   })
+
+  afterAll(() => nock.restore())
 
   describe('uploadDocument', () => {
     it('should upload a single document successfully', async () => {

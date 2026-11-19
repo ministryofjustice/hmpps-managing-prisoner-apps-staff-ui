@@ -22,6 +22,7 @@ describe('Prison API Client', () => {
   })
 
   afterEach(() => nock.cleanAll())
+  afterAll(() => nock.restore())
 
   it('should return a response from the api', async () => {
     fakePrisonApi.get('/api/offenders/prisoner-id').matchHeader('authorization', `Bearer ${token}`).reply(200, prisoner)

@@ -26,6 +26,8 @@ describe('PersonalRelationshipsApiClient', () => {
     jest.resetAllMocks()
   })
 
+  afterAll(() => nock.restore())
+
   it('should return relationship list from the api', async () => {
     const groupCode = PERSONAL_RELATIONSHIPS_GROUP_CODES.SOCIAL_RELATIONSHIP
     const mockResponse = [

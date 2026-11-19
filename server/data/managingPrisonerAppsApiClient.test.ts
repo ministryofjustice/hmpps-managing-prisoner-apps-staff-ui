@@ -36,6 +36,8 @@ describe('ManagingPrisonerAppsApiClient', () => {
     jest.resetAllMocks()
   })
 
+  afterAll(() => nock.restore())
+
   it('should fetch the active establishments/agencies', async () => {
     fakeManagingPrisonerAppApi
       .get('/v1/establishments')

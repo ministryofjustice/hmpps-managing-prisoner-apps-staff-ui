@@ -25,6 +25,8 @@ describe('LocationsInsidePrisonApiClient', () => {
     jest.resetAllMocks()
   })
 
+  afterAll(() => nock.restore())
+
   it('fetches the residential hierarchy for a prison', async () => {
     const hierarchy: ResidentialLocation[] = [
       {
