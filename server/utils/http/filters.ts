@@ -6,6 +6,7 @@ import { FILTER_KEYS } from '../../constants/filters'
 import { formatAppTypesForFilters } from '../../helpers/filters/formatAppTypesForFilters'
 import { formatGroupsForFilters } from '../../helpers/filters/formatGroupsForFilters'
 import { formatPriorityForFilters } from '../../helpers/filters/formatPriorityForFilters'
+import { LocationFilterOption } from '../../helpers/locationFilter'
 
 type SelectedFilters = {
   groups: string[]
@@ -19,6 +20,7 @@ type SelectedFilterTags = {
   groups: LinkText[]
   priority: LinkText[]
   types: LinkText[]
+  locations: LinkText[]
 }
 
 type LinkText = {
@@ -74,9 +76,9 @@ export const extractQueryParamArray = (
 
 export const checkSelectedFilters = (selectedFilters: SelectedFilters, selectedFilterTags: SelectedFilterTags) => {
   const { prisonerId } = selectedFilters
-  const { groups, types, priority } = selectedFilterTags
+  const { groups, types, priority, locations } = selectedFilterTags
 
-  return Boolean(prisonerId || groups.length > 0 || types.length > 0 || priority.length > 0)
+  return Boolean(prisonerId || groups.length > 0 || types.length > 0 || priority.length > 0 || locations.length > 0)
 }
 
 export type AllowedStatus = 'APPROVED' | 'DECLINED' | 'REJECTED' | 'NEW' | 'IN_PROGRESS'
@@ -94,6 +96,7 @@ export interface ParsedFilters {
   groups: string[]
   types: string[]
   priority: string[]
+  locations: string[]
 }
 
 export function parseApplicationFilters(req: Request): ParsedFilters {
@@ -146,6 +149,7 @@ export function parseApplicationFilters(req: Request): ParsedFilters {
     groups: extractArray(req.query.group),
     types: extractArray(req.query.type).map(t => t.toString()),
     priority: extractArray(req.query.priority),
+    locations: extractArray(req.query.location).map(l => l.toString()),
   }
 }
 
@@ -185,8 +189,26 @@ export function buildSelectedTags(
   options: {
     appTypes: { value: string; text: string; checked: boolean }[]
     assignedGroups: ViewAppListAssignedGroup[]
+    locationOptions?: LocationFilterOption[]
   },
 ) {
+  const getLocationLabel = (locationId: string): string => {
+    if (!options.locationOptions) return locationId
+
+    const findLocation = (locs: LocationFilterOption[]): string | null => {
+      for (const loc of locs) {
+        if (loc.value === locationId) return loc.text
+        if (loc.subLocations?.length > 0) {
+          const found = findLocation(loc.subLocations)
+          if (found) return found
+        }
+      }
+      return null
+    }
+
+    return findLocation(options.locationOptions) || locationId
+  }
+
   return {
     status: filters.clearFilters
       ? []
@@ -231,6 +253,13 @@ export function buildSelectedTags(
         href: removeFilterFromHref(req, 'type', t.value),
         text: t.text.replace(/\s\(\d+\)$/, ''),
       })),
+
+    locations: filters.clearFilters
+      ? []
+      : filters.locations.map(locationId => ({
+          href: removeFilterFromHref(req, 'location', locationId),
+          text: getLocationLabel(locationId),
+        })),
   }
 }
 

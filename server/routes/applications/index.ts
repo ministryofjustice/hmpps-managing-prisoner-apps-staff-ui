@@ -7,6 +7,7 @@ import AuditService from '../../services/auditService'
 import ManagingPrisonerAppsService from '../../services/managingPrisonerAppsService'
 import PersonalRelationshipsService from '../../services/personalRelationshipsService'
 import PrisonService from '../../services/prisonService'
+import LocationsInsidePrisonService from '../../services/locationsInsidePrisonService'
 import DocumentManagementService from '../../services/documentManagementService'
 
 import actionAppRouter from './actionApp'
@@ -39,6 +40,7 @@ export default function applicationsRoutes({
   managingPrisonerAppsService,
   documentManagementService,
   prisonService,
+  locationsInsidePrisonService,
   personalRelationshipsService,
   osPlacesAddressService,
 }: {
@@ -46,6 +48,7 @@ export default function applicationsRoutes({
   managingPrisonerAppsService: ManagingPrisonerAppsService
   documentManagementService: DocumentManagementService
   prisonService: PrisonService
+  locationsInsidePrisonService: LocationsInsidePrisonService
   personalRelationshipsService: PersonalRelationshipsService
   osPlacesAddressService?: OsPlacesAddressService
 }): Router {
@@ -107,7 +110,15 @@ export default function applicationsRoutes({
   router.use(prisonerRouter({ auditService, prisonService }))
   router.use(printReplyRouter({ auditService, managingPrisonerAppsService }))
   router.use(submitAppRouter({ auditService, managingPrisonerAppsService }))
-  router.use(viewAppsRouter({ auditService, managingPrisonerAppsService, prisonService, documentManagementService }))
+  router.use(
+    viewAppsRouter({
+      auditService,
+      managingPrisonerAppsService,
+      prisonService,
+      locationsInsidePrisonService,
+      documentManagementService,
+    }),
+  )
   router.use(logMethodRouter({ auditService }))
   router.use(photoCaptureRouter({ auditService }))
   router.use(confirmPhotoRouter({ auditService }))

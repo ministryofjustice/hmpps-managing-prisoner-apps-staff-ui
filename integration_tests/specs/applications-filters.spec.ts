@@ -8,10 +8,11 @@ import {
 import auth from '../mockApis/auth'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
 import prisonApi from '../mockApis/prison'
-import { resetStubs } from '../mockApis/wiremock'
+import { resetStubs, stubFor } from '../mockApis/wiremock'
 
 const targetBaseUrl = process.env.PW_BASE_URL || process.env.DPS_PRISONER_URL || 'http://localhost:3007'
 const isWiremock = process.env.PW_ENV === 'mock' || targetBaseUrl.includes('localhost')
+const locationFilterEnabled = (process.env.LOCATION_FILTER_ENABLED ?? 'true') === 'true'
 
 test.describe('Applications List - Filter Functionality', () => {
   test.beforeEach(async ({ page, signIn }) => {
@@ -23,11 +24,45 @@ test.describe('Applications List - Filter Functionality', () => {
       await managingPrisonerAppsApi.stubGetGroupsAndTypes()
       await managingPrisonerAppsApi.stubGetActiveAgencies()
       await managingPrisonerAppsApi.stubGetApps(appSearchResponse)
+      await stubFor({
+        request: {
+          method: 'GET',
+          urlPath: '/locationsInsidePrison/locations/prison/HMI/residential-hierarchy',
+        },
+        response: {
+          status: 200,
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+          jsonBody: [
+            {
+              locationId: 'wing-a',
+              fullLocationPath: 'A',
+              locationType: 'WING',
+              status: 'ACTIVE',
+              subLocations: [],
+            },
+          ],
+        },
+      })
     }
 
     await signIn()
     await page.goto('/applications')
     await expect(page.getByRole('heading', { name: 'View all applications in your prison' })).toBeVisible()
+  })
+
+  test(`should ${locationFilterEnabled ? 'show' : 'hide'} the location filter when LOCATION_FILTER_ENABLED=${locationFilterEnabled}`, async ({
+    page,
+  }) => {
+    const locationFilter = page.getByRole('group', { name: 'Location', exact: true })
+    const locationCheckbox = page.getByRole('checkbox', { name: 'A Wing', exact: true })
+
+    if (locationFilterEnabled) {
+      await expect(locationFilter).toBeVisible()
+      await expect(locationCheckbox).toBeVisible()
+    } else {
+      await expect(locationFilter).toHaveCount(0)
+      await expect(page.locator('input[name="location"]')).toHaveCount(0)
+    }
   })
 
   test('should display applications table with correct columns', async ({ page }) => {

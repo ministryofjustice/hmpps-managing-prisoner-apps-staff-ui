@@ -119,6 +119,7 @@ jobs:
           TOKEN_VERIFICATION_API_URL: http://localhost:${{ matrix.wiremock_port }}/verification
           MANAGING_PRISONER_APPS_API_URL: http://localhost:${{ matrix.wiremock_port }}/managingPrisonerApps
           PRISON_API_URL: http://localhost:${{ matrix.wiremock_port }}/prison
+          LOCATIONS_INSIDE_PRISON_API_URL: http://localhost:${{ matrix.wiremock_port }}/locationsInsidePrison
           PERSONAL_RELATIONSHIPS_API_URL: http://localhost:${{ matrix.wiremock_port }}/personalRelationships
           DOCUMENT_API_URL: http://localhost:${{ matrix.wiremock_port }}/documentApi
           OS_PLACES_API_URL: http://localhost:${{ matrix.wiremock_port }}/osPlaces
