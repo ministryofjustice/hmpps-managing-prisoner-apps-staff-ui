@@ -1,6 +1,5 @@
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import nock from 'nock'
-import { after } from 'node:test'
 import DocumentManagementApiClient from './documentManagementApiClient'
 import { mockDocument, mockDocuments } from '../testData'
 import config from '../config'
