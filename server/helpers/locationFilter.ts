@@ -14,6 +14,17 @@ const formatLocationLabel = (location: PrisonLocation): string => {
   return `${location.fullLocationPath} ${typeLabel}`
 }
 
+export const getSearchLocationIds = (locations: PrisonLocation[], selectedLocationIds: string[]): string[] => {
+  const parentsWithSelectedChildren = new Set(
+    locations
+      .filter(location =>
+        (location.subLocations ?? []).some(subLocation => selectedLocationIds.includes(subLocation.locationId)),
+      )
+      .map(location => location.locationId),
+  )
+  return selectedLocationIds.filter(locationId => !parentsWithSelectedChildren.has(locationId))
+}
+
 export const formatLocationFilterOptions = (
   locations: PrisonLocation[],
   selectedLocationIds: string[] = [],

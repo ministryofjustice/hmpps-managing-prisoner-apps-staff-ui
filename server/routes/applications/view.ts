@@ -32,7 +32,7 @@ import { getPaginationData } from '../../utils/http/pagination'
 import DocumentManagementService from '../../services/documentManagementService'
 import { isChangeAppDetailsDisabledEstablishment } from '../../constants/enabledEstablishments'
 import LocationsInsidePrisonService from '../../services/locationsInsidePrisonService'
-import { formatLocationFilterOptions } from '../../helpers/locationFilter'
+import { formatLocationFilterOptions, getSearchLocationIds } from '../../helpers/locationFilter'
 
 export default function viewAppsRouter({
   auditService,
@@ -70,15 +70,18 @@ export default function viewAppsRouter({
         }),
       async () => {
         const filters = parseApplicationFilters(req)
-        const payload = buildApplicationsPayload(filters)
+        const locationHierarchy =
+          'activeCaseLoadId' in user && user.activeCaseLoadId
+            ? ((await locationsInsidePrisonService.getResidentialHierarchy(user.activeCaseLoadId)) ?? [])
+            : []
+
+        const payload = buildApplicationsPayload({
+          ...filters,
+          locations: getSearchLocationIds(locationHierarchy, filters.locations),
+        })
 
         const { apps, applicationTypes, assignedGroups, totalRecords, firstNightCenter } =
           await managingPrisonerAppsService.getApps(payload, user)
-
-        const locationHierarchy =
-          'activeCaseLoadId' in user && user.activeCaseLoadId
-            ? await locationsInsidePrisonService.getResidentialHierarchy(user.activeCaseLoadId)
-            : []
 
         const requestedLocationIds = extractQueryParamArray(req.query.location)
 

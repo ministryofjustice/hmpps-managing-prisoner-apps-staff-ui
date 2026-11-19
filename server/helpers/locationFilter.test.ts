@@ -1,4 +1,4 @@
-import { formatLocationFilterOptions, PrisonLocation } from './locationFilter'
+import { formatLocationFilterOptions, getSearchLocationIds, PrisonLocation } from './locationFilter'
 
 describe(formatLocationFilterOptions.name, () => {
   const locations: PrisonLocation[] = [
@@ -108,5 +108,16 @@ describe(formatLocationFilterOptions.name, () => {
 
     expect(wing.checked).toBe(true)
     expect(wing.subLocations[0].checked).toBe(true)
+  })
+
+  it('sends the selected child location when both parent and child are selected', () => {
+    expect(getSearchLocationIds(locations, ['wing-a', 'landing-a1', 'landing-a2'])).toEqual([
+      'landing-a1',
+      'landing-a2',
+    ])
+  })
+
+  it('retains a parent location when no child is selected', () => {
+    expect(getSearchLocationIds(locations, ['wing-a'])).toEqual(['wing-a'])
   })
 })
