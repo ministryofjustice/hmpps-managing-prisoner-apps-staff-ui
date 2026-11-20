@@ -40,6 +40,12 @@ export default class ViewApplicationPage extends AbstractPage {
     return this.page.locator('.govuk-summary-list__row:has-text("Location") .govuk-summary-list__value')
   }
 
+  firstNightCentre(): PageElement {
+    return this.page.locator(
+      '.govuk-summary-list__row:has(dt:text-is("First night or early days centre")) .govuk-summary-list__value',
+    )
+  }
+
   submittedOn(): PageElement {
     return this.page.locator('.govuk-summary-list__row:has(dt:text-is("Date")) .govuk-summary-list__value')
   }
