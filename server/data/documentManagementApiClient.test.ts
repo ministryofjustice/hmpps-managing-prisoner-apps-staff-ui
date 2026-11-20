@@ -24,6 +24,8 @@ describe('DocumentManagementApiClient', () => {
     jest.resetAllMocks()
   })
 
+  afterAll(() => nock.restore())
+
   describe('uploadDocument', () => {
     it('should upload a single document successfully', async () => {
       const mockUploadRequest = {
