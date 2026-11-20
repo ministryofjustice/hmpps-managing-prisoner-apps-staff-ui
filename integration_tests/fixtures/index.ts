@@ -2,6 +2,7 @@ import { expect, Page, test as base } from '@playwright/test'
 import auth from '../mockApis/auth'
 import managingPrisonerAppsApi from '../mockApis/managingPrisonerApps'
 import ApplicationGroupPage from '../pages/applicationGroup'
+import ApplicationsListPage from '../pages/applicationsListPage'
 import ApplicationTypePage from '../pages/applicationTypePage'
 import DepartmentPage from '../pages/departmentPage'
 import LogMethodPage from '../pages/logMethodPage'
@@ -38,6 +39,7 @@ const getSignInUrlWithRetry = async (
 }
 
 type Fixtures = {
+  applicationsListPage: ApplicationsListPage
   signIn: () => Promise<void>
   resetAndSignIn: () => Promise<void>
   enterPrisonerDetails: () => Promise<void>
@@ -87,6 +89,10 @@ const openApplicationsFromDpsHome = async (page: Page) => {
 }
 
 export const test = base.extend<Fixtures>({
+  applicationsListPage: async ({ page }, use) => {
+    await use(new ApplicationsListPage(page))
+  },
+
   signIn: async ({ page }, use) => {
     await use(async () => {
       if (isLocalhost) {
