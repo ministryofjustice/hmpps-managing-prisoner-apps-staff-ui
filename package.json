@@ -112,7 +112,7 @@
     "typescript": "^6.0.3"
   },
   "overrides": {
-    "@opentelemetry/core": "^2.12.1",
+    "@opentelemetry/core": "^3.1.1",
     "minimatch@9 || 10 || 11": "^11.0.1",
     "glob": "^14.0.5"
   }
