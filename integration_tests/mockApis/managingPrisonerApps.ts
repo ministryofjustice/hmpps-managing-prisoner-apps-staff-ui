@@ -1,6 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 
-import { App } from '../../server/@types/managingAppsApi'
+import { App, PrisonerSearchResult } from '../../server/@types/managingAppsApi'
 
 import {
   appDecisionResponse,
@@ -274,6 +274,19 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: response,
+      },
+    })
+  },
+  stubSearchPrisoners: (prisoners: PrisonerSearchResult[]): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        urlPath: '/managingPrisonerApps/v1/prisoners/search',
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: prisoners,
       },
     })
   },
