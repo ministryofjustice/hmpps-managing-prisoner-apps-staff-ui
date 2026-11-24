@@ -26,7 +26,6 @@ import ViewApplicationPage from '../pages/viewApplicationPage'
 
 const targetBaseUrl = process.env.PW_BASE_URL || process.env.DPS_PRISONER_URL || 'http://localhost:3007'
 const isWiremock = process.env.PW_ENV === 'mock' || targetBaseUrl.includes('localhost')
-const locationFilterEnabled = (process.env.LOCATION_FILTER_ENABLED ?? 'true') === 'true'
 
 test.describe('Applications List - Filter Functionality', () => {
   test.beforeEach(async ({ page, signIn, applicationsListPage }) => {
@@ -37,21 +36,6 @@ test.describe('Applications List - Filter Functionality', () => {
     await signIn()
     await page.goto('/applications')
     await applicationsListPage.checkOnPage()
-  })
-
-  test(`should ${locationFilterEnabled ? 'show' : 'hide'} the location filter when LOCATION_FILTER_ENABLED=${locationFilterEnabled}`, async ({
-    applicationsListPage,
-  }) => {
-    const locationFilter = applicationsListPage.locationGroup()
-    const locationCheckbox = applicationsListPage.filterCheckbox('A Wing')
-
-    if (locationFilterEnabled) {
-      await expect(locationFilter).toBeVisible()
-      await expect(locationCheckbox).toBeVisible()
-    } else {
-      await expect(locationFilter).toHaveCount(0)
-      await expect(applicationsListPage.locationInputs()).toHaveCount(0)
-    }
   })
 
   test('should display applications table with correct columns', async ({ applicationsListPage }) => {
@@ -169,7 +153,7 @@ test.describe('Applications List - Filter Functionality', () => {
   })
 
   test('should apply a location filter', async ({ applicationsListPage }) => {
-    test.skip(!isWiremock || !locationFilterEnabled, 'Requires the mock location filter')
+    test.skip(!isWiremock, 'Requires the mock location filter')
     const payload = { locations: ['wing-a'] }
     await stubFilteredApps(payload)
 
@@ -190,7 +174,7 @@ test.describe('Applications List - Filter Functionality', () => {
       page,
       applicationsListPage,
     }) => {
-      test.skip(!isWiremock || !locationFilterEnabled, 'Requires controlled results and the mock location filter')
+      test.skip(!isWiremock, 'Requires controlled results and the mock location filter')
       const payload = { locations: [locationId] }
       const application = detailForListApp(filteredDetailListApp, cellLocation)
       await stubFilteredApps(payload, [filteredDetailListApp])
@@ -255,7 +239,7 @@ test.describe('Applications List - Filter Functionality', () => {
   })
 
   test('should apply combined filters and clear them all', async ({ applicationsListPage }) => {
-    test.skip(!isWiremock || !locationFilterEnabled, 'Requires controlled results and the mock location filter')
+    test.skip(!isWiremock, 'Requires controlled results and the mock location filter')
     const payload: Partial<ApplicationSearchPayload> = {
       status: ['NEW'],
       oldestAppFirst: true,
@@ -308,7 +292,7 @@ test.describe('Applications List - Filter Functionality', () => {
       page,
       applicationsListPage,
     }) => {
-      test.skip(!isWiremock || !locationFilterEnabled, 'Requires controlled results and the mock location filter')
+      test.skip(!isWiremock, 'Requires controlled results and the mock location filter')
       const listApp = { ...filteredDetailListApp, status }
       const application = detailForListApp(listApp)
       const payload: Partial<ApplicationSearchPayload> = {
