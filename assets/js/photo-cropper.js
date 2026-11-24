@@ -4,6 +4,7 @@ function initPhotoCropper() {
   let constrainImage = false
 
   const OUTPUT_LONG_EDGE = 1400
+  const OUTPUT_IMAGE_QUALITY = 0.92
 
   const MAX_WIDTH = 320
   const MAX_HEIGHT = 320
@@ -13,11 +14,6 @@ function initPhotoCropper() {
     uploadedPhoto && uploadedPhoto.attributes['data-file-name']
       ? uploadedPhoto.attributes['data-file-name'].value
       : undefined
-  const fileType =
-    uploadedPhoto && uploadedPhoto.attributes['data-file-type']
-      ? uploadedPhoto.attributes['data-file-type'].value
-      : undefined
-
   function dataURLtoFile(dataurl, filename) {
     const arr = dataurl.split(',')
     const mime = arr[0].match(/:(.*?);/)[1]
@@ -90,19 +86,25 @@ function initPhotoCropper() {
 
     // Preserve selected crop orientation while exporting a higher-resolution image.
     selector.$toCanvas({ width: outputWidth, height: outputHeight }).then(canvas => {
-      canvas.toBlob(blob => {
-        const file = new File([blob], fileName, {
-          type: fileType,
-          lastModified: new Date().getTime(),
-        })
-        const callback = dataUrl => {
-          document.getElementById('photo-preview').src = dataUrl
-        }
-        const a = new FileReader()
-        a.onload = e => callback(e.target.result)
-        a.readAsDataURL(blob)
-        setFormPhoto(file)
-      })
+      canvas.toBlob(
+        blob => {
+          if (!blob) return
+
+          const file = new File([blob], fileName, {
+            type: 'image/jpeg',
+            lastModified: new Date().getTime(),
+          })
+          const callback = dataUrl => {
+            document.getElementById('photo-preview').src = dataUrl
+          }
+          const a = new FileReader()
+          a.onload = e => callback(e.target.result)
+          a.readAsDataURL(blob)
+          setFormPhoto(file)
+        },
+        'image/jpeg',
+        OUTPUT_IMAGE_QUALITY,
+      )
     })
   }
 

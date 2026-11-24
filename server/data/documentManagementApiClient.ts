@@ -42,7 +42,7 @@ export default class DocumentManagementApiClient extends RestClient {
         'Content-Type': request.mimeType,
       }
       if (headers?.username) {
-        requestHeaders['User-Name'] = headers.username
+        requestHeaders.Username = headers.username
       }
       if (headers?.activeCaseLoadId) {
         requestHeaders['Active-Case-Load-Id'] = headers.activeCaseLoadId
@@ -63,7 +63,9 @@ export default class DocumentManagementApiClient extends RestClient {
           asSystem(),
         )
 
-        logger.info(`Successfully uploaded document ${documentUuid} (${request.filename})`)
+        logger.info(
+          `Successfully uploaded document ${documentUuid} (${request.filename}), size: ${result.fileSize} bytes (${(result.fileSize / 1024 / 1024).toFixed(2)} MB)`,
+        )
         return result as Document
       } catch (error) {
         logger.error(`Error uploading document ${request.filename}:`, error)
@@ -86,7 +88,7 @@ export default class DocumentManagementApiClient extends RestClient {
       'Service-Name': SERVICE_NAME,
     }
     if (headers?.username) {
-      requestHeaders['User-Name'] = headers.username
+      requestHeaders.Username = headers.username
     }
     if (headers?.activeCaseLoadId) {
       requestHeaders['Active-Case-Load-Id'] = headers.activeCaseLoadId
@@ -112,7 +114,7 @@ export default class DocumentManagementApiClient extends RestClient {
       'Service-Name': SERVICE_NAME,
     }
     if (headers?.username) {
-      requestHeaders['User-Name'] = headers.username
+      requestHeaders.Username = headers.username
     }
     if (headers?.activeCaseLoadId) {
       requestHeaders['Active-Case-Load-Id'] = headers.activeCaseLoadId

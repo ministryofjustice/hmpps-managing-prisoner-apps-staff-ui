@@ -16,7 +16,7 @@ export const buildAppTypes = (group: Group, selectedValue: string | null): AppTy
     })
   })
 
-  if (genericAppTypes.length === 1 && nonGenericAppTypes.length > 0) {
+  if (genericAppTypes.length > 0 && nonGenericAppTypes.length > 0) {
     items.push({ divider: 'or' })
   }
 
