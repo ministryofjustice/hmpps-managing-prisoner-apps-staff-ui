@@ -179,6 +179,5 @@ export default {
   },
   featureFlags: {
     logMethodPageEnabled: get('LOG_METHOD_PAGE_ENABLED', 'false') === 'true',
-    locationFilterEnabled: get('LOCATION_FILTER_ENABLED', 'false') === 'true',
   },
 }

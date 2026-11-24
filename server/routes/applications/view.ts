@@ -121,7 +121,6 @@ export default function viewAppsRouter({
             selectedStatusValues: filters.selectedStatusValues,
             applicationTypeFilter: filters.applicationTypeFilter,
             oldestAppFirst: filters.oldestAppFirst,
-            locationFilterEnabled: config.featureFlags.locationFilterEnabled,
             locations: locationOptions,
           },
           pagination: getPaginationData(Number(req.query.page) || 1, totalRecords),
