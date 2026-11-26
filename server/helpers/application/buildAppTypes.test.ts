@@ -49,7 +49,7 @@ describe(buildAppTypes.name, () => {
     ])
   })
 
-  it('does not add an "or" divider when there are multiple generic app types', () => {
+  it('does not add an "or" divider when there are multiple generic app types and no non-generic app types', () => {
     const group: Group = {
       id: 1,
       name: 'Property',
@@ -68,6 +68,25 @@ describe(buildAppTypes.name, () => {
     expect(buildAppTypes(group, null)).toEqual([
       { value: '10', text: 'Facilities list (general enquiry)', checked: false },
       { value: '11', text: 'Property (general enquiry)', checked: false },
+    ])
+  })
+
+  it('adds an "or" divider before multiple generic app types when non-generic app types exist', () => {
+    const group: Group = {
+      id: 1,
+      name: 'Property',
+      appTypes: [
+        { id: 10, name: 'Facilities list', genericType: false, genericForm: true, logDetailRequired: true },
+        { id: 11, name: 'Property (general enquiry)', genericType: true, genericForm: true, logDetailRequired: true },
+        { id: 12, name: 'Other (general enquiry)', genericType: true, genericForm: true, logDetailRequired: true },
+      ],
+    }
+
+    expect(buildAppTypes(group, null)).toEqual([
+      { value: '10', text: 'Facilities list', checked: false },
+      { divider: 'or' },
+      { value: '11', text: 'Property (general enquiry)', checked: false },
+      { value: '12', text: 'Other (general enquiry)', checked: false },
     ])
   })
 })
